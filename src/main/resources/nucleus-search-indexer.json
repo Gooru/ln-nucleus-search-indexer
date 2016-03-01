@@ -1,0 +1,14 @@
+{
+  "comment" : "This is bundled JSON file. Idea is that we should externalize this also as part of build. Currently this is going to hold the dev env information",
+  "defaultKafkaSettings" : {
+  	"bootstrap.servers" : "localhost:9092",
+  	"key.serializer" : "org.apache.kafka.common.serialization.StringSerializer",
+   	"value.serializer" : "org.apache.kafka.common.serialization.StringSerializer",
+   	"batch.size" : 10,
+   	"retries" : 2,
+   	"linger.ms" : 1,
+	"buffer.memory" : 33554432,
+	"topic" : "prodContentLog",
+	"testEnvironmentWithoutKafkaServer" : false
+  }
+}
