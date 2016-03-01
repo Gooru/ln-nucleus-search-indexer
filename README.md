@@ -9,18 +9,18 @@ DONE
 ----
 * Configured listener
 * Provided a initializer and finalizer mechanism for components to initialize and clean up themselves
-* Created a data source registry and register it as component for initialization and finalization
-* Provided Hikari connection pool from data source registry
-* Processor layer is created which is going to take over the message processing from main verticle once message is read
+* Created a kafka consumer registry and register it as component for initialization and finalization
 * Logging and app configuration
 
 TODO
 ----
-* Transactional layer to govern the transaction
-* DB layer to actually do the operations
-* Transformer and/or writer layer so that output from DB layer could be transformed and written back to message bus
-* Decide on using plain JDBC or light weight ORM like ActiveJDBC
+* Add message processor logic
+* Provide Elasticsearch client configuration 
+* Provide Cassandra client configuration 
+* Message processor and service layer to process consumed message by kafka consumer 
+* Index content with elastic search client 
 
 To understand build related stuff, take a look at **BUILD_README.md**.
+
 
 
