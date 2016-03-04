@@ -1,16 +1,5 @@
 {
   "comment" : "This is bundled JSON file. Idea is that we should externalize this also as part of build. Currently this is going to hold the dev env information",
-  "defaultKafkaSettings" : {
-  	"bootstrap.servers" : "localhost:9092",
-  	"key.serializer" : "org.apache.kafka.common.serialization.StringSerializer",
-   	"value.serializer" : "org.apache.kafka.common.serialization.StringSerializer",
-   	"batch.size" : 10,
-   	"retries" : 2,
-   	"linger.ms" : 1,
-	"buffer.memory" : 33554432,
-	"topic" : "prodContentLog",
-	"testEnvironmentWithoutKafkaServer" : false
-  },
   "defaultElasticSettings" : {
     "address": "et.vertx.elasticsearch",
     "elasticsearch.client_transport_sniff": true,
@@ -30,5 +19,15 @@
     "cassandra.keyspacename.suffix" : "search",
     "cassandra.strategyOptions" : "replication_factor=1",
     "cassandra.strategyClass" : "SimpleStrategy"
+  },
+  "defaultKafkaSettings" : {
+  	"zookeeper.connect": "localhost:2181",
+  	"group.id": "indexGroup",
+  	"zookeeper.session.timeout.ms": "10000",
+  	"zookeeper.sync.time.ms":"200",
+  	"auto.commit.interval.ms":"1000",
+  	"fetch.size" : "1048576",
+  	"auto.offset.reset" : "smallest",
+  	"index.topic":"prodIndex" 
   }
 }
