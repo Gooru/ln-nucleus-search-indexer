@@ -8,14 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
 
-public class KafkaConsumerVerticle extends AbstractVerticle {
+public class IndexerVertical extends AbstractVerticle {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerVerticle.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(IndexerVertical.class);
 
   @Override
-  public void start(Future<Void> voidFuture) throws Exception {
+  public void start() throws Exception {
 
     vertx.executeBlocking(blockingFuture -> {
       startApplication();
@@ -23,9 +22,8 @@ public class KafkaConsumerVerticle extends AbstractVerticle {
     }, future -> {
       if (future.succeeded()) {
         LOGGER.info("Successfully initialized EventPublish Handler machinery");
-        voidFuture.complete();
       } else {
-        voidFuture.fail("Not able to initialize the EventPublish Handler machinery properly");
+        LOGGER.error("Not able to initialize the EventPublish Handler machinery properly");
       }
     });
   }
@@ -47,12 +45,11 @@ public class KafkaConsumerVerticle extends AbstractVerticle {
       Runtime.getRuntime().halt(1);
     }
   }
-
+  
   private void shutDownApplication() {
     Finalizers finalizers = new Finalizers();
     for (Finalizer finalizer : finalizers ) {
       finalizer.finalizeComponent();
     }
-
   }
 }
