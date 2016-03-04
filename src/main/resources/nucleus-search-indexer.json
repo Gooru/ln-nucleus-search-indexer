@@ -6,7 +6,7 @@
     "elasticsearch.indexPrefix" : "gooru_",
     "elasticsearch.indexMiddle" : "local_",
     "elasticsearch.indexSuffix" : "_v2", 
-    "elasticsearch.clustername" : "els-local",
+    "elasticsearch.clustername" : "els-local-2.2",
     "elasticsearch.host" : "localhost:9300"
   },
   "defaultCassandraSettings" : {

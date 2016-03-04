@@ -33,7 +33,7 @@ public class Initializers implements Iterable<Initializer> {
 
   public Initializers() {
     List<Initializer> initializers = new ArrayList<>();
-    //initializers.add(KafkaRegistry.getInstance());
+    initializers.add(KafkaRegistry.getInstance());
     initializers.add(ElasticSearchClient.getInstance());
     initializers.add(CassandraClient.getInstance());
     internalIterator = initializers.iterator();
