@@ -8,7 +8,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>nucleus-event.log</file>
+        <file>nucleus-search-indexer.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>nucleus-event.%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- keep 30 days' worth of history -->
@@ -21,9 +21,9 @@
     </appender>
 
     <appender name="TRANSMIT-ERRORS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-       <file>nucleus-event-failed-transmissions.log</file>
+       <file>nucleus-search-indexer-failed-transmissions.log</file>
        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           <fileNamePattern>nucleus-event-failed-transmissions.%d{yyyy-MM-dd}.log</fileNamePattern>
+           <fileNamePattern>nucleus-search-indexer-failed-transmissions.%d{yyyy-MM-dd}.log</fileNamePattern>
            <!-- keep 30 days' worth of history -->
            <maxHistory>30</maxHistory>
        </rollingPolicy>

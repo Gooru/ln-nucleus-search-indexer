@@ -1,0 +1,559 @@
+ {
+            "taxonomy": {
+                "properties": {
+                    "assetURI": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "include_in_all": false
+                    },
+                    "code": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    },
+                    "codeId": {
+                        "type": "string"
+                    },
+                    "codeImage": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "include_in_all": false
+                    },
+                    "codeQuery": {
+                        "type": "string",
+                        "analyzer": "keyword_lowercase",
+                        "include_in_all": true
+                    },
+                    "codeUId": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "include_in_all": true
+                    },
+                    "codeUid": {
+                        "type": "string"
+                    },
+                    "depth": {
+                        "type": "short",
+                        "include_in_all": false
+                    },
+                    "description": {
+                        "type": "string",
+                        "analyzer": "snowball",
+                        "include_in_all": true
+                    },
+                    "displayOrder": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "include_in_all": false
+                    },
+                    "id": {
+                        "type": "integer",
+                        "include_in_all": false
+                    },
+                    "indexId": {
+                        "type": "string"
+                    },
+                    "indexType": {
+                        "type": "string"
+                    },
+                    "indexUpdatedDate": {
+                        "type": "date",
+                        "format": "dateOptionalTime",
+                        "include_in_all": false
+                    },
+                    "isAssociateToCode": {
+                        "type": "long"
+                    },
+                    "label": {
+                        "type": "string",
+                        "analyzer": "snowball",
+                        "include_in_all": true
+                    },
+                    "nextLevelLabels": {
+                        "type": "string",
+                        "analyzer": "standard",
+                        "include_in_all": false
+                    },
+                    "organization": {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "index": "not_analyzed",
+                                "analyzer": "standard",
+                                "include_in_all": false
+                            },
+                            "name": {
+                                "type": "string",
+                                "index": "not_analyzed",
+                                "analyzer": "standard",
+                                "include_in_all": false
+                            },
+                            "partyUid": {
+                                "type": "string",
+                                "index": "not_analyzed",
+                                "analyzer": "standard",
+                                "include_in_all": false
+                            }
+                        }
+                    },
+                    "parentId": {
+                        "type": "integer",
+                        "include_in_all": false
+                    },
+                    "parentTaxonomy": {
+                        "include_in_all": false,
+                        "properties": {
+                            "activeFlag": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "assetURI": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "associatedCodes": {
+                                "include_in_all": false,
+                                "properties": {
+                                    "activeFlag": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "assetURI": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "associatedCodes": {
+                                        "include_in_all": false,
+                                        "properties": {
+                                            "activeFlag": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "assetURI": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "code": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "codeId": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "codeOrganizationAssoc": {
+                                                "include_in_all": false,
+                                                "properties": {
+                                                    "organizationCode": {
+                                                        "type": "string",
+                                                        "include_in_all": false
+                                                    },
+                                                    "sequence": {
+                                                        "type": "long",
+                                                        "include_in_all": false
+                                                    }
+                                                }
+                                            },
+                                            "codeUid": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "depth": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "displayCode": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "displayOrder": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "entryId": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "indexId": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "indexType": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "label": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "libraryFlag": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "parentId": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "rootNodeId": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "s3UploadFlag": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            },
+                                            "thumbnails": {
+                                                "include_in_all": false,
+                                                "properties": {
+                                                    "defaultImage": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "dimensions": {
+                                                        "type": "string",
+                                                        "include_in_all": false
+                                                    },
+                                                    "url": {
+                                                        "type": "string",
+                                                        "include_in_all": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "codeId": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "codeOrganizationAssoc": {
+                                        "include_in_all": false,
+                                        "properties": {
+                                            "organizationCode": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "sequence": {
+                                                "type": "long",
+                                                "include_in_all": false
+                                            }
+                                        }
+                                    },
+                                    "codeUid": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "depth": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "displayCode": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "displayOrder": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "entryId": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "indexId": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "indexType": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "label": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "libraryFlag": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "parentId": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "rootNodeId": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "s3UploadFlag": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "sequence": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "thumbnails": {
+                                        "include_in_all": false,
+                                        "properties": {
+                                            "defaultImage": {
+                                                "type": "boolean"
+                                            },
+                                            "dimensions": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "url": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "code": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "codeId": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "codeImage": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "codeOrganizationAssoc": {
+                                "include_in_all": false,
+                                "properties": {
+                                    "isFeatured": {
+                                        "type": "boolean"
+                                    },
+                                    "organizationCode": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "sequence": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    }
+                                }
+                            },
+                            "codeUid": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "creator": {
+                                "include_in_all": false,
+                                "properties": {
+                                    "accountCreatedType": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "accountTypeId": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "confirmStatus": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "createdOn": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "customFields": {
+                                        "include_in_all": false,
+                                        "properties": {
+                                            "category": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "optionalKey": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "optionalValue": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            },
+                                            "partyUid": {
+                                                "type": "string",
+                                                "include_in_all": false
+                                            }
+                                        }
+                                    },
+                                    "entryId": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "firstName": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "gooruUId": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "isDeleted": {
+                                        "type": "boolean"
+                                    },
+                                    "lastName": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "loginType": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "meta": {
+                                        "include_in_all": false,
+                                        "properties": {
+                                            "userTaxPreference": {
+                                                "include_in_all": false,
+                                                "properties": {
+                                                    "userTaxPreference": {
+                                                        "type": "string",
+                                                        "include_in_all": false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "organizationName": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "partyUid": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "registerToken": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "userId": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    },
+                                    "userRoleSetString": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "usernameDisplay": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "viewFlag": {
+                                        "type": "long",
+                                        "include_in_all": false
+                                    }
+                                }
+                            },
+                            "depth": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "description": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "displayCode": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "displayOrder": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "entryId": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "grade": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "indexId": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "indexType": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "isFeatured": {
+                                "type": "boolean"
+                            },
+                            "label": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "libraryFlag": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "parentId": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "rootNodeId": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "s3UploadFlag": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "sequence": {
+                                "type": "long",
+                                "include_in_all": false
+                            },
+                            "taxonomyImageUrl": {
+                                "type": "string",
+                                "include_in_all": false
+                            },
+                            "thumbnails": {
+                                "include_in_all": false,
+                                "properties": {
+                                    "defaultImage": {
+                                        "type": "boolean"
+                                    },
+                                    "dimensions": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "include_in_all": false
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "parentTaxonomyXml": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "include_in_all": false
+                    },
+                    "rootNodeId": {
+                        "type": "integer",
+                        "include_in_all": false
+                    },
+                    "s3UploadFlag": {
+                        "type": "integer",
+                        "include_in_all": false
+                    },
+                    "sourceCodeId": {
+                        "type": "long"
+                    },
+                    "typeId": {
+                        "type": "integer",
+                        "include_in_all": false
+                    }
+                }
+            }
+        }
