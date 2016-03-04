@@ -1,0 +1,59 @@
+ {
+    "index": {
+      "store": {
+        "compress": {
+          "stored": "true",
+          "tv": "true"
+        }
+      },
+      "number_of_replicas": "1",
+      "translog": {
+        "flush_threshold_ops": "5000",
+        "flush_threshold_period": "30m",
+        "flush_threshold_size": "200mb"
+      },
+      "merge": {
+        "policy": {
+          "floor_segment": "2mb",
+          "max_merge_at_once": "10",
+          "segments_per_tier": "10"
+        }
+      },
+      "uuid": "fdVdst8UR-ibjTQuqmATFg",
+      "analysis": {
+        "analyzer": {
+          "gooru_kstem": {
+            "type": "custom",
+            "filter": [
+              "standard",
+              "lowercase",
+              "stop",
+              "kstem"
+            ],
+            "tokenizer": "standard"
+          },
+          "keyword_lowercase": {
+            "type": "custom",
+            "filter": [
+              "lowercase",
+              "trim"
+            ],
+            "tokenizer": "keyword"
+          },
+          "whitespace_lowercase": {
+            "type": "custom",
+            "filter": [
+              "lowercase",
+              "trim"
+            ],
+            "tokenizer": "whitespace"
+          }
+        }
+      },
+      "number_of_shards": "11",
+      "refresh_interval": "1s",
+      "version": {
+        "created": "1020299"
+      }
+    }
+  }

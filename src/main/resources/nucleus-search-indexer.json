@@ -10,5 +10,25 @@
 	"buffer.memory" : 33554432,
 	"topic" : "prodContentLog",
 	"testEnvironmentWithoutKafkaServer" : false
+  },
+  "defaultElasticSettings" : {
+    "address": "et.vertx.elasticsearch",
+    "elasticsearch.client_transport_sniff": true,
+    "elasticsearch.indexPrefix" : "gooru_",
+    "elasticsearch.indexMiddle" : "local_",
+    "elasticsearch.indexSuffix" : "_v2", 
+    "elasticsearch.clustername" : "els-local",
+    "elasticsearch.host" : "localhost:9300"
+  },
+  "defaultCassandraSettings" : {
+    "address": "et.vertx.cassandra",
+    "cassandra.version" : "3.3",
+    "cassandra.cqlversion" : "5.0.1",
+    "cassandra.clustername" : "Test Cluster",
+    "cassandra.seed" : "localhost:9160",
+    "cassandra.keyspacename.prefix" : "gooru",
+    "cassandra.keyspacename.suffix" : "search",
+    "cassandra.strategyOptions" : "replication_factor=1",
+    "cassandra.strategyClass" : "SimpleStrategy"
   }
 }

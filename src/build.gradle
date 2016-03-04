@@ -59,7 +59,7 @@ shadowJar {
     classifier = 'fat'
     manifest {
         attributes 'Main-Class': 'io.vertx.core.Launcher'
-        attributes 'Main-Verticle': 'org.gooru.nucleus.search.indexers.bootstrap.KafkaConsumerVerticle'
+        attributes 'Main-Verticle': 'org.gooru.nucleus.search.indexers.bootstrap.IndexerVerticle'
         attributes 'Created-By' : 'Gooru.org'
     }
 }
