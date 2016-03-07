@@ -35,6 +35,7 @@ ext {
     jestVersion = '2.0.0'
     cassandraVersion = '3.3'
     astyanaxVersion = '3.9.0'
+    flexjsonVersion = '2.1'
 }
 
 version = "0.1-snapshot"
@@ -61,7 +62,8 @@ dependencies {
     compile "io.searchbox:jest:${jestVersion}"
     compile "org.apache.cassandra:apache-cassandra:${cassandraVersion}"
     compile "com.netflix.astyanax:astyanax:${astyanaxVersion}"
-
+	compile "net.sf.flexjson:flexjson:${flexjsonVersion}"
+	
     // Test dependencies
     testCompile "junit:junit:${junitVersion}"
 }

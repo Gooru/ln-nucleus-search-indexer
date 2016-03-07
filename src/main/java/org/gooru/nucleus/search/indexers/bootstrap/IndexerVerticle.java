@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import io.vertx.core.AbstractVerticle;
 
-public class IndexerVertical extends AbstractVerticle {
+public class IndexerVerticle extends AbstractVerticle {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(IndexerVertical.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(IndexerVerticle.class);
 
   @Override
   public void start() throws Exception {
@@ -21,9 +21,9 @@ public class IndexerVertical extends AbstractVerticle {
       blockingFuture.complete();
     }, future -> {
       if (future.succeeded()) {
-        LOGGER.info("Successfully initialized EventPublish Handler machinery");
+        LOGGER.info("Successfully initialized Indexer Handler machinery");
       } else {
-        LOGGER.error("Not able to initialize the EventPublish Handler machinery properly");
+        LOGGER.error("Not able to initialize the Indexer Handler machinery properly");
       }
     });
   }

@@ -20,7 +20,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
 /**
- * This class initializes Jest client for ElasticSearch and registers indices using setting/ mapping files
+ * This class initializes ElasticSearch client and registers indices using setting/ mapping files
  *
  * @author Renuka
  */
@@ -29,7 +29,7 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 	private static final String DEFAULT_ELASTIC_SETTINGS = "defaultElasticSettings";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchClient.class);
 	private volatile boolean initialized = false;
-	private Client client;
+	private Client client = null;
 
 	private String indexNamePrefix;
 	
@@ -52,9 +52,13 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 					
 					JsonObject elasticSearchConfig = config.getJsonObject(DEFAULT_ELASTIC_SETTINGS);
 					initializeElasticSearchClient(elasticSearchConfig);
-					registerIndices();
-					initialized = true;
-					LOGGER.info("Initializing ELS Registry DONE");
+					if (getFactory().client != null){
+						registerIndices();
+						initialized = true;
+						LOGGER.info("Initializing ELS Registry DONE");
+					} else {
+						LOGGER.info("Initializing ELS Registry FAILED");
+					}
 				}
 			}
 		}
@@ -93,8 +97,9 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 				LOGGER.debug("Oops! Could't add host : " + host + " to elasticsearch!");
 			}
 		}
-		setClient(transportClient);
-
+		if(!transportClient.connectedNodes().isEmpty()) {
+			setClient(transportClient);
+		}
 	}
 
 	private final void registerIndices() {
