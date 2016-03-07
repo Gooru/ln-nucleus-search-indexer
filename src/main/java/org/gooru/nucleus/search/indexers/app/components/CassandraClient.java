@@ -53,10 +53,11 @@ public class CassandraClient implements Finalizer, Initializer {
 						createKeySpaceIfNotExist(cassandraConfig);
 						this.keyspace.describeKeyspace();
 						initialized = true;
+						LOGGER.info("Initializing Cassandra Registry DONE");
 					} catch (Throwable e) {
+						LOGGER.info("Initializing Cassandra Registry FAILED");
 						LOGGER.error("Could not connect to cassandra : ", e);
 					}
-					LOGGER.info("Initializing Cassandra Registry DONE");
 				}
 			}
 		}
