@@ -2,7 +2,7 @@ package org.gooru.nucleus.search.indexers.app.services;
 
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
-import org.gooru.nucleus.search.indexers.app.components.ElasticSearchClient;
+import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nuclues.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nuclues.search.indexers.app.utils.IdIterator;
@@ -40,11 +40,10 @@ public class EsIndexServiceImpl implements IndexService {
 				}
 			}
 		};
-
 	}
 
 	private Client getClient() {
-		return ElasticSearchClient.getFactory().getClient();
+		return ElasticSearchRegistry.getFactory().getClient();
 	}
 
 }

@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gooru.nucleus.search.indexers.app.components.CassandraClient;
-import org.gooru.nucleus.search.indexers.app.components.ElasticSearchClient;
+import org.gooru.nucleus.search.indexers.app.components.CassandraRegistry;
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
+import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.components.KafkaRegistry;
 
 public class Finalizers implements Iterable<Finalizer> {
@@ -32,8 +33,9 @@ public class Finalizers implements Iterable<Finalizer> {
 	public Finalizers() {
 		List<Finalizer> finalizers = new ArrayList<>();
 		finalizers.add(KafkaRegistry.getInstance());
-		finalizers.add(ElasticSearchClient.getInstance());
-		finalizers.add(CassandraClient.getInstance());
+		finalizers.add(ElasticSearchRegistry.getInstance());
+		finalizers.add(CassandraRegistry.getInstance());
+		finalizers.add(DataSourceRegistry.getInstance());
 		internalIterator = finalizers.iterator();
 	}
 

@@ -24,10 +24,10 @@ import io.vertx.core.json.JsonObject;
  *
  * @author Renuka
  */
-public class ElasticSearchClient implements Finalizer, Initializer {
+public class ElasticSearchRegistry implements Finalizer, Initializer {
 
 	private static final String DEFAULT_ELASTIC_SETTINGS = "defaultElasticSettings";
-	private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchClient.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchRegistry.class);
 	private volatile boolean initialized = false;
 	private Client client = null;
 
@@ -35,7 +35,7 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 	
 	private String indexNameSuffix;
 	
-	public static ElasticSearchClient getInstance() {
+	public static ElasticSearchRegistry getInstance() {
 		return Holder.INSTANCE;
 	}
 
@@ -112,7 +112,7 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 				String setting = EsMappingUtil.getSettingConfig(indexType);
 				String mapping = EsMappingUtil.getMappingConfig(indexType);
 				try {
-					CreateIndexRequestBuilder prepareCreate = ElasticSearchClient.getInstance().getClient().admin().indices().prepareCreate(indexName);
+					CreateIndexRequestBuilder prepareCreate = ElasticSearchRegistry.getInstance().getClient().admin().indices().prepareCreate(indexName);
 					prepareCreate.setSettings(setting);
 					prepareCreate.addMapping(indexType, mapping);
 					prepareCreate.execute().actionGet();
@@ -120,7 +120,7 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 				} catch (Exception exception) {
 					if (exception instanceof IndexAlreadyExistsException) {
 						LOGGER.debug("Oops! Es Index : " + indexName + " already exist!");
-						ElasticSearchClient.getInstance().getClient().admin().indices().preparePutMapping(indexName).setType(indexType).setSource(mapping).execute().actionGet();
+						ElasticSearchRegistry.getInstance().getClient().admin().indices().preparePutMapping(indexName).setType(indexType).setSource(mapping).execute().actionGet();
 						LOGGER.debug("Updated mapping with index '" + indexName + "' and type '" + indexType + "'");
 					} else {
 						LOGGER.error("Register index failed : ", exception);
@@ -145,11 +145,11 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 		getFactory().client = client;
 	}
 	
-	public static ElasticSearchClient getFactory() {
-		return ElasticSearchClient.getInstance();
+	public static ElasticSearchRegistry getFactory() {
+		return ElasticSearchRegistry.getInstance();
 	}
 	
-	public ElasticSearchClient() {}
+	public ElasticSearchRegistry() {}
 
 	public String getIndexNamePrefix() {
 		return indexNamePrefix;
@@ -174,7 +174,7 @@ public class ElasticSearchClient implements Finalizer, Initializer {
 	}
 
 	private static final class Holder {
-		private static final ElasticSearchClient INSTANCE = new ElasticSearchClient();
+		private static final ElasticSearchRegistry INSTANCE = new ElasticSearchRegistry();
 	}
 
 }

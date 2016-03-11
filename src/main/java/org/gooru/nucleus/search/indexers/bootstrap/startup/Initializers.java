@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gooru.nucleus.search.indexers.app.components.CassandraClient;
-import org.gooru.nucleus.search.indexers.app.components.ElasticSearchClient;
+import org.gooru.nucleus.search.indexers.app.components.CassandraRegistry;
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
+import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.components.KafkaRegistry;
 
 public class Initializers implements Iterable<Initializer> {
@@ -32,8 +33,9 @@ public class Initializers implements Iterable<Initializer> {
 	public Initializers() {
 		List<Initializer> initializers = new ArrayList<>();
 		initializers.add(KafkaRegistry.getInstance());
-		initializers.add(ElasticSearchClient.getInstance());
-		initializers.add(CassandraClient.getInstance());
+		initializers.add(ElasticSearchRegistry.getInstance());
+		initializers.add(CassandraRegistry.getInstance());
+		initializers.add(DataSourceRegistry.getInstance());
 		internalIterator = initializers.iterator();
 	}
 

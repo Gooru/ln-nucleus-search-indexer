@@ -25,9 +25,9 @@ import io.vertx.core.json.JsonObject;
  *
  * @author Renuka
  */
-public class CassandraClient implements Finalizer, Initializer {
+public class CassandraRegistry implements Finalizer, Initializer {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CassandraClient.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CassandraRegistry.class);
 	private static final String DEFAULT_CASSANDRA_SETTINGS = "defaultCassandraSettings";
 	private static final String CONNECTION_POOL = "MyConnectionPool";
 	private volatile boolean initialized = false;
@@ -115,11 +115,11 @@ public class CassandraClient implements Finalizer, Initializer {
 		}
 	}
 
-	public static CassandraClient getInstance() {
+	public static CassandraRegistry getInstance() {
 		return Holder.INSTANCE;
 	}
 
-	private CassandraClient() {
+	private CassandraRegistry() {
 	}
 	
 	public Keyspace getKeyspace() {
@@ -127,7 +127,7 @@ public class CassandraClient implements Finalizer, Initializer {
 	}
 
 	private static final class Holder {
-		private static final CassandraClient INSTANCE = new CassandraClient();
+		private static final CassandraRegistry INSTANCE = new CassandraRegistry();
 	}
 
 }

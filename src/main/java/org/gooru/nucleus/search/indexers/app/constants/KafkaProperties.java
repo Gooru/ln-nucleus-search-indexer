@@ -1,4 +1,4 @@
-package org.gooru.nucleus.search.indexers.constants;
+package org.gooru.nucleus.search.indexers.app.constants;
 
 public class KafkaProperties {
 
