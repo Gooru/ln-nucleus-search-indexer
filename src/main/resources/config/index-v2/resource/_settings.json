@@ -6,7 +6,6 @@
           "tv": "true"
         }
       },
-      "number_of_replicas": "1",
       "translog": {
         "flush_threshold_ops": "5000",
         "flush_threshold_period": "30m",

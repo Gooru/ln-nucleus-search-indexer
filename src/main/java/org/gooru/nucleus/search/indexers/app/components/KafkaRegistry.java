@@ -3,9 +3,9 @@ package org.gooru.nucleus.search.indexers.app.components;
 import java.util.Properties;
 
 import org.apache.kafka.clients.consumer.Consumer;
+import org.gooru.nucleus.search.indexers.app.constants.KafkaProperties;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
-import org.gooru.nucleus.search.indexers.constants.KafkaProperties;
 import org.gooru.nucleus.search.indexers.kafka.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

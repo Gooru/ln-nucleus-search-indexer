@@ -2,10 +2,12 @@ package org.gooru.nucleus.search.indexers.app.services;
 
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
-import org.gooru.nucleus.search.indexers.app.components.ElasticSearchClient;
+import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nuclues.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nuclues.search.indexers.app.utils.IdIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.vertx.core.json.JsonObject;
 
@@ -14,6 +16,8 @@ import io.vertx.core.json.JsonObject;
  * 
  */
 public class EsIndexServiceImpl implements IndexService {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EsIndexServiceImpl.class);
 
 	@Override
 	public void deleteDocuments(String indexableIds, String indexName, String type) {
@@ -35,16 +39,21 @@ public class EsIndexServiceImpl implements IndexService {
 			public void execute(String indexableId) {
 				if ((typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || typeName.equalsIgnoreCase(IndexerConstants.TYPE_SCOLLECTION))) {
 					if (!body.isEmpty()) {
-						getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute();
+						try {
+							getClient().prepareIndex(indexName, typeName, indexableId)
+									.setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute().actionGet();
+						} catch (Exception e) {
+							LOGGER.info("Exception while indexing");
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		};
-
 	}
-
+	
 	private Client getClient() {
-		return ElasticSearchClient.getFactory().getClient();
+		return ElasticSearchRegistry.getFactory().getClient();
 	}
 
 }

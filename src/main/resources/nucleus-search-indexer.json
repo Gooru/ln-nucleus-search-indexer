@@ -6,7 +6,7 @@
     "elasticsearch.indexPrefix" : "gooru_",
     "elasticsearch.indexMiddle" : "local_",
     "elasticsearch.indexSuffix" : "_v2", 
-    "elasticsearch.clustername" : "els-local-2.2",
+    "elasticsearch.clustername" : "els-local",
     "elasticsearch.host" : "localhost:9300"
   },
   "defaultCassandraSettings" : {
@@ -29,5 +29,13 @@
   	"fetch.size" : "1048576",
   	"auto.offset.reset" : "smallest",
   	"index.topic":"prodIndex" 
+  },
+  "defaultDataSource" : {
+  	"nucleus.ds.type" : "hikari",
+  	"username" : "nucleus",
+  	"password" : "nucleus",
+  	"autoCommit" : false,
+  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/nucleus",
+  	"maximumPoolSize" : 5
   }
 }

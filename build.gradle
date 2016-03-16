@@ -1,10 +1,12 @@
+import org.javalite.instrumentation.Instrumentation;
 import java.lang.invoke.LambdaForm.Compiled;
 
 buildscript {
     repositories { jcenter() }
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:1.2.2"
-        
+        classpath group: 'org.javalite', name: 'activejdbc', version: '1.4.11'
+        classpath group: 'org.javalite', name: 'activejdbc-instrumentation', version: '1.4.11'
     }
 }
 
@@ -32,10 +34,12 @@ ext {
     kafkaVersion = '0.9.0.0'
     guavaVersion = '18.0'
     elasticsearchVersion = '2.2.0'
-    jestVersion = '2.0.0'
     cassandraVersion = '3.3'
     astyanaxVersion = '3.9.0'
     flexjsonVersion = '2.1'
+    hikariVersion = '2.4.3'
+    postgresVersion = '9.4-1206-jdbc42'
+    activejdbcVersion = '1.4.11'
 }
 
 version = "0.1-snapshot"
@@ -59,10 +63,14 @@ dependencies {
     compile "org.apache.kafka:kafka_2.10:${kafkaVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
     compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
-    compile "io.searchbox:jest:${jestVersion}"
     compile "org.apache.cassandra:apache-cassandra:${cassandraVersion}"
     compile "com.netflix.astyanax:astyanax:${astyanaxVersion}"
 	compile "net.sf.flexjson:flexjson:${flexjsonVersion}"
+	compile "com.zaxxer:HikariCP:${hikariVersion}"
+    compile "org.postgresql:postgresql:${postgresVersion}"
+    compile "org.javalite:activejdbc:${activejdbcVersion}"
+    compile "org.javalite:activejdbc-instrumentation:${activejdbcVersion}"
+    
 	
     // Test dependencies
     testCompile "junit:junit:${junitVersion}"
@@ -79,5 +87,42 @@ shadowJar {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.7'
+}
+
+//////////////// specific to activeJDBC instrumentation ///////////////
+// from the Griffon ActiveJDBC plugin
+def addUrlIfNotPresent( to, what ) {
+
+    if ( !to || !what ) { return }
+    def urls = to.URLs.toList()
+    switch( what.class ) {
+        case URL: what = new File( what.toURI() ); break
+        case String: what = new File( what ); break
+        case GString: what = new File( what.toString() ); break
+        case File: break; // ok
+        default:
+            println "Don't know how to deal with $what as it is not an URL nor a File"
+            System.exit( 1 )
+    }
+
+    if ( what.directory && !what.exists() ) { what.mkdirs() }
+    def url = what.toURI().toURL()
+    if ( !urls.contains( url ) && ( what.directory || !urls.find{ it.path.endsWith( what.name ) } ) ) {
+        to.addURL( url )
+    }
+}
+
+// from the Griffon ActiveJDBC plugin
+compileJava.doLast {
+    println( "In compileJava.doLast" )
+    Instrumentation instrumentation = new Instrumentation()
+    def projectMainClassesDir = sourceSets.main.output.classesDir.getPath()
+    def rootLoader = this.class.classLoader.rootLoader
+    instrumentation.outputDirectory = projectMainClassesDir
+    addUrlIfNotPresent rootLoader, projectMainClassesDir
+    addUrlIfNotPresent Instrumentation.class.classLoader, projectMainClassesDir
+    instrumentation.instrument()
+    def activejdbcInstrumentSpyFile = new File( ".activejdbc_instrument" )
+    activejdbcInstrumentSpyFile.text = new Date().toString()
 }
 

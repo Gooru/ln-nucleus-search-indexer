@@ -1,6 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.constants;
 
-public enum CassandraConstant {
+public enum CassandraConnectionConstant {
 
 	CQL_VERSION("cassandra.cqlversion", "3.0.0"),
 
@@ -22,7 +22,7 @@ public enum CassandraConstant {
 
 	String key;
 
-	private CassandraConstant(String key,
+	private CassandraConnectionConstant(String key,
 			String defaultValue) {
 		this.defaultValue = defaultValue;
 		this.key = key;

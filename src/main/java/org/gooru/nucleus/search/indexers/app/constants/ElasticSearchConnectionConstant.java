@@ -5,7 +5,7 @@ package org.gooru.nucleus.search.indexers.app.constants;
  * @author Search Team
  * 
  */
-public enum ElasticSearchConstant {
+public enum ElasticSearchConnectionConstant {
 
 	INDEX_PREFIX_PART("elasticsearch.indexPrefix", "gooru_"),
 	
@@ -23,7 +23,7 @@ public enum ElasticSearchConstant {
 
 	String key;
 
-	private ElasticSearchConstant(String key,
+	private ElasticSearchConnectionConstant(String key,
 			String defaultValue) {
 		this.defaultValue = defaultValue;
 		this.key = key;
