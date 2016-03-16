@@ -1,4 +1,4 @@
-package org.gooru.nuclues.search.indexers.app.repositories;
+package org.gooru.nuclues.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
 import java.util.Set;

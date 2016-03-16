@@ -22,11 +22,11 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 	protected static final Logger LOG = LoggerFactory.getLogger(EsIndexSrcBuilder.class);
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-
+	
 	private static final VoidTransformer VOID_TRANSFORMER = new VoidTransformer();
-
+	
 	private static JSONSerializer serializer;
-
+	
 	private static final Map<String, IsEsIndexSrcBuilder<?, ?>> esIndexSrcBuilders = new HashMap<String, IsEsIndexSrcBuilder<?, ?>>();
 
 	static {
@@ -44,14 +44,22 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 	}
 
 	@Override
-	public String buildSource(JsonObject source, JsonObject destination) {
+	public String buildSource(JsonObject source, D destination) {
 		build(source, destination);
 		return getSerializer().deepSerialize(destination);
 	}
+	
+	@Override
+	public String buildSource(JsonObject source, JsonObject destination) {
+		destination = buildJson(source, destination);
+		return destination.toString();
+	}
 
-	protected abstract void build(JsonObject source, JsonObject destination);
+	protected abstract JsonObject buildJson(JsonObject source, JsonObject destination);
 
-	public JSONSerializer getSerializer() {
+	protected abstract void build(JsonObject source, D destination);
+
+	public static JSONSerializer getSerializer() {
 		return serializer;
 	}
 
@@ -62,7 +70,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 		}
 		return jsonSerializer;
 	}
-
+	
 	protected static String[] getExcludes() {
 		return null;
 	}

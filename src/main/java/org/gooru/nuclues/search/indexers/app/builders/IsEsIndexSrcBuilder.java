@@ -10,8 +10,12 @@ public interface IsEsIndexSrcBuilder<S, D> {
 
 	String buildSource(JsonObject source, JsonObject destination);
 
-	String buildSource(JsonObject body);
+	String buildJsonSource(JsonObject body);
 
 	String getName();
+
+	String buildSource(JsonObject source);
+
+	String buildSource(JsonObject source, D contentEio);
 
 }

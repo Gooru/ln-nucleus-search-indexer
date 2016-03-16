@@ -8,7 +8,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
-import org.gooru.nucleus.search.indexers.app.constants.ElasticSearchConstant;
+import org.gooru.nucleus.search.indexers.app.constants.ElasticSearchConnectionConstant;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
@@ -24,7 +24,7 @@ import io.vertx.core.json.JsonObject;
  *
  * @author Renuka
  */
-public class ElasticSearchRegistry implements Finalizer, Initializer {
+public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
 	private static final String DEFAULT_ELASTIC_SETTINGS = "defaultElasticSettings";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchRegistry.class);
@@ -66,12 +66,12 @@ public class ElasticSearchRegistry implements Finalizer, Initializer {
 
 	private void initializeElasticSearchClient(JsonObject elasticSearchConfig) {
 
-		String clusterName = elasticSearchConfig.getString(ElasticSearchConstant.CLUSTER_NAME.getKey(), ElasticSearchConstant.CLUSTER_NAME.getDefaultValue());
-		String hostName = elasticSearchConfig.getString(ElasticSearchConstant.HOST.getKey(), ElasticSearchConstant.HOST.getDefaultValue());
-		String indexPrefixPart = elasticSearchConfig.getString(ElasticSearchConstant.INDEX_PREFIX_PART.getKey(), ElasticSearchConstant.INDEX_PREFIX_PART.getDefaultValue());
-		String indexMiddlePart = elasticSearchConfig.getString(ElasticSearchConstant.INDEX_MIDDLE_PART.getKey(), ElasticSearchConstant.INDEX_MIDDLE_PART.getDefaultValue());
-		String indexSuffixPart = elasticSearchConfig.getString(ElasticSearchConstant.INDEX_SUFFIX_PART.getKey(), ElasticSearchConstant.INDEX_SUFFIX_PART.getDefaultValue());
-		String clientTransportSniff = elasticSearchConfig.getString(ElasticSearchConstant.CLIENT_TRANSPORT_SNIFF.getKey(), ElasticSearchConstant.CLIENT_TRANSPORT_SNIFF.getDefaultValue());
+		String clusterName = elasticSearchConfig.getString(ElasticSearchConnectionConstant.CLUSTER_NAME.getKey(), ElasticSearchConnectionConstant.CLUSTER_NAME.getDefaultValue());
+		String hostName = elasticSearchConfig.getString(ElasticSearchConnectionConstant.HOST.getKey(), ElasticSearchConnectionConstant.HOST.getDefaultValue());
+		String indexPrefixPart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_PREFIX_PART.getKey(), ElasticSearchConnectionConstant.INDEX_PREFIX_PART.getDefaultValue());
+		String indexMiddlePart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_MIDDLE_PART.getKey(), ElasticSearchConnectionConstant.INDEX_MIDDLE_PART.getDefaultValue());
+		String indexSuffixPart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getKey(), ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getDefaultValue());
+		String clientTransportSniff = elasticSearchConfig.getString(ElasticSearchConnectionConstant.CLIENT_TRANSPORT_SNIFF.getKey(), ElasticSearchConnectionConstant.CLIENT_TRANSPORT_SNIFF.getDefaultValue());
 
 		setIndexNamePrefix(indexPrefixPart + indexMiddlePart);
 		setIndexNameSuffix(indexSuffixPart);

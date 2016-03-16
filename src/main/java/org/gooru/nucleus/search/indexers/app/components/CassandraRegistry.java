@@ -1,6 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.components;
 
-import org.gooru.nucleus.search.indexers.app.constants.CassandraConstant;
+import org.gooru.nucleus.search.indexers.app.constants.CassandraConnectionConstant;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ import io.vertx.core.json.JsonObject;
  *
  * @author Renuka
  */
-public class CassandraRegistry implements Finalizer, Initializer {
+public final class CassandraRegistry implements Finalizer, Initializer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CassandraRegistry.class);
 	private static final String DEFAULT_CASSANDRA_SETTINGS = "defaultCassandraSettings";
@@ -67,8 +67,8 @@ public class CassandraRegistry implements Finalizer, Initializer {
 		try {
 			this.keyspace.describeKeyspace();
 		} catch (Exception ex) {
-			String 	strategyOption = cassandraConfig.getString(CassandraConstant.STRATEGY_OPTIONS.getKey(), CassandraConstant.STRATEGY_OPTIONS.getDefaultValue());
-			String 	strategyClass = cassandraConfig.getString(CassandraConstant.STRATEGY_CLASS.getKey(), CassandraConstant.STRATEGY_CLASS.getDefaultValue());			
+			String 	strategyOption = cassandraConfig.getString(CassandraConnectionConstant.STRATEGY_OPTIONS.getKey(), CassandraConnectionConstant.STRATEGY_OPTIONS.getDefaultValue());
+			String 	strategyClass = cassandraConfig.getString(CassandraConnectionConstant.STRATEGY_CLASS.getKey(), CassandraConnectionConstant.STRATEGY_CLASS.getDefaultValue());			
 
 			String[] strategyOptions = strategyOption.split(",");
 			ImmutableMap.Builder<String, Object> strategyMap = ImmutableMap.<String, Object> builder();
@@ -82,10 +82,10 @@ public class CassandraRegistry implements Finalizer, Initializer {
 	}
 
 	protected AstyanaxContext<Keyspace> getCassandraContext(JsonObject cassandraConfig) {
-		String clusterName = cassandraConfig.getString(CassandraConstant.CLUSTER_NAME.getKey(), CassandraConstant.CLUSTER_NAME.getDefaultValue());
-		String cqlVersion = cassandraConfig.getString(CassandraConstant.CQL_VERSION.getKey(), CassandraConstant.CQL_VERSION.getDefaultValue());
-		String version = cassandraConfig.getString(CassandraConstant.VERSION.getKey(), CassandraConstant.VERSION.getDefaultValue());
-		String seed = cassandraConfig.getString(CassandraConstant.SEED.getKey(), CassandraConstant.SEED.getDefaultValue());
+		String clusterName = cassandraConfig.getString(CassandraConnectionConstant.CLUSTER_NAME.getKey(), CassandraConnectionConstant.CLUSTER_NAME.getDefaultValue());
+		String cqlVersion = cassandraConfig.getString(CassandraConnectionConstant.CQL_VERSION.getKey(), CassandraConnectionConstant.CQL_VERSION.getDefaultValue());
+		String version = cassandraConfig.getString(CassandraConnectionConstant.VERSION.getKey(), CassandraConnectionConstant.VERSION.getDefaultValue());
+		String seed = cassandraConfig.getString(CassandraConnectionConstant.SEED.getKey(), CassandraConnectionConstant.SEED.getDefaultValue());
 		return new AstyanaxContext.Builder()
 				.forCluster(clusterName)
 				.forKeyspace(getKeyspaceName(cassandraConfig))
@@ -103,9 +103,9 @@ public class CassandraRegistry implements Finalizer, Initializer {
 	}
 	
 	protected String getKeyspaceName(JsonObject cassandraConfig) {
-		String keyspacePrefix = cassandraConfig.getString(CassandraConstant.KEYSPACE_NAME_PREFIX.getKey(), CassandraConstant.KEYSPACE_NAME_PREFIX.getDefaultValue());
-		String keyspaceSuffix = cassandraConfig.getString(CassandraConstant.KEYSPACE_NAME_SUFFIX.getKey(), CassandraConstant.KEYSPACE_NAME_SUFFIX.getDefaultValue());
-		return keyspacePrefix + "_" + (keyspaceSuffix.equals(keyspacePrefix) ? CassandraConstant.KEYSPACE_NAME_SUFFIX.getDefaultValue() : keyspaceSuffix);
+		String keyspacePrefix = cassandraConfig.getString(CassandraConnectionConstant.KEYSPACE_NAME_PREFIX.getKey(), CassandraConnectionConstant.KEYSPACE_NAME_PREFIX.getDefaultValue());
+		String keyspaceSuffix = cassandraConfig.getString(CassandraConnectionConstant.KEYSPACE_NAME_SUFFIX.getKey(), CassandraConnectionConstant.KEYSPACE_NAME_SUFFIX.getDefaultValue());
+		return keyspacePrefix + "_" + (keyspaceSuffix.equals(keyspacePrefix) ? CassandraConnectionConstant.KEYSPACE_NAME_SUFFIX.getDefaultValue() : keyspaceSuffix);
 	}
 
 	@Override
