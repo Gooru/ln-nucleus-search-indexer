@@ -27,14 +27,18 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 	
 	private static JSONSerializer serializer;
 	
-	private static final Map<String, IsEsIndexSrcBuilder<?, ?>> esIndexSrcBuilders = new HashMap<String, IsEsIndexSrcBuilder<?, ?>>();
+	private static final Map<String, IsEsIndexSrcBuilder<?, ?>> esIndexSrcBuilders = new HashMap<>();
 
 	static {
 		serializer = initSerializer();
-		esIndexSrcBuilders.put(IndexType.RESOURCE.getType(), new ResourceEsIndexSrcBuilder<>());
-		esIndexSrcBuilders.put(IndexType.SCOLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());
+		registerESIndexSrcBuilders();
 	}
 
+	private static void registerESIndexSrcBuilders() {
+		esIndexSrcBuilders.put(IndexType.RESOURCE.getType(), new ContentEsIndexSrcBuilder<>());
+		esIndexSrcBuilders.put(IndexType.COLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());		
+	}
+	
 	public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {
 		if (esIndexSrcBuilders.containsKey(requestBuilderName)) {
 			return esIndexSrcBuilders.get(requestBuilderName);

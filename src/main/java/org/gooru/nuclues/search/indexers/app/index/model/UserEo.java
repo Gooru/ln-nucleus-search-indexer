@@ -7,16 +7,14 @@ public class UserEo {
 	private String lastName;
 	
 	private String usernameDisplay;
-	
-	private String organizationUId;
-	
+		
 	private String userId;
 	
 	private String emailId;
 	
 	private String fullName;
 	
-	private String profileVisibility;
+	private Boolean profileVisibility;
 	
 
 	public void setFirstName(String firstName) {
@@ -43,19 +41,11 @@ public class UserEo {
 		return usernameDisplay;
 	}
 
-	public void setOrganizationUId(String organizationUId) {
-		this.organizationUId = organizationUId;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getOrganizationUId() {
-		return organizationUId;
-	}
-
-	public void setGooruUId(String gooruUId) {
-		this.userId = gooruUId;
-	}
-
-	public String getGooruUId() {
+	public String getUserId() {
 		return userId;
 	}
 
@@ -75,11 +65,11 @@ public class UserEo {
 		this.fullName = fullName;
 	}
 
-	public String getProfileVisibility() {
+	public Boolean getProfileVisibility() {
 		return profileVisibility;
 	}
 
-	public void setProfileVisibility(String profileVisibility) {
+	public void setProfileVisibility(Boolean profileVisibility) {
 		this.profileVisibility = profileVisibility;
 	}
 
