@@ -15,15 +15,6 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 
 	  private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
 
-	  /**
-	  * @see org.gooru.nuclues.search.indexers.app.repositories.activejdbc.CollectionRepository#getCollection(java.lang.String)
-	  * getCollection: generates event with the following data items:
-	  *            id, title, created_at, updated_at, creator_id, original_creator_id, original_collection_id,
-	  *            publish_date, format, learning_objective, collaborator, orientation, grading, setting,
-	  *            metadata, taxonomy, thumbnail, visible_on_profile, course_id, unit_id, lesson_id
-	  *
-	  *            course_id, unit_id, lesson_id   ------ will come from the association table
-	  */
 	  @Override
 	  public JsonObject getCollection(String contentID) {
 	    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
@@ -47,9 +38,6 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 	    return returnValue;
 	  }
 
-	  /* (non-Javadoc)
-	   * @see org.gooru.nuclues.search.indexers.app.repositories.activejdbc.CollectionRepository#getDeletedCollection(java.lang.String)
-	   */
 	  @Override
 	  public JsonObject getDeletedCollection(String contentID) {
 	    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
@@ -59,15 +47,6 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 	    return null;
 	  }
 
-	  /**
-	  * @see org.gooru.nuclues.search.indexers.app.repositories.activejdbc.CollectionRepository#getCollection(java.lang.String)
-	  * getAssessment: generates event with the following data items:
-	  *            id, title, created_at, updated_at, creator_id, original_creator_id, original_collection_id,
-	  *            publish_date, format, learning_objective, collaborator, orientation, grading, setting,
-	  *            metadata, taxonomy, thumbnail, visible_on_profile, course_id, unit_id, lesson_id
-	  *
-	  *            course_id, unit_id, lesson_id   ------ will come from the association table
-	  */
 	  @Override
 	  public JsonObject getAssessment(String contentID) {
 	    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
@@ -92,9 +71,6 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 	    return returnValue;
 	  }
 
-	  /* (non-Javadoc)
-	   * @see org.gooru.nuclues.search.indexers.app.repositories.activejdbc.CollectionRepository#getDeletedAssessment(java.lang.String)
-	   */
 	  @Override
 	  public JsonObject getDeletedAssessment(String contentID) {
 	    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());

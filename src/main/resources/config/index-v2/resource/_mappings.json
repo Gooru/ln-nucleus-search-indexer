@@ -51,56 +51,6 @@
             "format":"dateOptionalTime",
             "include_in_all":false
          },
-         "owner":{
-            "properties":{
-               "emailId":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
-               },
-               "firstName":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
-               },
-               "fullName":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
-               },
-               "userId":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
-               "lastName":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
-               },
-               "organizationUId":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
-               "profileVisibility":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
-               "usernameDisplay":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "fields":{
-                     "usernameDisplaySnowball":{
-                        "type":"string",
-                        "analyzer":"snowball"
-                     }
-                  },
-                  "include_in_all":false
-               }
-            }
-         },
          "creator":{
             "properties":{
                "emailId":{
@@ -128,14 +78,8 @@
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "organizationUId":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
                "profileVisibility":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"boolean",
                   "include_in_all":false
                },
                "usernameDisplay":{
@@ -151,7 +95,7 @@
                }
             }
          },
-         "originalOwner":{
+         "originalCreator":{
             "properties":{
                "emailId":{
                   "type":"string",
@@ -178,14 +122,8 @@
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "organizationUId":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
                "profileVisibility":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"boolean",
                   "include_in_all":false
                },
                "usernameDisplay":{
@@ -228,14 +166,8 @@
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "organizationUId":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
                "profileVisibility":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"boolean",
                   "include_in_all":false
                },
                "usernameDisplay":{
@@ -255,10 +187,11 @@
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false
-         }, "publishStatus" : {
-            "type" : "string",
-            "index" : "not_analyzed",
-            "include_in_all":false        
+         },
+         "publishStatus":{
+            "type":"string",
+            "index":"not_analyzed",
+            "include_in_all":false
          },
          "shortTitle":{
             "type":"string",
@@ -320,23 +253,18 @@
             "analyzer":"keyword_lowercase",
             "include_in_all":false
          },
+         "contentSubFormatEscaped":{
+            "type":"string",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
          "question":{
             "properties":{
                "answer":{
                   "properties":{
-                     "answerId":{
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "include_in_all":false
-                     },
                      "answerText":{
                         "type":"string",
                         "analyzer":"snowball",
-                        "include_in_all":false
-                     },
-                     "answerType":{
-                        "type":"string",
-                        "index":"not_analyzed",
                         "include_in_all":false
                      }
                   }
@@ -359,16 +287,6 @@
                         "include_in_all":false
                      }
                   }
-               },
-               "question":{
-                  "type":"string",
-                  "analyzer":"snowball",
-                  "include_in_all":false
-               },
-               "type":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
                }
             }
          },
@@ -509,33 +427,6 @@
                      }
                   }
                },
-               "subdomain":{
-                  "type":"nested",
-                  "include_in_parent":true,
-                  "properties":{
-                     "codeId":{
-                        "type":"string",
-                        "analyzer":"keyword_lowercase",
-                        "include_in_all":false
-                     },
-                     "codeTypeId":{
-                        "type":"string",
-                        "analyzer":"keyword_lowercase",
-                        "include_in_all":false
-                     },
-                     "label":{
-                        "type":"string",
-                        "analyzer":"keyword_lowercase",
-                        "fields":{
-                           "labelSnowball":{
-                              "type":"string",
-                              "analyzer":"snowball"
-                           }
-                        },
-                        "include_in_all":false
-                     }
-                  }
-               },
                "taxonomyDataSet":{
                   "type":"string",
                   "analyzer":"snowball",
@@ -606,15 +497,7 @@
                   "type":"double",
                   "include_in_all":false
                },
-               "resourceAddedCount":{
-                  "type":"long",
-                  "include_in_all":false
-               },
                "resourceUsedUserCount":{
-                  "type":"long",
-                  "include_in_all":false
-               },
-               "scollectionRemixCount":{
                   "type":"long",
                   "include_in_all":false
                },
@@ -622,7 +505,7 @@
                   "type":"integer",
                   "include_in_all":false
                },
-               "usedInSCollectionCount":{
+               "usedInCollectionCount":{
                   "type":"integer",
                   "include_in_all":false
                },
