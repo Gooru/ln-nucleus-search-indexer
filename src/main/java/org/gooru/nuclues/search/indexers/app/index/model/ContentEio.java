@@ -2,282 +2,264 @@ package org.gooru.nuclues.search.indexers.app.index.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+
+import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class ContentEio implements Serializable {
 
 	private static final long serialVersionUID = -8299148888835845089L;
-	private String id;
-	private String type;
-	private String url;
-	private String title;
-	private Date indexUpdatedDate;
-	private Date createdAt;
-	private Date updatedAt;
-	private String originalContentId;
-	private String parentContentId;
-	private UserEo owner; // creator
-	private UserEo creator; // original_creator
-	private Date publishDate;
-	private String publishStatus;
-	private String shortTitle;
-	private String narration;
-	private String description;
-	private String contentFormat; // resource/question
-	private String contentSubFormat; // Res : WEB, URL; QUES : MC, TF
-	private QuesionEo question; // answer, hint_explanation_detail,
-	private Map<String, Object> metadata; // educational_use,reading_level,advertisement_level
-	private Object taxonomyDataSet;
-	private String thumbnail;
-	private String collectionId;
-	private Boolean isCopyrightOwner;
-	private UserEo copyrightOwner;
-	private Boolean visibleOnProfile;
-	private StatisticsEo statistics;
-	private Set<String> collectionIds;
-	private String collectionTitles;
-	private String grade;
+	private JsonObject content = null;
+
+	public ContentEio() {
+		this.content = new JsonObject();
+	}
+
+	public JsonObject getContentJson() {
+		return this.content;
+	}
 
 	public String getId() {
-		return id;
+		return content.getString("id", null);
 	}
 
 	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+		content = JsonUtil.set(content, "id", id);
 	}
 
 	public String getUrl() {
-		return url;
+		return content.getString("url", null);
 	}
 
 	public void setUrl(String url) {
-		this.url = url;
+		content = JsonUtil.set(content, "url", url);
 	}
 
 	public String getTitle() {
-		return title;
+		return content.getString("title", null);
 	}
 
 	public void setTitle(String title) {
-		this.title = title;
+		content = JsonUtil.set(content, "title", title);
 	}
 
-	public Date getIndexUpdatedDate() {
-		return indexUpdatedDate;
+	public String getIndexUpdatedTime() {
+		return content.getString("indexUpdatedTime", null);
 	}
 
-	public void setIndexUpdatedDate(Date indexUpdatedDate) {
-		this.indexUpdatedDate = indexUpdatedDate;
+	public void setIndexUpdatedTime(Date indexUpdatedTime) {
+		content = JsonUtil.set(content, "indexUpdatedTime", indexUpdatedTime.toInstant());
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public String getCreatedAt() {
+		return content.getString("createdAt", null);
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setCreatedAt(String createdAt) {
+		content = JsonUtil.set(content, "createdAt", createdAt);
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public String getUpdatedAt() {
+		return content.getString("updatedAt", null);
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUpdatedAt(String updatedAt) {
+		content = JsonUtil.set(content, "updatedAt", updatedAt);
 	}
 
 	public String getOriginalContentId() {
-		return originalContentId;
+		return content.getString("originalContentId", null);
 	}
 
 	public void setOriginalContentId(String originalContentId) {
-		this.originalContentId = originalContentId;
+		content = JsonUtil.set(content, "originalContentId", originalContentId);
 	}
 
 	public String getParentContentId() {
-		return parentContentId;
+		return content.getString("parentContentId", null);
 	}
 
 	public void setParentContentId(String parentContentId) {
-		this.parentContentId = parentContentId;
+		content = JsonUtil.set(content, "parentContentId", parentContentId);
 	}
 
-	public UserEo getOwner() {
-		return owner;
+	public JsonObject getOriginalCreator() {
+		return content.getJsonObject("originalCreator", null);
 	}
 
-	public void setOwner(UserEo owner) {
-		this.owner = owner;
+	public void setOriginalCreator(JsonObject originalCreator) {
+		content = JsonUtil.set(content, "originalCreator", originalCreator);
+		System.out.println("content : " +content);
 	}
 
-	public UserEo getCreator() {
-		return creator;
+	public JsonObject getCreator() {
+		return content.getJsonObject("creator", null);
 	}
 
-	public void setCreator(UserEo creator) {
-		this.creator = creator;
+	public void setCreator(JsonObject creator) {
+		content = JsonUtil.set(content, "creator", creator);
 	}
 
-	public Date getPublishDate() {
-		return publishDate;
+	public String getPublishDate() {
+		return content.getString("publishDate", null);
 	}
 
-	public void setPublishDate(Date publishDate) {
-		this.publishDate = publishDate;
+	public void setPublishDate(String publishDate) {
+		content = JsonUtil.set(content, "publishDate", publishDate);
 	}
 
 	public String getPublishStatus() {
-		return publishStatus;
+		return content.getString("publishStatus", null);
 	}
 
 	public void setPublishStatus(String publishStatus) {
-		this.publishStatus = publishStatus;
+		content = JsonUtil.set(content, "publishStatus", publishStatus);
 	}
 
 	public String getShortTitle() {
-		return shortTitle;
+		return content.getString("shortTitle", null);
 	}
 
 	public void setShortTitle(String shortTitle) {
-		this.shortTitle = shortTitle;
+		content = JsonUtil.set(content, "shortTitle", shortTitle);
 	}
 
 	public String getNarration() {
-		return narration;
+		return content.getString("narration", null);
 	}
 
 	public void setNarration(String narration) {
-		this.narration = narration;
+		content = JsonUtil.set(content, "narration", narration);
 	}
 
 	public String getDescription() {
-		return description;
+		return content.getString("description", null);
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		content = JsonUtil.set(content, "description", description);
 	}
 
 	public String getContentFormat() {
-		return contentFormat;
+		return content.getString("contentFormat", null);
 	}
 
 	public void setContentFormat(String contentFormat) {
-		this.contentFormat = contentFormat;
+		content = JsonUtil.set(content, "contentFormat", contentFormat);
 	}
 
 	public String getContentSubFormat() {
-		return contentSubFormat;
+		return content.getString("contentSubFormat", null);
 	}
 
 	public void setContentSubFormat(String contentSubFormat) {
-		this.contentSubFormat = contentSubFormat;
+		content = JsonUtil.set(content, "contentSubFormat", contentSubFormat);
 	}
 
-	public QuesionEo getQuestion() {
-		return question;
+	public String getContentSubFormatEscaped() {
+		return content.getString("contentSubFormatEscaped", null);
 	}
 
-	public void setQuestion(QuesionEo question) {
-		this.question = question;
+	public void setContentSubFormatEscaped(String contentSubFormatEscaped) {
+		content = JsonUtil.set(content, "contentSubFormatEscaped", contentSubFormatEscaped);
 	}
 
-	public Map<String, Object> getMetadata() {
-		return metadata;
+	public JsonObject getQuestion() {
+		return content.getJsonObject("question", null);
 	}
 
-	public void setMetadata(Map<String, Object> metadata) {
-		this.metadata = metadata;
+	public void setQuestion(JsonObject question) {
+		content = JsonUtil.set(content, "question", question);
 	}
 
-	public Object getTaxonomyDataSet() {
-		return taxonomyDataSet;
+	public JsonObject getMetadata() {
+		return content.getJsonObject("metadata", null);
 	}
 
-	public void setTaxonomyDataSet(Object taxonomyDataSet) {
-		this.taxonomyDataSet = taxonomyDataSet;
+	public void setMetadata(JsonObject metadata) {
+		content = JsonUtil.set(content, "metadata", metadata);
+	}
+
+	public JsonObject getTaxonomy() {
+		return content.getJsonObject("taxonomy", null);
+	}
+
+	public void setTaxonomy(JsonObject taxonomy) {
+		content = JsonUtil.set(content, "taxonomy", taxonomy);
 	}
 
 	public String getThumbnail() {
-		return thumbnail;
+		return content.getString("taxonomy", null);
 	}
 
 	public void setThumbnail(String thumbnail) {
-		this.thumbnail = thumbnail;
+		content = JsonUtil.set(content, "thumbnail", thumbnail);
 	}
 
 	public String getCollectionId() {
-		return collectionId;
+		return content.getString("collectionId", null);
 	}
 
 	public void setCollectionId(String collectionId) {
-		this.collectionId = collectionId;
+		content = JsonUtil.set(content, "collectionId", collectionId);
 	}
 
 	public Boolean getIsCopyrightOwner() {
-		return isCopyrightOwner;
+		return content.getBoolean("isCopyrightOwner", null);
 	}
 
 	public void setIsCopyrightOwner(Boolean isCopyrightOwner) {
-		this.isCopyrightOwner = isCopyrightOwner;
+		content = JsonUtil.set(content, "isCopyrightOwner", isCopyrightOwner);
 	}
 
-	public UserEo getCopyrightOwner() {
-		return copyrightOwner;
+	public JsonObject getCopyrightOwner() {
+		return content.getJsonObject("copyrightOwner", null);
 	}
 
-	public void setCopyrightOwner(UserEo copyrightOwner) {
-		this.copyrightOwner = copyrightOwner;
+	public void setCopyrightOwner(JsonObject copyrightOwner) {
+		content = JsonUtil.set(content, "copyrightOwner", copyrightOwner);
 	}
 
 	public Boolean getVisibleOnProfile() {
-		return visibleOnProfile;
+		return content.getBoolean("visibleOnProfile", null);
 	}
 
 	public void setVisibleOnProfile(Boolean visibleOnProfile) {
-		this.visibleOnProfile = visibleOnProfile;
+		content = JsonUtil.set(content, "visibleOnProfile", visibleOnProfile);
 	}
 
-	public StatisticsEo getStatistics() {
-		return statistics;
+	public JsonObject getStatistics() {
+		return content.getJsonObject("statistics", null);
 	}
 
-	public void setStatistics(StatisticsEo statistics) {
-		this.statistics = statistics;
+	public void setStatistics(JsonObject statistics) {
+		content = JsonUtil.set(content, "statistics", statistics);
 	}
 
-
-	public Set<String> getCollectionIds() {
-		return collectionIds;
+	public JsonArray getCollectionIds() {
+		return content.getJsonArray("collectionIds", null);
 	}
 
-	public void setCollectionIds(Set<String> collectionIds) {
-		this.collectionIds = collectionIds;
+	public void setCollectionIds(JsonArray collectionIds) {
+		content = JsonUtil.set(content, "collectionIds", collectionIds);
 	}
 
-	public String getCollectionTitles() {
-		return collectionTitles;
+	public JsonArray getCollectionTitles() {
+		return content.getJsonArray("collectionTitles", null);
 	}
 
-	public void setCollectionTitles(String collectionTitles) {
-		this.collectionTitles = collectionTitles;
+	public void setCollectionTitles(JsonArray collectionTitles) {
+		content = JsonUtil.set(content, "collectionTitles", collectionTitles);
 	}
 
 	public String getGrade() {
-		return grade;
+		return content.getString("grade", null);
 	}
 
 	public void setGrade(String grade) {
-		this.grade = grade;
+		content = JsonUtil.set(content, "grade", grade);
 	}
 
 }

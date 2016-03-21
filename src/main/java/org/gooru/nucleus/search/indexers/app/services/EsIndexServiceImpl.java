@@ -37,7 +37,7 @@ public class EsIndexServiceImpl implements IndexService {
 		new IdIterator(indexableIds) {
 			@Override
 			public void execute(String indexableId) {
-				if ((typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || typeName.equalsIgnoreCase(IndexerConstants.TYPE_SCOLLECTION))) {
+				if ((typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION))) {
 					if (!body.isEmpty()) {
 						try {
 							getClient().prepareIndex(indexName, typeName, indexableId)

@@ -1,6 +1,7 @@
 package org.gooru.nuclues.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
@@ -15,6 +16,29 @@ import io.vertx.core.json.JsonObject;
 public class ContentRepositoryImpl implements ContentRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
+
+	private Content question;
+
+	public JsonObject getContentByType(String questionId, String contentFormat) {
+		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+		List<Content> questions = Content.where(Content.FETCH_CONTENT_QUERY, contentFormat, questionId, false);
+		// Question should be present in DB
+		if (questions.size() < 1) {
+			LOGGER.warn("Question id: {} not present in DB" + questionId);
+		}
+		this.question = questions.get(0);
+
+		JsonObject returnValue = null;
+		Set<String> attributes = Content.attributeNames();
+		LOGGER.debug("ContentRepositoryImpl:getQuestion:findById attributes: " + String.join(", ", attributes.toArray(new String[0])));
+
+		if (question != null) {
+			returnValue = new JsonObject(question.toJson(false, attributes.toArray(new String[0])));
+		}
+		Base.close();
+		return returnValue;
+
+	}
 
 	@Override
 	public JsonObject getResource(String contentID) {

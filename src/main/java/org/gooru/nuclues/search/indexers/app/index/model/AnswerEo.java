@@ -1,36 +1,27 @@
 package org.gooru.nuclues.search.indexers.app.index.model;
 
+import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonObject;
+
 public class AnswerEo {
 
-	private String answerText;
-	
-	private String answerId;
-	
-	private String answerType;
+	private JsonObject answer;
 
+	public AnswerEo() {
+		this.answer = new JsonObject();
+	}
+
+	public JsonObject getAnswer() {
+		return answer;
+	} 
+	
 	public void setAnswerText(String answerText) {
-		this.answerText = answerText;
+		this.answer = JsonUtil.set(answer, "answerText", answerText);
 	}
 
 	public String getAnswerText() {
-		return answerText;
+		return answer.getString("answerText", null);
 	}
-
-	public void setAnswerId(String answerId) {
-		this.answerId = answerId;
-	}
-
-	public String getAnswerId() {
-		return answerId;
-	}
-
-	public String getAnswerType() {
-		return answerType;
-	}
-
-	public void setAnswerType(String answerType) {
-		this.answerType = answerType;
-	}
-	
 
 }

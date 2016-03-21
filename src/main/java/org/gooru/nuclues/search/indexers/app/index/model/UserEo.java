@@ -1,77 +1,75 @@
 package org.gooru.nuclues.search.indexers.app.index.model;
 
+import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonObject;
+
 public class UserEo {
-	
-	private String firstName;
-	
-	private String lastName;
-	
-	private String usernameDisplay;
-		
-	private String userId;
-	
-	private String emailId;
-	
-	private String fullName;
-	
-	private Boolean profileVisibility;
-	
+
+	private JsonObject user;
+
+	public UserEo() {
+		this.user = new JsonObject();
+	}
+
+	public JsonObject getUser() {
+		return this.user;
+	}
 
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		user = JsonUtil.set(user, "firstName", firstName);
 	}
 
 	public String getFirstName() {
-		return firstName;
+		return user.getString("firstName", null);
 	}
 
 	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		user = JsonUtil.set(user, "lastName", lastName);
 	}
 
 	public String getLastName() {
-		return lastName;
+		return user.getString("lastName", null);
 	}
 
 	public void setUsernameDisplay(String usernameDisplay) {
-		this.usernameDisplay = usernameDisplay;
+		user = JsonUtil.set(user, "usernameDisplay", usernameDisplay);
 	}
 
 	public String getUsernameDisplay() {
-		return usernameDisplay;
+		return user.getString("usernameDisplay", null);
 	}
 
 	public void setUserId(String userId) {
-		this.userId = userId;
+		user = JsonUtil.set(user, "userId", userId);
 	}
 
 	public String getUserId() {
-		return userId;
+		return user.getString("userId", null);
 	}
 
 	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+		user = JsonUtil.set(user, "emailId", emailId);
 	}
 
 	public String getEmailId() {
-		return emailId;
+		return user.getString("emailId", null);
 	}
 
 	public String getFullName() {
-		return fullName;
+		return user.getString("fullName", null);
 	}
 
 	public void setFullName(String fullName) {
-		this.fullName = fullName;
+		user = JsonUtil.set(user, "fullName", fullName);
 	}
 
 	public Boolean getProfileVisibility() {
-		return profileVisibility;
+		return user.getBoolean("profileVisibility", null);
 	}
 
 	public void setProfileVisibility(Boolean profileVisibility) {
-		this.profileVisibility = profileVisibility;
+		user = JsonUtil.set(user, "profileVisibility", profileVisibility);
 	}
 
-	
 }

@@ -1,87 +1,87 @@
 package org.gooru.nuclues.search.indexers.app.index.model;
 
-import java.util.Set;
+import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class TaxonomyEo {
 
-	private Set<CodeEo> subject;
-	
-    private Set<CodeEo> course;
+	private JsonObject taxonomy = null;
 
-    private Set<String> standards;
-    
-    private Set<String> learningTargets;
-
-	private String taxonomyDataSet;
-
-	private String taxonomySkills;
-
-	private Integer hasNoTaxonomy;
-
-	private Integer hasNoStandard;
-	
-	public Set<CodeEo> getSubject() {
-		return subject;
+	public TaxonomyEo() {
+		this.taxonomy = new JsonObject();
 	}
 
-	public void setSubject(Set<CodeEo> subject) {
-		this.subject = subject;
+	public JsonObject getTaxonomyJson() {
+		return this.taxonomy;
 	}
 
-	public Set<CodeEo> getCourse() {
-		return course;
+	public JsonArray getSubject() {
+		return taxonomy.getJsonArray("subject", null);
 	}
 
-	public void setCourse(Set<CodeEo> course) {
-		this.course = course;
+	public void setSubject(JsonArray subject) {
+		taxonomy = JsonUtil.set(taxonomy, "subject", subject);
 	}
 
-	public Set<String> getStandards() {
-		return standards;
+	public JsonArray getCourse() {
+		return taxonomy.getJsonArray("course", null);
 	}
 
-	public void setStandards(Set<String> standards) {
-		this.standards = standards;
+	public void setCourse(JsonArray course) {
+		taxonomy = JsonUtil.set(taxonomy, "course", course);
+	}
+
+	public JsonArray getDomain() {
+		return taxonomy.getJsonArray("domain", null);
+	}
+
+	public void setDomain(JsonArray domain) {
+		taxonomy = JsonUtil.set(taxonomy, "domain", domain);
+	}
+
+	public JsonArray getStandards() {
+		return taxonomy.getJsonArray("standards", null);
+	}
+
+	public void setStandards(JsonArray standards) {
+		taxonomy = JsonUtil.set(taxonomy, "standards", standards);
 	}
 
 	public String getTaxonomyDataSet() {
-		return taxonomyDataSet;
+		return taxonomy.getString("taxonomyDataSet", null);
 	}
 
 	public void setTaxonomyDataSet(String taxonomyDataSet) {
-		this.taxonomyDataSet = taxonomyDataSet;
+		taxonomy = JsonUtil.set(taxonomy, "taxonomyDataSet", taxonomyDataSet);
 	}
 
 	public String getTaxonomySkills() {
-		return taxonomySkills;
+		return taxonomy.getString("taxonomySkills", null);
 	}
 
 	public void setTaxonomySkills(String taxonomySkills) {
-		this.taxonomySkills = taxonomySkills;
+		taxonomy = JsonUtil.set(taxonomy, "taxonomySkills", taxonomySkills);
 	}
 
-	public Integer getHasNoTaxonomy() {
-		return hasNoTaxonomy;
+	public Integer getHasStandard() {
+		return taxonomy.getInteger("hasStandard", 0);
 	}
 
-	public void setHasNoTaxonomy(Integer hasNoTaxonomy) {
-		this.hasNoTaxonomy = hasNoTaxonomy;
+	public void setHasStandard(Integer hasStandard) {
+		if (hasStandard == null) {
+			hasStandard = 0;
+		}
+		this.taxonomy = JsonUtil.set(taxonomy, "hasStandard", hasStandard);
 	}
 
-	public Integer getHasNoStandard() {
-		return hasNoStandard;
+	public JsonArray getLearningTargets() {
+		return taxonomy.getJsonArray("learningTargets", null);
 	}
 
-	public void setHasNoStandard(Integer hasNoStandard) {
-		this.hasNoStandard = hasNoStandard;
+	public void setLearningTargets(JsonArray learningTargets) {
+		this.taxonomy = JsonUtil.set(taxonomy, "learningTargets", learningTargets);
 	}
 
-	public Set<String> getLearningTargets() {
-		return learningTargets;
-	}
-
-	public void setLearningTargets(Set<String> learningTargets) {
-		this.learningTargets = learningTargets;
-	}
-	
 }
