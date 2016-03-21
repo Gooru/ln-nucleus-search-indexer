@@ -215,7 +215,7 @@
          },
          "resourceTitles":{  
             "type":"string",
-            "index":"snowball",
+            "analyzer":"snowball",
             "include_in_all":true
          },
          "metadata":{  
@@ -273,12 +273,7 @@
                   ],
                   "include_in_all":false
                },
-               "hasNoStandard":{  
-                  "type":"integer",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
-               "hasNoTaxonomy":{  
+               "hasStandard":{  
                   "type":"integer",
                   "index":"not_analyzed",
                   "include_in_all":false
@@ -412,7 +407,7 @@
                   "include_in_all":false
                },
                "collaboratorCount":{  
-                  "type":"string",
+                  "type":"integer",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
@@ -426,7 +421,7 @@
                }
             }
          },
-         "collectionItem":{  
+         "collectionContents":{  
             "properties":{  
                "description":{  
                   "type":"string",

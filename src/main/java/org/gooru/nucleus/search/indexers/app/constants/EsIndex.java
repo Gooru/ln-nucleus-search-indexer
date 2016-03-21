@@ -10,7 +10,7 @@ package org.gooru.nucleus.search.indexers.app.constants;
 public enum EsIndex {
 	
 	RESOURCE("resource"),
-	SCOLLECTION("scollection"),
+	COLLECTION("collection"),
 	TAXONOMY("taxonomy"),
 	LIBRARY("library"),
 	SEARCH_QUERY("searchquery"),

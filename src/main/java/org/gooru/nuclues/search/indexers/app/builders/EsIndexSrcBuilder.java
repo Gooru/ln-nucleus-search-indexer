@@ -1,16 +1,12 @@
 package org.gooru.nuclues.search.indexers.app.builders;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
-import org.gooru.nuclues.search.indexers.app.utils.VoidTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import flexjson.JSONSerializer;
-import flexjson.transformer.DateTransformer;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -19,18 +15,13 @@ import io.vertx.core.json.JsonObject;
  */
 public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, D> {
 
-	protected static final Logger LOG = LoggerFactory.getLogger(EsIndexSrcBuilder.class);
-
-	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-	
-	private static final VoidTransformer VOID_TRANSFORMER = new VoidTransformer();
-	
-	private static JSONSerializer serializer;
+	protected static final Logger LOGGER = LoggerFactory.getLogger(EsIndexSrcBuilder.class);
+	protected static final String dateInputPatterns[] = {"yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss.SSS", "yyyy/MM/dd", "yyyy-MM" };
+	protected static final String dateOutputPattern = "yyyy/MM/dd HH:mm:ss";
 	
 	private static final Map<String, IsEsIndexSrcBuilder<?, ?>> esIndexSrcBuilders = new HashMap<>();
 
 	static {
-		serializer = initSerializer();
 		registerESIndexSrcBuilders();
 	}
 
@@ -46,36 +37,12 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 			throw new RuntimeException("Oops! Invalid type : " + requestBuilderName);
 		}
 	}
-
+	
 	@Override
 	public String buildSource(JsonObject source, D destination) {
-		build(source, destination);
-		return getSerializer().deepSerialize(destination);
-	}
-	
-	@Override
-	public String buildSource(JsonObject source, JsonObject destination) {
-		destination = buildJson(source, destination);
-		return destination.toString();
+		return build(source, destination).toString();
 	}
 
-	protected abstract JsonObject buildJson(JsonObject source, JsonObject destination);
+	protected abstract JsonObject build(JsonObject source, D destination);
 
-	protected abstract void build(JsonObject source, D destination);
-
-	public static JSONSerializer getSerializer() {
-		return serializer;
-	}
-
-	protected static JSONSerializer initSerializer() {
-		JSONSerializer jsonSerializer = new JSONSerializer().transform(new DateTransformer(DATE_FORMAT), Date.class).transform(VOID_TRANSFORMER, void.class).exclude("*.class");
-		if (getExcludes() != null) {
-			jsonSerializer.exclude(getExcludes());
-		}
-		return jsonSerializer;
-	}
-	
-	protected static String[] getExcludes() {
-		return null;
-	}
 }

@@ -1,35 +1,39 @@
 package org.gooru.nuclues.search.indexers.app.index.model;
 
+import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonObject;
+
 public class CodeEo {
 
-	private String label;
-	
-	private String codeId;
-		
-	private Boolean hasTaxonomyRepresentation;
-	
+	private JsonObject code;
+
+	public CodeEo() {
+		this.code = new JsonObject();
+	}
+
 	public String getLabel() {
-		return label;
+		return code.getString("label", null);
 	}
 
 	public void setLabel(String label) {
-		this.label = label;
+		code = JsonUtil.set(code, "label", label);
 	}
 
 	public String getCodeId() {
-		return codeId;
+		return code.getString("codeId", null);
 	}
 
 	public void setCodeId(String codeId) {
-		this.codeId = codeId;
+		code = JsonUtil.set(code, "codeId", codeId);
 	}
 
 	public Boolean getHasTaxonomyRepresentation() {
-		return hasTaxonomyRepresentation;
+		return code.getBoolean("hasTaxonomyRepresentation", null);
 	}
 
 	public void setHasTaxonomyRepresentation(Boolean hasTaxonomyRepresentation) {
-		this.hasTaxonomyRepresentation = hasTaxonomyRepresentation;
+		code = JsonUtil.set(code, "hasTaxonomyRepresentation", hasTaxonomyRepresentation);
 	}
 
 }

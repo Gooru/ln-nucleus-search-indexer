@@ -1,70 +1,99 @@
 package org.gooru.nuclues.search.indexers.app.index.model;
 
+import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonObject;
+
 public class CollectionContentEo {
 
-	private String title;
-	private Integer sequenceId;
-	private String description;
-	private String text;
-	private String contentSubFormat;
-	private String url;
-	private String contentFormat;
-	private String id;
-	private String thumbnail;
+	private JsonObject collectionContents;
+
+	public CollectionContentEo() {
+		this.collectionContents = new JsonObject();
+	}
+
+	public JsonObject getCollectionContentJson() {
+		return this.collectionContents;
+	}
+
 	public String getTitle() {
-		return title;
+		return collectionContents.getString("title", null);
 	}
+
 	public void setTitle(String title) {
-		this.title = title;
+		this.collectionContents = JsonUtil.set(collectionContents, "title", title);
 	}
+
+	public String getShortTitle() {
+		return collectionContents.getString("shortTitle", null);
+	}
+
+	public void setShortTitle(String shortTitle) {
+		this.collectionContents = JsonUtil.set(collectionContents, "shortTitle", shortTitle);
+	}
+
 	public Integer getSequenceId() {
-		return sequenceId;
+		return collectionContents.getInteger("sequenceId", null);
 	}
+
 	public void setSequenceId(Integer sequenceId) {
-		this.sequenceId = sequenceId;
+		this.collectionContents = JsonUtil.set(collectionContents, "sequenceId", sequenceId);
 	}
+
 	public String getDescription() {
-		return description;
+		return collectionContents.getString("sequenceId", null);
 	}
+
 	public void setDescription(String description) {
-		this.description = description;
+		this.collectionContents = JsonUtil.set(collectionContents, "description", description);
 	}
+
 	public String getText() {
-		return text;
+		return collectionContents.getString("text", null);
 	}
+
 	public void setText(String text) {
-		this.text = text;
+		this.collectionContents = JsonUtil.set(collectionContents, "text", text);
 	}
+
 	public String getContentSubFormat() {
-		return contentSubFormat;
+		return collectionContents.getString("contentSubFormat", null);
 	}
+
 	public void setContentSubFormat(String contentSubFormat) {
-		this.contentSubFormat = contentSubFormat;
+		this.collectionContents = JsonUtil.set(collectionContents, "contentSubFormat", contentSubFormat);
 	}
+
 	public String getUrl() {
-		return url;
+		return collectionContents.getString("url", null);
 	}
+
 	public void setUrl(String url) {
-		this.url = url;
+		this.collectionContents = JsonUtil.set(collectionContents, "url", url);
 	}
+
 	public String getContentFormat() {
-		return contentFormat;
+		return collectionContents.getString("contentFormat", null);
 	}
+
 	public void setContentFormat(String contentFormat) {
-		this.contentFormat = contentFormat;
+		this.collectionContents = JsonUtil.set(collectionContents, "contentFormat", contentFormat);
 	}
+
 	public String getId() {
-		return id;
+		return collectionContents.getString("id", null);
 	}
+
 	public void setId(String id) {
-		this.id = id;
+		this.collectionContents = JsonUtil.set(collectionContents, "id", id);
 	}
+
 	public String getThumbnail() {
-		return thumbnail;
+		return collectionContents.getString("thumbnail", null);
 	}
+
 	public void setThumbnail(String thumbnail) {
-		this.thumbnail = thumbnail;
+		this.collectionContents = JsonUtil.set(collectionContents, "thumbnail", thumbnail);
 	}
-	
 
 }

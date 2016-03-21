@@ -8,14 +8,10 @@ import io.vertx.core.json.JsonObject;
  */
 public interface IsEsIndexSrcBuilder<S, D> {
 
-	String buildSource(JsonObject source, JsonObject destination);
-
-	String buildJsonSource(JsonObject body);
+	String buildSource(JsonObject source);
+	
+	String buildSource(JsonObject source, D destination);
 
 	String getName();
-
-	String buildSource(JsonObject source);
-
-	String buildSource(JsonObject source, D contentEio);
 
 }

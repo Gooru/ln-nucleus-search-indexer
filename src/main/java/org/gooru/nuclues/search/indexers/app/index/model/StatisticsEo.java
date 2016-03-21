@@ -1,170 +1,198 @@
 package org.gooru.nuclues.search.indexers.app.index.model;
 
+import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonObject;
+
 public class StatisticsEo {
 	
-	private Integer usedInSCollectionCount = 0;
+	private JsonObject statistics = null;
 	
-	private Long scollectionRemixCount = 0L;
-	
-	private Long viewsCount = 0L;
-	
-	private Long resourceUsedUserCount = 0L;
-	
-	private Long resourceAddedCount = 0L;
-
-	private Long averageTimeSpent = 0L;
-	
-	private Integer invalidResource = 0;
-	
-	private Integer hasNoThumbnail = 0;
-	
-	private Integer hasNoDescription = 0;
-	
-	private Integer hasFrameBreaker = 0;
-	
-	private Integer statusIsBroken = 0;
-	
-	private Double preComputedWeight = 0.0;
-		
-	private Boolean has21stCenturySkills;
-	
-	private Boolean hasAdvertisement;
+	public StatisticsEo() {
+		this.statistics = new JsonObject();
+	}
 	
 	public Long getViewsCount() {
-		return viewsCount;
+		return statistics.getLong("viewsCount", 0L);
 	}
 
 	public void setViewsCount(Long viewsCount) {
-		this.viewsCount = viewsCount;
-	}
-
-	public Integer getUsedInSCollectionCount() {
-		return usedInSCollectionCount;
-	}
-
-	public void setUsedInSCollectionCount(Integer usedInSCollectionCount) {
-		if(usedInSCollectionCount == null) {
-			usedInSCollectionCount = 0;
+		if(viewsCount == null) {
+			viewsCount = 0L;
 		}
-		this.usedInSCollectionCount = usedInSCollectionCount;
+		this.statistics = JsonUtil.set(statistics, "viewsCount", viewsCount);
+	}
+
+	public Integer getUsedInCollectionCount() {
+		return statistics.getInteger("usedInCollectionCount", 0);
+	}
+
+	public void setUsedInSCollectionCount(Integer usedInCollectionCount) {
+		if(usedInCollectionCount == null) {
+			usedInCollectionCount = 0;
+		}
+		this.statistics = JsonUtil.set(statistics, "usedInCollectionCount", usedInCollectionCount);
 	}
 
 
 	public Integer getInvalidResource() {
-		return invalidResource;
+		return statistics.getInteger("invalidResource", 0);
 	}
 
 	public void setInvalidResource(Integer invalidResource) {
 		if(invalidResource == null) {
 			invalidResource = 0;
 		}
-		this.invalidResource = invalidResource;
+		this.statistics = JsonUtil.set(statistics, "invalidResource", invalidResource);
 	}
 
 	public Integer getHasNoThumbnail() {
-		return hasNoThumbnail;
+		return statistics.getInteger("hasNoThumbnail", 0);
 	}
 
 	public void setHasNoThumbnail(Integer hasNoThumbnail) {
 		if(hasNoThumbnail == null) {
 			hasNoThumbnail = 0;
 		}
-		this.hasNoThumbnail = hasNoThumbnail;
+		this.statistics = JsonUtil.set(statistics, "hasNoThumbnail", hasNoThumbnail);
 	}
 
 	public Integer getHasNoDescription() {
-		return hasNoDescription;
+		return statistics.getInteger("hasNoDescription", 0);
 	}
 
 	public void setHasNoDescription(Integer hasNoDescription) {
 		if(hasNoDescription == null) {
 			hasNoDescription = 0;
 		}
-		this.hasNoDescription = hasNoDescription;
+		this.statistics = JsonUtil.set(statistics, "hasNoDescription", hasNoDescription);
 	}
 
 
 	public Integer getHasFrameBreaker() {
-		return hasFrameBreaker;
+		return statistics.getInteger("hasFrameBreaker", 0);
 	}
 
 	public void setHasFrameBreaker(Integer hasFrameBreaker) {
 		if(hasFrameBreaker == null) {
 			hasFrameBreaker = 0;
 		}
-		this.hasFrameBreaker = hasFrameBreaker;
+		this.statistics = JsonUtil.set(statistics, "hasFrameBreaker", hasFrameBreaker);
 	}
 
 	public Integer getStatusIsBroken() {
-		return statusIsBroken;
+		return statistics.getInteger("statusIsBroken", 0);
 	}
 
 	public void setStatusIsBroken(Integer statusIsBroken) {
 		if(statusIsBroken == null) {
 			statusIsBroken = 0;
 		}
-		this.statusIsBroken = statusIsBroken;
+		this.statistics = JsonUtil.set(statistics, "statusIsBroken", statusIsBroken);
 	}
 
 	public void setPreComputedWeight(Double preComputedWeight) {
 		if(preComputedWeight == null) {
 			preComputedWeight = 0.0;
 		}
-		this.preComputedWeight = preComputedWeight;
+		this.statistics = JsonUtil.set(statistics, "preComputedWeight", preComputedWeight);
 	}
 
 	public Double getPreComputedWeight() {
-		return preComputedWeight;
+		return statistics.getDouble("averageTimeSpent", 0.0);
 	}
 	
 	public Long getAverageTimeSpent() {
-		return averageTimeSpent;
+		return statistics.getLong("averageTimeSpent", 0L);
 	}
 
 	public void setAverageTimeSpent(Long averageTimeSpent) {
-		if(averageTimeSpent != null){
-			this.averageTimeSpent = averageTimeSpent;
+		if(averageTimeSpent == null) {
+			averageTimeSpent = 0L;
 		}
+		this.statistics = JsonUtil.set(statistics, "averageTimeSpent", averageTimeSpent);
 	}
 	
 	public Long getResourceUsedUserCount() {
-		return resourceUsedUserCount;
+		return statistics.getLong("resourceUsedUserCount", 0L);
 	}
 
 	public void setResourceUsedUserCount(Long resourceUsedUserCount) {
-		this.resourceUsedUserCount = resourceUsedUserCount;
+		if(resourceUsedUserCount == null) {
+			resourceUsedUserCount = 0L;
+		}
+		this.statistics = JsonUtil.set(statistics, "resourceUsedUserCount", resourceUsedUserCount);
 	}
 
 	public Long getResourceAddedCount() {
-		return resourceAddedCount;
+		return statistics.getLong("resourceAddedCount", 0L);
 	}
 
 	public void setResourceAddedCount(Long resourceAddedCount) {
-		this.resourceAddedCount = resourceAddedCount;
+		if(resourceAddedCount == null) {
+			resourceAddedCount = 0L;
+		}
+		this.statistics = JsonUtil.set(statistics, "resourceAddedCount", resourceAddedCount);
 	}
 
-	public Long getScollectionRemixCount() {
-		return scollectionRemixCount;
+	public Long getCollectionRemixCount() {
+		return statistics.getLong("collectionRemixCount", 0L);
 	}
 
-	public void setScollectionRemixCount(Long scollectionRemixCount) {
-		this.scollectionRemixCount = scollectionRemixCount;
+	public void setCollectionRemixCount(Long collectionRemixCount) {
+		if(collectionRemixCount == null) {
+			collectionRemixCount = 0L;
+		}
+		this.statistics = JsonUtil.set(statistics, "collectionRemixCount", collectionRemixCount);
 	}
 
 	public Boolean getHas21stCenturySkills() {
-		return has21stCenturySkills;
+		return statistics.getBoolean("has21stCenturySkills", false);
 	}
 
 	public void setHas21stCenturySkills(Boolean has21stCenturySkills) {
-		this.has21stCenturySkills = has21stCenturySkills;
+		if(has21stCenturySkills == null) {
+			has21stCenturySkills = false;
+		}
+		this.statistics = JsonUtil.set(statistics, "has21stCenturySkills", has21stCenturySkills);
 	}
 
 	public Boolean getHasAdvertisement() {
-		return hasAdvertisement;
+		return statistics.getBoolean("hasAdvertisement", false);
 	}
 
 	public void setHasAdvertisement(Boolean hasAdvertisement) {
-		this.hasAdvertisement = hasAdvertisement;
+		if(hasAdvertisement == null) {
+			hasAdvertisement = false;
+		}
+		this.statistics = JsonUtil.set(statistics, "hasAdvertisement", hasAdvertisement);
 	}
+	
+	public Integer getQuestionCount() {
+		return statistics.getInteger("questionCount", 0);
+	}
+
+	public void setQuestionCount(Integer questionCount) {
+		if(questionCount == null) {
+			questionCount = 0;
+		}
+		this.statistics = JsonUtil.set(statistics, "questionCount", questionCount);
+	}
+
+	public Integer getResourceCount() {
+		return statistics.getInteger("resourceCount", 0);
+	}
+
+	public void setCollaboratorCount(Integer collaboratorCount) {
+		if(collaboratorCount == null) {
+			collaboratorCount = 0;
+		}
+		this.statistics = JsonUtil.set(statistics, "collaboratorCount", collaboratorCount);
+	}
+	
+	public Integer getCollaboratorCount() {
+		return statistics.getInteger("collaboratorCount", 0);
+	}
+
 
 }

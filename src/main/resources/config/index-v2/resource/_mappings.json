@@ -277,8 +277,7 @@
                "hint":{
                   "properties":{
                      "hintCount":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"integer",
                         "include_in_all":false
                      },
                      "hintText":{
@@ -355,12 +354,7 @@
                   ],
                   "include_in_all":false
                },
-               "hasNoStandard":{
-                  "type":"integer",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
-               "hasNoTaxonomy":{
+               "hasStandard":{
                   "type":"integer",
                   "index":"not_analyzed",
                   "include_in_all":false
@@ -495,10 +489,6 @@
                },
                "preComputedWeight":{
                   "type":"double",
-                  "include_in_all":false
-               },
-               "resourceUsedUserCount":{
-                  "type":"long",
                   "include_in_all":false
                },
                "statusIsBroken":{

@@ -12,5 +12,6 @@ import org.javalite.activejdbc.annotations.Table;
 public class Content extends Model {
   public static final String CONTENT_FORMAT_RESOURCE = "resource";
   public static final String CONTENT_FORMAT_QUESTION = "question";
+  public static final String FETCH_CONTENT_QUERY = "content_format = ?::content_format_type and id = ?::uuid and is_deleted = ?";
   
 }
