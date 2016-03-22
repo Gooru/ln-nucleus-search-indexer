@@ -11,6 +11,10 @@ import io.vertx.core.json.JsonObject;
  */
 public interface IndexService {
 
+	static IndexService instance(){
+		return new EsIndexServiceImpl();
+	}
+	
 	/**
 	 * Delete content in index using the entry id
 	 * 

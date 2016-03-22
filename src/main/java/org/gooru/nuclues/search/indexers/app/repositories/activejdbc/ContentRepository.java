@@ -4,6 +4,10 @@ import io.vertx.core.json.JsonObject;
 
 public interface ContentRepository {
 
+	  static ContentRepository instance(){
+		  return new ContentRepositoryImpl();
+	  }
+	  
 	  JsonObject getResource(String contentID);
 	  JsonObject getDeletedResource(String contentID);
 	  

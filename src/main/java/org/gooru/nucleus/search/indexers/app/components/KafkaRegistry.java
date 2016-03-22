@@ -19,7 +19,7 @@ public final class KafkaRegistry implements Initializer, Finalizer {
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaRegistry.class);
   private Consumer<String, String> kafkaConsumer;
 
-  private String KAFKA_TOPIC = "prodContentLog";
+  private String KAFKA_TOPIC = "prodIndex";
 
   private volatile boolean initialized = false;
 
@@ -37,10 +37,15 @@ public final class KafkaRegistry implements Initializer, Finalizer {
         LOGGER.debug("Will initialize after double checking");
         if (!initialized) {
           LOGGER.debug("Initializing KafkaRegistry now");
-          JsonObject kafkaConfig = config.getJsonObject(DEFAULT_KAFKA_SETTINGS);
-          initializeKafkaConsumer(kafkaConfig);
-          initialized = true;
-          LOGGER.debug("Initializing KafkaRegistry DONE");
+          try{
+            JsonObject kafkaConfig = config.getJsonObject(DEFAULT_KAFKA_SETTINGS);
+            initializeKafkaConsumer(kafkaConfig);
+            initialized = true;
+            LOGGER.debug("Initializing KafkaRegistry DONE");
+          }
+          catch(Exception e){
+            LOGGER.error("Initializing KafkaRegistry Failed " +e);
+          }
         }
       }
     }

@@ -3,10 +3,8 @@ package org.gooru.nuclues.search.indexers.app.repositories.activejdbc;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
-import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -20,7 +18,6 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 	private Collection collection;
 
 	public JsonObject getCollectionByType(String contentID, String format) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LazyList<Collection> collections = Collection.where(Collection.AUTHORIZER_QUERY, format, contentID, false);
 		// Question should be present in DB
 		if (collections.size() < 1) {
@@ -34,14 +31,12 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 		if (collection != null) {
 			returnValue = new JsonObject(collection.toJson(false, attributes.toArray(new String[0])));
 		}
-		Base.close();
 		return returnValue;
 
 	}
 
 	@Override
 	public JsonObject getCollection(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("CollectionRepositoryImpl : getCollection : " + contentID);
 		Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
 		LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
@@ -55,23 +50,19 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 			returnValue = new JsonObject(result.toJson(false, attributes));
 		}
 		LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);
-		Base.close();
 		return returnValue;
 
 	}
 
 	@Override
 	public JsonObject getDeletedCollection(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("CollectionRepositoryImpl : getDeletedCollection : " + contentID);
 		// TODO: ...
-		Base.close();
 		return null;
 	}
 
 	@Override
 	public JsonObject getAssessment(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + contentID);
 
 		Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
@@ -88,16 +79,13 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 		}
 		LOGGER.debug("CollectionRepositoryImpl : getAssessment : afterAddingContainmentInfo : " + returnValue);
 
-		Base.close();
 		return returnValue;
 	}
 
 	@Override
 	public JsonObject getDeletedAssessment(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("CollectionRepositoryImpl : getDeletedAssessment : " + contentID);
 		// TODO: ...
-		Base.close();
 		return null;
 	}
 

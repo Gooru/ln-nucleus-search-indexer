@@ -13,6 +13,7 @@ import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
 import org.gooru.nuclues.search.indexers.app.utils.EsMappingUtil;
+import org.gooru.nuclues.search.indexers.app.utils.IndexNameHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,8 +104,10 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 	}
 
 	private final void registerIndices() {
+		
 		for (EsIndex esIndex : EsIndex.values()) {
 			String indexName = getIndexNamePrefix() + esIndex.getName() + getIndexNameSuffix();
+			IndexNameHolder.registerIndex(esIndex, indexName);
 			LOGGER.debug("Registering : " + indexName + " Index");
 			for (String indexType : esIndex.getTypes()) {
 				LOGGER.debug("Es Index Type  : " + indexType);

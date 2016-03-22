@@ -4,9 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
-import org.javalite.activejdbc.Base;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +18,6 @@ public class ContentRepositoryImpl implements ContentRepository {
 	private Content question;
 
 	public JsonObject getContentByType(String questionId, String contentFormat) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		List<Content> questions = Content.where(Content.FETCH_CONTENT_QUERY, contentFormat, questionId, false);
 		// Question should be present in DB
 		if (questions.size() < 1) {
@@ -35,14 +32,12 @@ public class ContentRepositoryImpl implements ContentRepository {
 		if (question != null) {
 			returnValue = new JsonObject(question.toJson(false, attributes.toArray(new String[0])));
 		}
-		Base.close();
 		return returnValue;
 
 	}
 
 	@Override
 	public JsonObject getResource(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("ContentRepositoryImpl:getResource: " + contentID);
 
 		Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
@@ -59,13 +54,11 @@ public class ContentRepositoryImpl implements ContentRepository {
 		}
 		LOGGER.debug("ContentRepositoryImpl:getResource:findById returned: " + returnValue);
 
-		Base.close();
 		return returnValue;
 	}
 
 	@Override
 	public JsonObject getDeletedResource(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("ContentRepositoryImpl:getDeletedResource: " + contentID);
 
 		Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
@@ -81,13 +74,11 @@ public class ContentRepositoryImpl implements ContentRepository {
 		}
 		LOGGER.debug("ContentRepositoryImpl:getDeletedResource:findById returned: " + returnValue);
 
-		Base.close();
 		return returnValue;
 	}
 
 	@Override
 	public JsonObject getQuestion(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("ContentRepositoryImpl:getQuestion: " + contentID);
 
 		Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
@@ -102,13 +93,11 @@ public class ContentRepositoryImpl implements ContentRepository {
 		}
 		LOGGER.debug("ContentRepositoryImpl:getQuestion:findById returned: " + returnValue);
 
-		Base.close();
 		return returnValue;
 	}
 
 	@Override
 	public JsonObject getDeletedQuestion(String contentID) {
-		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		LOGGER.debug("ContentRepositoryImpl:getDeletedQuestion: " + contentID);
 
 		Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
@@ -124,7 +113,6 @@ public class ContentRepositoryImpl implements ContentRepository {
 		}
 		LOGGER.debug("ContentRepositoryImpl:getDeletedQuestion:findById returned: " + returnValue);
 
-		Base.close();
 		return returnValue;
 	}
 

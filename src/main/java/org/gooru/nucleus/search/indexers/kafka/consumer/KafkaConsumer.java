@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import org.gooru.nucleus.search.indexers.app.processors.ProcessorBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import io.vertx.core.json.JsonObject;
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.KafkaStream;
@@ -59,9 +61,11 @@ public class KafkaConsumer {
         while (stream.iterator().hasNext()) {
           try{
             final MessageAndMetadata<String, String> msg = stream.iterator().next();
-            String indexMessage = msg.message();
-            LOG.debug("Index message" + indexMessage);
+            String key = msg.key(); 
+            String message = msg.message();   
+            LOG.debug("key : " + key + " Index message :" + message);
             LOG.info("Continuing message processing");
+            ProcessorBuilder.build(key, new JsonObject(message)).process();
           }
           catch(Exception e){
             LOG.error("Re-index failed " + e);
