@@ -17,7 +17,7 @@ import io.vertx.core.json.JsonObject;
  * 
  */
 public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends CollectionEio> extends EsIndexSrcBuilder<S, D> {
-	
+	 
 	@Override
 	public JsonObject build(JsonObject source, D collectionEio) {
 		collectionEio.setId(source.getString(EntityAttributeConstants.ID));

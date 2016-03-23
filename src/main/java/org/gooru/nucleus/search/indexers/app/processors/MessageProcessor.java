@@ -101,7 +101,7 @@ class MessageProcessor implements Processor {
 	        if (result != null) {
 		      LOGGER.debug("processEventResourceCreateUpdateCopy: getResource(Id) returned:" + result);
 		      IndexService.instance().indexDocuments(contentId, IndexNameHolder.getIndexName(EsIndex.RESOURCE), IndexerConstants.TYPE_RESOURCE, result);
-		      LOGGER.debug("Indexed resource, resource id : " + contentId);
+		      LOGGER.debug("Indexed resource! event name : " + eventName + " resource id : " + contentId);
 	        }
 	    }
 	}  

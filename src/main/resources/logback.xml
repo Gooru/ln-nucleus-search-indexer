@@ -19,11 +19,25 @@
             <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
+    <appender name="TRANSMIT-ERRORS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+       <file>nucleus-index-failed-transmissions.log</file>
+       <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+           <fileNamePattern>nucleus-index-failed-transmissions.%d{yyyy-MM-dd}.log</fileNamePattern>
+           <!-- keep 30 days' worth of history -->
+           <maxHistory>30</maxHistory>
+       </rollingPolicy>
+       <append>true</append>
+       <encoder>
+           <pattern>%msg%n</pattern>
+       </encoder>
+   </appender>
     
     <logger name="org.gooru.nucleus" level="debug">
            
     </logger>
-    
+    <logger name="org.gooru.nucleus.index.failures">
+		<appender-ref ref="TRANSMIT-ERRORS"/>
+    </logger> 
     <root level="info">
         <appender-ref ref="FILE" />
     </root>
