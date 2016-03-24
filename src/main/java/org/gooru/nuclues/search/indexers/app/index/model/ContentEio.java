@@ -91,7 +91,6 @@ public class ContentEio implements Serializable {
 
 	public void setOriginalCreator(JsonObject originalCreator) {
 		content = JsonUtil.set(content, "originalCreator", originalCreator);
-		System.out.println("content : " +content);
 	}
 
 	public JsonObject getCreator() {

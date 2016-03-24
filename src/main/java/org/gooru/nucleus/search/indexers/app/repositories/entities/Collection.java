@@ -14,6 +14,8 @@ public class Collection extends Model {
 
 	  public static final String ASSESSEMENT = "assessment";
 
-	  public static final String AUTHORIZER_QUERY = "format = ?::content_container_type and id = ?::uuid and is_deleted = ?";
+	  public static final String COLLECTION_QUERY = "format = ?::content_container_type and id = ?::uuid and is_deleted = ?";
+	  
+	  public static final String FETCH_RESOURCE_META = "select * from content where collection_id = ?::uuid;";
   
 }

@@ -12,6 +12,10 @@ public class StatisticsEo {
 		this.statistics = new JsonObject();
 	}
 	
+	public JsonObject getStatistics() {
+		return statistics;
+	}
+
 	public Long getViewsCount() {
 		return statistics.getLong("viewsCount", 0L);
 	}
@@ -27,7 +31,7 @@ public class StatisticsEo {
 		return statistics.getInteger("usedInCollectionCount", 0);
 	}
 
-	public void setUsedInSCollectionCount(Integer usedInCollectionCount) {
+	public void setUsedInCollectionCount(Integer usedInCollectionCount) {
 		if(usedInCollectionCount == null) {
 			usedInCollectionCount = 0;
 		}
@@ -183,6 +187,13 @@ public class StatisticsEo {
 		return statistics.getInteger("resourceCount", 0);
 	}
 
+	public void setResourceCount(Integer resourceCount) {
+		if(resourceCount == null) {
+			resourceCount = 0;
+		}
+		this.statistics = JsonUtil.set(statistics, "resourceCount", resourceCount);
+	}
+	
 	public void setCollaboratorCount(Integer collaboratorCount) {
 		if(collaboratorCount == null) {
 			collaboratorCount = 0;

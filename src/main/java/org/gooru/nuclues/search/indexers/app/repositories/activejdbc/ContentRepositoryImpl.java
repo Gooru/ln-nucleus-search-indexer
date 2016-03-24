@@ -2,9 +2,12 @@ package org.gooru.nuclues.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
+import org.javalite.activejdbc.Base;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,27 +18,33 @@ public class ContentRepositoryImpl implements ContentRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
 
-	private Content question;
-
-	public JsonObject getContentByType(String questionId, String contentFormat) {
-		List<Content> questions = Content.where(Content.FETCH_CONTENT_QUERY, contentFormat, questionId, false);
-		// Question should be present in DB
-		if (questions.size() < 1) {
-			LOGGER.warn("Question id: {} not present in DB" + questionId);
-		}
-		this.question = questions.get(0);
-
+	@Override
+	public JsonObject getContentByType(String contentId, String contentFormat) {
+		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
 		JsonObject returnValue = null;
-		Set<String> attributes = Content.attributeNames();
-		LOGGER.debug("ContentRepositoryImpl:getQuestion:findById attributes: " + String.join(", ", attributes.toArray(new String[0])));
-
-		if (question != null) {
-			returnValue = new JsonObject(question.toJson(false, attributes.toArray(new String[0])));
+		List<Content> contents = Content.where(Content.FETCH_CONTENT_QUERY, contentFormat, contentId, false);
+		if (contents.size() < 1) {
+			LOGGER.warn("Content id: {} not present in DB", contentId);
 		}
+		Content content = contents.get(0);
+		if (content != null) {
+			returnValue = new JsonObject(content.toJson(false));
+		}
+		Base.close();
 		return returnValue;
-
 	}
-
+	
+	@Override
+	public List<Map> getCollectionMeta(String parentContentId) {
+		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+		List<Map> collectionMeta = Base.findAll(Content.FETCH_COLLECTION_META, parentContentId);
+		if (collectionMeta.size() < 1) {
+			LOGGER.warn("Collections for resource : {} not present in DB", parentContentId);
+		}
+		Base.close();
+		return  collectionMeta;
+	}
+	
 	@Override
 	public JsonObject getResource(String contentID) {
 		LOGGER.debug("ContentRepositoryImpl:getResource: " + contentID);
@@ -58,26 +67,6 @@ public class ContentRepositoryImpl implements ContentRepository {
 	}
 
 	@Override
-	public JsonObject getDeletedResource(String contentID) {
-		LOGGER.debug("ContentRepositoryImpl:getDeletedResource: " + contentID);
-
-		Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
-		LOGGER.debug("ContentRepositoryImpl:getDeletedResource:findById: " + result);
-
-		JsonObject returnValue = null;
-		String[] attributes = { "id", "title", "description", "url", "created_at", "updated_at", "creator_id", "original_creator_id", "original_content_id", "content_format", "content_subformat",
-				"course_id", "unit_id", "lesson_id", "collection_id", "sequence_id", "is_copyright_owner", "copyright_owner" };
-		LOGGER.debug("ContentRepositoryImpl:getDeletedResource:findById attributes: " + String.join(", ", attributes));
-
-		if (result != null) {
-			returnValue = new JsonObject(result.toJson(false, attributes));
-		}
-		LOGGER.debug("ContentRepositoryImpl:getDeletedResource:findById returned: " + returnValue);
-
-		return returnValue;
-	}
-
-	@Override
 	public JsonObject getQuestion(String contentID) {
 		LOGGER.debug("ContentRepositoryImpl:getQuestion: " + contentID);
 
@@ -92,26 +81,6 @@ public class ContentRepositoryImpl implements ContentRepository {
 			returnValue = new JsonObject(result.toJson(false, attributes.toArray(new String[0])));
 		}
 		LOGGER.debug("ContentRepositoryImpl:getQuestion:findById returned: " + returnValue);
-
-		return returnValue;
-	}
-
-	@Override
-	public JsonObject getDeletedQuestion(String contentID) {
-		LOGGER.debug("ContentRepositoryImpl:getDeletedQuestion: " + contentID);
-
-		Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
-		LOGGER.debug("ContentRepositoryImpl:getDeletedResource:findById: " + result);
-
-		JsonObject returnValue = null;
-		String[] attributes = { "id", "title", "description", "url", "short_title", "created_at", "updated_at", "creator_id", "original_creator_id", "original_content_id", "content_format",
-				"content_subformat", "course_id", "unit_id", "lesson_id", "collection_id", "sequence_id" };
-		LOGGER.debug("ContentRepositoryImpl:getDeletedQuestion:findById attributes: " + String.join(", ", attributes));
-
-		if (result != null) {
-			returnValue = new JsonObject(result.toJson(false, attributes));
-		}
-		LOGGER.debug("ContentRepositoryImpl:getDeletedQuestion:findById returned: " + returnValue);
 
 		return returnValue;
 	}

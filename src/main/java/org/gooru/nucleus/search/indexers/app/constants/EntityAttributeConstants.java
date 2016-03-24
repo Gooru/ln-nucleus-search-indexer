@@ -23,6 +23,7 @@ public class EntityAttributeConstants {
 	public static final String ANSWER = "answer";
 	public static final String ANSWER_TEXT = "answerText";
 	public static final String METADATA = "metadata";
+	public static final String LABEL = "label";
 	public static final String TAXONOMY = "taxonomy";
 	public static final String DEPTH_OF_KNOWLEDGE = "depth_of_knowledge";
 	public static final String HINT_EXPLANATION_DETAIL = "hint_explanation_detail";
