@@ -1,10 +1,12 @@
 package org.gooru.nuclues.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
+import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -15,24 +17,21 @@ import io.vertx.core.json.JsonObject;
 public class CollectionRepositoryImpl implements CollectionRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
-	private Collection collection;
 
+	@Override
 	public JsonObject getCollectionByType(String contentID, String format) {
-		LazyList<Collection> collections = Collection.where(Collection.AUTHORIZER_QUERY, format, contentID, false);
-		// Question should be present in DB
+		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+		LazyList<Collection> collections = Collection.where(Collection.COLLECTION_QUERY, format, contentID, false);
 		if (collections.size() < 1) {
 			LOGGER.warn("Collection id: {} not present in DB", contentID);
 		}
-		this.collection = collections.get(0);
+		Collection collection = collections.get(0);
 		JsonObject returnValue = null;
-		Set<String> attributes = Content.attributeNames();
-		LOGGER.debug("ContentRepositoryImpl:getQuestion:findById attributes: " + String.join(", ", attributes.toArray(new String[0])));
-
 		if (collection != null) {
-			returnValue = new JsonObject(collection.toJson(false, attributes.toArray(new String[0])));
+			returnValue = new JsonObject(collection.toJson(false));
 		}
+		Base.close();
 		return returnValue;
-
 	}
 
 	@Override
@@ -52,13 +51,6 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 		LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);
 		return returnValue;
 
-	}
-
-	@Override
-	public JsonObject getDeletedCollection(String contentID) {
-		LOGGER.debug("CollectionRepositoryImpl : getDeletedCollection : " + contentID);
-		// TODO: ...
-		return null;
 	}
 
 	@Override
@@ -83,12 +75,16 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 	}
 
 	@Override
-	public JsonObject getDeletedAssessment(String contentID) {
-		LOGGER.debug("CollectionRepositoryImpl : getDeletedAssessment : " + contentID);
-		// TODO: ...
-		return null;
+	public List<Map> getContentsOfCollection(String collectionId) {
+		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+		List<Map> collectionMeta = Base.findAll(Collection.FETCH_RESOURCE_META, collectionId);
+		if (collectionMeta.size() < 1) {
+			LOGGER.warn("Resources for collection : {} not present in DB" , collectionId);
+		}
+		Base.close();
+		return  collectionMeta;
 	}
-
+	
 	private static final String UUID_TYPE = "uuid";
 
 	private PGobject getPGObject(String field, String type, String value) {

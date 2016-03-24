@@ -12,6 +12,10 @@ public class QuestionEo {
 		this.question = new JsonObject();
 	}
 
+	public JsonObject getQuestion() {
+		return question;
+	}
+	
 	public JsonObject getAnswer() {
 		return question.getJsonObject("answer", null);
 	}

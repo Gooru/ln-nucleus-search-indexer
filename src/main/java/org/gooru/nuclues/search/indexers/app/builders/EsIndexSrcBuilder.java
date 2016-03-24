@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
+import org.gooru.nuclues.search.indexers.app.index.model.UserEo;
+import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.CollectionRepositoryImpl;
+import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.ContentRepositoryImpl;
+import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.IndexRepositoryImpl;
+import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.UserRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,4 +50,37 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 
 	protected abstract JsonObject build(JsonObject source, D destination);
 
+	private static final class Repository {
+		private static final ContentRepositoryImpl CONTENT_REPO = new ContentRepositoryImpl();
+		private static final CollectionRepositoryImpl COLLECTION_REPO = new CollectionRepositoryImpl();
+		private static final UserRepositoryImpl USER_REPO = new UserRepositoryImpl();
+		private static final IndexRepositoryImpl INDEX_REPO = new IndexRepositoryImpl();
+	}
+	
+	protected CollectionRepositoryImpl getCollectionRepo() {
+		return Repository.COLLECTION_REPO;
+	}
+	
+	protected UserRepositoryImpl getUserRepo() {
+		return Repository.USER_REPO;
+	}
+	
+	protected ContentRepositoryImpl getContentRepo() {
+		return Repository.CONTENT_REPO;
+	}
+	
+	protected IndexRepositoryImpl getIndexRepo() {
+		return Repository.INDEX_REPO;
+	}
+	
+	protected void setUser(JsonObject user, UserEo userEo) {
+		userEo.setUsernameDisplay(user.getString("username", null));
+		userEo.setUserId(user.getString("id"));
+		userEo.setLastName(user.getString("lastname", null));
+		userEo.setFirstName(user.getString("firstname", null));
+		userEo.setFullName(user.getString("firstname") + " " + user.getString("lastname"));
+		userEo.setEmailId(user.getString("lastname", null));
+		userEo.setProfileVisibility(user.getBoolean("profileVisibility", false));
+	}
+	
 }

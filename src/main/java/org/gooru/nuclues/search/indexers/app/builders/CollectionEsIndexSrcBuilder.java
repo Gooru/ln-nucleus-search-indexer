@@ -1,13 +1,17 @@
 package org.gooru.nuclues.search.indexers.app.builders;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nuclues.search.indexers.app.index.model.CollectionContentEo;
 import org.gooru.nuclues.search.indexers.app.index.model.CollectionEio;
-import org.gooru.nuclues.search.indexers.app.index.model.TaxonomyEo;
+import org.gooru.nuclues.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nuclues.search.indexers.app.index.model.UserEo;
-import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.UserRepositoryImpl;
+import org.gooru.nuclues.search.indexers.app.utils.BaseUtil;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -17,68 +21,139 @@ import io.vertx.core.json.JsonObject;
  * 
  */
 public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends CollectionEio> extends EsIndexSrcBuilder<S, D> {
-	 
-	@Override
-	public JsonObject build(JsonObject source, D collectionEio) {
-		collectionEio.setId(source.getString(EntityAttributeConstants.ID));
-		collectionEio.setUrl(source.getString(EntityAttributeConstants.URL, null));
-		collectionEio.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
-		collectionEio.setContentFormat(this.getName());
-		collectionEio.setIndexUpdatedTime(new Date());
-		collectionEio.setCollaboratorIds(source.getJsonArray(EntityAttributeConstants.COLLABORATOR));
-		collectionEio.setCreatedAt(source.getString(EntityAttributeConstants.CREATED_AT));
-		collectionEio.setCreatedAt(source.getString(EntityAttributeConstants.UPDATED_AT));
-		collectionEio.setOriginalCollectionId(source.getString(EntityAttributeConstants.ORIGINAL_COLLECTION_ID, null));
-		collectionEio.setParentCollectionId(source.getString(EntityAttributeConstants.PARENT_COLLECTION_ID, null));
-		collectionEio.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
-		collectionEio.setPublishStatus(source.getString(EntityAttributeConstants.PUBLISH_STATUS, null));
-		collectionEio.setContentFormat(source.getString(EntityAttributeConstants.CONTENT_FORMAT, null));
-		collectionEio.setThumbnail(source.getString(EntityAttributeConstants.THUMBNAIL, null));
-		collectionEio.setLearningObjective(source.getString(EntityAttributeConstants.LEARNING_OBJECTIVE, null));
-		collectionEio.setAudience(source.getJsonArray(EntityAttributeConstants.AUDIENCE, null));
-		collectionEio.setOrientation(source.getString(EntityAttributeConstants.ORIENTATION, null));
-		collectionEio.setVisibleOnProfile(source.getBoolean(EntityAttributeConstants.VISIBLE_ON_PROFILE, null));
-		collectionEio.setGradingType(source.getString(EntityAttributeConstants.GRADING, null));
-		try {
-			String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
-			if (originalCreatorId != null) {
-				UserEo orginalCreator = new UserEo();
-				setUser(getUserRepo().getUser(originalCreatorId), orginalCreator);
-				collectionEio.setOriginalCreator(orginalCreator.getUser());
-			}
-			String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
-			if (creatorId != null) {
-				UserEo creator = new UserEo();
-				setUser(getUserRepo().getUser(creatorId), creator);
-				collectionEio.setCreator(creator.getUser());
-			}
-			String ownerId = source.getString(EntityAttributeConstants.OWNER_ID, null);
-			if (ownerId != null) {
-				UserEo owner = new UserEo();
-				setUser(getUserRepo().getUser(ownerId), owner);
-				collectionEio.setCreator(owner.getUser());
-			}
 
-			JsonArray sourceTaxonomy = source.getJsonArray(EntityAttributeConstants.TAXONOMY);
-			if (sourceTaxonomy != null && sourceTaxonomy.size() > 0) {
-				TaxonomyEo taxonomyEo = new TaxonomyEo();
-				taxonomyEo.setHasStandard(1);
-				collectionEio.setTaxonomy(taxonomyEo.getTaxonomyJson());
+	@Override
+	public JsonObject build(JsonObject source, D collectionEo) {
+		String id = source.getString(EntityAttributeConstants.ID);
+		collectionEo.setId(source.getString(EntityAttributeConstants.ID));
+		collectionEo.setUrl(source.getString(EntityAttributeConstants.URL, null));
+		collectionEo.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
+		collectionEo.setContentFormat(source.getString(EntityAttributeConstants.FORMAT, null));
+		collectionEo.setIndexUpdatedTime(new Date());
+		collectionEo.setCreatedAt(source.getString(EntityAttributeConstants.CREATED_AT));
+		collectionEo.setCreatedAt(source.getString(EntityAttributeConstants.UPDATED_AT, null));
+		collectionEo.setOriginalCollectionId(source.getString(EntityAttributeConstants.ORIGINAL_COLLECTION_ID, null));
+		collectionEo.setParentCollectionId(source.getString(EntityAttributeConstants.PARENT_COLLECTION_ID, null));
+		collectionEo.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
+		collectionEo.setPublishStatus(source.getString(EntityAttributeConstants.PUBLISH_STATUS, null));
+		collectionEo.setContentFormat(source.getString(EntityAttributeConstants.CONTENT_FORMAT, null));
+		String thumbnail = source.getString(EntityAttributeConstants.THUMBNAIL, null);
+		collectionEo.setThumbnail(thumbnail);
+		String learningObjective = source.getString(EntityAttributeConstants.LEARNING_OBJECTIVE, null);
+		collectionEo.setLearningObjective(learningObjective);
+		collectionEo.setAudience(source.getJsonArray(EntityAttributeConstants.AUDIENCE, null));
+		collectionEo.setOrientation(source.getString(EntityAttributeConstants.ORIENTATION, null));
+		collectionEo.setVisibleOnProfile(source.getBoolean(EntityAttributeConstants.VISIBLE_ON_PROFILE, null));
+		collectionEo.setGradingType(source.getString(EntityAttributeConstants.GRADING, null));
+		//Set Original Creator
+		String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
+		if (originalCreatorId != null) {
+			UserEo orginalCreatorEo = new UserEo();
+			JsonObject orginalCreator = getUserRepo().getUser(originalCreatorId);
+			if (orginalCreator != null) {
+				setUser(orginalCreator, orginalCreatorEo);
+				collectionEo.setOriginalCreator(orginalCreatorEo.getUser());
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		/*//TODO Add logic to store below details
-		collectionEio.setMetadata(metadata);
-		collectionEio.setStatistics(statistics);
-		collectionEio.setCollaboratorIds(collaboratorIds);
-		collectionEio.setResourceIds(resourceIds);
-		collectionEio.setResourceTitles(resourceTitles);
-		collectionEio.setCollectionContents(collectionContents);
-		*/
-		return collectionEio.getCollectionJson();
+		//Set Creator
+		String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
+		if (creatorId != null) {
+			UserEo creatorEo = new UserEo();
+			JsonObject creator = getUserRepo().getUser(originalCreatorId);
+			if (creator != null) {
+				setUser(creator, creatorEo);
+				collectionEo.setCreator(creatorEo.getUser());
+			}
+		}
+		//Set Owner
+		String ownerId = source.getString(EntityAttributeConstants.OWNER_ID, null);
+		if (ownerId != null) {
+			UserEo ownerEo = new UserEo();
+			JsonObject owner = getUserRepo().getUser(originalCreatorId);
+			if (owner != null) {
+				setUser(owner, ownerEo);
+				collectionEo.setOwner(ownerEo.getUser());
+			}
+		}
+		//Set Metadata
+		String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
+		if (metadataString != null) {
+			JsonObject metadata = new JsonObject(metadataString);
+			if (metadata != null) {
+				JsonObject metadataAsMap = new JsonObject();
+				for (String fieldName : metadata.fieldNames()) {
+					String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
+					JsonArray references = metadata.getJsonArray(fieldName);
+					if (references != null) {
+						JsonArray value = new JsonArray();
+						String referenceIds = references.toString();
+						List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
+						for (Map metaMap : metacontent) {
+							value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+						}
+						metadataAsMap.put(key, value);
+						collectionEo.setMetadata(metadataAsMap);
+					}
+				}
+			}
+		}
+		StatisticsEo statisticsEo = new StatisticsEo();
+		//Set Collaborator
+		String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);
+		if (collaborator != null) {
+			JsonArray collaboratorIds = new JsonArray(collaborator);
+			if (collaboratorIds != null)
+				collectionEo.setCollaboratorIds(collaboratorIds);
+			statisticsEo.setCollaboratorCount(collaboratorIds.size());
+		}
+		//Set Contents of Collection
+		List<Map> resourceMetaAsList = getCollectionRepo().getContentsOfCollection(id);
+		int questionCount = 0, resourceCount = 0;
+		if (resourceMetaAsList != null && resourceMetaAsList.size() > 0) {
+			JsonArray resourceIds = new JsonArray();
+			JsonArray resourceTitles = new JsonArray();
+			JsonArray collectionContents = new JsonArray();
+			for (Map resourceMetaMap : resourceMetaAsList) {
+				resourceIds.add(resourceMetaMap.get(EntityAttributeConstants.ID).toString());
+				resourceTitles.add(resourceMetaMap.get(EntityAttributeConstants.TITLE));
+				setCollectionContent(collectionContents, resourceMetaMap);
+				String contentFormat = resourceMetaMap.get(EntityAttributeConstants.CONTENT_FORMAT).toString();
+				if (contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION)) {
+					questionCount++;
+				} else {
+					resourceCount++;
+				}
+			}
+			collectionEo.setResourceIds(resourceIds);
+			collectionEo.setResourceTitles(resourceTitles);
+			collectionEo.setCollectionContents(collectionContents);
+		}
+		//Set Statistics
+		statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
+		statisticsEo.setHasNoDescription(learningObjective != null ? 0 : 1);
+		statisticsEo.setQuestionCount(questionCount);
+		statisticsEo.setResourceCount(resourceCount);
+		collectionEo.setStatistics(statisticsEo.getStatistics());
+
+		/*
+		 * //TODO Add logic to store collectionEio.setTaxonomy(taxonomyEo.getTaxonomyJson()); collectionEio.setStatistics(statistics);
+		 */
+		return collectionEo.getCollectionJson();
 	}
-	
+
+	private void setCollectionContent(JsonArray collectionContents, Map resourceMetaMap) {
+		CollectionContentEo content = new CollectionContentEo();
+		content.setId(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.ID));
+		content.setTitle(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.TITLE));
+		content.setUrl(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.URL));
+		content.setShortTitle(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.SHORT_TITLE));
+		content.setDescription(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.DESCRIPTION));
+		content.setContentFormat(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.CONTENT_FORMAT));
+		content.setContentSubFormat(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.CONTENT_SUB_FORMAT));
+		content.setThumbnail(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.THUMBNAIL));
+		collectionContents.add(content.getCollectionContentJson());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public String buildSource(JsonObject source) {
@@ -88,24 +163,6 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 	@Override
 	public String getName() {
 		return IndexType.COLLECTION.getType();
-	}
-	
-	private static final class Repository {
-		private static final UserRepositoryImpl USER_REPO = new UserRepositoryImpl();
-	}
-	
-	private UserRepositoryImpl getUserRepo() {
-		return Repository.USER_REPO;
-	}
-	
-	private void setUser(JsonObject user, UserEo userEo) {
-		userEo.setUsernameDisplay(user.getString("username", null));
-		userEo.setUserId(user.getString("id"));
-		userEo.setLastName(user.getString("lastname", null));
-		userEo.setFirstName(user.getString("firstname", null));
-		userEo.setFullName(user.getString("firstname") + " " + user.getString("lastname"));
-		userEo.setEmailId(user.getString("lastname", null));
-		userEo.setProfileVisibility(user.getBoolean("profileVisibility", false));
 	}
 
 }
