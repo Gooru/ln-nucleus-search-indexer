@@ -87,20 +87,12 @@ class MessageProcessor implements Processor {
 		EventHandlerBuilder.buildUserHandler(eventBody).handleEvents();
 	}
 	
-	private void processAssessmentEvents() {
-		EventHandlerBuilder.buildAssessmentHandler(eventBody).handleEvents();
-	}
-	
 	private void processCollectionEvents() {
 		EventHandlerBuilder.buildCollectionHandler(eventBody).handleEvents();
 	}
 	
 	private void processContentCopyEvents() {
 		EventHandlerBuilder.buildContentCopyHandler(eventBody).handleEvents();
-	}
-	
-	private void processQuestionEvents() {
-		EventHandlerBuilder.buildQuestionHandler(eventBody).handleEvents();
 	}
 	
 	private void processResourceEvents() {

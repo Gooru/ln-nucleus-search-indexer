@@ -12,20 +12,12 @@ public final class EventHandlerBuilder {
 		return new ResourceEventsHandler(eventJson);
 	}
 
-	public static IndexEventHandler buildQuestionHandler(JsonObject eventJson){
-		return new QuestionEventsHandler(eventJson);
-	}
-
 	public static IndexEventHandler buildContentCopyHandler(JsonObject eventJson){
 		return new QuestionCopyEventsHandler(eventJson);
 	}
 
 	public static IndexEventHandler buildContentCounterHandler(JsonObject eventJson){
 		return new ContentCounterEventsHandler(eventJson);
-	}
-
-	public static IndexEventHandler buildAssessmentHandler(JsonObject eventJson){
-		return new AssessmentEventsHandler(eventJson);
 	}
 
 	public static IndexEventHandler buildUserHandler(JsonObject eventJson){
