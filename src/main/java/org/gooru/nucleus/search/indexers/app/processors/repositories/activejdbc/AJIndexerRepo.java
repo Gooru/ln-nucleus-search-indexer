@@ -15,12 +15,12 @@ public class AJIndexerRepo implements IndexerRepo{
 	}
 	
 	@Override
-	public JsonObject getResoure() {
+	public JsonObject getIndexDataContent() {
 		return new TransactionExecutor().executeTransaction(new DBHandlerBuilder().buildFetchContentHandler(context));
 	}
 
 	@Override
-	public JsonObject getCollection() {
+	public JsonObject getIndexDataCollection() {
 		// TODO Auto-generated method stub
 		return null;
 	}

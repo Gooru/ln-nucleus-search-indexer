@@ -12,4 +12,6 @@ public final class ExecuteOperationConstants {
 	
 	public static final String GET_COLLECTION_BY_TYPE = "get_collection_by_type";
 	
+	public static final String GET_COLLECTION_IDS = "get_collection_ids";
+	
 }

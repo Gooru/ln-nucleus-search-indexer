@@ -4,9 +4,9 @@ import io.vertx.core.json.JsonObject;
 
 public interface IndexerRepo {
 	
-	public JsonObject getResoure();
+	public JsonObject getIndexDataContent();
 	
-	public JsonObject getCollection();
+	public JsonObject getIndexDataCollection();
 	
 	public JsonObject getAssessment();
 

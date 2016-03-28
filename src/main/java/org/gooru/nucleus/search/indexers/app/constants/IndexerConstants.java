@@ -12,7 +12,9 @@ public class IndexerConstants {
 	public static final String TYPE_COLLECTION = "collection";
 
 	public static final String TYPE_ASSESSMENT = "assessment";
-
+	
+	public static final String COLLECTION_IDS = "collection_ids";
+	
 	public static Map<String, String> metadataReferenceType;
 	
 	public static String getMetadataIndexAttributeName(String referencetype) {

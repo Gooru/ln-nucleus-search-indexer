@@ -6,6 +6,7 @@ import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidReques
 import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResult;
 import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResult.ExecutionStatus;
 import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.ContentRepository;
+import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.IndexRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +55,13 @@ public class FetchContentHandler implements DBHandler {
 				case ExecuteOperationConstants.GET_RESOURCE : 
 				result = ContentRepository.instance().getResource(context.getContentId());
 				break;
-
+            
 				case ExecuteOperationConstants.GET_QUESTION : 
 				result = ContentRepository.instance().getQuestion(context.getContentId());		
+				break;
+
+				case ExecuteOperationConstants.GET_COLLECTION_IDS : 
+				result = IndexRepository.instance().getCollectionIdsByContentId(context.getContentId());
 				break;
 
 				default:
