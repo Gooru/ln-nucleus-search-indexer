@@ -12,6 +12,14 @@ public class CodeEo {
 		this.code = new JsonObject();
 	}
 
+	public JsonObject getCode() {
+		return code;
+	}
+
+	public void setCode(JsonObject code) {
+		this.code = code;
+	}
+
 	public String getLabel() {
 		return code.getString("label", null);
 	}

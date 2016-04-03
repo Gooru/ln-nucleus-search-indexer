@@ -103,7 +103,7 @@ public class StatisticsEo {
 	}
 
 	public Double getPreComputedWeight() {
-		return statistics.getDouble("averageTimeSpent", 0.0);
+		return statistics.getDouble("preComputedWeight", 0.0);
 	}
 	
 	public Long getAverageTimeSpent() {
@@ -205,5 +205,14 @@ public class StatisticsEo {
 		return statistics.getInteger("collaboratorCount", 0);
 	}
 
-
+	public void setContentCount(Integer contentCount) {
+		if(contentCount == null) {
+			contentCount = 0;
+		}
+		this.statistics = JsonUtil.set(statistics, "contentCount", contentCount);
+	}
+	
+	public Integer getContentCount() {
+		return statistics.getInteger("contentCount", 0);
+	}
 }
