@@ -23,6 +23,26 @@ public class IndexerConstants {
 	
 	public static final String PARENT_CONTENT_IDS = "parent_content_ids";
 	
+	public static final String CODE_ID = "codeId";
+	
+	public static final String LABEL = "label";
+	
+	public static final String SUBJECT = "subject";
+	
+	public static final String COURSE = "course";
+	
+	public static final String DOMAIN = "domain";
+	
+	public static final String CURRICULUM_CODE = "curriculumCode";
+	
+	public static final String CURRICULUM_DESC = "curriculumDesc";
+	
+	public static final String CURRICULUM_NAME = "curriculumName";
+	
+	public static final String CURRICULUM = "curriculum";
+	
+	public static final String HYPHEN_SEPARATOR = "-";
+	
 	public static Map<String, String> metadataReferenceType;
 	
 	public static String getMetadataIndexAttributeName(String referencetype) {
