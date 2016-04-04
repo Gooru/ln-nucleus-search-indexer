@@ -3,6 +3,7 @@ package org.gooru.nuclues.search.indexers.app.builders;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
@@ -10,6 +11,7 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nuclues.search.indexers.app.index.model.CollectionContentEo;
 import org.gooru.nuclues.search.indexers.app.index.model.CollectionEio;
 import org.gooru.nuclues.search.indexers.app.index.model.StatisticsEo;
+import org.gooru.nuclues.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nuclues.search.indexers.app.index.model.UserEo;
 import org.gooru.nuclues.search.indexers.app.utils.BaseUtil;
 
@@ -108,7 +110,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 		}
 		//Set Contents of Collection
 		List<Map> resourceMetaAsList = getCollectionRepo().getContentsOfCollection(id);
-		int questionCount = 0, resourceCount = 0;
+		int questionCount = 0, resourceCount = 0, contentCount = 0;
 		if (resourceMetaAsList != null && resourceMetaAsList.size() > 0) {
 			JsonArray resourceIds = new JsonArray();
 			JsonArray resourceTitles = new JsonArray();
@@ -118,6 +120,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 				resourceTitles.add(resourceMetaMap.get(EntityAttributeConstants.TITLE));
 				setCollectionContent(collectionContents, resourceMetaMap);
 				String contentFormat = resourceMetaMap.get(EntityAttributeConstants.CONTENT_FORMAT).toString();
+				contentCount++;
 				if (contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION)) {
 					questionCount++;
 				} else {
@@ -125,7 +128,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 				}
 			}
 			collectionEo.setResourceIds(resourceIds);
-			collectionEo.setResourceTitles(resourceTitles);
+			collectionEo.setResourceTitles(new JsonArray(resourceTitles.stream().distinct().collect(Collectors.toList())));
 			collectionEo.setCollectionContents(collectionContents);
 		}
 		//Set Statistics
@@ -133,10 +136,20 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 		statisticsEo.setHasNoDescription(learningObjective != null ? 0 : 1);
 		statisticsEo.setQuestionCount(questionCount);
 		statisticsEo.setResourceCount(resourceCount);
+		statisticsEo.setContentCount(contentCount);
 		collectionEo.setStatistics(statisticsEo.getStatistics());
 
+		String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+		if (taxonomy != null) {
+			JsonArray taxonomyArray = new JsonArray(taxonomy);
+			TaxonomyEo taxonomyEo = new TaxonomyEo();
+			if (taxonomyArray.size() > 0) {
+				addTaxnomy(taxonomyArray, taxonomyEo);
+			}
+			collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
+		}
 		/*
-		 * //TODO Add logic to store collectionEio.setTaxonomy(taxonomyEo.getTaxonomyJson()); collectionEio.setStatistics(statistics);
+		 * //TODO Add logic to store collectionEio.setStatistics(statistics);
 		 */
 		return collectionEo.getCollectionJson();
 	}

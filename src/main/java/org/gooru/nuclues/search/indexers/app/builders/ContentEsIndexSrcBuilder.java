@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -13,6 +14,7 @@ import org.gooru.nuclues.search.indexers.app.index.model.ContentEio;
 import org.gooru.nuclues.search.indexers.app.index.model.HintEo;
 import org.gooru.nuclues.search.indexers.app.index.model.QuestionEo;
 import org.gooru.nuclues.search.indexers.app.index.model.StatisticsEo;
+import org.gooru.nuclues.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nuclues.search.indexers.app.index.model.UserEo;
 
 import io.vertx.core.json.JsonArray;
@@ -175,9 +177,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 				collectionIds.add(usedCollectionId);
 				collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
 			}
-			collectionTitles = new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList()));
 			contentEo.setCollectionIds(collectionIds);
-			contentEo.setCollectionTitles(collectionTitles);
+			contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
 		}
 
 		// Set Statistics
@@ -187,6 +188,16 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 		statisticsEo.setUsedInCollectionCount(collectionIds.size());
 		contentEo.setStatistics(statisticsEo.getStatistics());
 
+		String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+		if (taxonomy != null) {
+			JsonArray taxonomyArray = new JsonArray(taxonomy);
+			TaxonomyEo taxonomyEo = new TaxonomyEo();
+			if (taxonomyArray.size() > 0) {
+				addTaxnomy(taxonomyArray, taxonomyEo);
+			}
+			contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
+		}
+		
 		/*//TODO Add logic to store below details
 		statisticsEo.setHasFrameBreaker(hasFrameBreaker);
 		statisticsEo.setInvalidResource(invalidResource);
@@ -194,14 +205,10 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 		statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
 		statisticsEo.setStatusIsBroken(statusIsBroken);
 		statisticsEo.setViewsCount(viewsCount);
-		JsonArray sourceTaxonomy = source.getJsonArray(EntityAttributeConstants.TAXONOMY, null);
-		if (sourceTaxonomy != null && sourceTaxonomy.size() > 0) {
-			TaxonomyEo taxonomyEo = new TaxonomyEo();
-			contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
-		}*/
+		*/
 		return contentEo.getContentJson();
 	}
-	
+
 	@Override
 	public String getName() {
 		return IndexType.RESOURCE.getType();

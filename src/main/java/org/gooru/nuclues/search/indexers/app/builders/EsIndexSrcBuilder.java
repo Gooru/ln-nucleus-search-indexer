@@ -2,8 +2,13 @@ package org.gooru.nuclues.search.indexers.app.builders;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nuclues.search.indexers.app.index.model.CodeEo;
+import org.gooru.nuclues.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nuclues.search.indexers.app.index.model.UserEo;
 import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.CollectionRepositoryImpl;
 import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.ContentRepositoryImpl;
@@ -12,6 +17,7 @@ import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.UserReposit
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -81,6 +87,64 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 		userEo.setFullName(user.getString("firstname") + " " + user.getString("lastname"));
 		userEo.setEmailId(user.getString("lastname", null));
 		userEo.setProfileVisibility(user.getBoolean("profileVisibility", false));
+	}
+	
+	protected void addTaxnomy(JsonArray taxonomyArray, TaxonomyEo taxonomyEo) {
+		JsonArray subjectArray = new JsonArray();
+		JsonArray courseArray = new JsonArray();
+		JsonArray domainArray = new JsonArray();
+		JsonArray standardArray = new JsonArray();
+		JsonArray learningTargetArray = new JsonArray();
+		JsonObject taxonomyDataSet = new JsonObject();
+
+		for (int index = 0; index < taxonomyArray.size(); index++) {
+			CodeEo subject = new CodeEo();
+			CodeEo course = new CodeEo();
+			CodeEo domain = new CodeEo();
+			
+			String code = taxonomyArray.getString(index);
+			String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
+			// TODO fetch label from DB
+			subject.setCodeId(code.substring(0, StringUtils.ordinalIndexOf(code, "-", 1)));
+			subject.setLabel("");
+			course.setCodeId(code.substring(0, StringUtils.ordinalIndexOf(code, "-", 2)));
+			course.setLabel("");
+			domain.setCodeId(code.substring(0, StringUtils.ordinalIndexOf(code, "-", 3)));
+			domain.setLabel("");
+
+			subjectArray.add(subject.getCode());
+			courseArray.add(course.getCode());
+			domainArray.add(domain.getCode());
+
+			if (codes.length >= 4) {
+				if (codes.length == 4) {
+					standardArray.add(code);
+				} else if (codes.length == 5) {
+					standardArray.add(code.substring(0, StringUtils.ordinalIndexOf(code, "-", 4)));
+					learningTargetArray.add(code);
+				}
+			}
+		}
+		if (subjectArray.size() > 0) {
+			taxonomyEo.setSubject(new JsonArray(subjectArray.stream().distinct().collect(Collectors.toList())));
+			taxonomyEo.setCourse(new JsonArray(courseArray.stream().distinct().collect(Collectors.toList())));
+			taxonomyEo.setDomain(new JsonArray(domainArray.stream().distinct().collect(Collectors.toList())));
+		}
+		JsonArray standards = null;
+		if (standardArray.size() > 0) {
+			taxonomyEo.setHasStandard(1);
+			standards = new JsonArray(standardArray.stream().distinct().collect(Collectors.toList()));
+			taxonomyEo.setStandards(standards);
+			taxonomyEo.setLearningTargets(learningTargetArray);
+		}
+		// TODO fetch label from DB
+		taxonomyDataSet.put(IndexerConstants.SUBJECT, new JsonArray());
+		taxonomyDataSet.put(IndexerConstants.COURSE, new JsonArray());
+		taxonomyDataSet.put(IndexerConstants.DOMAIN, new JsonArray());
+		JsonObject curriculumTaxonomy = new JsonObject();
+		curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standards != null ? standards : new JsonArray()).put(IndexerConstants.CURRICULUM_DESC, new JsonArray()).put(IndexerConstants.CURRICULUM_NAME, new JsonArray());
+		taxonomyDataSet.put(IndexerConstants.CURRICULUM, curriculumTaxonomy);
+		taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.toString());
 	}
 	
 }
