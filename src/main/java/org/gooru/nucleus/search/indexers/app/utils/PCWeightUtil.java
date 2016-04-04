@@ -21,7 +21,7 @@ public class PCWeightUtil {
 			float descScore = computeDiscriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
 			float domainBoost = (rankingData.getDomainBoost() == 1) ? 1f : ScoreConstants.DEMOTE_DOMAIN;
 			float standardScore = (rankingData.getHasNoStandard() == 0) ? 1f : 0f;
-			float skillScore = (rankingData.getHas21stCenturySkills() == 1) ? 1f : 0f;
+			float skillScore = (rankingData.getHas21stCenturySkills()) ? 1f : 0f;
 			float viewsScore = rankingData.getViewsCount()/ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
 			 
 			float usageSignalWeight = (float) ((normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore))/2 *  0.6);
@@ -60,7 +60,7 @@ public class PCWeightUtil {
     		return scPreComputedWeight;
     	}
     	catch(Exception e){
-    		throw new RuntimeException(e);
+    		throw new Exception(e);
     	}
 
 	}

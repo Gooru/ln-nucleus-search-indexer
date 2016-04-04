@@ -16,6 +16,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.HintEo;
 import org.gooru.nucleus.search.indexers.app.index.model.QuestionEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
+import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
@@ -181,11 +182,21 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 					collectionIds.add(usedCollectionId);
 					collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
 				}
-				collectionTitles = new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList()));
 				contentEo.setCollectionIds(collectionIds);
-				contentEo.setCollectionTitles(collectionTitles);
+				contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
 			}
 			
+			
+			String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+	 		if (taxonomy != null) {
+	 			JsonArray taxonomyArray = new JsonArray(taxonomy);
+	 			TaxonomyEo taxonomyEo = new TaxonomyEo();
+	 			if (taxonomyArray.size() > 0) {
+	 				addTaxnomy(taxonomyArray, taxonomyEo);
+	 			}
+	 			contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
+	 		}
+	 		
 			// Set Statistics
 			StatisticsEo statisticsEo = new StatisticsEo();
 			statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
@@ -203,12 +214,18 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 			rankingFields.put(ScoreConstants.SATS_HAS_NO_DESC, statisticsEo.getHasNoDescription());
 			rankingFields.put(ScoreConstants.RESOURCE_URL_FIELD, contentEo.getUrl());
 			rankingFields.put(ScoreConstants.HAS_21ST_CENTURY_SKILL,  statisticsEo.getHas21stCenturySkills());
+			
+			JsonObject taxJson  = contentEo.getTaxonomy();
+			int hasStandard = 0;
+			if(taxJson != null){
+				hasStandard = taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD);
+			}
+			
+			rankingFields.put(ScoreConstants.TAX_HAS_STANDARD, hasStandard);
+			
 			double pcWeight = PCWeightUtil.getResourcePcWeight(new ScoreFields(rankingFields));
 			LOGGER.debug("CEISB->build : PC weight : " +pcWeight);
 			statisticsEo.setPreComputedWeight(pcWeight);
-			
-			//rankingFields.put(ScoreConstants.TAX_HAS_STANDARD, );
-			
 			
 			
 			contentEo.setStatistics(statisticsEo.getStatistics());

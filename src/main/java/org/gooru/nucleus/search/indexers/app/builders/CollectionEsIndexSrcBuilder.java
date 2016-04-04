@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
@@ -13,6 +14,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.CollectionContentEo;
 import org.gooru.nucleus.search.indexers.app.index.model.CollectionEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
+import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
@@ -131,7 +133,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 					}
 				}
 				collectionEo.setResourceIds(resourceIds);
-				collectionEo.setResourceTitles(resourceTitles);
+				collectionEo.setResourceTitles(new JsonArray(resourceTitles.stream().distinct().collect(Collectors.toList())));
 				collectionEo.setCollectionContents(collectionContents);
 			}
 			//Set Statistics
@@ -139,7 +141,18 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 			statisticsEo.setHasNoDescription(learningObjective != null ? 0 : 1);
 			statisticsEo.setQuestionCount(questionCount);
 			statisticsEo.setResourceCount(resourceCount);
+			statisticsEo.setContentCount(questionCount + resourceCount);
+
 			
+			String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+			if (taxonomy != null) {
+	 			JsonArray taxonomyArray = new JsonArray(taxonomy);
+	 			TaxonomyEo taxonomyEo = new TaxonomyEo();
+	 			if (taxonomyArray.size() > 0) {
+	 				addTaxnomy(taxonomyArray, taxonomyEo);
+				}
+	 			collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
+	 		}
 			Map<String, Object> rankingFields = new HashMap<>();
 			rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, source.getInteger(ScoreConstants.COLLECTION_REMIX_COUNT));
 			rankingFields.put(ScoreConstants.VIEW_COUNT, source.getLong(ScoreConstants.VIEW_COUNT));
@@ -150,7 +163,14 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 			rankingFields.put(ScoreConstants.DESCRIPTION_FIELD, learningObjective);
 			rankingFields.put(ScoreConstants.SATS_HAS_NO_DESC, statisticsEo.getHasNoDescription());
 			rankingFields.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, collectionEo.getOriginalCollectionId());
-			//rankingFields.put(ScoreConstants.TAX_HAS_STANDARD,  );
+			
+			JsonObject taxJson  = collectionEo.getTaxonomy();
+			int hasStandard = 0;
+			if(taxJson != null){
+				hasStandard = taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD);
+			}
+			
+			rankingFields.put(ScoreConstants.TAX_HAS_STANDARD, hasStandard);
 
 			statisticsEo.setPreComputedWeight(PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields)));
 

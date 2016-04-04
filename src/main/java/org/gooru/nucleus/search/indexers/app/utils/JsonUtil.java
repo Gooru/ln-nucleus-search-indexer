@@ -1,4 +1,4 @@
-package org.gooru.nuclues.search.indexers.app.utils;
+package org.gooru.nucleus.search.indexers.app.utils;
 
 import java.time.Instant;
 

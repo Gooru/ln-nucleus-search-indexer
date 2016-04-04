@@ -5,7 +5,7 @@ import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class TaxonomyEo {
+public class TaxonomyEo extends JsonObject {
 
 	private JsonObject taxonomy = null;
 

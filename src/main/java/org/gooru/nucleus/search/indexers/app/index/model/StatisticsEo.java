@@ -1,6 +1,6 @@
-package org.gooru.nuclues.search.indexers.app.index.model;
+package org.gooru.nucleus.search.indexers.app.index.model;
 
-import org.gooru.nuclues.search.indexers.app.utils.JsonUtil;
+import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 import io.vertx.core.json.JsonObject;
 

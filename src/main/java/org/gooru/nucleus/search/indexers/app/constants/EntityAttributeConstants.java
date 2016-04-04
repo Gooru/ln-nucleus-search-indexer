@@ -45,5 +45,6 @@ public class EntityAttributeConstants {
 	public static final String COLLABORATOR = "collaborator";
 	public static final String ORIENTATION = "orientation";
 	public static final String GRADING = "grading";
+	public static final String TAXONOMY_HAS_STD = "hasStandard";
 	
 }
