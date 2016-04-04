@@ -184,8 +184,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 
 		}
 		catch(Exception e){
-			e.printStackTrace();
-			LOGGER.error("ColEISB->build : Collection re-index failed : exception :" + e);
+			LOGGER.error("ColEISB->build : Collection re-index failed : exception :" , e);
 			throw new Exception(e);
 			
 		}

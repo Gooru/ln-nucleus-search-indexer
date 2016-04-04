@@ -246,8 +246,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 			LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
 		}
 		catch(Exception e){
-			e.printStackTrace();
-			LOGGER.error("CEISB->build : Failed to build source : Exception" + e);
+			LOGGER.error("CEISB->build : Failed to build source : Exception" , e);
 			throw new Exception(e);
 		}
 		return contentEo.getContentJson();

@@ -418,7 +418,13 @@
                "resourceCount":{  
                   "type":"integer",
                   "include_in_all":false
+               },
+               "contentCount":{  
+                  "type":"integer",
+                  "include_in_all":false
                }
+               
+               
             }
          },
          "collectionContents":{  
