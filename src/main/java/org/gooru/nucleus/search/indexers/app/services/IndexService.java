@@ -3,6 +3,8 @@
  */
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.util.Map;
+
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -23,14 +25,21 @@ public interface IndexService {
 
 	/**
 	 * Index a single content based on inputs.
+	 * @throws Exception 
 	 * 
 	 */
-	void indexDocuments(String idString, String indexName, String typeName, JsonObject body);
+	void indexDocuments(String idString, String indexName, String typeName, JsonObject body) throws Exception;
 
 	/**
 	 * Refresh the index
 	 * 
 	 */
 	void refreshIndex(String indexName);
+	
+	Map<String, Object> getDocument(String id, String indexName, String type);
+	
+	void indexDocumentByFields(String id, String indexName, String typeName, Map<String, Object> fieldValues) throws Exception;
+	
+	void buildIndex(String idString,  String typeName) throws Exception;
 
 }

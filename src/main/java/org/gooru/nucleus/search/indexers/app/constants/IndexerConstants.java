@@ -13,7 +13,15 @@ public class IndexerConstants {
 
 	public static final String TYPE_ASSESSMENT = "assessment";
 	
+	public static final String TYPE_STATISTICS = "statistics";
+	
 	public static final String COLLECTION_IDS = "collection_ids";
+	
+	public static final String RESOURCE_IDS = "resource_ids";
+	
+	public static final String QUESTION_IDS = "question_ids";
+	
+	public static final String PARENT_CONTENT_IDS = "parent_content_ids";
 	
 	public static Map<String, String> metadataReferenceType;
 	

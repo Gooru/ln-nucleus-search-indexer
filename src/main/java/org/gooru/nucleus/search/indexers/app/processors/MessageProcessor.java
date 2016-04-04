@@ -1,8 +1,10 @@
 package org.gooru.nucleus.search.indexers.app.processors;
 
+import org.gooru.nucleus.search.indexers.app.constants.ContentFormat;
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.processors.event.handlers.EventHandlerBuilder;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
+import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,65 +19,26 @@ class MessageProcessor implements Processor {
 
   private final JsonObject eventBody;
   
-  private final String operationName;
- 
-  
-  public MessageProcessor(JsonObject message, String operationName) {
+  public MessageProcessor(JsonObject message) {
     this.eventBody = message;
-    // need to revisit once verified sample event data.
-    this.operationName = operationName;
   }
 
   @Override
   public void process() {
     try {
-      if (eventBody == null || operationName == null) {
-        LOGGER.error("Invalid message received, either null or body of message is not JsonObject ");
-        throw new InvalidRequestException();
-      }
-      String eventName = eventBody.getString(EventsConstants.EVT_PAYLOAD_EVENT_NAME);
-      LOGGER.debug("Event name : " + operationName);
+      ValidationUtil.rejectIfInvalidEventJson(eventBody);
+      String eventName = eventBody.getString(EventsConstants.EVT_OBJECT_EVENT_NAME);
+      String contentFormat = eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
+      LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
       LOGGER.debug("Event body Json : " +eventBody.toString());
-
-      switch (eventName) {
-        case EventsConstants.EVT_RES_CREATE:
-        case EventsConstants.EVT_RES_UPDATE:
-        case EventsConstants.EVT_RES_DELETE:
-        case EventsConstants.EVT_QUESTION_CREATE:
-        case EventsConstants.EVT_QUESTION_UPDATE:
-        case EventsConstants.EVT_QUESTION_DELETE:        	
-        	processResourceEvents();
-        	break;
-          
-        case EventsConstants.EVT_COLLECTION_CREATE:
-        case EventsConstants.EVT_COLLECTION_UPDATE:
-        case EventsConstants.EVT_ASSESSMENT_CREATE:
-        case EventsConstants.EVT_ASSESSMENT_UPDATE:
-        case EventsConstants.EVT_COLLECTION_DELETE:	
-        case EventsConstants.EVT_ASSESSMENT_DELETE:	
-        	processCollectionEvents();
-        	break;
-        	
-        case EventsConstants.EVT_QUESTION_COPY:
-        case EventsConstants.EVT_COLLECTION_COPY:
-        case EventsConstants.EVT_ASSESSMENT_COPY:
-        	processContentCopyEvents();
-			break;	
-        
-        case EventsConstants.EVT_USER_CREATE:
-        case EventsConstants.EVT_USER_UPDATE:
-        	processUserEvents(); 
-            break;
-          
-        case EventsConstants.EVT_COLLABORATOR_UPDATE_ASSESSMENT:
-        case EventsConstants.EVT_COLLABORATOR_UPDATE_COLLECTION:
-        case EventsConstants.EVT_ASSESSMENT_QUESTION_ADD:
-        case EventsConstants.EVT_COLLECTION_CONTENT_ADD:	
-        	processContentCopyEvents();
-        	break;
-    
-        default:
-          LOGGER.error("Invalid operation type passed in, not able to handle");
+      
+      if(contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())){
+    	  processResourceEvents();
+      }else if(contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name()) || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name())){
+    	  processCollectionEvents();
+      }
+      else{
+          LOGGER.error("Invalid content type passed in, not able to handle. Event name : " +eventName);
           throw new InvalidRequestException();
       }
     } catch (InvalidRequestException e) {
@@ -83,16 +46,13 @@ class MessageProcessor implements Processor {
     }
   }
 
+  // This method to handle user related events 
 	private void processUserEvents() {
 		EventHandlerBuilder.buildUserHandler(eventBody).handleEvents();
 	}
 	
 	private void processCollectionEvents() {
 		EventHandlerBuilder.buildCollectionHandler(eventBody).handleEvents();
-	}
-	
-	private void processContentCopyEvents() {
-		EventHandlerBuilder.buildContentCopyHandler(eventBody).handleEvents();
 	}
 	
 	private void processResourceEvents() {

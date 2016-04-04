@@ -15,5 +15,11 @@ public interface IndexHandler {
 
 	public void deleteIndexedDocument(String documentId) throws Exception;
 	
-	public void indexDocmentPartial(JsonObject json) throws Exception;
+	public void increaseCount(String entityId, String field) throws Exception;
+	
+	public void decreaseCount(String entityId, String field) throws Exception;
+	
+	public void updateCount(String entityId, String field, int count) throws Exception;
+
+	public void updateViewCount(String entityId, Long viewCount) throws Exception;
 }

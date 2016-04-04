@@ -65,7 +65,7 @@ public class KafkaConsumer {
             String message = msg.message();   
             LOG.debug("key : " + key + " Index message :" + message);
             LOG.info("Continuing message processing");
-            ProcessorBuilder.build(key, new JsonObject(message)).process();
+            ProcessorBuilder.build(new JsonObject(message)).process();
           }
           catch(Exception e){
             LOG.error("Re-index failed " + e);

@@ -40,6 +40,7 @@ ext {
     hikariVersion = '2.4.3'
     postgresVersion = '9.4-1206-jdbc42'
     activejdbcVersion = '1.4.11'
+    mvelVersion='1.5.0'
 }
 
 version = "0.1-snapshot"
@@ -56,6 +57,7 @@ repositories {
 dependencies {
     // Vertx specific dependencies
     compile "io.vertx:vertx-core:${vertxVersion}"
+    compile "io.vertx:vertx-web:${vertxVersion}"
     compile "io.vertx:vertx-hazelcast:${vertxVersion}"
 
     // Other dependencies
@@ -70,6 +72,8 @@ dependencies {
     compile "org.postgresql:postgresql:${postgresVersion}"
     compile "org.javalite:activejdbc:${activejdbcVersion}"
     compile "org.javalite:activejdbc-instrumentation:${activejdbcVersion}"
+//    compile "org.elasticsearch:elasticsearch-lang-mvel:${mvelVersion}"
+ compile "org.mvel:mvel2:2.0"
     
 	
     // Test dependencies

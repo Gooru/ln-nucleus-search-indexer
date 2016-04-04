@@ -1,16 +1,14 @@
 package org.gooru.nucleus.search.indexers.bootstrap;
 
-import org.gooru.nucleus.search.indexers.app.services.EsIndexServiceImpl;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizers;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializers;
-import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.ContentRepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.DeploymentOptions;
 
 public class IndexerVerticle extends AbstractVerticle {
 
@@ -18,10 +16,9 @@ public class IndexerVerticle extends AbstractVerticle {
 
 	@Override
 	public void start() throws Exception {
-
 		vertx.executeBlocking(blockingFuture -> {
 			startApplication();
-			// testFetchFromDBAndIndex();
+			deployIndexBuilderVertical();
 			blockingFuture.complete();
 		}, future -> {
 			if (future.succeeded()) {
@@ -57,11 +54,15 @@ public class IndexerVerticle extends AbstractVerticle {
 		}
 	}
 
-	private void testFetchFromDBAndIndex() {
-		String id = "16ba9509-03d2-45d9-94e9-23cd3a90fa56";
-		ContentRepositoryImpl cr = new ContentRepositoryImpl();
-		JsonObject jsonBody = cr.getResource(id);
-		EsIndexServiceImpl eis = new EsIndexServiceImpl();
-		eis.indexDocuments(id, "gooru_local_resource_v2", "resource", jsonBody);
+	private void deployIndexBuilderVertical(){
+		DeploymentOptions options = new DeploymentOptions().setConfig(config());
+		vertx.deployVerticle("org.gooru.nucleus.search.indexers.bootstrap.IndexBuilderVerticle", options, res -> {
+			if (res.succeeded()) {
+				LOGGER.info("Deploying IndexBuilderVerticle... " + res.result());
+			} else {
+				LOGGER.info("Deployment of IndexBuilderVerticle failed !" + res.cause());
+			}
+		});
 	}
+	
 }

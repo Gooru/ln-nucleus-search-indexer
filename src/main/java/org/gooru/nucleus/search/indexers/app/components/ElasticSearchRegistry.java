@@ -10,10 +10,10 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.gooru.nucleus.search.indexers.app.constants.ElasticSearchConnectionConstant;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
+import org.gooru.nucleus.search.indexers.app.utils.EsMappingUtil;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
-import org.gooru.nuclues.search.indexers.app.utils.EsMappingUtil;
-import org.gooru.nuclues.search.indexers.app.utils.IndexNameHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

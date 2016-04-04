@@ -14,4 +14,5 @@ public final class ExecuteOperationConstants {
 	
 	public static final String GET_COLLECTION_IDS = "get_collection_ids";
 	
+	public static final String GET_COLLECTION_QUESTION_PARENT_CONTENT_IDS = "get_collection_question_ids_and_content_parent_ids";
 }

@@ -4,8 +4,8 @@ import io.vertx.core.json.JsonObject;
 
 public final class ProcessorBuilder {
 
-  public static Processor build(String operationName, JsonObject message) {
-    return new MessageProcessor(message, operationName);
+  public static Processor build(JsonObject message) {
+    return new MessageProcessor(message);
   }
 
   private ProcessorBuilder(JsonObject message) {

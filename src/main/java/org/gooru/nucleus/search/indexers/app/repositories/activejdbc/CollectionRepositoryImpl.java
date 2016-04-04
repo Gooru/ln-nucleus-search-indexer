@@ -1,0 +1,102 @@
+package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
+import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.LazyList;
+import org.postgresql.util.PGobject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.vertx.core.json.JsonObject;
+
+public class CollectionRepositoryImpl implements CollectionRepository {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
+
+	@Override
+	public JsonObject getCollectionByType(String contentID, String format) {
+		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+		LazyList<Collection> collections = Collection.where(Collection.COLLECTION_QUERY, format, contentID, false);
+		if (collections.size() < 1) {
+			LOGGER.warn("Collection id: {} not present in DB", contentID);
+		}
+		Collection collection = collections.get(0);
+		JsonObject returnValue = null;
+		if (collection != null) {
+			returnValue = new JsonObject(collection.toJson(false));
+		}
+		Base.close();
+		return returnValue;
+	}
+
+	@Override
+	public JsonObject getCollection(String contentID) {
+		LOGGER.debug("CollectionRepositoryImpl : getCollection : " + contentID);
+		Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
+		LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
+
+		JsonObject returnValue = null;
+		String[] attributes = { "id", "title", "created_at", "updated_at", "creator_id", "original_creator_id", "original_collection_id", "publish_date", "format", "learning_objective",
+				"collaborator", "orientation", "grading", "setting", "metadata", "taxonomy", "thumbnail", "visible_on_profile", "course_id", "unit_id", "lesson_id" };
+		LOGGER.debug("CollectionRepositoryImpl : getCollection : findById attributes: " + String.join(", ", attributes));
+
+		if (result != null) {
+			returnValue = new JsonObject(result.toJson(false, attributes));
+		}
+		LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);
+		return returnValue;
+
+	}
+
+	@Override
+	public JsonObject getAssessment(String contentID) {
+		LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + contentID);
+
+		Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
+		LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + result);
+
+		JsonObject returnValue = null;
+		String[] attributes = { "id", "title", "created_at", "updated_at", "creator_id", "original_creator_id", "original_collection_id", "publish_date", "format", "learning_objective",
+				"collaborator", "orientation", "grading", "setting", "metadata", "taxonomy", "thumbnail", "visible_on_profile", "course_id", "unit_id", "lesson_id" };
+		LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById attributes: " + String.join(", ", attributes));
+
+		if (result != null) {
+			returnValue = new JsonObject(result.toJson(false, attributes));
+			LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById returned: " + returnValue);
+		}
+		LOGGER.debug("CollectionRepositoryImpl : getAssessment : afterAddingContainmentInfo : " + returnValue);
+
+		return returnValue;
+	}
+
+	@Override
+	public List<Map> getContentsOfCollection(String collectionId) {
+		Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+		List<Map> collectionMeta = Base.findAll(Collection.FETCH_RESOURCE_META, collectionId);
+		if (collectionMeta.size() < 1) {
+			LOGGER.warn("Resources for collection : {} not present in DB" , collectionId);
+		}
+		Base.close();
+		return  collectionMeta;
+	}
+	
+	private static final String UUID_TYPE = "uuid";
+
+	private PGobject getPGObject(String field, String type, String value) {
+		PGobject pgObject = new PGobject();
+		pgObject.setType(type);
+		try {
+			pgObject.setValue(value);
+			return pgObject;
+		} catch (SQLException e) {
+			LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
+			return null;
+		}
+	}
+
+}

@@ -1,21 +1,26 @@
 package org.gooru.nucleus.search.indexers.app.processors.index.handlers;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
+import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
-import org.gooru.nuclues.search.indexers.app.utils.IndexNameHolder;
-import org.gooru.nuclues.search.indexers.app.utils.ValidationUtil;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
+import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
+import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class CollectionIndexHandler implements IndexHandler {
+public class CollectionIndexHandler extends BaseIndexHandler implements IndexHandler {
 	
 	private final String indexName;
 	
@@ -75,12 +80,81 @@ public class CollectionIndexHandler implements IndexHandler {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getScoreValues(String collectionId){
+		Map<String, Object> result = IndexService.instance().getDocument(collectionId, indexName, getIndexType());
+		if(result == null || result.get(ScoreConstants.STATISTICS_FIELD) == null){
+			throw new RuntimeException("Invalid Request");
+		}
+		
+		Map<String, Object> statisticsMap = (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
+		Map<String, Object> scoreFieldsValues = statisticsMap;
+		Map<String, Object> taxonomy = (Map<String, Object>) result.get(ScoreConstants.TAXONOMY_FIELD);
+		scoreFieldsValues.put(ScoreConstants.TAX_HAS_STANDARD, taxonomy.get(ScoreConstants.TAX_HAS_STANDARD));
+		scoreFieldsValues.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, result.get(ScoreConstants.ORIGINAL_CONTENT_FIELD));
+		return scoreFieldsValues;
+	}
+	
 	@Override
-	public void indexDocmentPartial(JsonObject json) throws Exception {
+	public void increaseCount(String collectionId, String field) throws Exception {
+		try{
+			handleCount(collectionId, field, 0, ScoreConstants.OPERATION_TYPE_INCR);
+		}
+		catch(Exception e){
+			LOGGER.error("CIH->increaseCount : Update fields values failed for fields : "+ field.toString() + " collection id :"+collectionId);
+			throw new Exception(e);
+		}
+	}
+
+	private void indexDocumentByFields(Map<String, Object> fieldsMap, Map<String, Object> rankingFields, String collectionId) throws Exception {
+		//Calculate PC weight 
+		double pcWeight = PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields));
+		LOGGER.debug("New PC weight : "+pcWeight+" for collection id : " + collectionId);
+		fieldsMap.put("preComputedWeight", pcWeight);
+		IndexService.instance().indexDocumentByFields(collectionId, indexName, getIndexType(), fieldsMap);
+	}
+	
+	@Override
+	public void decreaseCount(String collectionId, String field) throws Exception {
+		try{
+			handleCount(collectionId, field, 0, ScoreConstants.OPERATION_TYPE_DECR);
+		}
+		catch(Exception e){
+			LOGGER.error("CIH->decreaseCount : Update fields values failed for fields : "+ field.toString() + " collection id :"+collectionId);
+			throw new Exception(e);
+		}
+	}
+
+	private void handleCount(String collectionId, String field, int count, String operationType) throws Exception {
+		try{
+			Map<String, Object> fieldsMap = new HashMap<String, Object>();
+			Map<String, Object> scoreValues = getScoreValues(collectionId);
+			handleCount(collectionId, field, operationType, count, scoreValues, fieldsMap);
+			indexDocumentByFields(fieldsMap, scoreValues, collectionId);
+		}
+		catch(Exception e){
+			LOGGER.error("CIH->handleCount : Update fields values failed for fields : "+ field+ " collection id :"+collectionId);
+			throw new Exception(e);
+		}
+	}
+
+	@Override
+	public void updateCount(String collectionId, String field, int count) throws Exception {
+		try{
+			handleCount(collectionId, field, count, ScoreConstants.OPERATION_TYPE_UPDATE);
+		}
+		catch(Exception e){
+			LOGGER.error("CIH->updateCount : Update fields values failed for fields : "+ field+ " collection id :"+collectionId);
+			throw new Exception(e);
+		}
+	}
+
+	@Override
+	public void updateViewCount(String entityId, Long viewCount) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
-	
+
 	private String getIndexName(){
 		return IndexNameHolder.getIndexName(EsIndex.COLLECTION);
 	}
@@ -88,6 +162,7 @@ public class CollectionIndexHandler implements IndexHandler {
 	private String getIndexType(){
 		return IndexerConstants.TYPE_COLLECTION;
 	}
+
 
 
 }

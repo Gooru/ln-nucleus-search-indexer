@@ -5,8 +5,9 @@ import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResult;
 import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResult.ExecutionStatus;
-import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.ContentRepository;
-import org.gooru.nuclues.search.indexers.app.repositories.activejdbc.IndexRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,12 +57,12 @@ public class FetchContentHandler implements DBHandler {
 				result = ContentRepository.instance().getResource(context.getContentId());
 				break;
             
-				case ExecuteOperationConstants.GET_QUESTION : 
-				result = ContentRepository.instance().getQuestion(context.getContentId());		
+				case ExecuteOperationConstants.GET_COLLECTION_QUESTION_PARENT_CONTENT_IDS : 
+				result = IndexRepository.instance().getCollectionIdsByContentId(context.getContentId());
 				break;
 
-				case ExecuteOperationConstants.GET_COLLECTION_IDS : 
-				result = IndexRepository.instance().getCollectionIdsByContentId(context.getContentId());
+				case ExecuteOperationConstants.GET_COLLECTION : 
+				result = CollectionRepository.instance().getCollection(context.getContentId());
 				break;
 
 				default:
