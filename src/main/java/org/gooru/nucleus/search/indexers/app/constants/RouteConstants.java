@@ -11,7 +11,7 @@ public class RouteConstants {
   // Helper: Entity name constants
 	private static final String INDEX = "index";
 
-  // Upload file = /api/nucleus-media/{version}/uploads
+  // Upload file = /api/nucleus-indexr/{version}/index
 	public static final String EP_BUILD_INDEX = API_BASE_ROUTE + INDEX;
 
 	public static final String INDEXABLE_IDS = "ids";
