@@ -9,17 +9,6 @@
     "elasticsearch.clustername" : "els-local",
     "elasticsearch.host" : "localhost:9300"
   },
-  "defaultCassandraSettings" : {
-    "address": "et.vertx.cassandra",
-    "cassandra.version" : "3.3",
-    "cassandra.cqlversion" : "5.0.1",
-    "cassandra.clustername" : "Test Cluster",
-    "cassandra.seed" : "localhost:9160",
-    "cassandra.keyspacename.prefix" : "gooru",
-    "cassandra.keyspacename.suffix" : "search",
-    "cassandra.strategyOptions" : "replication_factor=1",
-    "cassandra.strategyClass" : "SimpleStrategy"
-  },
   "defaultKafkaSettings" : {
   	"zookeeper.connect": "localhost:2181",
   	"group.id": "indexGroup",

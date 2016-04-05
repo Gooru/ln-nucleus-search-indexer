@@ -142,7 +142,6 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 			statisticsEo.setQuestionCount(questionCount);
 			statisticsEo.setResourceCount(resourceCount);
 			statisticsEo.setContentCount(questionCount + resourceCount);
-
 			
 			String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
 			if (taxonomy != null) {
@@ -153,10 +152,22 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 				}
 	 			collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 	 		}
+			
+			long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
+			int remixCount = source.getInteger(ScoreConstants.COLLECTION_REMIX_COUNT);
+			int collaboratorCount = source.getInteger(ScoreConstants.COLLAB_COUNT);
+					
+			// Use values from statistics index on build index from scratch 
+			if(source.getBoolean(IS_BUILD_INDEX) != null && source.getBoolean(IS_BUILD_INDEX)){
+				statisticsEo.setViewsCount(viewsCount);
+				statisticsEo.setCollectionRemixCount(remixCount);
+				statisticsEo.setCollaboratorCount(collaboratorCount);
+			}
+
 			Map<String, Object> rankingFields = new HashMap<>();
-			rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, source.getInteger(ScoreConstants.COLLECTION_REMIX_COUNT));
-			rankingFields.put(ScoreConstants.VIEW_COUNT, source.getLong(ScoreConstants.VIEW_COUNT));
-			rankingFields.put(ScoreConstants.COLLAB_COUNT, source.getInteger(ScoreConstants.COLLAB_COUNT));
+			rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);
+			rankingFields.put(ScoreConstants.VIEW_COUNT, viewsCount);
+			rankingFields.put(ScoreConstants.COLLAB_COUNT, collaboratorCount);
 			rankingFields.put(ScoreConstants.RESOURCE_COUNT, resourceCount);
 			rankingFields.put(ScoreConstants.QUESTION_COUNT, questionCount);
 			rankingFields.put(ScoreConstants.HAS_NO_THUMBNAIL, statisticsEo.getHasNoThumbnail());
