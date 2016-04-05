@@ -139,13 +139,13 @@ public class StatisticsEo {
 		this.statistics = JsonUtil.set(statistics, "resourceAddedCount", resourceAddedCount);
 	}
 
-	public Long getCollectionRemixCount() {
-		return statistics.getLong("collectionRemixCount", 0L);
+	public Integer getCollectionRemixCount() {
+		return statistics.getInteger("collectionRemixCount", 0);
 	}
 
-	public void setCollectionRemixCount(Long collectionRemixCount) {
+	public void setCollectionRemixCount(Integer collectionRemixCount) {
 		if(collectionRemixCount == null) {
-			collectionRemixCount = 0L;
+			collectionRemixCount = 0;
 		}
 		this.statistics = JsonUtil.set(statistics, "collectionRemixCount", collectionRemixCount);
 	}

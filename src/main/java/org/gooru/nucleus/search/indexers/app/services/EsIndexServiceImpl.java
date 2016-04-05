@@ -136,6 +136,7 @@ public class EsIndexServiceImpl implements IndexService {
 					// Get statistics data from backup index 
 					Map<String, Object > statisticsMap = getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.STATISTICS),  IndexerConstants.TYPE_STATISTICS);
 					LOGGER.debug("statistics index data : " + statisticsMap);
+					result.put("isBuildIndex", true);
 					setExistingStatisticsData(result, statisticsMap, typeName);
 					LOGGER.debug("index source data : " + result.toString());
 
@@ -143,7 +144,7 @@ public class EsIndexServiceImpl implements IndexService {
 					LOGGER.debug("EISI->indexDocument : Indexed "+typeName+" id  : " + indexableId);
 				}  
 				catch(Exception ex){
-					LOGGER.error("EISI->Re-index failed for " +typeName + " id : " + indexableId +" Exception " +ex);
+					LOGGER.error("EISI->Re-index failed for " +typeName + " id : " + indexableId +" Exception " , ex);
 					INDEX_FAILURES_LOGGER.error(" buildIndex() : Failed : " + typeName +" id : " +indexableId);
 					throw new Exception(ex);
 				}
@@ -169,7 +170,17 @@ public class EsIndexServiceImpl implements IndexService {
 	}
 	
 	private static long getLong(Object value){
-		return value == null ? 0L : (long) value;
+		long views = 0L;
+		if(value != null){
+			if(value instanceof Integer){
+				views = new Long((int)value);
+			}
+			else if(value instanceof Long){
+				views = (long)value;
+			}
+
+		}
+		return views;
 	}
 
 	private static String getExectueOperation(String type){

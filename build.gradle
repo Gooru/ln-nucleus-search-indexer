@@ -34,13 +34,11 @@ ext {
     kafkaVersion = '0.9.0.0'
     guavaVersion = '18.0'
     elasticsearchVersion = '2.2.0'
-    cassandraVersion = '3.3'
-    astyanaxVersion = '3.9.0'
     flexjsonVersion = '2.1'
     hikariVersion = '2.4.3'
     postgresVersion = '9.4-1206-jdbc42'
     activejdbcVersion = '1.4.11'
-    mvelVersion='1.5.0'
+    mvelVersion='2.0'
 }
 
 version = "0.1-snapshot"
@@ -65,15 +63,16 @@ dependencies {
     compile "org.apache.kafka:kafka_2.10:${kafkaVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
     compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
-    compile "org.apache.cassandra:apache-cassandra:${cassandraVersion}"
-    compile "com.netflix.astyanax:astyanax:${astyanaxVersion}"
 	compile "net.sf.flexjson:flexjson:${flexjsonVersion}"
 	compile "com.zaxxer:HikariCP:${hikariVersion}"
     compile "org.postgresql:postgresql:${postgresVersion}"
     compile "org.javalite:activejdbc:${activejdbcVersion}"
     compile "org.javalite:activejdbc-instrumentation:${activejdbcVersion}"
-//    compile "org.elasticsearch:elasticsearch-lang-mvel:${mvelVersion}"
- compile "org.mvel:mvel2:2.0"
+//	compile "org.mvel:mvel2:${mvelVersion}"
+	compile "commons-lang:commons-lang:2.6"
+	compile "org.apache.commons:commons-lang3:3.0"
+	compile "org.elasticsearch:elasticsearch-lang-mvel:1.5.0"
+	
     
 	
     // Test dependencies

@@ -43,7 +43,7 @@ public class PCWeightUtil {
     		Map<String, Object> scollectionMvelInputs = new HashMap<String, Object>();
     		scollectionMvelInputs.put("viewsCount", rankingData.getViewsCount());
     		scollectionMvelInputs.put("hasNoDescription", rankingData.getHasNoDescription());
-    		scollectionMvelInputs.put("descriptionLength", (StringUtils.trimToNull(rankingData.getDescription()) != null) ? rankingData.getDescription().length() : 0);
+    	//	scollectionMvelInputs.put("descriptionLength", (StringUtils.trimToNull(rankingData.getDescription()) != null) ? rankingData.getDescription().length() : 0);
     		scollectionMvelInputs.put("hasNoThumbnail", rankingData.getHasNoThumbnail());
     		scollectionMvelInputs.put("hasNoStandard", rankingData.getHasNoStandard());
     		scollectionMvelInputs.put("isCopied", rankingData.getIsCopied());
@@ -51,8 +51,6 @@ public class PCWeightUtil {
     		scollectionMvelInputs.put("questionCount", rankingData.getQuestionCount());
     		scollectionMvelInputs.put("resourceCount", rankingData.getResouceCount());
     		scollectionMvelInputs.put("maxViewCount", ScoreConstants.MAX_COLLECTION_VIEWS_99PERSENT_VAL);
-    		scollectionMvelInputs.put("upperboundResourceCount", ScoreConstants.MAX_COLLECTION_RESOURCE_COUNT_99PERSENT_VAL);
-    		scollectionMvelInputs.put("upperboundQuestionCount", ScoreConstants.MAX_COLLECTION_QUESTION_COUNT_99PERSENT_VAL);
     		
     		VariableResolverFactory inputFactory = new MapVariableResolverFactory(scollectionMvelInputs);
     		Double scPreComputedWeight = 0.0; 

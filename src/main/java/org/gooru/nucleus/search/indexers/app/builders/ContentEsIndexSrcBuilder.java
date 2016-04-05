@@ -202,12 +202,17 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 			statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
 			statisticsEo.setHasNoDescription(description != null ? 0 : 1);
 			statisticsEo.setUsedInCollectionCount(collectionIds.size());
+            
+			long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
 			
+			if(source.getBoolean(IS_BUILD_INDEX) != null && source.getBoolean(IS_BUILD_INDEX)){
+				statisticsEo.setViewsCount(viewsCount);
+			}
 			
 			// Set ranking fields 
 			Map<String, Object> rankingFields = new HashMap<>();
 			rankingFields.put(ScoreConstants.USED_IN_COLLECTION_COUNT, statisticsEo.getUsedInCollectionCount());
-			rankingFields.put(ScoreConstants.VIEW_COUNT, source.getLong(ScoreConstants.VIEW_COUNT));
+			rankingFields.put(ScoreConstants.VIEW_COUNT, viewsCount);
 			rankingFields.put(ScoreConstants.HAS_FRAME_BREAKER, statisticsEo.getHasFrameBreaker());
 			rankingFields.put(ScoreConstants.HAS_NO_THUMBNAIL, statisticsEo.getHasNoThumbnail());
 			rankingFields.put(ScoreConstants.DESCRIPTION_FIELD, description);

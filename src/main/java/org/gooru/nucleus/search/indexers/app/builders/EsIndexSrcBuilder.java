@@ -31,6 +31,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 	protected static final String dateOutputPattern = "yyyy/MM/dd HH:mm:ss";
 	
 	private static final Map<String, IsEsIndexSrcBuilder<?, ?>> esIndexSrcBuilders = new HashMap<>();
+	
+	protected static final String IS_BUILD_INDEX = "isBuildIndex";
 
 	static {
 		registerESIndexSrcBuilders();
