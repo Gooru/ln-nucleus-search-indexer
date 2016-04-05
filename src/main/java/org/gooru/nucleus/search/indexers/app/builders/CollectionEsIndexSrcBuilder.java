@@ -39,7 +39,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 			collectionEo.setContentFormat(source.getString(EntityAttributeConstants.FORMAT, null));
 			collectionEo.setIndexUpdatedTime(new Date());
 			collectionEo.setCreatedAt(source.getString(EntityAttributeConstants.CREATED_AT));
-			collectionEo.setCreatedAt(source.getString(EntityAttributeConstants.UPDATED_AT, null));
+			collectionEo.setUpdatedAt(source.getString(EntityAttributeConstants.UPDATED_AT, null));
 			collectionEo.setOriginalCollectionId(source.getString(EntityAttributeConstants.ORIGINAL_COLLECTION_ID, null));
 			collectionEo.setParentCollectionId(source.getString(EntityAttributeConstants.PARENT_COLLECTION_ID, null));
 			collectionEo.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
@@ -67,7 +67,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 			String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
 			if (creatorId != null) {
 				UserEo creatorEo = new UserEo();
-				JsonObject creator = getUserRepo().getUser(originalCreatorId);
+				JsonObject creator = getUserRepo().getUser(creatorId);
 				if (creator != null) {
 					setUser(creator, creatorEo);
 					collectionEo.setCreator(creatorEo.getUser());
@@ -77,7 +77,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 			String ownerId = source.getString(EntityAttributeConstants.OWNER_ID, null);
 			if (ownerId != null) {
 				UserEo ownerEo = new UserEo();
-				JsonObject owner = getUserRepo().getUser(originalCreatorId);
+				JsonObject owner = getUserRepo().getUser(ownerId);
 				if (owner != null) {
 					setUser(owner, ownerEo);
 					collectionEo.setOwner(ownerEo.getUser());

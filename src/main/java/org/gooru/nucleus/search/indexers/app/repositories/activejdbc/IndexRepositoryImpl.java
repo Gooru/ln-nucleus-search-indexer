@@ -9,8 +9,6 @@ import org.javalite.activejdbc.Base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.vertx.core.json.JsonObject;
-
 public class IndexRepositoryImpl implements IndexRepository {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IndexRepositoryImpl.class);
@@ -26,9 +24,4 @@ public class IndexRepositoryImpl implements IndexRepository {
 		return  metadataReference;
 	}
 
-	@Override
-	public JsonObject getCollectionIdsByContentId(String contentId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
