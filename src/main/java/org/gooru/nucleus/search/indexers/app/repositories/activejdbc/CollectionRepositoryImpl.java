@@ -25,14 +25,9 @@ public class CollectionRepositoryImpl implements CollectionRepository {
     LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
 
     JsonObject returnValue = null;
-    String[] attributes =
-      {"id", "title", "created_at", "updated_at", "creator_id", "original_creator_id", "original_collection_id", "publish_date", "format",
-        "learning_objective", "collaborator", "orientation", "grading", "setting", "metadata", "taxonomy", "thumbnail", "visible_on_profile",
-        "course_id", "unit_id", "lesson_id"};
-    LOGGER.debug("CollectionRepositoryImpl : getCollection : findById attributes: " + String.join(", ", attributes));
 
     if (result != null) {
-      returnValue = new JsonObject(result.toJson(false, attributes));
+      returnValue = new JsonObject(result.toJson(false));
     }
     LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);
     return returnValue;

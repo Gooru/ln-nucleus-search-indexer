@@ -27,7 +27,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
   public void indexDocument(String collectionId) throws Exception {
     try {
       ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_COLLECTION);
-      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataCollection();
+      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNull(result, ErrorMsgConstants.COLLECTION_DATA_NULL);
       LOGGER.debug("CIH->indexDocument : getIndexDataCollection() returned:" + result);
       IndexService.instance().indexDocuments(collectionId, indexName, getIndexType(), result);
