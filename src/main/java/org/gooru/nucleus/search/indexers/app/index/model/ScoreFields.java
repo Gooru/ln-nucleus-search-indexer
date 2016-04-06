@@ -133,7 +133,7 @@ public class ScoreFields {
   public int getDomainBoost() {
     for (int domainIndex = 0; domainIndex < ScoreConstants.DEMOTE_DOMAINS.length; domainIndex++) {
       try {
-        if (ScoreConstants.DEMOTE_DOMAINS[domainIndex].contains(getDomainName(getUrl()))) {
+        if (getUrl() != null && ScoreConstants.DEMOTE_DOMAINS[domainIndex].contains(getDomainName(getUrl()))) {
           domainBoost = 0;
         }
       } catch (URISyntaxException e) {
