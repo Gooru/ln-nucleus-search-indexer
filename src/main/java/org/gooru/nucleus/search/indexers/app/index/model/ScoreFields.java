@@ -106,8 +106,7 @@ public class ScoreFields {
   }
 
   public int getCollectionItemCount() {
-    int collectionItemCount = 0;
-    return collectionItemCount;
+    return 0;
   }
 
   public int getHasFrameBreaker() {

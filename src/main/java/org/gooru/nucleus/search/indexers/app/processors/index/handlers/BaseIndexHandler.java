@@ -7,7 +7,7 @@ import java.util.Map;
 public class BaseIndexHandler {
 
   protected void handleCount(String resourceId, String field, String operationType, int count, Map<String, Object> scoreValues,
-                             Map<String, Object> fieldsMap) throws Exception {
+                             Map<String, Object> fieldsMap) {
     int value = (int) scoreValues.get(field);
     if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_INCR)) {
       scoreValues.put(field, incrementValue(value));
@@ -16,7 +16,7 @@ public class BaseIndexHandler {
     } else if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_UPDATE)) {
       scoreValues.put(field, count);
     }
-    String fieldName = ScoreConstants.STATISTICS_FIELD + "." + field;
+    String fieldName = ScoreConstants.STATISTICS_FIELD + '.' + field;
     fieldsMap.put(fieldName, value);
   }
 

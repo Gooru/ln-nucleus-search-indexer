@@ -4,6 +4,7 @@ import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("ALL")
 public interface IndexHandler {
 
   Logger LOGGER = LoggerFactory.getLogger(IndexHandler.class);
@@ -20,5 +21,5 @@ public interface IndexHandler {
 
   void updateCount(String entityId, String field, int count) throws Exception;
 
-  void updateViewCount(String entityId, Long viewCount) throws Exception;
+  void updateViewCount(String entityId, Long viewCount);
 }

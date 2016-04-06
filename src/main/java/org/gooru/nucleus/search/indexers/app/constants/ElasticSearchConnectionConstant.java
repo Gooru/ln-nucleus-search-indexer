@@ -18,9 +18,9 @@ public enum ElasticSearchConnectionConstant {
 
   CLIENT_TRANSPORT_SNIFF("elasticsearch.client.transport.sniff", "true");
 
-  String defaultValue;
+  final String defaultValue;
 
-  String key;
+  final String key;
 
   ElasticSearchConnectionConstant(String key, String defaultValue) {
     this.defaultValue = defaultValue;

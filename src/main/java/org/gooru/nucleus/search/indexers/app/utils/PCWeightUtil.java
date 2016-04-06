@@ -41,7 +41,7 @@ public final class PCWeightUtil {
     try {
       Serializable scollectionScoreCompiled = MVEL.compileExpression(ScoreConstants.COLLECTION_SCORE_EXPRESSION);
 
-      Map<String, Object> scollectionMvelInputs = new HashMap<String, Object>();
+      Map<String, Object> scollectionMvelInputs = new HashMap<>();
       scollectionMvelInputs.put("viewsCount", rankingData.getViewsCount());
       scollectionMvelInputs.put("hasNoDescription", rankingData.getHasNoDescription());
       //	scollectionMvelInputs.put("descriptionLength", (StringUtils.trimToNull(rankingData.getDescription()) != null) ? rankingData.getDescription

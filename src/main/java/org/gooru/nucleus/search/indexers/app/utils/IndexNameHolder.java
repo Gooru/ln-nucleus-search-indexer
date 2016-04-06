@@ -7,7 +7,7 @@ import java.util.Map;
 
 public final class IndexNameHolder {
 
-  public static Map<EsIndex, String> indexNames = new HashMap<EsIndex, String>();
+  private static final Map<EsIndex, String> indexNames = new HashMap<>();
 
   private IndexNameHolder() {
     throw new AssertionError();

@@ -14,8 +14,8 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
 
   private final JsonObject eventJson;
   private String eventName;
-  private IndexHandler resourceIndexHandler;
-  private IndexHandler collectionIndexHandler;
+  private final IndexHandler resourceIndexHandler;
+  private final IndexHandler collectionIndexHandler;
 
   public ResourceEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
@@ -60,8 +60,8 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     } catch (Exception ex) {
       LOGGER.error("REH->handleEvents : Index failed !! event name : " + eventName + " Event data received : " +
         (eventJson == null ? eventJson : eventJson.toString()) + " Exception : " + ex);
-      INDEX_FAILURES_LOGGER.error(
-        "Re-index failed for resource. Event name : " + eventName + " Event json : " + (eventJson == null ? eventJson : eventJson.toString()) +
+      INDEX_FAILURES_LOGGER
+        .error("Re-index failed for resource. Event name : " + eventName + " Event json : " + (eventJson == null ? eventJson : eventJson.toString()) +
           " Exception :" + ex);
     }
   }
