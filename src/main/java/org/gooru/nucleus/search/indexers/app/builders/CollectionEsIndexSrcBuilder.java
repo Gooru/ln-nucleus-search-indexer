@@ -90,9 +90,11 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
               String referenceIds = references.toString();
               List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
               for (Map metaMap : metacontent) {
-                value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+            	value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
               }
-              metadataAsMap.put(key, value);
+              if(value != null){
+            	metadataAsMap.put(key, value);
+              }
               collectionEo.setMetadata(metadataAsMap);
             }
           }
