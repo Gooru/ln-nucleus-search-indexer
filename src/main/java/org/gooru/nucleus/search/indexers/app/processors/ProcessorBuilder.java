@@ -4,11 +4,11 @@ import io.vertx.core.json.JsonObject;
 
 public final class ProcessorBuilder {
 
-  public static Processor build(JsonObject message) {
-    return new MessageProcessor(message);
-  }
-
   private ProcessorBuilder(JsonObject message) {
     throw new AssertionError();
+  }
+
+  public static Processor build(JsonObject message) {
+    return new MessageProcessor(message);
   }
 }

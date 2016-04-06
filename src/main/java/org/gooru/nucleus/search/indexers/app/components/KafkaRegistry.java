@@ -1,7 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.components;
 
-import java.util.Properties;
-
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.gooru.nucleus.search.indexers.app.constants.KafkaProperties;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
@@ -10,8 +10,7 @@ import org.gooru.nucleus.search.indexers.kafka.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
+import java.util.Properties;
 
 public final class KafkaRegistry implements Initializer, Finalizer {
 
@@ -23,7 +22,13 @@ public final class KafkaRegistry implements Initializer, Finalizer {
 
   private volatile boolean initialized = false;
 
-  private KafkaConsumer consumer;
+  private KafkaRegistry() {
+    // TODO Auto-generated constructor stub
+  }
+
+  public static KafkaRegistry getInstance() {
+    return Holder.INSTANCE;
+  }
 
   @Override
   public void initializeComponent(Vertx vertx, JsonObject config) {
@@ -37,20 +42,18 @@ public final class KafkaRegistry implements Initializer, Finalizer {
         LOGGER.debug("Will initialize after double checking");
         if (!initialized) {
           LOGGER.debug("Initializing KafkaRegistry now");
-          try{
+          try {
             JsonObject kafkaConfig = config.getJsonObject(DEFAULT_KAFKA_SETTINGS);
             initializeKafkaConsumer(kafkaConfig);
             initialized = true;
             LOGGER.debug("Initializing KafkaRegistry DONE");
-          }
-          catch(Exception e){
-            LOGGER.error("Initializing KafkaRegistry Failed " +e);
+          } catch (Exception e) {
+            LOGGER.error("Initializing KafkaRegistry Failed " + e);
           }
         }
       }
     }
   }
-
 
   private void initializeKafkaConsumer(JsonObject kafkaConfig) {
     LOGGER.debug("InitializeKafkaConsumer now...");
@@ -64,9 +67,9 @@ public final class KafkaRegistry implements Initializer, Finalizer {
     properties.put(KafkaProperties.AUTOCOMMIT_INTERVAL_MS, kafkaConfig.getString(KafkaProperties.AUTOCOMMIT_INTERVAL_MS));
     properties.put(KafkaProperties.FETCH_SIZE, kafkaConfig.getString(KafkaProperties.FETCH_SIZE));
     properties.put(KafkaProperties.AUTO_OFFSET_RESET, kafkaConfig.getString(KafkaProperties.AUTO_OFFSET_RESET));
-    
+
     this.KAFKA_TOPIC = kafkaConfig.getString(KafkaProperties.INDEX_TOPIC);
-    consumer = KafkaConsumer.create(properties);
+    KafkaConsumer consumer = KafkaConsumer.create(properties);
     consumer.start(KAFKA_TOPIC);
   }
 
@@ -87,14 +90,6 @@ public final class KafkaRegistry implements Initializer, Finalizer {
 
   public String getKafkaTopic() {
     return this.KAFKA_TOPIC;
-  }
-
-  public static KafkaRegistry getInstance() {
-    return Holder.INSTANCE;
-  }
-
-  private KafkaRegistry() {
-    // TODO Auto-generated constructor stub
   }
 
   private static final class Holder {

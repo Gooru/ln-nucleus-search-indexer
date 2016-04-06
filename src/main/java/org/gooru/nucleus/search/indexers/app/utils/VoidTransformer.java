@@ -4,17 +4,16 @@ import flexjson.transformer.AbstractTransformer;
 
 /**
  * @author Renuka
- * 
  */
 public class VoidTransformer extends AbstractTransformer {
 
-	@Override
-	public Boolean isInline() {
-		return true;
-	}
+  @Override
+  public Boolean isInline() {
+    return true;
+  }
 
-	@Override
-	public void transform(Object object) {
-	}
+  @Override
+  public void transform(Object object) {
+  }
 
 }

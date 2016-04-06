@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 public interface IndexRepository {
-    
-	static IndexRepository instance() {
-		return new IndexRepositoryImpl();
-	}
 
-	List<Map> getMetadata(String referenceIds);
+  static IndexRepository instance() {
+    return new IndexRepositoryImpl();
+  }
+
+  List<Map> getMetadata(String referenceIds);
 }

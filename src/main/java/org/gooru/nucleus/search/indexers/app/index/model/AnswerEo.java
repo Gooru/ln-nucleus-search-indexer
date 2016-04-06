@@ -1,27 +1,26 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
-import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
-
 import io.vertx.core.json.JsonObject;
+import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 public class AnswerEo {
 
-	private JsonObject answer;
+  private JsonObject answer;
 
-	public AnswerEo() {
-		this.answer = new JsonObject();
-	}
+  public AnswerEo() {
+    this.answer = new JsonObject();
+  }
 
-	public JsonObject getAnswer() {
-		return answer;
-	} 
-	
-	public void setAnswerText(String answerText) {
-		this.answer = JsonUtil.set(answer, "answerText", answerText);
-	}
+  public JsonObject getAnswer() {
+    return answer;
+  }
 
-	public String getAnswerText() {
-		return answer.getString("answerText", null);
-	}
+  public String getAnswerText() {
+    return answer.getString("answerText", null);
+  }
+
+  public void setAnswerText(String answerText) {
+    this.answer = JsonUtil.set(answer, "answerText", answerText);
+  }
 
 }

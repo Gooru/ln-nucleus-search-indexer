@@ -4,16 +4,14 @@ import io.vertx.core.json.JsonObject;
 
 public class UserEventsHandler implements IndexEventHandler {
 
-	private final JsonObject eventJson;
+  public UserEventsHandler(JsonObject eventJson) {
+    JsonObject eventJson1 = eventJson;
+  }
 
-	public UserEventsHandler(JsonObject eventJson) {
-		this.eventJson = eventJson;
-	}
+  @Override
+  public void handleEvents() {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void handleEvents() {
-		// TODO Auto-generated method stub
-
-	}
+  }
 
 }

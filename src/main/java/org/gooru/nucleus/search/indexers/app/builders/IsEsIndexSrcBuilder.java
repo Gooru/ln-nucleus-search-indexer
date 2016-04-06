@@ -4,14 +4,13 @@ import io.vertx.core.json.JsonObject;
 
 /**
  * @author Renuka
- * 
  */
 public interface IsEsIndexSrcBuilder<S, D> {
 
-	String buildSource(JsonObject source) throws Exception;
-	
-	String buildSource(JsonObject source, D destination) throws Exception;
+  String buildSource(JsonObject source) throws Exception;
 
-	String getName();
+  String buildSource(JsonObject source, D destination) throws Exception;
+
+  String getName();
 
 }

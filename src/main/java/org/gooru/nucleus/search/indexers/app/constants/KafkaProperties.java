@@ -1,6 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.constants;
 
-public class KafkaProperties {
+public final class KafkaProperties {
 
   public static final String ZK_CONSUMER_CONNECT = "zookeeper.connect";
   public static final String ZK_CONSUMER_GROUP = "group.id";
@@ -10,5 +10,8 @@ public class KafkaProperties {
   public static final String FETCH_SIZE = "fetch.size";
   public static final String AUTO_OFFSET_RESET = "auto.offset.reset";
   public static final String INDEX_TOPIC = "index.topic";
-  
+
+  private KafkaProperties() {
+    throw new AssertionError();
+  }
 }

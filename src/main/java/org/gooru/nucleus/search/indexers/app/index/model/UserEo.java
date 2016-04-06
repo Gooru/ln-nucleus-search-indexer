@@ -1,75 +1,74 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
-import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
-
 import io.vertx.core.json.JsonObject;
+import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 public class UserEo {
 
-	private JsonObject user;
+  private JsonObject user;
 
-	public UserEo() {
-		this.user = new JsonObject();
-	}
+  public UserEo() {
+    this.user = new JsonObject();
+  }
 
-	public JsonObject getUser() {
-		return this.user;
-	}
+  public JsonObject getUser() {
+    return this.user;
+  }
 
-	public void setFirstName(String firstName) {
-		user = JsonUtil.set(user, "firstName", firstName);
-	}
+  public String getFirstName() {
+    return user.getString("firstName", null);
+  }
 
-	public String getFirstName() {
-		return user.getString("firstName", null);
-	}
+  public void setFirstName(String firstName) {
+    user = JsonUtil.set(user, "firstName", firstName);
+  }
 
-	public void setLastName(String lastName) {
-		user = JsonUtil.set(user, "lastName", lastName);
-	}
+  public String getLastName() {
+    return user.getString("lastName", null);
+  }
 
-	public String getLastName() {
-		return user.getString("lastName", null);
-	}
+  public void setLastName(String lastName) {
+    user = JsonUtil.set(user, "lastName", lastName);
+  }
 
-	public void setUsernameDisplay(String usernameDisplay) {
-		user = JsonUtil.set(user, "usernameDisplay", usernameDisplay);
-	}
+  public String getUsernameDisplay() {
+    return user.getString("usernameDisplay", null);
+  }
 
-	public String getUsernameDisplay() {
-		return user.getString("usernameDisplay", null);
-	}
+  public void setUsernameDisplay(String usernameDisplay) {
+    user = JsonUtil.set(user, "usernameDisplay", usernameDisplay);
+  }
 
-	public void setUserId(String userId) {
-		user = JsonUtil.set(user, "userId", userId);
-	}
+  public String getUserId() {
+    return user.getString("userId", null);
+  }
 
-	public String getUserId() {
-		return user.getString("userId", null);
-	}
+  public void setUserId(String userId) {
+    user = JsonUtil.set(user, "userId", userId);
+  }
 
-	public void setEmailId(String emailId) {
-		user = JsonUtil.set(user, "emailId", emailId);
-	}
+  public String getEmailId() {
+    return user.getString("emailId", null);
+  }
 
-	public String getEmailId() {
-		return user.getString("emailId", null);
-	}
+  public void setEmailId(String emailId) {
+    user = JsonUtil.set(user, "emailId", emailId);
+  }
 
-	public String getFullName() {
-		return user.getString("fullName", null);
-	}
+  public String getFullName() {
+    return user.getString("fullName", null);
+  }
 
-	public void setFullName(String fullName) {
-		user = JsonUtil.set(user, "fullName", fullName);
-	}
+  public void setFullName(String fullName) {
+    user = JsonUtil.set(user, "fullName", fullName);
+  }
 
-	public Boolean getProfileVisibility() {
-		return user.getBoolean("profileVisibility", null);
-	}
+  public Boolean getProfileVisibility() {
+    return user.getBoolean("profileVisibility", null);
+  }
 
-	public void setProfileVisibility(Boolean profileVisibility) {
-		user = JsonUtil.set(user, "profileVisibility", profileVisibility);
-	}
+  public void setProfileVisibility(Boolean profileVisibility) {
+    user = JsonUtil.set(user, "profileVisibility", profileVisibility);
+  }
 
 }

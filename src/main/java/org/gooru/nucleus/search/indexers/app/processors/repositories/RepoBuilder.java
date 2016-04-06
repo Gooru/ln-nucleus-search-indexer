@@ -6,12 +6,12 @@ import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.
 
 
 public final class RepoBuilder {
- 
-  public static IndexerRepo buildIndexerRepo(ProcessorContext context){
-	 return ActiveJdbcRepoBuilder.buildAJIndexerRepo(context);
-  }	
 
   private RepoBuilder() {
     throw new AssertionError();
+  }
+
+  public static IndexerRepo buildIndexerRepo(ProcessorContext context) {
+    return ActiveJdbcRepoBuilder.buildAJIndexerRepo(context);
   }
 }

@@ -10,5 +10,5 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("user_demographic")
 @IdName("id")
 public class User extends Model {
-  
+
 }

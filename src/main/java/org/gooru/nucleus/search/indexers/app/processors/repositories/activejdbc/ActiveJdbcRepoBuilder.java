@@ -4,8 +4,12 @@ import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 
 public final class ActiveJdbcRepoBuilder {
 
+  private ActiveJdbcRepoBuilder() {
+    throw new AssertionError();
+  }
+
   public static IndexerRepo buildAJIndexerRepo(ProcessorContext context) {
     return new AJIndexerRepo(context);
   }
-   
+
 }

@@ -4,8 +4,8 @@ import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 
 public class DBHandlerBuilder {
 
-  public DBHandler buildFetchContentHandler(ProcessorContext context){
+  public DBHandler buildFetchContentHandler(ProcessorContext context) {
     return new FetchContentHandler(context);
   }
-  
- }
+
+}
