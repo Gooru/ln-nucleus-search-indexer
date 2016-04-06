@@ -136,7 +136,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
             LOGGER.debug("Oops! Es Index : " + indexName + " already exist!");
             ElasticSearchRegistry.getInstance().getClient().admin().indices().preparePutMapping(indexName).setType(indexType).setSource(mapping)
                                  .execute().actionGet();
-            LOGGER.debug("Updated mapping with index '" + indexName + "' and type '" + indexType + "'");
+            LOGGER.debug("Updated mapping with index '" + indexName + "' and type '" + indexType + '\'');
           } else {
             LOGGER.error("Register index failed : ", exception);
           }
@@ -166,7 +166,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
   //TODO Add logic to fetch config from property file, if not available in cassandra
   /*private String getSetting(ElasticsearchConstant constant) {
-		String value = configSettingRepository != null ? configSettingRepository.getSetting(constant.getKey()) : constant.getDefaultValue();
+    String value = configSettingRepository != null ? configSettingRepository.getSetting(constant.getKey()) : constant.getDefaultValue();
 		return value != null && value.length() > 0 ? value : constant.getDefaultValue();
 	}*/
 

@@ -12,7 +12,6 @@ import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class CollectionIndexHandler extends BaseIndexHandler implements IndexHandler {
@@ -45,9 +44,8 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
       JsonArray ids = idsJson.getJsonArray(IndexerConstants.COLLECTION_IDS);
       if (ids != null && ids.size() > 0) {
         LOGGER.debug("CIH->indexDocuments : Processing received ids array size : " + ids.size());
-        Iterator<Object> iter = idsJson.getJsonArray(IndexerConstants.COLLECTION_IDS).iterator();
-        while (iter.hasNext()) {
-          indexDocument((String) iter.next());
+        for (Object o : idsJson.getJsonArray(IndexerConstants.COLLECTION_IDS)) {
+          indexDocument((String) o);
         }
         LOGGER.debug("CIH->indexDocuments : Successfully indexed all the collections/assessments");
       } else {
@@ -76,7 +74,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
     try {
       handleCount(collectionId, field, 0, ScoreConstants.OPERATION_TYPE_INCR);
     } catch (Exception e) {
-      LOGGER.error("CIH->increaseCount : Update fields values failed for fields : " + field.toString() + " collection id :" + collectionId);
+      LOGGER.error("CIH->increaseCount : Update fields values failed for fields : " + field + " collection id :" + collectionId);
       throw new Exception(e);
     }
   }
@@ -86,7 +84,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
     try {
       handleCount(collectionId, field, 0, ScoreConstants.OPERATION_TYPE_DECR);
     } catch (Exception e) {
-      LOGGER.error("CIH->decreaseCount : Update fields values failed for fields : " + field.toString() + " collection id :" + collectionId);
+      LOGGER.error("CIH->decreaseCount : Update fields values failed for fields : " + field + " collection id :" + collectionId);
       throw new Exception(e);
     }
   }
@@ -102,7 +100,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
   }
 
   @Override
-  public void updateViewCount(String entityId, Long viewCount) throws Exception {
+  public void updateViewCount(String entityId, Long viewCount) {
     // TODO Auto-generated method stub
 
   }
@@ -132,7 +130,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
 
   private void handleCount(String collectionId, String field, int count, String operationType) throws Exception {
     try {
-      Map<String, Object> fieldsMap = new HashMap<String, Object>();
+      Map<String, Object> fieldsMap = new HashMap<>();
       Map<String, Object> scoreValues = getScoreValues(collectionId);
       handleCount(collectionId, field, operationType, count, scoreValues, fieldsMap);
       indexDocumentByFields(fieldsMap, scoreValues, collectionId);

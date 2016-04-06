@@ -18,9 +18,9 @@ public enum EsIndex {
   CONTENT_PROVIDER("content_provider", new String[]{"publisher", "aggregator"}),
   STATISTICS("statistics");
 
-  private String name;
+  private final String name;
 
-  private String[] types;
+  private final String[] types;
 
   /**
    *

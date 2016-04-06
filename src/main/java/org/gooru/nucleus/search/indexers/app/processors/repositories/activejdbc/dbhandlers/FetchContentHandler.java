@@ -32,7 +32,7 @@ public class FetchContentHandler implements DBHandler {
 
   @Override
   public ExecutionResult<JsonObject> validateRequest() {
-    return new ExecutionResult<JsonObject>(null, ExecutionStatus.CONTINUE_PROCESSING);
+    return new ExecutionResult<>(null, ExecutionStatus.CONTINUE_PROCESSING);
   }
 
   @Override
@@ -60,12 +60,12 @@ public class FetchContentHandler implements DBHandler {
       }
       if (result != null) {
         LOGGER.debug("Processed operation : " + operationName + " data : " + result.toString());
-        return new ExecutionResult<JsonObject>(result, ExecutionStatus.SUCCESSFUL);
+        return new ExecutionResult<>(result, ExecutionStatus.SUCCESSFUL);
       }
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch operation " + operationName + " content Id : " + context.getContentId() + " Exception : " + ex);
     }
-    return new ExecutionResult<JsonObject>(null, ExecutionStatus.FAILED);
+    return new ExecutionResult<>(null, ExecutionStatus.FAILED);
   }
 
   @Override

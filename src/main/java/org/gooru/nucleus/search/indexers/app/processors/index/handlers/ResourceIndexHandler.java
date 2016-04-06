@@ -50,7 +50,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     try {
       handleCount(resourceId, field, 0, ScoreConstants.OPERATION_TYPE_INCR);
     } catch (Exception e) {
-      LOGGER.error("RIH->increaseCount : Update fields values failed for fields : " + field.toString() + " resource id :" + resourceId);
+      LOGGER.error("RIH->increaseCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
       throw new Exception(e);
     }
   }
@@ -76,7 +76,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
   }
 
   @Override
-  public void updateViewCount(String resourceId, Long viewCount) throws Exception {
+  public void updateViewCount(String resourceId, Long viewCount) {
     // TODO Auto-generated method stub
   }
 
@@ -107,7 +107,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
 
   private void handleCount(String resourceId, String field, int count, String operationType) throws Exception {
     try {
-      Map<String, Object> fieldsMap = new HashMap<String, Object>();
+      Map<String, Object> fieldsMap = new HashMap<>();
       Map<String, Object> scoreValues = getScoreValues(resourceId);
       handleCount(resourceId, field, operationType, count, scoreValues, fieldsMap);
       indexDocumentByFields(fieldsMap, scoreValues, resourceId);

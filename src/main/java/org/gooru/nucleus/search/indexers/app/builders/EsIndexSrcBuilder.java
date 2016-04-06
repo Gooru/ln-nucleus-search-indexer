@@ -76,7 +76,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     userEo.setUserId(user.getString("id"));
     userEo.setLastName(user.getString("lastname", null));
     userEo.setFirstName(user.getString("firstname", null));
-    userEo.setFullName(user.getString("firstname") + " " + user.getString("lastname"));
+    userEo.setFullName(user.getString("firstname") + ' ' + user.getString("lastname"));
     userEo.setEmailId(user.getString("lastname", null));
     userEo.setProfileVisibility(user.getBoolean("profileVisibility", false));
   }

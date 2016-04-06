@@ -7,7 +7,7 @@ public enum ContentFormat {
   ASSESSMENT("assessment"),
   QUESTION("question");
 
-  String contentFormat;
+  final String contentFormat;
 
   ContentFormat(String contentFormat) {
     this.contentFormat = contentFormat;

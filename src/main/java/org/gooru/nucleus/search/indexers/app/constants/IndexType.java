@@ -12,7 +12,7 @@ public enum IndexType {
   PUBLISHER("publisher"),
   AGGREGATOR("aggregator");
 
-  String type;
+  final String type;
 
   IndexType(String type) {
     this.type = type;

@@ -51,7 +51,7 @@ public class EsIndexServiceImpl implements IndexService {
     long views = 0L;
     if (value != null) {
       if (value instanceof Integer) {
-        views = new Long((int) value);
+        views = (long) (int) value;
       } else if (value instanceof Long) {
         views = (long) value;
       }
@@ -171,7 +171,7 @@ public class EsIndexServiceImpl implements IndexService {
   }
 
   private void setExistingStatisticsData(JsonObject source, Map<String, Object> statisticsMap, String typeName) {
-    long viewsCount = 0l;
+    long viewsCount = 0L;
     int collabCount = 0;
     int remixCount = 0;
 

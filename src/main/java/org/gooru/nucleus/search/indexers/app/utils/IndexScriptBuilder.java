@@ -49,16 +49,16 @@ public final class IndexScriptBuilder {
   public static void buildScript(final String id, Map<String, Object> paramsField, StringBuffer scriptQuery,
                                  final Map<String, Object> fieldValueMap) {
     int i = 0;
-    for (String field : fieldValueMap.keySet()) {
-      String paramKey = field.replaceAll("\\.", "");
-      Object value = fieldValueMap.get(field);
+    for (Map.Entry<String, Object> stringObjectEntry : fieldValueMap.entrySet()) {
+      String paramKey = stringObjectEntry.getKey().replaceAll("\\.", "");
+      Object value = stringObjectEntry.getValue();
       if (value != null) {
         if (i == 0) {
           paramsField.put(INDEX_UPDATED_DATE, new SimpleDateFormat(DATE_FORMAT).format(new Date()));
           scriptQuery.append(INDEX_UPDATED);
         }
         paramsField.put(paramKey, value);
-        createScript(field, scriptQuery);
+        createScript(stringObjectEntry.getKey(), scriptQuery);
         ++i;
       }
     }
@@ -78,15 +78,15 @@ public final class IndexScriptBuilder {
       childField = key.substring(key.lastIndexOf(DOT) + 1, key.length());
     }
     if (parentField.trim().length() > 0) {
-      scriptQuery.append(parentField + DOT);
+      scriptQuery.append(parentField).append(DOT);
     }
     scriptQuery.append(CONTAINS_KEY);
     scriptQuery.append(CLOSE_BRACKET_DOUBLE_QUOTE);
     scriptQuery.append(childField);
     scriptQuery.append(DOUBLE_QUOTES_CLOSE_BRACKETS);
-    scriptQuery.append(OPEN_CURLY_BRACKET + CTX_SOURCE + key + EQUALS + paramKey + CLOSE_CURLY_BRACKET);
+    scriptQuery.append(OPEN_CURLY_BRACKET + CTX_SOURCE).append(key).append(EQUALS).append(paramKey).append(CLOSE_CURLY_BRACKET);
     scriptQuery.append(ELSE_EXISTS_FIELD);
-    scriptQuery.append(key + EQUALS + paramKey + CLOSE_CURLY_BRACKET);
+    scriptQuery.append(key).append(EQUALS).append(paramKey).append(CLOSE_CURLY_BRACKET);
   }
 
 

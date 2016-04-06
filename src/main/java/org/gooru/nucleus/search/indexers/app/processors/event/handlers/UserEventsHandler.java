@@ -5,7 +5,6 @@ import io.vertx.core.json.JsonObject;
 public class UserEventsHandler implements IndexEventHandler {
 
   public UserEventsHandler(JsonObject eventJson) {
-    JsonObject eventJson1 = eventJson;
   }
 
   @Override

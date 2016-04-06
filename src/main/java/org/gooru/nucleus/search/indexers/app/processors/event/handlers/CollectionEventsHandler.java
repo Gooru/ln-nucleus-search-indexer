@@ -15,8 +15,8 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
 
   private final JsonObject eventJson;
   private String eventName;
-  private IndexHandler collectionIndexHandler;
-  private IndexHandler resourceIndexHandler;
+  private final IndexHandler collectionIndexHandler;
+  private final IndexHandler resourceIndexHandler;
 
   public CollectionEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
@@ -57,8 +57,8 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
     } catch (Exception ex) {
       LOGGER.error("REH->handleEvents : Index failed !! event name : " + eventName + " Event data received : " +
         (eventJson == null ? eventJson : eventJson.toString()) + " Exception : " + ex);
-      INDEX_FAILURES_LOGGER.error(
-        "Re-index failed for resource. Event name : " + eventName + " Event json : " + (eventJson == null ? eventJson : eventJson.toString()) +
+      INDEX_FAILURES_LOGGER
+        .error("Re-index failed for resource. Event name : " + eventName + " Event json : " + (eventJson == null ? eventJson : eventJson.toString()) +
           " Exception :" + ex);
     }
   }
@@ -87,7 +87,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
           resourceIndexHandler.deleteIndexedDocument((String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Deleted questions inside collection id : " + collectionId + " question id : " + (String) iter.next());
+          LOGGER.debug("CEH->handleCopy : Deleted questions inside collection id : " + collectionId + " question id : " + iter.next());
         }
       }
 
@@ -95,7 +95,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         Iterator<Object> iter = resourceIds.iterator();
         while (iter.hasNext()) {
           resourceIndexHandler.decreaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, (String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Decreased used in collection count id : " + (String) iter.next());
+          LOGGER.debug("CEH->handleCopy : Decreased used in collection count id : " + iter.next());
         }
       }
     } catch (Exception e) {
@@ -128,7 +128,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
           resourceIndexHandler.indexDocument((String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Re-indexed question id : " + (String) iter.next());
+          LOGGER.debug("CEH->handleCopy : Re-indexed question id : " + iter.next());
         }
       }
 
@@ -136,7 +136,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         Iterator<Object> iter = resourceIds.iterator();
         while (iter.hasNext()) {
           resourceIndexHandler.increaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, (String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Incremented used in collection count id : " + (String) iter.next());
+          LOGGER.debug("CEH->handleCopy : Incremented used in collection count id : " + iter.next());
         }
       }
     } catch (Exception e) {
