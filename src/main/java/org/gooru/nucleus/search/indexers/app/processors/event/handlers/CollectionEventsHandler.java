@@ -29,7 +29,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
     try {
       eventName = eventJson.getString(EventsConstants.EVT_OBJECT_EVENT_NAME);
       LOGGER.debug("CEH->handleEvents : Event validation passed, proceding to handle consumed event : " + eventName);
-      String collectionId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_CONTEXT_CONTENT_ID);
+      String collectionId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_GOORU_ID);
 
       switch (eventName) {
 

@@ -82,18 +82,22 @@ public class EsIndexServiceImpl implements IndexService {
 
     new IdIterator(indexableIds) {
       @Override
-      public void execute(String indexableId) {
+      public void execute(String indexableId) throws Exception {
         if ((typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION))) {
           if (!body.isEmpty()) {
             try {
               Map<String, Object> existingDocument = getDocument(indexableId, indexName, typeName);
-              Map<String, Object> statisticsMap = (Map<String, Object>) existingDocument.get(ScoreConstants.STATISTICS_FIELD);
-              setExistingStatisticsData(body, statisticsMap, typeName);
+              Map<String, Object> statisticsMap = null;
+              if(existingDocument != null){
+            	  statisticsMap = (Map<String, Object>) existingDocument.get(ScoreConstants.STATISTICS_FIELD);
+              }
+        	  setExistingStatisticsData(body, statisticsMap, typeName);
+
               getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute()
                          .actionGet();
             } catch (Exception e) {
               LOGGER.info("Exception while indexing");
-              e.printStackTrace();
+              throw new Exception(e);
             }
           }
         }

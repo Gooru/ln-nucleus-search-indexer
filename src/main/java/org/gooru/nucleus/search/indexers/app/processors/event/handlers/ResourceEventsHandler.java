@@ -28,7 +28,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     try {
       eventName = eventJson.getString(EventsConstants.EVT_OBJECT_EVENT_NAME);
       LOGGER.debug("REH->handleEvents : Event validation passed, proceding to handle consumed event : " + eventName);
-      String resourceId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_CONTEXT_CONTENT_ID);
+      String resourceId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_GOORU_ID);
 
       switch (eventName) {
 
@@ -81,6 +81,14 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   private void handlePostDelete(String resourceId) {
     try {
       LOGGER.debug("REH->handlePostDelete : Proceding to index collection/assessment that had mapped to resource : " + resourceId);
+      
+      // Decrease used in collection count of parent resource
+      String parentContentId = getParentContentIdContextObj(eventJson);
+      if(parentContentId != null ){
+    	  resourceIndexHandler.decreaseCount(parentContentId, ScoreConstants.USED_IN_COLLECTION_COUNT);
+      }
+      
+      // Re-index all the collections deleted resource mapped with.
       JsonObject payload = getPayLoadObj(eventJson);
       JsonArray collectionIds = payload.getJsonArray(EventsConstants.EVT_REF_PARENT_GOORU_IDS);
 

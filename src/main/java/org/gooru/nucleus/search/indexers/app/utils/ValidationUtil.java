@@ -25,7 +25,7 @@ public final class ValidationUtil {
       json.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT) == null || json.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).isEmpty()) {
       LOGGER.error(ErrorMsgConstants.INVALID_EVENT_JSON + " Event json : " + json);
       throw new InvalidRequestException(ErrorMsgConstants.INVALID_EVENT_JSON);
-    } else if (isNullOrEmpty(json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_CONTEXT_CONTENT_ID))) {
+    } else if (isNullOrEmpty(json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_GOORU_ID))) {
       LOGGER.error(ErrorMsgConstants.INVALID_CONTENT_ID + " Event json : " + json);
       throw new InvalidRequestException(ErrorMsgConstants.INVALID_CONTENT_ID);
     }
