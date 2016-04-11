@@ -1,6 +1,9 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import io.vertx.core.json.JsonObject;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.User;
 import org.javalite.activejdbc.Base;
@@ -8,7 +11,7 @@ import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
+import io.vertx.core.json.JsonObject;
 
 public class UserRepositoryImpl implements UserRepository {
   private static final Logger LOGGER = LoggerFactory.getLogger(UserRepositoryImpl.class);
@@ -36,6 +39,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     Base.close();
     return returnValue;
+  }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public List<Map> getUserDetails(String userID) {
+    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+    LOGGER.debug("UserRepositoryImpl : getUserDetails: " + userID);
+    List<Map> userData = Base.findAll(User.GET_USER, userID);
+    if (userData.size() < 1) {
+      LOGGER.warn("User id: {} not present in DB", userID);
+    }
+    Base.close();
+    return userData;
+
   }
 
   private PGobject getPGObject(String field, String type, String value) {

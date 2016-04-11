@@ -13,6 +13,7 @@ public class IndexRepositoryImpl implements IndexRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(IndexRepositoryImpl.class);
 
+  @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getMetadata(String referenceIds) {
     Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());

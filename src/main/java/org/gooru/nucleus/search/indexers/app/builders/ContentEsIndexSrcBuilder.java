@@ -20,13 +20,17 @@ import java.util.stream.Collectors;
  */
 public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio> extends EsIndexSrcBuilder<S, D> {
 
+  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject build(JsonObject source, D contentEo) throws Exception {
     try {
       LOGGER.debug("CEISB->build : source " + source.toString());
       String id = source.getString(EntityAttributeConstants.ID);
       contentEo.setId(id);
-      contentEo.setContentFormat(source.getString(EntityAttributeConstants.CONTENT_FORMAT, null));
+      contentEo.setIndexId(id);
+      contentEo.setIndexType(getName());
+      String contentFormat = source.getString(EntityAttributeConstants.CONTENT_FORMAT, null);
+      contentEo.setContentFormat(contentFormat);
       contentEo.setUrl(source.getString(EntityAttributeConstants.URL, null));
       contentEo.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
       String description = source.getString(EntityAttributeConstants.DESCRIPTION, null);
@@ -46,27 +50,27 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       contentEo.setIsCopyrightOwner(source.getBoolean(EntityAttributeConstants.IS_COPYRIGHT_OWNER, null));
       contentEo.setVisibleOnProfile(source.getBoolean(EntityAttributeConstants.VISIBLE_ON_PROFILE, null));
 
-      //Set Original Creator
+      // Set Original Creator
       String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
       if (originalCreatorId != null) {
         UserEo orginalCreatorEo = new UserEo();
-        JsonObject orginalCreator = getUserRepo().getUser(originalCreatorId);
-        if (orginalCreator != null) {
-          setUser(orginalCreator, orginalCreatorEo);
+        List<Map> orginalCreator = getUserRepo().getUserDetails(originalCreatorId);
+        if (orginalCreator != null && orginalCreator.size() > 0) {
+          setUser(orginalCreator.get(0), orginalCreatorEo);
           contentEo.setOriginalCreator(orginalCreatorEo.getUser());
         }
       }
-      //Set Creator
+      // Set Creator
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {
         UserEo creatorEo = new UserEo();
-        JsonObject creator = getUserRepo().getUser(creatorId);
-        if (creator != null) {
-          setUser(creator, creatorEo);
+        List<Map> creator = getUserRepo().getUserDetails(originalCreatorId);
+        if (creator != null && creator.size() > 0) {
+          setUser(creator.get(0), creatorEo);
           contentEo.setCreator(creatorEo.getUser());
         }
       }
-      //Set ContentSubFormat type escaped
+      // Set ContentSubFormat type escaped
       String contentSubFormat = source.getString(EntityAttributeConstants.CONTENT_SUB_FORMAT, null);
       contentEo.setContentSubFormat(contentSubFormat);
       String contentSubTypeEscaped = null;
@@ -78,7 +82,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         contentSubTypeEscaped = contentSubFormat.replace("/", "");
       }
       contentEo.setContentSubFormatEscaped(contentSubTypeEscaped);
-      //Set CopyrightOwner
+      // Set CopyrightOwner
       String copyrightOwner = source.getString(EntityAttributeConstants.COPYRIGHT_OWNER, null);
       if (copyrightOwner != null) {
         JsonObject copyrightOwnerJson = new JsonObject(copyrightOwner);
@@ -86,7 +90,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
           contentEo.setCopyrightOwner(copyrightOwnerJson);
         }
       }
-      //Set Question
+      // Set Question
       QuestionEo questionEo = new QuestionEo();
       String answerJson = source.getString(EntityAttributeConstants.ANSWER, null);
       if (answerJson != null) {
@@ -137,7 +141,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (!questionEo.getQuestion().isEmpty()) {
         contentEo.setQuestion(questionEo.getQuestion());
       }
-      //Set Metadata
+      // Set Metadata
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
       if (metadataString != null) {
         JsonObject metadata = new JsonObject(metadataString);
@@ -159,7 +163,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
           }
         }
       }
-      //Set Collection info of content
+      // Set Collection info of content
       JsonArray collectionIds = new JsonArray();
       JsonArray collectionTitles = new JsonArray();
       String collectionId = source.getString(EntityAttributeConstants.COLLECTION_ID, null);
@@ -173,10 +177,9 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
           collectionIds.add(usedCollectionId);
           collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
         }
-        contentEo.setCollectionIds(collectionIds);
-        contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
       }
-
+      contentEo.setCollectionIds(collectionIds);
+      contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       if (taxonomy != null) {
@@ -223,21 +226,17 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       LOGGER.debug("CEISB->build : PC weight : " + pcWeight);
       statisticsEo.setPreComputedWeight(pcWeight);
 
-
       contentEo.setStatistics(statisticsEo.getStatistics());
 
-			/*//TODO Add logic to store below details
-      statisticsEo.setHasFrameBreaker(hasFrameBreaker);
-			statisticsEo.setInvalidResource(invalidResource);
-			statisticsEo.setHasAdvertisement(hasAdvertisement);
-			statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
-			statisticsEo.setStatusIsBroken(statusIsBroken);
-			statisticsEo.setViewsCount(viewsCount);
-			JsonArray sourceTaxonomy = source.getJsonArray(EntityAttributeConstants.TAXONOMY, null);
-			if (sourceTaxonomy != null && sourceTaxonomy.size() > 0) {
-				TaxonomyEo taxonomyEo = new TaxonomyEo();
-				contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
-			}*/
+      /*
+       * //TODO Add logic to store taxonomy transformation and below details
+       * statisticsEo.setHasFrameBreaker(hasFrameBreaker);
+       * statisticsEo.setInvalidResource(invalidResource);
+       * statisticsEo.setHasAdvertisement(hasAdvertisement);
+       * statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
+       * statisticsEo.setStatusIsBroken(statusIsBroken);
+       * statisticsEo.setViewsCount(viewsCount); 
+       */
 
       LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
     } catch (Exception e) {
@@ -259,4 +258,3 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
   }
 
 }
-

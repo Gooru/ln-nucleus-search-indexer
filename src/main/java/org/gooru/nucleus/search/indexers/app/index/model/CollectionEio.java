@@ -28,6 +28,22 @@ public class CollectionEio implements Serializable {
     collection = JsonUtil.set(collection, "id", id);
   }
 
+  public String getIndexId() {
+    return collection.getString("indexId", null);
+  }
+
+  public void setIndexId(String indexId) {
+    collection = JsonUtil.set(collection, "indexId", indexId);
+  }
+
+  public String getIndexType() {
+    return collection.getString("indexType", null);
+  }
+
+  public void setIndexType(String indexType) {
+    collection = JsonUtil.set(collection, "indexType", indexType);
+  }
+
   public String getTitle() {
     return collection.getString("title", null);
   }
@@ -234,6 +250,14 @@ public class CollectionEio implements Serializable {
 
   public void setCollectionContents(JsonArray collectionContents) {
     this.collection = JsonUtil.set(collection, "collectionContents", collectionContents);
+  }
+
+  public String getModifierId() {
+    return collection.getString("modifierId", null);
+  }
+
+  public void setModifierId(String modifierId) {
+    this.collection = JsonUtil.set(collection, "modifierId", modifierId);
   }
 
 }

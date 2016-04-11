@@ -10,5 +10,7 @@ import org.javalite.activejdbc.annotations.Table;
 @Table("user_demographic")
 @IdName("id")
 public class User extends Model {
+  
+  public static final String GET_USER = "SELECT * from user_demographic u inner join user_identity i on u.id = i.user_id where u.id = ?::uuid";
 
 }
