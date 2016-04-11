@@ -78,6 +78,7 @@ public class ContentRepositoryImpl implements ContentRepository {
     return returnValue;
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getCollectionMeta(String parentContentId) {
     Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
@@ -88,7 +89,8 @@ public class ContentRepositoryImpl implements ContentRepository {
     Base.close();
     return collectionMeta;
   }
-
+  
+  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject getQuestionAndParentContentIds(String collectionId) {
     Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());

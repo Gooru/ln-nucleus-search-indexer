@@ -28,6 +28,22 @@ public class ContentEio implements Serializable {
     content = JsonUtil.set(content, "id", id);
   }
 
+	public String getIndexId() {
+		return content.getString("indexId", null);
+	}
+
+	public void setIndexId(String indexId) {
+		content = JsonUtil.set(content, "indexId", indexId);
+	}
+	
+	public String getIndexType() {
+		return content.getString("indexType", null);
+	}
+
+	public void setIndexType(String indexType) {
+		content = JsonUtil.set(content, "indexType", indexType);
+	}
+	
   public String getUrl() {
     return content.getString("url", null);
   }
