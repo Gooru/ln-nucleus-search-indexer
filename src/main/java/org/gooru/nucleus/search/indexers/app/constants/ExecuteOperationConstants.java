@@ -16,6 +16,10 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_COLLECTION_QUESTION_PARENT_CONTENT_IDS = "get_collection_question_ids_and_content_parent_ids";
 
+  public static final String GET_DELETED_RESOURCE = "get_deleted_resource";
+  
+  public static final String GET_DELETED_COLLECTION = "get_deleted_collection";
+
   private ExecuteOperationConstants() {
     throw new AssertionError();
   }

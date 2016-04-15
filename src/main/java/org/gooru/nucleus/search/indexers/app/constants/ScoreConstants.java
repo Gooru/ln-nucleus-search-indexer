@@ -22,6 +22,7 @@ public final class ScoreConstants {
   public static final String OPERATION_TYPE_INCR = "increaseCount";
   public static final String OPERATION_TYPE_DECR = "decreaseCount";
   public static final String OPERATION_TYPE_UPDATE = "update";
+  public static final String VIEWS_COUNT_FIELD = "statistics.viewsCount";
 
   public static final String[] DEMOTE_DOMAINS = {"wikipedia"};
 

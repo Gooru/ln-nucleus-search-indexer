@@ -17,11 +17,11 @@ public final class IndexScriptBuilder {
 
   protected static final String EQUALS = "=";
 
-  protected static final String INDEX_UPDATED_DATE = "indexUpdatedDate";
+  protected static final String INDEX_UPDATED_DATE = "indexUpdatedTime";
 
   protected static final String INDEX_UPDATED =
-    "if (ctx._source.containsKey(\"indexUpdatedDate\")) {ctx._source.indexUpdatedDate=indexUpdatedDate} else ({ctx._source" +
-      ".indexUpdatedDate=indexUpdatedDate})";
+    "if (ctx._source.containsKey(\"indexUpdatedTime\")) {ctx._source.indexUpdatedTime=indexUpdatedTime} else ({ctx._source" +
+      ".indexUpdatedTime=indexUpdatedTime})";
 
   protected static final String IF_EXISTS_FIELD = "if (ctx._source.";
 

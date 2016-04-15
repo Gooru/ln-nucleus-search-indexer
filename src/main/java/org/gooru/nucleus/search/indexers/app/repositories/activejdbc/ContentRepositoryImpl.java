@@ -1,7 +1,10 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -11,10 +14,8 @@ import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class ContentRepositoryImpl implements ContentRepository {
 
@@ -29,15 +30,21 @@ public class ContentRepositoryImpl implements ContentRepository {
     LOGGER.debug("ContentRepositoryImpl:getResource:findById: " + result);
 
     JsonObject returnValue = null;
-    String[] attributes =
-      {"id", "title", "description", "url", "created_at", "updated_at", "creator_id", "original_creator_id", "original_content_id", "narration",
-        "content_format", "content_subformat", "metadata", "taxonomy", "depth_of_knowledge", "thumbnail", "course_id", "unit_id", "lesson_id",
-        "collection_id", "sequence_id", "is_copyright_owner", "copyright_owner", "visible_on_profile", "info", "display_guide", "accessibility"};
-    LOGGER.debug("ContentRepositoryImpl:getResource:findById attributes: " + String.join(", ", attributes));
+    String collectionId = null;
 
     if (result != null) {
-      returnValue = new JsonObject(result.toJson(false, attributes));
+      returnValue = new JsonObject(result.toJson(false));
+      collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
     }
+    
+    // Set collection title
+    if(collectionId != null && returnValue != null){
+      JsonObject collection = CollectionRepository.instance().getCollection(collectionId);
+      if(collection != null){
+        returnValue.put(EntityAttributeConstants.COLLECTION_TITLE, collection.getString(EntityAttributeConstants.TITLE));
+      }
+    }
+    
     LOGGER.debug("ContentRepositoryImpl:getResource:findById returned: " + returnValue);
 
     return returnValue;
@@ -129,6 +136,22 @@ public class ContentRepositoryImpl implements ContentRepository {
       LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
       return null;
     }
+  }
+
+  @Override
+  public JsonObject getDeletedContent(String contentId) {
+    JsonObject returnValue = null;
+    List<Content> contents = Content.where(Content.FETCH_DELETED_QUERY, contentId, true);
+    if (contents.size() < 1) {
+      LOGGER.warn("Content id: {} not present in DB", contentId);
+    }
+    if(contents.size() > 0){
+      Content content = contents.get(0);
+      if (content != null) {
+        returnValue = new JsonObject(content.toJson(false));
+      }
+    }
+    return returnValue;
   }
 
 }

@@ -1,7 +1,13 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
-import io.vertx.core.json.JsonObject;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.script.Script;
@@ -9,6 +15,7 @@ import org.elasticsearch.script.ScriptService.ScriptType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
+import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
@@ -21,8 +28,8 @@ import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 /**
  * @author SearchTeam
@@ -34,13 +41,24 @@ public class EsIndexServiceImpl implements IndexService {
 
   private static String getIndexByType(String type) {
     String indexName = null;
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+    if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COLLECTION);
     }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+    if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
     }
     return indexName;
+  }
+
+  private static String  getIndexTypeByType(String type) {
+    String indexType = null;
+    if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+      indexType = IndexerConstants.TYPE_COLLECTION;
+    }
+    if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+      indexType = IndexerConstants.TYPE_RESOURCE;
+    }
+    return indexType;
   }
 
   private static int getInteger(Object value) {
@@ -194,4 +212,44 @@ public class EsIndexServiceImpl implements IndexService {
     source.put(ScoreConstants.COLLAB_COUNT, collabCount);
     source.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);
   }
+
+  @Override
+  public void bulkIndexStatisticsField(JsonArray jsonArr) {
+    try{
+      BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+      Iterator<Object> iter = jsonArr.iterator();
+      while(iter.hasNext()){
+        JsonObject data = (JsonObject) iter.next();
+        if(data != null){
+          LOGGER.debug("received index message from insights : " + data.toString());
+          Map<String, Object> paramsField = new HashMap<>();
+          StringBuffer scriptQuery = new StringBuffer();
+          Map<String, Object> fieldValues = new HashMap<>();
+          
+          fieldValues.put(ScoreConstants.VIEWS_COUNT_FIELD, data.getLong(EventsConstants.EVT_DATA_VIEW_COUNT));
+          IndexScriptBuilder.buildScript(data.getString(EventsConstants.EVT_DATA_ID), paramsField, scriptQuery, fieldValues);
+          LOGGER.debug("script : " + scriptQuery.toString());
+          LOGGER.debug("param fields : " + paramsField.toString());
+          bulkRequest.add(getClient().prepareUpdate(getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)), getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
+        }
+      }
+      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+      if(bulkResponse.hasFailures()){
+        BulkItemResponse[] responses =  bulkResponse.getItems();
+        for(BulkItemResponse response : responses){
+          if(response.isFailed()){
+            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId());
+          }
+        }
+        throw new Exception(bulkResponse.buildFailureMessage());
+      }
+      else {
+        LOGGER.debug("Successfully updated view count bulk");
+      }
+    }
+    catch(Exception e){
+      LOGGER.error("Failed to update statistics fields ", e.getMessage());
+    }
+  }
+  
 }

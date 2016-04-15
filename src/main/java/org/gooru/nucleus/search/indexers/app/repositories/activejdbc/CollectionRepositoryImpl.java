@@ -1,6 +1,9 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import io.vertx.core.json.JsonObject;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.javalite.activejdbc.Base;
@@ -9,9 +12,7 @@ import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import io.vertx.core.json.JsonObject;
 
 public class CollectionRepositoryImpl implements CollectionRepository {
 
@@ -94,6 +95,22 @@ public class CollectionRepositoryImpl implements CollectionRepository {
       LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
       return null;
     }
+  }
+
+  @Override
+  public JsonObject getDeletedCollection(String collectionId) {
+    JsonObject returnValue = null;
+    List<Collection> collections = Collection.where(Collection.FETCH_DELETED_QUERY, collectionId, true);
+    if (collections.size() < 1) {
+      LOGGER.warn("Content id: {} not present in DB", collectionId);
+    }
+    if(collections.size() > 0){
+      Collection content = collections.get(0);
+      if (content != null) {
+        returnValue = new JsonObject(content.toJson(false));
+      }
+    }
+    return returnValue;
   }
 
 }

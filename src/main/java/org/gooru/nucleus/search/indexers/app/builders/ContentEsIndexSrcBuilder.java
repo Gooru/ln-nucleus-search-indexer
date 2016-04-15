@@ -116,14 +116,14 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (hintDetail != null) {
         JsonObject hintExplanationDetail = new JsonObject(hintDetail);
         if (hintExplanationDetail != null) {
-          JsonArray hintArray = hintExplanationDetail.getJsonArray(EntityAttributeConstants.HINTS, null);
+          JsonArray hintArray = hintExplanationDetail.getJsonArray(EntityAttributeConstants.HINT, null);
           if (hintArray != null && hintArray.size() > 0) {
             HintEo hintEo = new HintEo();
             StringBuilder hintText = new StringBuilder();
             int hintCount = 0;
             for (int index = 0; index < hintArray.size(); index++) {
               JsonObject hintObject = hintArray.getJsonObject(index);
-              String hint = hintObject.getString(EntityAttributeConstants.HINT, null);
+              String hint = hintObject.getString(EntityAttributeConstants.HINT_TEXT, null);
               if (hint != null) {
                 hintCount++;
                 if (hintText.length() > 0) {
@@ -167,8 +167,12 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       JsonArray collectionIds = new JsonArray();
       JsonArray collectionTitles = new JsonArray();
       String collectionId = source.getString(EntityAttributeConstants.COLLECTION_ID, null);
+      String collectionTitle = source.getString(EntityAttributeConstants.COLLECTION_TITLE, null);
       if (collectionId != null) {
         collectionIds.add(collectionId);
+      }
+      if(collectionTitle != null){
+        collectionTitles.add(collectionTitle);
       }
       List<Map> collectionMetaAsList = getContentRepo().getCollectionMeta(id);
       if (collectionMetaAsList != null && collectionMetaAsList.size() > 0) {

@@ -3,6 +3,7 @@
  */
 package org.gooru.nucleus.search.indexers.app.services;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.util.Map;
@@ -38,5 +39,7 @@ public interface IndexService {
   void indexDocumentByFields(String id, String indexName, String typeName, Map<String, Object> fieldValues) throws Exception;
 
   void buildIndex(String idString, String typeName) throws Exception;
+  
+  void bulkIndexStatisticsField(JsonArray jsonArr);
 
 }

@@ -26,6 +26,13 @@ public final class EventsConstants {
   public static final String ITEM_ADD = "item.add";
   public static final String EVT_USER_CREATE = "event.user.create";
   public static final String EVT_USER_UPDATE = "user.update";
+  
+  // Events(pushed by insights) constants   
+  public static final String EVT_UPDATE_VIEWS_COUNT = "views.update";
+  public static final String EVT_DATA = "data";
+  public static final String EVT_DATA_ID = "id";
+  public static final String EVT_DATA_TYPE = "type";
+  public static final String EVT_DATA_VIEW_COUNT = "viewsCount";
 
   private EventsConstants() {
     throw new AssertionError();

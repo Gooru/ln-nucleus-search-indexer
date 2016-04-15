@@ -25,26 +25,42 @@ class MessageProcessor implements Processor {
   @Override
   public void process() {
     try {
-      ValidationUtil.rejectIfInvalidEventJson(eventBody);
       String eventName = eventBody.getString(EventsConstants.EVT_OBJECT_EVENT_NAME);
-      String contentFormat = eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
-      LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
-      LOGGER.debug("Event body Json : " + eventBody.toString());
-
-      if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
-        processResourceEvents();
-      } else if (contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name()) || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name())) {
-        processCollectionEvents();
-      } else {
-        LOGGER.error("Invalid content type passed in, not able to handle. Event name : " + eventName);
-        throw new InvalidRequestException();
+      if(!eventName.equalsIgnoreCase(EventsConstants.EVT_UPDATE_VIEWS_COUNT)){
+        ValidationUtil.rejectIfInvalidEventJson(eventBody);
       }
+      
+      if(eventName.equalsIgnoreCase(EventsConstants.EVT_UPDATE_VIEWS_COUNT)){
+        processInsightsStatsEvents();
+      }
+      else{
+        String contentFormat = eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
+        LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
+        LOGGER.debug("Event body Json : " + eventBody.toString());
+        
+        if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
+          processResourceEvents();
+        } else if (contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name()) || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name())) {
+          processCollectionEvents();
+        } else if(eventName.equalsIgnoreCase(EventsConstants.EVT_USER_UPDATE) || eventName.equalsIgnoreCase(EventsConstants.EVT_USER_CREATE)){
+          processUserEvents();
+        }
+        else{
+          LOGGER.error("Invalid content type passed in, not able to handle. Event name : " + eventName);
+          throw new InvalidRequestException();
+        }
+      }
+      
     } catch (InvalidRequestException e) {
       TRANSMIT_FAIL_LOGGER.error((eventBody != null ? eventBody : null).toString());
     }
   }
 
-  // This method to handle user related events
+
+  private void processInsightsStatsEvents() {
+    EventHandlerBuilder.buildStatisticsHandler(eventBody).handleEvents();
+  }
+
   private void processUserEvents() {
     EventHandlerBuilder.buildUserHandler(eventBody).handleEvents();
   }

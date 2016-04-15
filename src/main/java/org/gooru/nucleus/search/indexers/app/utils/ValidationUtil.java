@@ -38,6 +38,13 @@ public final class ValidationUtil {
     }
   }
 
+  public static void rejectIfNotDeleted(JsonObject json, String msg) throws InvalidRequestException {
+    if (json != null) {
+      LOGGER.error(msg);
+      throw new InvalidRequestException(msg);
+    }
+  }
+
   public static void rejectIfInvalidJsonCopyEvent(JsonObject json) throws InvalidRequestException {
     JsonObject targetObj = json.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getJsonObject(EventsConstants.EVT_PAYLOAD_TARGET);
     if (targetObj == null || originalContentIdIsNull(targetObj) || parentContentIdIsNull(targetObj)) {

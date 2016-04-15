@@ -41,8 +41,17 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
   }
 
   @Override
-  public void deleteIndexedDocument(String documentId) throws Exception {
-    // TODO Auto-generated method stub
+  public void deleteIndexedDocument(String resourceId) throws Exception {
+    try {
+      LOGGER.debug("CIH->deleteIndexedDocument : Processing delete resource for id : " + resourceId);
+      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_RESOURCE);
+      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+      ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RESOURCE_NOT_DELETED);
+      IndexService.instance().deleteDocuments(resourceId, indexName, getIndexType());
+    } catch (Exception ex) {
+      LOGGER.error("CIH->deleteIndexedDocument : Delete resource from index failed for resource id : " + resourceId + " Exception : " + ex);
+      throw new Exception(ex);
+    }
   }
 
   @Override

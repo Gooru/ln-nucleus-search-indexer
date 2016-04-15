@@ -19,5 +19,9 @@ public final class EventHandlerBuilder {
   public static IndexEventHandler buildUserHandler(JsonObject eventJson) {
     return new UserEventsHandler(eventJson);
   }
+  
+  public static IndexEventHandler buildStatisticsHandler(JsonObject eventJson){
+    return new StatisticsEventsHandler(eventJson);
+  }
 
 }

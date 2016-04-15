@@ -10,6 +10,8 @@ public final class ErrorMsgConstants {
   public static final String INVALID_CONTENT_ID = "Content id is null or empty!, Invalid event JSON ";
   public static final String INVALID_COLLABORATORS_EVENT_JSON = "JSON collaborator info is null or empty, Invalid collaborator update event JSON !!";
   public static final String INVALID_ITEM_ADD_EVENT_JSON = "JSON item add target object is null or empty, Invalid item.add event JSON !!";
+  public static final String RESOURCE_NOT_DELETED = "Given resource exists in DB !!, Delete from index failed"; 
+  public static final String COLLECTION_NOT_DELETED = "Given collection exists in DB !!, Delete from index failed"; 
 
 
   private ErrorMsgConstants() {

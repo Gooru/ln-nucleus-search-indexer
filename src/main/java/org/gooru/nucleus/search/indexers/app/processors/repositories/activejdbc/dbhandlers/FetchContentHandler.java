@@ -54,6 +54,14 @@ public class FetchContentHandler implements DBHandler {
           result = CollectionRepository.instance().getCollection(context.getContentId());
           break;
 
+        case ExecuteOperationConstants.GET_DELETED_RESOURCE:
+          result = ContentRepository.instance().getDeletedContent(context.getContentId());
+          break;
+
+        case ExecuteOperationConstants.GET_DELETED_COLLECTION:
+          result = CollectionRepository.instance().getDeletedCollection(context.getContentId());
+          break;
+          
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
           throw new InvalidRequestException();
