@@ -47,6 +47,7 @@ public final class EntityAttributeConstants {
   public static final String ORIENTATION = "orientation";
   public static final String GRADING = "grading";
   public static final String TAXONOMY_HAS_STD = "hasStandard";
+  public static final String CODE = "code";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

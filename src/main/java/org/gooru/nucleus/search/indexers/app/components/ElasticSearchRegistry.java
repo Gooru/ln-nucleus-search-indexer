@@ -101,10 +101,10 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
         try {
           LOGGER.debug("host : " + hostParams[0] + " port : " + hostParams[1]);
           transportClient.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostParams[0]), Integer.parseInt(hostParams[1])));
+          LOGGER.debug("Host added : " + host + " to elasticsearch!");
         } catch (Exception e) {
           LOGGER.error("Add transport address failed : ", e);
         }
-        LOGGER.debug("Host added : " + host + " to elasticsearch!");
       } else {
         LOGGER.debug("Oops! Could't add host : " + host + " to elasticsearch!");
       }

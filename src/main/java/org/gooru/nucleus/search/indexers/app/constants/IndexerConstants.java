@@ -32,6 +32,10 @@ public final class IndexerConstants {
   public static final String COURSE = "course";
 
   public static final String DOMAIN = "domain";
+  
+  public static final String STANDARD = "standard";
+
+  public static final String LEARNING_TARGET = "learningTarget";
 
   public static final String CURRICULUM_CODE = "curriculumCode";
 

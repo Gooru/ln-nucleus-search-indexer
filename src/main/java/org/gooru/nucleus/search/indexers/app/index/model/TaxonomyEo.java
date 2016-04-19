@@ -48,6 +48,30 @@ public class TaxonomyEo extends JsonObject {
     taxonomy = JsonUtil.set(taxonomy, "standards", standards);
   }
 
+  public JsonArray getLearningTargets() {
+    return taxonomy.getJsonArray("learningTargets", null);
+  }
+
+  public void setLearningTargets(JsonArray learningTargets) {
+    this.taxonomy = JsonUtil.set(taxonomy, "learningTargets", learningTargets);
+  }
+  
+  public JsonArray getStandardsDisplay() {
+    return taxonomy.getJsonArray("standardsDisplay", null);
+  }
+
+  public void setStandardsDisplay(JsonArray standardsDisplay) {
+    taxonomy = JsonUtil.set(taxonomy, "standardsDisplay", standardsDisplay);
+  }
+
+  public JsonArray getLearningTargetsDisplay() {
+    return taxonomy.getJsonArray("ltDisplay", null);
+  }
+
+  public void setLearningTargetsDisplay(JsonArray ltDisplay) {
+    this.taxonomy = JsonUtil.set(taxonomy, "ltDisplay", ltDisplay);
+  }
+  
   public String getTaxonomyDataSet() {
     return taxonomy.getString("taxonomyDataSet", null);
   }
@@ -73,14 +97,6 @@ public class TaxonomyEo extends JsonObject {
       hasStandard = 0;
     }
     this.taxonomy = JsonUtil.set(taxonomy, "hasStandard", hasStandard);
-  }
-
-  public JsonArray getLearningTargets() {
-    return taxonomy.getJsonArray("learningTargets", null);
-  }
-
-  public void setLearningTargets(JsonArray learningTargets) {
-    this.taxonomy = JsonUtil.set(taxonomy, "learningTargets", learningTargets);
   }
 
 }
