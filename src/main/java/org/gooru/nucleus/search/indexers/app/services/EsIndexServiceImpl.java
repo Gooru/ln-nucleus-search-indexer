@@ -218,6 +218,7 @@ public class EsIndexServiceImpl implements IndexService {
     try{
       BulkRequestBuilder bulkRequest = getClient().prepareBulk();
       Iterator<Object> iter = jsonArr.iterator();
+      LOGGER.debug("Batch size : " + jsonArr.size());
       while(iter.hasNext()){
         JsonObject data = (JsonObject) iter.next();
         if(data != null){
