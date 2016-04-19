@@ -74,6 +74,7 @@ public class CollectionRepositoryImpl implements CollectionRepository {
     return returnValue;
   }
 
+  @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getContentsOfCollection(String collectionId) {
     Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());

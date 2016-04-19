@@ -31,6 +31,14 @@ public class UserEo {
     user = JsonUtil.set(user, "lastName", lastName);
   }
 
+  public String getUsername() {
+    return user.getString("username", null);
+  }
+
+  public void setUsername(String username) {
+    user = JsonUtil.set(user, "username", username);
+  }
+  
   public String getUsernameDisplay() {
     return user.getString("usernameDisplay", null);
   }
