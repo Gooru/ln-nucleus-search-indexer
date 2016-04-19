@@ -222,7 +222,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     taxonomyDataSet.put(IndexerConstants.SUBJECT, new JsonArray(subjectLabelArray.stream().distinct().collect(Collectors.toList())));
     taxonomyDataSet.put(IndexerConstants.COURSE, new JsonArray(courseLabelArray.stream().distinct().collect(Collectors.toList())));
     taxonomyDataSet.put(IndexerConstants.DOMAIN, new JsonArray(domainLabelArray.stream().distinct().collect(Collectors.toList())));
-    curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standards != null ? standards : new JsonArray())
+    curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplay != null ? standardDisplay : new JsonArray())
             .put(IndexerConstants.CURRICULUM_DESC, new JsonArray())
             .put(IndexerConstants.CURRICULUM_NAME, new JsonArray());
     taxonomyDataSet.put(IndexerConstants.CURRICULUM, curriculumTaxonomy);
