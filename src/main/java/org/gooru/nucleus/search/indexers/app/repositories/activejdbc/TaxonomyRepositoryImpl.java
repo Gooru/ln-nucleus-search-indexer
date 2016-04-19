@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,16 +30,21 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepository {
     case IndexerConstants.DOMAIN :
       query = DefaultTaxonomy.GET_DOMAIN_QUERY;
       break;
+    case IndexerConstants.STANDARD :
+      query = DefaultTaxonomy.GET_CODE;
+      break;
+    case IndexerConstants.LEARNING_TARGET :
+      query = DefaultTaxonomy.GET_CODE;
+      break;
     }
+    List<Map> defaultTaxMetaList = null;
     if (query != null) {
-      List<Map> contents = Base.findAll(query, codeId);
-      if (contents.size() < 1) {
-        LOGGER.warn("Resources for collection : {} not present in DB", codeId);
+      defaultTaxMetaList = Base.findAll(query, codeId);
+      if (defaultTaxMetaList.size() < 1) {
+        LOGGER.warn("Default Taxonomy info for {} level for id : {} not present in DB", level, codeId);
       }
-      Base.close();
-      return contents;
     }
     Base.close();
-    return null;
+    return defaultTaxMetaList;
   }
 }
