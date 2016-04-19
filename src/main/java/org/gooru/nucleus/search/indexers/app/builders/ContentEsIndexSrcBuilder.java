@@ -200,7 +200,12 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
       statisticsEo.setHasNoDescription(description != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount(collectionIds.size());
-
+      
+      // Set accessbility values 
+      JsonObject accessibility = source.getJsonObject(EntityAttributeConstants.ACCESSIBILITY);
+      statisticsEo.setHasFrameBreaker(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
+      statisticsEo.setStatusIsBroken(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
+      
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
 
       if (source.getBoolean(IS_BUILD_INDEX) != null && source.getBoolean(IS_BUILD_INDEX)) {
@@ -231,7 +236,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       statisticsEo.setPreComputedWeight(pcWeight);
 
       contentEo.setStatistics(statisticsEo.getStatistics());
-
+      
       /*
        * //TODO Add logic to store taxonomy transformation and below details
        * statisticsEo.setHasFrameBreaker(hasFrameBreaker);
