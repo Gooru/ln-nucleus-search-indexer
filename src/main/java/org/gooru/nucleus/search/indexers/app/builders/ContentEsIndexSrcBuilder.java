@@ -157,8 +157,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
               for (Map metaMap : metacontent) {
                 value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
               }
-              metadataAsMap.put(key, value);
-              contentEo.setMetadata(metadataAsMap);
+              if(!value.isEmpty()) metadataAsMap.put(key, value);
+              if(!metadataAsMap.isEmpty()) contentEo.setMetadata(metadataAsMap);
             }
           }
         }
@@ -182,8 +182,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
           collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
         }
       }
-      contentEo.setCollectionIds(collectionIds);
-      contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
+      if (!collectionIds.isEmpty()) contentEo.setCollectionIds(collectionIds);
+      if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       if (taxonomy != null) {
@@ -225,7 +225,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       JsonObject taxJson = contentEo.getTaxonomy();
       int hasStandard = 0;
-      if (taxJson != null) {
+      if (!taxJson.isEmpty()) {
         hasStandard = taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD);
       }
 

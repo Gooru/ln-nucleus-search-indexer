@@ -364,6 +364,22 @@
                   ],
                   "include_in_all":false
                },
+               "standardsDisplay":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "ltDisplay":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
                "subject":{
                   "type":"nested",
                   "include_in_parent":true,

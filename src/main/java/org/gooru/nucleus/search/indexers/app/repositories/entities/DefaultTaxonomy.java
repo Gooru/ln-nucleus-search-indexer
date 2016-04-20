@@ -8,5 +8,6 @@ public class DefaultTaxonomy {
 
   public static final String GET_DOMAIN_QUERY = "SELECT * from default_domain where id = ?";
 
+  public static final String GET_CODE = "SELECT * from default_code where id = ?";
 
 }

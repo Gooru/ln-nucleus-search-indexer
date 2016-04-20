@@ -47,6 +47,7 @@ public final class EntityAttributeConstants {
   public static final String ORIENTATION = "orientation";
   public static final String GRADING = "grading";
   public static final String TAXONOMY_HAS_STD = "hasStandard";
+  public static final String CODE = "code";
   public static final String IS_BROKEN = "is_broken";
   public static final String IS_FRAME_BREAKER = "is_frame_breaker";
   public static final String ACCESSIBILITY = "accessibility";
