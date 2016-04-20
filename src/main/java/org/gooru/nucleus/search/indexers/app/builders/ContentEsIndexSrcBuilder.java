@@ -203,8 +203,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       
       // Set accessbility values 
       JsonObject accessibility = source.getJsonObject(EntityAttributeConstants.ACCESSIBILITY);
-      statisticsEo.setHasFrameBreaker(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
-      statisticsEo.setStatusIsBroken(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
+      statisticsEo.setHasFrameBreaker(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : 0);
+      statisticsEo.setStatusIsBroken(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_BROKEN) : 0);
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
 
@@ -225,7 +225,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       JsonObject taxJson = contentEo.getTaxonomy();
       int hasStandard = 0;
-      if (!taxJson.isEmpty()) {
+      if (taxJson != null) {
         hasStandard = taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD);
       }
 
@@ -239,12 +239,9 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       
       /*
        * //TODO Add logic to store taxonomy transformation and below details
-       * statisticsEo.setHasFrameBreaker(hasFrameBreaker);
        * statisticsEo.setInvalidResource(invalidResource);
        * statisticsEo.setHasAdvertisement(hasAdvertisement);
        * statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
-       * statisticsEo.setStatusIsBroken(statusIsBroken);
-       * statisticsEo.setViewsCount(viewsCount); 
        */
 
       LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());

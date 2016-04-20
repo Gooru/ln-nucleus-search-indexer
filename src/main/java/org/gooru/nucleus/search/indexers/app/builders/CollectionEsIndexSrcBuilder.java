@@ -105,13 +105,16 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
       String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);
+      Integer collaboratorSize = 0;
       if (collaborator != null) {
         JsonArray collaboratorIds = new JsonArray(collaborator);
         if (collaboratorIds != null) {
           collectionEo.setCollaboratorIds(collaboratorIds);
         }
-        statisticsEo.setCollaboratorCount(collaboratorIds.size());
+        collaboratorSize = collaboratorIds.size();
       }
+      statisticsEo.setCollaboratorCount(collaboratorSize);
+      
       // Set Contents of Collection
       List<Map> resourceMetaAsList = getCollectionRepo().getContentsOfCollection(id);
       int questionCount = 0, resourceCount = 0;
