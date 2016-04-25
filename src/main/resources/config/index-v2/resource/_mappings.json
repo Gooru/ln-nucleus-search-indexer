@@ -778,7 +778,7 @@
          		},
         		"name":{
          			"type" : "string",
-         			"index" : "keyword_lowercase",
+         			"analyzer" : "keyword_lowercase",
          			"include_in_all" : false
          		}
          	}
