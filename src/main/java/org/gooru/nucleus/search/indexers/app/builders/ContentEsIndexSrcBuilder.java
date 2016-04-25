@@ -184,9 +184,10 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       }
 
       // Set info 
-      JsonObject info = source.getJsonObject(EntityAttributeConstants.INFO);
+      String infoStr = source.getString(EntityAttributeConstants.INFO);
       int oer = 0;
-      if(info != null){
+      if(infoStr != null){
+        JsonObject info = new JsonObject(infoStr);
         if(info.getInteger(EntityAttributeConstants.OER) != null){
          oer = info.getInteger(EntityAttributeConstants.OER);  
         }
