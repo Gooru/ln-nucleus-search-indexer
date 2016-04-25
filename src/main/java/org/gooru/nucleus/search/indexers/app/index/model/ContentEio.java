@@ -292,4 +292,12 @@ public class ContentEio implements Serializable {
     return content.getJsonObject("displayGuide", null);
   }
 
+  public void setLicense(JsonObject license){
+    content = JsonUtil.set(content, "license", license);
+  }
+
+  public JsonObject getLicense(){
+    return content.getJsonObject("license", null);
+  }
+
 }

@@ -228,6 +228,28 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         statisticsEo.setViewsCount(viewsCount);
       }
 
+      // Set license 
+      Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
+      if(licenseId != null){
+        List<Map> metacontent = getIndexRepo().getLicenseMetadata(licenseId);
+        if(metacontent != null && metacontent.size() > 0){
+          LicenseEo license = new LicenseEo();
+          for (Map metaMap : metacontent) {
+            license.setName(metaMap.get(EntityAttributeConstants.LABEL).toString());
+            if(metaMap.get(EntityAttributeConstants.META_DATA_INFO) != null){
+              JsonObject metadataInfo = (JsonObject) metaMap.get(EntityAttributeConstants.META_DATA_INFO);
+              license.setCode(metadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
+              license.setDefinition(metadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
+              license.setIcon(metadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
+              license.setUrl(metadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
+            }
+          }
+          if(license.getLicense() != null){
+            contentEo.setLicense(license.getLicense());
+          }
+        }
+      }
+
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.USED_IN_COLLECTION_COUNT, statisticsEo.getUsedInCollectionCount());

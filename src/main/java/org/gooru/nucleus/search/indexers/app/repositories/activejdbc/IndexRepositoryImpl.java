@@ -25,4 +25,16 @@ public class IndexRepositoryImpl implements IndexRepository {
     return metadataReference;
   }
 
+  @SuppressWarnings("rawtypes")
+  @Override
+  public List<Map> getLicenseMetadata(int metadataId) {
+    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+    List<Map> metadataReference = Base.findAll(Content.FETCH_LICENSE_METADATA, metadataId);
+    if (metadataReference.size() < 1) {
+      LOGGER.warn("Metadata Reference id: {} not present in DB", metadataId);
+    }
+    Base.close();
+    return metadataReference;
+  }
+
 }

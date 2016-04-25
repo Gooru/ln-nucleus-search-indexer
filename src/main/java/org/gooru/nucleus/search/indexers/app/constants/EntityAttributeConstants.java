@@ -58,6 +58,13 @@ public final class EntityAttributeConstants {
   public static final String CONTRIBUTOR_ANALYZED = "contributor_analyzed";
   public static final String CRAWLED_SUB_ANALYZED = "crawledSubject_analyzed";
   public static final String OER = "oer";
+  public static final String LICENSE = "license";
+  public static final String META_DATA_INFO = "info";
+  public static final String LICENSE_NAME = "name";
+  public static final String LICENSE_CODE = "code";
+  public static final String LICENSE_ICON = "icon";
+  public static final String LICENSE_DEFINITION = "definition";
+  public static final String LICENSE_URL = "url";
 
   private EntityAttributeConstants() {
     throw new AssertionError();
