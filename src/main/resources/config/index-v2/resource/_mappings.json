@@ -758,22 +758,22 @@
          	"properties":{
          		"code":{
          			"type" : "string",
-         			"index" : "not_anlayzed",
+         			"index" : "not_analyzed",
          			"include_in_all" : false
          		},
         		"definition":{
          			"type" : "string",
-         			"index" : "not_anlayzed",
+         			"index" : "not_analyzed",
          			"include_in_all" : false
          		},
         		"icon":{
          			"type" : "string",
-         			"index" : "not_anlayzed",
+         			"index" : "not_analyzed",
          			"include_in_all" : false
          		},
         		"url":{
          			"type" : "string",
-         			"index" : "not_anlayzed",
+         			"index" : "not_analyzed",
          			"include_in_all" : false
          		},
         		"name":{
