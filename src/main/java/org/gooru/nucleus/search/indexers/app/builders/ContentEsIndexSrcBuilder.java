@@ -9,6 +9,8 @@ import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.*;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
+import com.google.common.base.CaseFormat;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -141,28 +143,14 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (!questionEo.getQuestion().isEmpty()) {
         contentEo.setQuestion(questionEo.getQuestion());
       }
-      // Set Metadata
+      // Set Metadata 
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
-      if (metadataString != null) {
-        JsonObject metadata = new JsonObject(metadataString);
-        if (metadata != null) {
-          JsonObject metadataAsMap = new JsonObject();
-          for (String fieldName : metadata.fieldNames()) {
-            String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
-            JsonArray value = new JsonArray();
-            JsonArray references = metadata.getJsonArray(fieldName);
-            if (references != null) {
-              String referenceIds = references.toString();
-              List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
-              for (Map metaMap : metacontent) {
-                value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
-              }
-              if(!value.isEmpty()) metadataAsMap.put(key, value);
-              if(!metadataAsMap.isEmpty()) contentEo.setMetadata(metadataAsMap);
-            }
-          }
-        }
-      }
+      setMetaData(metadataString, contentEo);
+      
+      // Set accessibility 
+      String accessibility = source.getString(EntityAttributeConstants.ACCESSIBILITY, null);
+      setMetaData(accessibility, contentEo);
+      
       // Set Collection info of content
       JsonArray collectionIds = new JsonArray();
       JsonArray collectionTitles = new JsonArray();
@@ -195,16 +183,44 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
       }
 
+      // Set info 
+      JsonObject info = source.getJsonObject(EntityAttributeConstants.INFO);
+      int oer = 0;
+      if(info != null){
+        if(info.getInteger(EntityAttributeConstants.OER) != null){
+         oer = info.getInteger(EntityAttributeConstants.OER);  
+        }
+        info.put(EntityAttributeConstants.OER, oer);
+        
+        if(info.getJsonArray(EntityAttributeConstants.COLLABORATOR) != null && info.getJsonArray(EntityAttributeConstants.COLLABORATOR).size() > 0){
+          info.put(EntityAttributeConstants.CONTRIBUTOR_ANALYZED, info.getJsonArray(EntityAttributeConstants.COLLABORATOR));
+        }
+        if(info.getString(EntityAttributeConstants.CRAWLED_SUB) != null && !info.getString(EntityAttributeConstants.CRAWLED_SUB).isEmpty()){
+          info.put(EntityAttributeConstants.CRAWLED_SUB_ANALYZED, info.getString(EntityAttributeConstants.CRAWLED_SUB));
+        }
+        
+        // Change underscore fields names to camel case
+        for(String fieldName : info.fieldNames()){
+          info.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName), info.getValue(fieldName));
+        }
+        contentEo.setInfo(info);
+      }
+      
       // Set Statistics
       StatisticsEo statisticsEo = new StatisticsEo();
       statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
       statisticsEo.setHasNoDescription(description != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount(collectionIds.size());
       
-      // Set accessbility values 
-      JsonObject accessibility = source.getJsonObject(EntityAttributeConstants.ACCESSIBILITY);
-      statisticsEo.setHasFrameBreaker(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
-      statisticsEo.setStatusIsBroken(accessibility != null ? accessibility.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
+      // Set accessibility values 
+      JsonObject displayGuide = source.getJsonObject(EntityAttributeConstants.DISPLAY_GUIDE);
+      statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
+      statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
+      
+      // Set display guide 
+      if(displayGuide != null){
+        contentEo.setDisplayGuide(displayGuide);
+      }
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
 
@@ -222,6 +238,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       rankingFields.put(ScoreConstants.SATS_HAS_NO_DESC, statisticsEo.getHasNoDescription());
       rankingFields.put(ScoreConstants.RESOURCE_URL_FIELD, contentEo.getUrl());
       rankingFields.put(ScoreConstants.HAS_21ST_CENTURY_SKILL, statisticsEo.getHas21stCenturySkills());
+      rankingFields.put(ScoreConstants.OER, oer);
 
       JsonObject taxJson = contentEo.getTaxonomy();
       int hasStandard = 0;
@@ -265,5 +282,34 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
   public String getName() {
     return IndexType.RESOURCE.getType();
   }
-
+  
+  private void setMetaData(String jsonString, ContentEio contentEo){
+    if (jsonString != null) {
+      JsonObject data = new JsonObject(jsonString);
+      if (data != null) {
+        JsonObject dataMap = new JsonObject();
+        for (String fieldName : data.fieldNames()) {
+          JsonArray value = extractMetaValues(data, fieldName);
+          String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
+          if(!value.isEmpty()) dataMap.put(key, value);
+          if(!dataMap.isEmpty()) contentEo.setMetadata(dataMap);
+        }
+      }
+    }
+  }
+  
+  @SuppressWarnings("rawtypes")
+  private JsonArray extractMetaValues(JsonObject metadata, String fieldName){
+    JsonArray value = new JsonArray();
+    JsonArray references = metadata.getJsonArray(fieldName);
+    if (references != null) {
+      String referenceIds = references.toString();
+      List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
+      for (Map metaMap : metacontent) {
+        value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+      }
+    }
+    return value;
+  }
+  
 }

@@ -39,7 +39,7 @@ public final class ValidationUtil {
   }
 
   public static void rejectIfNotDeleted(JsonObject json, String msg) throws InvalidRequestException {
-    if (json != null) {
+    if (json == null) {
       LOGGER.error(msg);
       throw new InvalidRequestException(msg);
     }

@@ -134,4 +134,23 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     return IndexerConstants.TYPE_RESOURCE;
   }
 
+  @Override
+  public void updateUserDocuments(String userId) throws Exception {
+    try {
+      LOGGER.debug("RIH->updateUserDocuments : Processing update user documents  : " + userId);
+      ProcessorContext context = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_RESOURCES);
+      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+      if(result != null && result.getJsonArray(IndexerConstants.RESOURCES) != null && result.getJsonArray(IndexerConstants.RESOURCES).size() > 0){
+        IndexService.instance().bulkIndexDocuments(result.getJsonArray(IndexerConstants.RESOURCES), getIndexType(), getIndexName());
+      }
+      else {
+        LOGGER.debug("RIH->updateUserDocuments : DB returned 0 resources,  user Id  : " + userId);
+      }
+    } catch (Exception ex) {
+      LOGGER.error("RIH->updateUserDocuments : Re-index user resources failed for user : " + userId + " Exception : " + ex);
+      throw new Exception(ex);
+    }
+
+  }
+
 }

@@ -22,7 +22,7 @@ public class FetchContentHandler implements DBHandler {
 
   @Override
   public ExecutionResult<JsonObject> checkSanity() {
-    if (context.getContentId() == null || context.getContentId().isEmpty()) {
+    if (context.getId() == null || context.getId().isEmpty()) {
       LOGGER.debug("checkSanity() failed");
       return new ExecutionResult<>(null, ExecutionResult.ExecutionStatus.FAILED);
     }
@@ -43,25 +43,33 @@ public class FetchContentHandler implements DBHandler {
     try {
       switch (operationName) {
         case ExecuteOperationConstants.GET_RESOURCE:
-          result = ContentRepository.instance().getResource(context.getContentId());
+          result = ContentRepository.instance().getResource(context.getId());
           break;
 
         case ExecuteOperationConstants.GET_COLLECTION_QUESTION_PARENT_CONTENT_IDS:
-          result = ContentRepository.instance().getQuestionAndParentContentIds(context.getContentId());
+          result = ContentRepository.instance().getQuestionAndParentContentIds(context.getId());
           break;
 
         case ExecuteOperationConstants.GET_COLLECTION:
-          result = CollectionRepository.instance().getCollection(context.getContentId());
+          result = CollectionRepository.instance().getCollection(context.getId());
           break;
 
         case ExecuteOperationConstants.GET_DELETED_RESOURCE:
-          result = ContentRepository.instance().getDeletedContent(context.getContentId());
+          result = ContentRepository.instance().getDeletedContent(context.getId());
           break;
 
         case ExecuteOperationConstants.GET_DELETED_COLLECTION:
-          result = CollectionRepository.instance().getDeletedCollection(context.getContentId());
+          result = CollectionRepository.instance().getDeletedCollection(context.getId());
+          break;
+
+        case ExecuteOperationConstants.GET_USER_RESOURCES:
+          result = ContentRepository.instance().getUserResources(context.getId());
           break;
           
+        case ExecuteOperationConstants.GET_USER_COLLECTIONS:
+          result = CollectionRepository.instance().getUserCollections(context.getId());
+          break;
+
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
           throw new InvalidRequestException();
@@ -71,7 +79,7 @@ public class FetchContentHandler implements DBHandler {
         return new ExecutionResult<>(result, ExecutionStatus.SUCCESSFUL);
       }
     } catch (Exception ex) {
-      LOGGER.error("Failed to fetch operation " + operationName + " content Id : " + context.getContentId() + " Exception : " + ex);
+      LOGGER.error("Failed to fetch operation " + operationName + " content Id : " + context.getId() + " Exception : " + ex);
     }
     return new ExecutionResult<>(null, ExecutionStatus.FAILED);
   }

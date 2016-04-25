@@ -33,6 +33,8 @@ public class ScoreFields {
   private int isCopied = 0;
 
   private String url;
+  
+  private int oer = 0;
 
   public ScoreFields(Map<String, Object> scoreFieldsMap) {
     if (scoreFieldsMap.get(ScoreConstants.VIEW_COUNT) != null) {
@@ -81,6 +83,11 @@ public class ScoreFields {
     if (scoreFieldsMap.get(ScoreConstants.ORIGINAL_CONTENT_FIELD) != null) {
       this.isCopied = 1;
     }
+    
+    if (scoreFieldsMap.get(ScoreConstants.OER) != null) {
+      this.oer = (int) scoreFieldsMap.get(ScoreConstants.OER);
+    }
+
   }
 
   public static String getDomainName(String url) throws URISyntaxException {
@@ -152,5 +159,9 @@ public class ScoreFields {
 
   public String getUrl() {
     return url;
+  }
+
+  public int getOer() {
+    return oer;
   }
 }

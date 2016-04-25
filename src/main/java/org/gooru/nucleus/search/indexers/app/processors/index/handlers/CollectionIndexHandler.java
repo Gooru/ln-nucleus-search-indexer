@@ -151,5 +151,23 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
     return IndexerConstants.TYPE_COLLECTION;
   }
 
+  @Override
+  public void updateUserDocuments(String userId) throws Exception {
+    try {
+      LOGGER.debug("CIH->updateUserDocuments : Processing update user collections  : " + userId);
+      ProcessorContext context = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_COLLECTIONS);
+      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+      if(result != null && result.getJsonArray(IndexerConstants.COLLECTIONS) != null && result.getJsonArray(IndexerConstants.COLLECTIONS).size() > 0){
+        IndexService.instance().bulkIndexDocuments(result.getJsonArray(IndexerConstants.COLLECTIONS), getIndexType(), getIndexName());
+      }
+      else {
+        LOGGER.debug("CIH->updateUserDocuments : DB returned 0 collections,  user Id  : " + userId);
+      }
+    } catch (Exception ex) {
+      LOGGER.error("CIH->updateUserDocuments : Re-index user collections failed for user : " + userId + " Exception : " + ex);
+      throw new Exception(ex);
+    }
+  }
+
 
 }

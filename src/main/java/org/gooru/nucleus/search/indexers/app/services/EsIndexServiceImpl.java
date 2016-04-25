@@ -252,5 +252,41 @@ public class EsIndexServiceImpl implements IndexService {
       LOGGER.error("Failed to update statistics fields ", e.getMessage());
     }
   }
-  
+
+  @Override
+  public void bulkIndexDocuments(JsonArray jsonArr, String indexType, String index) {
+    try{
+      int batchIndex = 0;
+      boolean contIndex = true;
+      int batchSize = jsonArr.size();
+
+      while(contIndex){
+        BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+        for(int bulkReqIndex=batchIndex; bulkReqIndex < 50; bulkReqIndex++){
+          JsonObject data = jsonArr.getJsonObject(bulkReqIndex);
+          if(data != null){
+            bulkRequest.add(getClient().prepareIndex(index, indexType, data.getString("id")).setSource(data));
+          }
+          batchIndex++;
+        }
+        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+        if(bulkResponse.hasFailures()){
+          BulkItemResponse[] responses =  bulkResponse.getItems();
+          for(BulkItemResponse response : responses){
+            if(response.isFailed()){
+              INDEX_FAILURES_LOGGER.error(" bulkIndexDocuments() : Failed  id : " + response.getId());
+            }
+          }
+          throw new Exception(bulkResponse.buildFailureMessage());
+        }
+      }
+      
+      if(batchIndex >= batchSize){
+        contIndex = false;
+      }
+    }
+    catch(Exception e){
+      LOGGER.error("EIS->bulkIndexDocuments : Failed", e);
+    }
+  }   
 }

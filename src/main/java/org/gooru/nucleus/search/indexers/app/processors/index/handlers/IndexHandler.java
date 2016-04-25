@@ -22,4 +22,6 @@ public interface IndexHandler {
   void updateCount(String entityId, String field, int count) throws Exception;
 
   void updateViewCount(String entityId, Long viewCount);
+  
+  void updateUserDocuments(String userId) throws Exception;
 }

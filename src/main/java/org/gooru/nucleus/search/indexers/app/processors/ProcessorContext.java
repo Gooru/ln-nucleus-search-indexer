@@ -4,7 +4,7 @@ import io.vertx.core.json.JsonObject;
 
 public class ProcessorContext {
 
-  private final String contentId;
+  private final String id;
   private final String contentFormat;
   private final JsonObject filters;
   private final String operationName;
@@ -13,7 +13,7 @@ public class ProcessorContext {
     if (contentId == null || operationName == null) {
       throw new IllegalStateException("Processor Context creation failed because of invalid values");
     }
-    this.contentId = contentId;
+    this.id = contentId;
     this.contentFormat = contentFormat;
     this.filters = (filters != null ? filters.copy() : null);
     this.operationName = operationName;
@@ -23,14 +23,14 @@ public class ProcessorContext {
     if (contentId == null || operationName == null) {
       throw new IllegalStateException("Processor Context creation failed because of invalid values");
     }
-    this.contentId = contentId;
+    this.id = contentId;
     this.contentFormat = null;
     this.filters = null;
     this.operationName = operationName;
   }
 
-  public String getContentId() {
-    return contentId;
+  public String getId() {
+    return id;
   }
 
   public String getContentFormat() {

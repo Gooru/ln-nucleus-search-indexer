@@ -22,5 +22,7 @@ public interface ContentRepository {
   JsonObject getQuestionAndParentContentIds(String collectionId);
   
   JsonObject getDeletedContent(String contentId);
+  
+  JsonObject getUserResources(String userId);
 
 }

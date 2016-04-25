@@ -557,7 +557,7 @@
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"mobile_friendliness":{
+         		"mobileFriendliness":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false         			
@@ -567,7 +567,7 @@
          			"analyzer" : "keyword_lowercase",
          			"include_in_all":false
          		},
-         		"school_level":{
+         		"schoolLevel":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
@@ -577,17 +577,17 @@
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"interactivity_type":{
+         		"interactivityType":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"data_type":{
+         		"dataType":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"series_title":{
+         		"seriesTitle":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
@@ -602,22 +602,22 @@
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"country_code":{
+         		"countryCode":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"script_code":{
+         		"scriptCode":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"access_mode":{
+         		"accessMode":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"control_flexibility":{
+         		"controlFlexibility":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
@@ -627,22 +627,22 @@
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"import_mode":{
+         		"importMode":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"file_code":{
+         		"fileCode":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"crawl_origin":{
+         		"crawlOrigin":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"crawl_method":{
+         		"crawlMethod":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
@@ -657,7 +657,7 @@
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"crawled_subject":{
+         		"crawledSubject":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
@@ -672,47 +672,47 @@
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"learning_mode":{
+         		"learningMode":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"end_user":{
+         		"endUser":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"child_abbreviation":{
+         		"childAbbreviation":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"child_attribution":{
+         		"childAttribution":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"parent_abbreviation":{
+         		"parentAbbreviation":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"parent_attribution":{
+         		"parentAttribution":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"subdivision_code":{
+         		"subdivisionCode":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"security_group_name":{
+         		"securityGroupName":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"resource_source_name":{
+         		"resourceSourceName":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
@@ -722,17 +722,17 @@
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"has_adaptation":{
+         		"hasAdaptation":{
          			"type" : "integer",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"is_adaptation_of":{
+         		"isAdaptationOf":{
          			"type" : "integer",
          			"index" : "not_analyzed",
          			"include_in_all":false
          		},
-         		"access_api":{
+         		"accessApi":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
@@ -747,10 +747,39 @@
          			"analyzer" : "standard",
          			"include_in_all":false
          		},
-         		"domain_authority":{
+         		"domainAuthority":{
          			"type" : "string",
          			"index" : "not_analyzed",
          			"include_in_all":false
+         		}
+         	}
+         },
+         "license":{
+         	"properties":{
+         		"code":{
+         			"type" : "string",
+         			"index" : "not_anlayzed",
+         			"include_in_all" : false
+         		},
+        		"definition":{
+         			"type" : "string",
+         			"index" : "not_anlayzed",
+         			"include_in_all" : false
+         		},
+        		"icon":{
+         			"type" : "string",
+         			"index" : "not_anlayzed",
+         			"include_in_all" : false
+         		},
+        		"url":{
+         			"type" : "string",
+         			"index" : "not_anlayzed",
+         			"include_in_all" : false
+         		},
+        		"name":{
+         			"type" : "string",
+         			"index" : "keyword_lowercase",
+         			"include_in_all" : false
          		}
          	}
          }

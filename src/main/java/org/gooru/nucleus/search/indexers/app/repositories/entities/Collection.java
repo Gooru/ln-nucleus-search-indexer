@@ -19,5 +19,7 @@ public class Collection extends Model {
   public static final String FETCH_RESOURCE_META = "select * from content where collection_id = ?::uuid;";
 
   public static final String FETCH_DELETED_QUERY = "id = ?::uuid and is_deleted = ?";
+  
+  public static final String FETCH_USER_COLLECTIONS = "creator_id = ?::uuid or original_creator_id = ?::uuid or owner_id = ?::uuid and is_deleted = ?";
 
 }

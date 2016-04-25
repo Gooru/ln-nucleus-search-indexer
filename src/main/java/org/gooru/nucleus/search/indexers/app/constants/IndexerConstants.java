@@ -46,7 +46,11 @@ public final class IndexerConstants {
   public static final String CURRICULUM = "curriculum";
 
   public static final String HYPHEN_SEPARATOR = "-";
-
+  
+  public static final String RESOURCES = "resources";
+  
+  public static final String COLLECTIONS = "collections";
+  
   public static Map<String, String> metadataReferenceType;
   public static Map<String, Map<String, Object>> metadataReference;
 

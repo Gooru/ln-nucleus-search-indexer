@@ -12,6 +12,7 @@ import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class CollectionRepositoryImpl implements CollectionRepository {
@@ -112,6 +113,21 @@ public class CollectionRepositoryImpl implements CollectionRepository {
       }
     }
     return returnValue;
+  }
+
+  @Override
+  public JsonObject getUserCollections(String userId) {
+    JsonArray collectionArray = new JsonArray();
+    List<Collection> collections = Collection.where(Collection.FETCH_USER_COLLECTIONS, userId, userId, false);
+    if(collections != null){
+      if (collections.size() < 1) {
+        LOGGER.warn("User resources not present in DB for user id: {} not present in DB", userId);
+      }
+      for(Collection collection : collections){
+        collectionArray.add(collection.toJson(false));
+      }
+    }
+    return new JsonObject().put("collections", collectionArray);
   }
 
 }

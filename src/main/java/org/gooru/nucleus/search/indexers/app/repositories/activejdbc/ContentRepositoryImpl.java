@@ -154,4 +154,19 @@ public class ContentRepositoryImpl implements ContentRepository {
     return returnValue;
   }
 
+  @Override
+  public JsonObject getUserResources(String userId) {
+    JsonArray contentArray = new JsonArray();
+    List<Content> contents = Content.where(Content.FETCH_USER_RESOURCES, userId, userId, false);
+    if(contents != null){
+      if (contents.size() < 1) {
+        LOGGER.warn("User resources not present in DB for user id: {} not present in DB", userId);
+      }
+      for(Content content : contents){
+        contentArray.add(content.toJson(false));
+      }
+    }
+    return new JsonObject().put("resources", contentArray);
+  }
+
 }

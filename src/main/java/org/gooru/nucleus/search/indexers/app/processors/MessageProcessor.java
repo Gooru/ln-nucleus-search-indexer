@@ -47,7 +47,6 @@ class MessageProcessor implements Processor {
         }
         else{
           LOGGER.error("Invalid content type passed in, not able to handle. Event name : " + eventName);
-          throw new InvalidRequestException();
         }
       }
       

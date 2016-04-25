@@ -19,6 +19,11 @@ public final class ExecuteOperationConstants {
   public static final String GET_DELETED_RESOURCE = "get_deleted_resource";
   
   public static final String GET_DELETED_COLLECTION = "get_deleted_collection";
+  
+  public static final String GET_USER_RESOURCES = "get_user_resources";
+  
+  public static final String GET_USER_COLLECTIONS = "get_user_collections";
+
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

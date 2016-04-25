@@ -51,9 +51,13 @@ public final class EntityAttributeConstants {
   public static final String IS_BROKEN = "is_broken";
   public static final String IS_FRAME_BREAKER = "is_frame_breaker";
   public static final String ACCESSIBILITY = "accessibility";
+  public static final String DISPLAY_GUIDE = "display_guide";
   public static final String INFO = "info";
   public static final String CRAWLED_SUB = "crawled_subject";
   public static final String CONTRIBUTOR = "contributor";
+  public static final String CONTRIBUTOR_ANALYZED = "contributor_analyzed";
+  public static final String CRAWLED_SUB_ANALYZED = "crawledSubject_analyzed";
+  public static final String OER = "oer";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

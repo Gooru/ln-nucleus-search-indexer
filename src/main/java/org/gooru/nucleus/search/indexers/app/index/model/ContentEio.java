@@ -275,5 +275,21 @@ public class ContentEio implements Serializable {
   public void setGrade(String grade) {
     content = JsonUtil.set(content, "grade", grade);
   }
+  
+  public JsonObject getInfo(){
+    return content.getJsonObject("info", null);
+  }
+  
+  public void setInfo(JsonObject info){
+    content = JsonUtil.set(content, "info", info);
+  }
+  
+  public void setDisplayGuide(JsonObject displayGuide){
+    content = JsonUtil.set(content, "displayGuide", displayGuide);
+  }
+  
+  public JsonObject getDisplayGuide(){
+    return content.getJsonObject("displayGuide", null);
+  }
 
 }

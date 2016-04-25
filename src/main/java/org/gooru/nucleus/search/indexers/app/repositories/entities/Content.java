@@ -14,6 +14,7 @@ public class Content extends Model {
   public static final String CONTENT_FORMAT_QUESTION = "question";
   public static final String FETCH_CONTENT_QUERY = "content_format = ?::content_format_type and id = ?::uuid and is_deleted = ?";
   public static final String FETCH_DELETED_QUERY = "id = ?::uuid and is_deleted = ?";
+  public static final String FETCH_USER_RESOURCES = "creator_id = ?::uuid or original_creator_id = ?::uuid and is_deleted = ?";
   public static final String FETCH_METADATA = "select * from metadata_reference where id = any(string_to_array(?,',')::integer[]);";
   public static final String FETCH_COLLECTION_META =
     "select collection.id, collection.title from content content inner join collection collection on collection.id = content.collection_id where " +

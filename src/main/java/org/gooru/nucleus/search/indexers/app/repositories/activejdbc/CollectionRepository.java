@@ -20,4 +20,6 @@ public interface CollectionRepository {
   List<Map> getContentsOfCollection(String collectionId);
 
   JsonObject getDeletedCollection(String collectionId);
+  
+  JsonObject getUserCollections(String userId);
 }

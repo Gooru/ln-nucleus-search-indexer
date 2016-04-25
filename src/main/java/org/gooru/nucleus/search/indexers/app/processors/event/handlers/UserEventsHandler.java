@@ -51,7 +51,18 @@ public class UserEventsHandler extends BaseEventHandler implements IndexEventHan
   }
   
   private void handleUserUpdate(String userId){
+    try {
+      resourceIndexHandler.updateUserDocuments(userId);
+    } catch (Exception e) {
+      LOGGER.error("UEH->handleUserUpdate : Failed to re-index user resources ", e);
+    }
     
+    try{
+      collectionIndexHandler.updateUserDocuments(userId);
+    }
+    catch(Exception e){
+      LOGGER.error("UEH->handleUserUpdate : Failed to re-index user collections ", e);
+    }
   }
 
 }

@@ -1,8 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.components;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
-import org.apache.kafka.clients.consumer.Consumer;
+import java.util.Properties;
+
 import org.gooru.nucleus.search.indexers.app.constants.KafkaProperties;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
@@ -10,13 +9,14 @@ import org.gooru.nucleus.search.indexers.kafka.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Properties;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 
 public final class KafkaRegistry implements Initializer, Finalizer {
 
   private static final String DEFAULT_KAFKA_SETTINGS = "defaultKafkaSettings";
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaRegistry.class);
-  private Consumer<String, String> kafkaConsumer;
+  private KafkaConsumer kafkaConsumer;
 
   private String KAFKA_TOPIC = "prodIndex";
 
@@ -69,11 +69,11 @@ public final class KafkaRegistry implements Initializer, Finalizer {
     properties.put(KafkaProperties.AUTO_OFFSET_RESET, kafkaConfig.getString(KafkaProperties.AUTO_OFFSET_RESET));
 
     this.KAFKA_TOPIC = kafkaConfig.getString(KafkaProperties.INDEX_TOPIC);
-    KafkaConsumer consumer = KafkaConsumer.create(properties);
-    consumer.start(KAFKA_TOPIC);
+    kafkaConsumer = KafkaConsumer.create(properties);
+    kafkaConsumer.start(KAFKA_TOPIC);
   }
 
-  public Consumer<String, String> getKafkaConsumer() {
+  public KafkaConsumer getKafkaConsumer() {
     if (initialized) {
       return this.kafkaConsumer;
     }
@@ -83,7 +83,7 @@ public final class KafkaRegistry implements Initializer, Finalizer {
   @Override
   public void finalizeComponent() {
     if (this.kafkaConsumer != null) {
-      this.kafkaConsumer.close();
+      this.kafkaConsumer.stop();
       this.kafkaConsumer = null;
     }
   }

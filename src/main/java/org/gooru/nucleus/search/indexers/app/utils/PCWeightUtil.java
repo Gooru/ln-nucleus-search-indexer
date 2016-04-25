@@ -24,11 +24,12 @@ public final class PCWeightUtil {
       float descScore = computeDiscriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
       float domainBoost = (rankingData.getDomainBoost() == 1) ? 1f : ScoreConstants.DEMOTE_DOMAIN;
       float standardScore = (rankingData.getHasNoStandard() == 0) ? 1f : 0f;
+      float oerScore = (rankingData.getOer() == 1) ? 1f : 0f;
       float skillScore = (rankingData.getHas21stCenturySkills()) ? 1f : 0f;
       float viewsScore = rankingData.getViewsCount() / ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
-
+      
       float usageSignalWeight = (float) ((normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2 * 0.6);
-      float otherSignalWeight = (float) (((descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore) / 6) * 0.4);
+      float otherSignalWeight = (float) (((descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore) / 7) * 0.4);
 
       return (double) normalizeValue(usageSignalWeight + otherSignalWeight);
     } catch (Exception e) {

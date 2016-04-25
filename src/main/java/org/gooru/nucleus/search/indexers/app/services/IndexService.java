@@ -42,4 +42,6 @@ public interface IndexService {
   
   void bulkIndexStatisticsField(JsonArray jsonArr);
 
+  void bulkIndexDocuments(JsonArray jsonArr, String indexType, String index);
+  
 }
