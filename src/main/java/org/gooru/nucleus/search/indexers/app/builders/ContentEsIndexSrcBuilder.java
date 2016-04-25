@@ -212,7 +212,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       statisticsEo.setHasNoDescription(description != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount(collectionIds.size());
       
-      // Set accessibility values 
+      // Set display guide values 
       JsonObject displayGuide = source.getJsonObject(EntityAttributeConstants.DISPLAY_GUIDE);
       statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
@@ -242,7 +242,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       JsonObject taxJson = contentEo.getTaxonomy();
       int hasStandard = 0;
-      if (!taxJson.isEmpty()) {
+      if (taxJson != null) {
         hasStandard = taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD);
       }
 
@@ -256,12 +256,9 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       
       /*
        * //TODO Add logic to store taxonomy transformation and below details
-       * statisticsEo.setHasFrameBreaker(hasFrameBreaker);
        * statisticsEo.setInvalidResource(invalidResource);
        * statisticsEo.setHasAdvertisement(hasAdvertisement);
        * statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
-       * statisticsEo.setStatusIsBroken(statusIsBroken);
-       * statisticsEo.setViewsCount(viewsCount); 
        */
 
       LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
