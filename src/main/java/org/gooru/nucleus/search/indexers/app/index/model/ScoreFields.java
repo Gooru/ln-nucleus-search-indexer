@@ -142,7 +142,7 @@ public class ScoreFields {
         if (getUrl() != null && ScoreConstants.DEMOTE_DOMAINS[domainIndex].contains(getDomainName(getUrl()))) {
           domainBoost = 0;
         }
-      } catch (URISyntaxException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
