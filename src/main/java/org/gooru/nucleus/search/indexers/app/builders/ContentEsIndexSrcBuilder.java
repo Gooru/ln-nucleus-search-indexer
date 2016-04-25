@@ -1,21 +1,30 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
-import org.gooru.nucleus.search.indexers.app.constants.IndexType;
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
-import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
-import org.gooru.nucleus.search.indexers.app.index.model.*;
-import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
-
-import com.google.common.base.CaseFormat;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexType;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
+import org.gooru.nucleus.search.indexers.app.index.model.AnswerEo;
+import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
+import org.gooru.nucleus.search.indexers.app.index.model.HintEo;
+import org.gooru.nucleus.search.indexers.app.index.model.LicenseEo;
+import org.gooru.nucleus.search.indexers.app.index.model.QuestionEo;
+import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
+import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
+import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
+import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
+import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
+
+import com.google.common.base.CaseFormat;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 /**
  * @author SearchTeam
@@ -188,23 +197,25 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       int oer = 0;
       if(infoStr != null){
         JsonObject info = new JsonObject(infoStr);
+        JsonObject infoEo = new JsonObject();
         if(info.getInteger(EntityAttributeConstants.OER) != null){
          oer = info.getInteger(EntityAttributeConstants.OER);  
         }
-        info.put(EntityAttributeConstants.OER, oer);
         
         if(info.getJsonArray(EntityAttributeConstants.COLLABORATOR) != null && info.getJsonArray(EntityAttributeConstants.COLLABORATOR).size() > 0){
-          info.put(EntityAttributeConstants.CONTRIBUTOR_ANALYZED, info.getJsonArray(EntityAttributeConstants.COLLABORATOR));
+          infoEo.put(EntityAttributeConstants.CONTRIBUTOR_ANALYZED, info.getJsonArray(EntityAttributeConstants.COLLABORATOR));
         }
         if(info.getString(EntityAttributeConstants.CRAWLED_SUB) != null && !info.getString(EntityAttributeConstants.CRAWLED_SUB).isEmpty()){
-          info.put(EntityAttributeConstants.CRAWLED_SUB_ANALYZED, info.getString(EntityAttributeConstants.CRAWLED_SUB));
+          infoEo.put(EntityAttributeConstants.CRAWLED_SUB_ANALYZED, info.getString(EntityAttributeConstants.CRAWLED_SUB));
         }
         
         // Change underscore fields names to camel case
         for(String fieldName : info.fieldNames()){
-          info.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName), info.getValue(fieldName));
+          if(info.getValue(fieldName) != null){
+            infoEo.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName), info.getValue(fieldName));
+          }
         }
-        contentEo.setInfo(info);
+        contentEo.setInfo(infoEo);
       }
       
       // Set Statistics
