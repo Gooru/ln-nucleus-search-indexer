@@ -15,6 +15,7 @@ public final class EventsConstants {
   public static final String EVT_PAYLOAD_CONTENT_GOORU_ID = "contentGooruId";
   public static final String EVT_PAYLOAD_COLLABORATORS = "collaborators";
   public static final String EVT_REF_PARENT_GOORU_IDS = "referenceParentGooruIds";
+  public static final String EVT_PAYLOAD_USER_ID = "id";
 
 
   public static final String ITEM_CREATE = "item.create";
@@ -25,7 +26,7 @@ public final class EventsConstants {
   public static final String COLLABORATORS_UPDATE = "collaborators.update";
   public static final String ITEM_ADD = "item.add";
   public static final String EVT_USER_CREATE = "event.user.create";
-  public static final String EVT_USER_UPDATE = "user.update";
+  public static final String EVT_USER_UPDATE = "event.user.update";
   
   // Events(pushed by insights) constants   
   public static final String EVT_UPDATE_VIEWS_COUNT = "views.update";
