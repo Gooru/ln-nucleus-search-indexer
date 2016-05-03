@@ -1,87 +1,87 @@
-{  
-   "collection":{  
-      "properties":{  
-         "id":{  
+{
+   "collection":{
+      "properties":{
+         "id":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "title":{  
+         "title":{
             "type":"string",
             "analyzer":"standard",
-            "fields":{  
-               "titleSnowball":{  
+            "fields":{
+               "titleSnowball":{
                   "type":"string",
                   "analyzer":"snowball"
                },
-               "titleKStem":{  
+               "titleKStem":{
                   "type":"string",
                   "analyzer":"gooru_kstem"
                }
             },
             "include_in_all":true
          },
-         "originalContentId":{  
+         "originalContentId":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "parentContentId":{  
+         "parentContentId":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "createdAt":{  
+         "createdAt":{
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false
          },
-         "updatedAt":{  
+         "updatedAt":{
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false
          },
-         "indexUpdatedTime":{  
+         "indexUpdatedTime":{
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false
          },
-         "owner":{  
-            "properties":{  
-               "emailId":{  
+         "owner":{
+            "properties":{
+               "emailId":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "firstName":{  
+               "firstName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "fullName":{  
+               "fullName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "userId":{  
+               "userId":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "lastName":{  
+               "lastName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "profileVisibility":{  
+               "profileVisibility":{
                   "type":"boolean",
                   "include_in_all":false
                },
-               "usernameDisplay":{  
+               "usernameDisplay":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
-                  "fields":{  
-                     "usernameDisplaySnowball":{  
+                  "fields":{
+                     "usernameDisplaySnowball":{
                         "type":"string",
                         "analyzer":"snowball"
                      }
@@ -90,42 +90,42 @@
                }
             }
          },
-         "creator":{  
-            "properties":{  
-               "emailId":{  
+         "creator":{
+            "properties":{
+               "emailId":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "firstName":{  
+               "firstName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "fullName":{  
+               "fullName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "userId":{  
+               "userId":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "lastName":{  
+               "lastName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "profileVisibility":{  
+               "profileVisibility":{
                   "type":"boolean",
                   "include_in_all":false
                },
-               "usernameDisplay":{  
+               "usernameDisplay":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
-                  "fields":{  
-                     "usernameDisplaySnowball":{  
+                  "fields":{
+                     "usernameDisplaySnowball":{
                         "type":"string",
                         "analyzer":"snowball"
                      }
@@ -134,42 +134,42 @@
                }
             }
          },
-         "originalCreator":{  
-            "properties":{  
-               "emailId":{  
+         "originalCreator":{
+            "properties":{
+               "emailId":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "firstName":{  
+               "firstName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "fullName":{  
+               "fullName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "userId":{  
+               "userId":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "lastName":{  
+               "lastName":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
-               "profileVisibility":{  
+               "profileVisibility":{
                   "type":"boolean",
                   "include_in_all":false
                },
-               "usernameDisplay":{  
+               "usernameDisplay":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
-                  "fields":{  
-                     "usernameDisplaySnowball":{  
+                  "fields":{
+                     "usernameDisplaySnowball":{
                         "type":"string",
                         "analyzer":"snowball"
                      }
@@ -178,90 +178,90 @@
                }
             }
          },
-         "modifierId":{  
+         "modifierId":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "publishDate":{  
+         "publishDate":{
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false
          },
-         "publishStatus":{  
+         "publishStatus":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "contentFormat":{  
+         "contentFormat":{
             "type":"string",
             "analyzer":"keyword_lowercase",
             "include_in_all":false
          },
-         "thumbnail":{  
+         "thumbnail":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "learningObjective":{  
+         "learningObjective":{
             "type":"string",
             "analyzer":"gooru_kstem",
             "include_in_all":true
          },
-         "audience":{  
+         "audience":{
             "type":"string",
             "analyzer":"gooru_kstem",
             "include_in_all":false
          },
-         "collaboratorIds":{  
+         "collaboratorIds":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":true
          },
-         "resourceTitles":{  
+         "resourceTitles":{
             "type":"string",
             "analyzer":"snowball",
             "include_in_all":true
          },
-         "metadata":{  
-            "properties":{  
-               "educationalUse":{  
+         "metadata":{
+            "properties":{
+               "educationalUse":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "readingLevel":{  
+               "readingLevel":{
                   "type":"string",
                   "analyzer":"snowball",
                   "include_in_all":false
                },
-               "depthOfKnowledge":{  
+               "depthOfKnowledge":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                }
             }
          },
-         "taxonomy":{  
-            "properties":{  
-               "course":{  
+         "taxonomy":{
+            "properties":{
+               "course":{
                   "type":"nested",
                   "include_in_parent":true,
-                  "properties":{  
-                     "codeId":{  
+                  "properties":{
+                     "codeId":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
-                     "hasTaxonomyRepresentation":{  
+                     "hasTaxonomyRepresentation":{
                         "type":"boolean",
                         "include_in_all":false
                      },
-                     "label":{  
+                     "label":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
-                        "fields":{  
-                           "labelSnowball":{  
+                        "fields":{
+                           "labelSnowball":{
                               "type":"string",
                               "analyzer":"snowball"
                            }
@@ -270,46 +270,46 @@
                      }
                   }
                },
-               "learningTargets":{  
+               "learningTargets":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
-                  "copy_to":[  
+                  "copy_to":[
                      "customSpellCheckerSuggest"
                   ],
                   "include_in_all":false
                },
-               "hasStandard":{  
+               "hasStandard":{
                   "type":"integer",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "standards":{  
+               "standards":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
-                  "copy_to":[  
+                  "copy_to":[
                      "customSpellCheckerSuggest"
                   ],
                   "include_in_all":false
                },
-               "subject":{  
+               "subject":{
                   "type":"nested",
                   "include_in_parent":true,
-                  "properties":{  
-                     "codeId":{  
+                  "properties":{
+                     "codeId":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
-                     "codeTypeId":{  
+                     "codeTypeId":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
-                     "label":{  
+                     "label":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
-                        "fields":{  
-                           "labelSnowball":{  
+                        "fields":{
+                           "labelSnowball":{
                               "type":"string",
                               "analyzer":"snowball"
                            }
@@ -318,25 +318,25 @@
                      }
                   }
                },
-               "domain":{  
+               "domain":{
                   "type":"nested",
                   "include_in_parent":true,
-                  "properties":{  
-                     "codeId":{  
+                  "properties":{
+                     "codeId":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
-                     "codeTypeId":{  
+                     "codeTypeId":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
-                     "label":{  
+                     "label":{
                         "type":"string",
                         "analyzer":"keyword_lowercase",
-                        "fields":{  
-                           "labelSnowball":{  
+                        "fields":{
+                           "labelSnowball":{
                               "type":"string",
                               "analyzer":"snowball"
                            }
@@ -345,149 +345,144 @@
                      }
                   }
                },
-               "taxonomyDataSet":{  
+               "taxonomyDataSet":{
                   "type":"string",
                   "analyzer":"snowball",
                   "include_in_all":false
                },
-               "taxonomySkills":{  
+               "taxonomySkills":{
                   "type":"string",
                   "analyzer":"snowball",
                   "include_in_all":false
                }
             }
          },
-         "url":{  
+         "url":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "orientation":{  
+         "orientation":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "gradingType":{  
+         "gradingType":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "resourceIds":{  
+         "resourceIds":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "visibleOnProfile":{  
+         "visibleOnProfile":{
             "type":"boolean",
             "include_in_all":false
          },
-         "statistics":{  
-            "properties":{  
-               "averageTimeSpent":{  
+         "statistics":{
+            "properties":{
+               "averageTimeSpent":{
                   "type":"long",
                   "include_in_all":false
                },
-               "hasNoDescription":{  
+               "hasNoDescription":{
                   "type":"integer",
                   "include_in_all":false
                },
-               "hasNoThumbnail":{  
+               "hasNoThumbnail":{
                   "type":"integer",
                   "include_in_all":false
                },
-               "preComputedWeight":{  
+               "preComputedWeight":{
                   "type":"double",
                   "include_in_all":false
                },
-               "collectionRemixCount":{  
+               "collectionRemixCount":{
                   "type":"long",
                   "include_in_all":false
                },
-               "viewsCount":{  
+               "viewsCount":{
                   "type":"long",
                   "include_in_all":false
                },
-               "has21stCenturySkills":{  
+               "has21stCenturySkills":{
                   "type":"boolean",
                   "include_in_all":false
                },
-               "collaboratorCount":{  
+               "collaboratorCount":{
                   "type":"integer",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "questionCount":{  
+               "questionCount":{
                   "type":"integer",
                   "include_in_all":false
                },
-               "resourceCount":{  
+               "resourceCount":{
                   "type":"integer",
                   "include_in_all":false
                },
-               "contentCount":{  
+               "contentCount":{
                   "type":"integer",
                   "include_in_all":false
                }
-               
-               
+
+
             }
          },
-         "collectionContents":{  
-            "properties":{  
-               "description":{  
+         "collectionContents":{
+            "properties":{
+               "description":{
                   "type":"string",
                   "analyzer":"gooru_kstem",
                   "include_in_all":true
                },
-               "id":{  
+               "id":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "sequenceId":{  
+               "sequenceId":{
                   "type":"integer",
                   "include_in_all":false
                },
-               "contentFormat":{  
+               "contentFormat":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "narration":{  
+               "narration":{
                   "type":"string",
                   "analyzer":"snowball",
                   "include_in_all":true
                },
-               "contentSubFormat":{  
+               "contentSubFormat":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":true
                },
-               "text":{  
+               "text":{
                   "type":"string",
                   "analyzer":"snowball",
                   "include_in_all":true
                },
-               "thumbnail":{  
+               "thumbnail":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
-               "title":{  
+               "title":{
                   "type":"string",
                   "analyzer":"gooru_kstem",
                   "include_in_all":true
                },
-               "url":{  
+               "url":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":true
                },
-               "shortTitle":{  
-                  "type":"string",
-                  "analyzer":"gooru_kstem",
-                  "include_in_all":true
-               }
             }
          }
       }

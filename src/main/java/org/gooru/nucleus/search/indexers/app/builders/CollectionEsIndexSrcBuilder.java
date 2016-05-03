@@ -114,7 +114,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         collaboratorSize = collaboratorIds.size();
       }
       statisticsEo.setCollaboratorCount(collaboratorSize);
-      
+
       // Set Contents of Collection
       List<Map> resourceMetaAsList = getCollectionRepo().getContentsOfCollection(id);
       int questionCount = 0, resourceCount = 0;
@@ -187,7 +187,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setPreComputedWeight(PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields)));
 
       collectionEo.setStatistics(statisticsEo.getStatistics());
-      
+
       //TODO Add logic to store taxonomy transformation and some statistics
       LOGGER.debug("CEISB->build : collection Eo source : " + collectionEo.getCollectionJson().toString());
 
@@ -204,7 +204,6 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
     content.setId(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.ID));
     content.setTitle(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.TITLE));
     content.setUrl(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.URL));
-    content.setShortTitle(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.SHORT_TITLE));
     content.setDescription(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.DESCRIPTION));
     content.setContentFormat(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.CONTENT_FORMAT));
     content.setContentSubFormat(BaseUtil.checkNullAndGetString(resourceMetaMap, EntityAttributeConstants.CONTENT_SUB_FORMAT));
