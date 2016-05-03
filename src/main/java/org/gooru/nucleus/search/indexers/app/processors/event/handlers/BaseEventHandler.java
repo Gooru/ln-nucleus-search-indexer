@@ -58,7 +58,7 @@ public class BaseEventHandler {
   }
 
   protected static JsonArray getCollaborators(JsonObject json) {
-    return getPayLoadObj(json).getJsonArray(EventsConstants.EVT_PAYLOAD_COLLABORATORS);
+    return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getJsonArray(EventsConstants.EVT_PAYLOAD_COLLABORATORS);
   }
 
   protected IndexHandler getResourceIndexHandler() {

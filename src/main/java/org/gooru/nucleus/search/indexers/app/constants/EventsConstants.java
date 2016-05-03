@@ -4,6 +4,7 @@ public final class EventsConstants {
 
   // Event payload field names
   public static final String EVT_PAYLOAD_OBJECT = "payLoadObject";
+  public static final String EVT_PAYLOAD_OBJECT_DATA = "data";
   public static final String EVT_CONTEXT_OBJECT = "context";
   public static final String EVT_OBJECT_EVENT_NAME = "eventName";
   public static final String EVT_PAYLOAD_CONTENT_FORMAT = "contentFormat";
