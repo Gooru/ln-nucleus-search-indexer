@@ -182,14 +182,11 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
-      if (taxonomy != null) {
-        JsonArray taxonomyArray = new JsonArray(taxonomy);
-        TaxonomyEo taxonomyEo = new TaxonomyEo();
-        if (taxonomyArray.size() > 0) {
-          addTaxnomy(taxonomyArray, taxonomyEo);
-        }
-        contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
-      }
+      JsonArray taxonomyArray = null;
+      if (taxonomy != null) taxonomyArray = new JsonArray(taxonomy);
+      TaxonomyEo taxonomyEo = new TaxonomyEo();
+      addTaxnomy(taxonomyArray, taxonomyEo);
+      contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 
       // Set info
       String infoStr = source.getString(EntityAttributeConstants.INFO);
@@ -224,7 +221,9 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       statisticsEo.setUsedInCollectionCount(collectionIds.size());
 
       // Set display guide values
-      JsonObject displayGuide = source.getJsonObject(EntityAttributeConstants.DISPLAY_GUIDE);
+      String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
+      JsonObject displayGuide = null; 
+      if (displayGuideString != null) displayGuide = source.getJsonObject(displayGuideString);
       statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
 
