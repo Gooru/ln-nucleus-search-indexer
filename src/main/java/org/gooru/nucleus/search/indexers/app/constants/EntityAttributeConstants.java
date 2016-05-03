@@ -15,7 +15,6 @@ public final class EntityAttributeConstants {
   public static final String PARENT_CONTENT_ID = "parent_content_id";
   public static final String PUBLISH_DATE = "publish_date";
   public static final String PUBLISH_STATUS = "publish_status";
-  public static final String SHORT_TITLE = "short_title";
   public static final String NARRATION = "narration";
   public static final String DESCRIPTION = "description";
   public static final String CONTENT_FORMAT = "content_format";
