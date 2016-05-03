@@ -23,14 +23,6 @@ public class CollectionContentEo {
     this.collectionContents = JsonUtil.set(collectionContents, "title", title);
   }
 
-  public String getShortTitle() {
-    return collectionContents.getString("shortTitle", null);
-  }
-
-  public void setShortTitle(String shortTitle) {
-    this.collectionContents = JsonUtil.set(collectionContents, "shortTitle", shortTitle);
-  }
-
   public Integer getSequenceId() {
     return collectionContents.getInteger("sequenceId", null);
   }

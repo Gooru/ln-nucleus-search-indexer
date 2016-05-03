@@ -53,7 +53,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       contentEo.setParentContentId(source.getString(EntityAttributeConstants.PARENT_CONTENT_ID, null));
       contentEo.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
       contentEo.setPublishStatus(source.getString(EntityAttributeConstants.PUBLISH_STATUS, null));
-      contentEo.setShortTitle(source.getString(EntityAttributeConstants.SHORT_TITLE, null));
       contentEo.setNarration(source.getString(EntityAttributeConstants.NARRATION, null));
       String thumbnail = source.getString(EntityAttributeConstants.THUMBNAIL, null);
       contentEo.setThumbnail(thumbnail);
@@ -152,14 +151,14 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (!questionEo.getQuestion().isEmpty()) {
         contentEo.setQuestion(questionEo.getQuestion());
       }
-      // Set Metadata 
+      // Set Metadata
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
       setMetaData(metadataString, contentEo);
-      
-      // Set accessibility 
+
+      // Set accessibility
       String accessibility = source.getString(EntityAttributeConstants.ACCESSIBILITY, null);
       setMetaData(accessibility, contentEo);
-      
+
       // Set Collection info of content
       JsonArray collectionIds = new JsonArray();
       JsonArray collectionTitles = new JsonArray();
@@ -183,32 +182,29 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
-      if (taxonomy != null) {
-        JsonArray taxonomyArray = new JsonArray(taxonomy);
-        TaxonomyEo taxonomyEo = new TaxonomyEo();
-        if (taxonomyArray.size() > 0) {
-          addTaxnomy(taxonomyArray, taxonomyEo);
-        }
-        contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
-      }
+      JsonArray taxonomyArray = null;
+      if (taxonomy != null) taxonomyArray = new JsonArray(taxonomy);
+      TaxonomyEo taxonomyEo = new TaxonomyEo();
+      addTaxnomy(taxonomyArray, taxonomyEo);
+      contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 
-      // Set info 
+      // Set info
       String infoStr = source.getString(EntityAttributeConstants.INFO);
       int oer = 0;
       if(infoStr != null){
         JsonObject info = new JsonObject(infoStr);
         JsonObject infoEo = new JsonObject();
         if(info.getInteger(EntityAttributeConstants.OER) != null){
-         oer = info.getInteger(EntityAttributeConstants.OER);  
+         oer = info.getInteger(EntityAttributeConstants.OER);
         }
-        
+
         if(info.getJsonArray(EntityAttributeConstants.COLLABORATOR) != null && info.getJsonArray(EntityAttributeConstants.COLLABORATOR).size() > 0){
           infoEo.put(EntityAttributeConstants.CONTRIBUTOR_ANALYZED, info.getJsonArray(EntityAttributeConstants.COLLABORATOR));
         }
         if(info.getString(EntityAttributeConstants.CRAWLED_SUB) != null && !info.getString(EntityAttributeConstants.CRAWLED_SUB).isEmpty()){
           infoEo.put(EntityAttributeConstants.CRAWLED_SUB_ANALYZED, info.getString(EntityAttributeConstants.CRAWLED_SUB));
         }
-        
+
         // Change underscore fields names to camel case
         for(String fieldName : info.fieldNames()){
           if(info.getValue(fieldName) != null){
@@ -217,30 +213,32 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
         contentEo.setInfo(infoEo);
       }
-      
+
       // Set Statistics
       StatisticsEo statisticsEo = new StatisticsEo();
       statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
       statisticsEo.setHasNoDescription(description != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount(collectionIds.size());
-      
-      // Set display guide values 
-      JsonObject displayGuide = source.getJsonObject(EntityAttributeConstants.DISPLAY_GUIDE);
+
+      // Set display guide values
+      String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
+      JsonObject displayGuide = null; 
+      if (displayGuideString != null) displayGuide = source.getJsonObject(displayGuideString);
       statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
-      
-      // Set display guide 
+
+      // Set display guide
       if(displayGuide != null){
         contentEo.setDisplayGuide(displayGuide);
       }
-      
+
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
 
       if (source.getBoolean(IS_BUILD_INDEX) != null && source.getBoolean(IS_BUILD_INDEX)) {
         statisticsEo.setViewsCount(viewsCount);
       }
 
-      // Set license 
+      // Set license
       Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
       if(licenseId != null){
         List<Map> metacontent = getIndexRepo().getLicenseMetadata(licenseId);
@@ -287,7 +285,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       statisticsEo.setPreComputedWeight(pcWeight);
 
       contentEo.setStatistics(statisticsEo.getStatistics());
-      
+
       /*
        * //TODO Add logic to store taxonomy transformation and below details
        * statisticsEo.setInvalidResource(invalidResource);
@@ -313,7 +311,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
   public String getName() {
     return IndexType.RESOURCE.getType();
   }
-  
+
   private void setMetaData(String jsonString, ContentEio contentEo){
     if (jsonString != null) {
       JsonObject data = new JsonObject(jsonString);
@@ -328,7 +326,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       }
     }
   }
-  
+
   @SuppressWarnings("rawtypes")
   private JsonArray extractMetaValues(JsonObject metadata, String fieldName){
     JsonArray value = new JsonArray();
@@ -342,5 +340,5 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     }
     return value;
   }
-  
+
 }

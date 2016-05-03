@@ -193,21 +193,6 @@
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "shortTitle":{
-            "type":"string",
-            "analyzer":"standard",
-            "fields":{
-               "shortTitleSnowball":{
-                  "type":"string",
-                  "analyzer":"snowball"
-               },
-               "shortTitleKStem":{
-                  "type":"string",
-                  "analyzer":"gooru_kstem"
-               }
-            },
-            "include_in_all":true
-         },
          "description":{
             "type":"string",
             "analyzer":"standard",
@@ -560,7 +545,7 @@
          		"mobileFriendliness":{
          			"type" : "string",
          			"index" : "not_analyzed",
-         			"include_in_all":false         			
+         			"include_in_all":false
          		},
          		"keywords":{
          			"type" : "string",

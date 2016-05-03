@@ -35,7 +35,7 @@ public class ContentEio implements Serializable {
 	public void setIndexId(String indexId) {
 		content = JsonUtil.set(content, "indexId", indexId);
 	}
-	
+
 	public String getIndexType() {
 		return content.getString("indexType", null);
 	}
@@ -43,7 +43,7 @@ public class ContentEio implements Serializable {
 	public void setIndexType(String indexType) {
 		content = JsonUtil.set(content, "indexType", indexType);
 	}
-	
+
   public String getUrl() {
     return content.getString("url", null);
   }
@@ -130,14 +130,6 @@ public class ContentEio implements Serializable {
 
   public void setPublishStatus(String publishStatus) {
     content = JsonUtil.set(content, "publishStatus", publishStatus);
-  }
-
-  public String getShortTitle() {
-    return content.getString("shortTitle", null);
-  }
-
-  public void setShortTitle(String shortTitle) {
-    content = JsonUtil.set(content, "shortTitle", shortTitle);
   }
 
   public String getNarration() {
@@ -275,19 +267,19 @@ public class ContentEio implements Serializable {
   public void setGrade(String grade) {
     content = JsonUtil.set(content, "grade", grade);
   }
-  
+
   public JsonObject getInfo(){
     return content.getJsonObject("info", null);
   }
-  
+
   public void setInfo(JsonObject info){
     content = JsonUtil.set(content, "info", info);
   }
-  
+
   public void setDisplayGuide(JsonObject displayGuide){
     content = JsonUtil.set(content, "displayGuide", displayGuide);
   }
-  
+
   public JsonObject getDisplayGuide(){
     return content.getJsonObject("displayGuide", null);
   }
