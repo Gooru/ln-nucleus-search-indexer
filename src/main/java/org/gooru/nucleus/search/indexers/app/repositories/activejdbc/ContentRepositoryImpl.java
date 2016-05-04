@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,13 +11,10 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHelper;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.javalite.activejdbc.Base;
-import org.javalite.activejdbc.Model;
-import org.javalite.activejdbc.ModelDelegate;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.vertx.core.impl.StringEscapeUtils;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
