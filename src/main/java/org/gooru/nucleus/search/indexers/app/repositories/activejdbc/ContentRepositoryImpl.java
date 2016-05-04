@@ -1,6 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,13 +9,16 @@ import java.util.Set;
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
-import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
+import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHelper;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.ModelDelegate;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.vertx.core.impl.StringEscapeUtils;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -34,8 +38,8 @@ public class ContentRepositoryImpl implements ContentRepository {
     String collectionId = null;
 
     if (result != null) {
-    //  returnValue = new JsonObject(result.toJson(false));
-      returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      DBHelper.getInstance().escapeSplChars(result);
+      returnValue = new JsonObject(result.toJson(false));
       collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
     }
     
