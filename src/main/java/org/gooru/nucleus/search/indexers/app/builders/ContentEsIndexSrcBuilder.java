@@ -320,8 +320,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         for (String fieldName : data.fieldNames()) {
           JsonArray value = extractMetaValues(data, fieldName);
           String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
-          if(!value.isEmpty()) dataMap.put(key, value);
-          if(!dataMap.isEmpty()) contentEo.setMetadata(dataMap);
+          if(value != null && !value.isEmpty()) dataMap.put(key, value);
+          if(dataMap != null && !dataMap.isEmpty()) contentEo.setMetadata(dataMap);
         }
       }
     }
