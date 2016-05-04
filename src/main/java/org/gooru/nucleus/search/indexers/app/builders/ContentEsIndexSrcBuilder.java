@@ -319,7 +319,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         JsonObject dataMap = new JsonObject();
         for (String fieldName : data.fieldNames()) {
           // Temp logic to only process array fields
-          if(fieldName.contains("[")){
+          Object metaValue = data.getValue(fieldName);
+          if(metaValue instanceof JsonArray){
             JsonArray value = extractMetaValues(data, fieldName);
             String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
             if(value != null && !value.isEmpty()) dataMap.put(key, value);

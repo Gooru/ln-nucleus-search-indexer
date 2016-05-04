@@ -2,6 +2,8 @@ package org.gooru.nucleus.search.indexers.app.builders;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import scala.Array;
+
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -89,7 +91,8 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
           for (String fieldName : metadata.fieldNames()) {
             String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
             // Temp logic to only process array fields
-            if(fieldName.contains("[")){
+            Object metaValue = metadata.getValue(fieldName);
+            if(metaValue instanceof JsonArray){
               JsonArray references = metadata.getJsonArray(fieldName);
               if (references != null) {
                 JsonArray value = new JsonArray();
