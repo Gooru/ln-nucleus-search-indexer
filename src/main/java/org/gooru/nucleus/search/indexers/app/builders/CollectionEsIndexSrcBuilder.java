@@ -96,8 +96,8 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
               for (Map metaMap : metacontent) {
                 value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
               }
-              if (!value.isEmpty()) metadataAsMap.put(key, value);
-              if (!metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
+              if (value != null && !value.isEmpty()) metadataAsMap.put(key, value);
+              if (metadataAsMap != null && !metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
             }
           }
         }
