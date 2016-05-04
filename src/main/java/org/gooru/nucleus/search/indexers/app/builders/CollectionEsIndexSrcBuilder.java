@@ -64,7 +64,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {
         UserEo creatorEo = new UserEo();
-        List<Map> creator = getUserRepo().getUserDetails(originalCreatorId);
+        List<Map> creator = getUserRepo().getUserDetails(creatorId);
         if (creator != null && creator.size() > 0) {
           setUser(creator.get(0), creatorEo);
           collectionEo.setCreator(creatorEo.getUser());
@@ -74,7 +74,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       String ownerId = source.getString(EntityAttributeConstants.OWNER_ID, null);
       if (ownerId != null) {
         UserEo ownerEo = new UserEo();
-        List<Map> owner = getUserRepo().getUserDetails(originalCreatorId);
+        List<Map> owner = getUserRepo().getUserDetails(ownerId);
         if (owner != null && owner.size() > 0) {
           setUser(owner.get(0), ownerEo);
           collectionEo.setOriginalCreator(ownerEo.getUser());

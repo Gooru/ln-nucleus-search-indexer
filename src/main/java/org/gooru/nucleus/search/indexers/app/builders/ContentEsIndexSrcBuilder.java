@@ -74,7 +74,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {
         UserEo creatorEo = new UserEo();
-        List<Map> creator = getUserRepo().getUserDetails(originalCreatorId);
+        List<Map> creator = getUserRepo().getUserDetails(creatorId);
         if (creator != null && creator.size() > 0) {
           setUser(creator.get(0), creatorEo);
           contentEo.setCreator(creatorEo.getUser());
