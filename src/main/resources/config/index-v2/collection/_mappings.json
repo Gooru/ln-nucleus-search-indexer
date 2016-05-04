@@ -484,6 +484,35 @@
                   "include_in_all":true
                }
             }
+         },
+         "license":{
+         	"properties":{
+         		"code":{
+         			"type" : "string",
+         			"index" : "not_analyzed",
+         			"include_in_all" : false
+         		},
+        		"definition":{
+         			"type" : "string",
+         			"index" : "not_analyzed",
+         			"include_in_all" : false
+         		},
+        		"icon":{
+         			"type" : "string",
+         			"index" : "not_analyzed",
+         			"include_in_all" : false
+         		},
+        		"url":{
+         			"type" : "string",
+         			"index" : "not_analyzed",
+         			"include_in_all" : false
+         		},
+        		"name":{
+         			"type" : "string",
+         			"analyzer" : "keyword_lowercase",
+         			"include_in_all" : false
+         		}
+         	}
          }
       }
    }

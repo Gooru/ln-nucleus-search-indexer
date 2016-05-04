@@ -259,5 +259,13 @@ public class CollectionEio implements Serializable {
   public void setModifierId(String modifierId) {
     this.collection = JsonUtil.set(collection, "modifierId", modifierId);
   }
+  
+  public void setLicense(JsonObject license){
+    collection = JsonUtil.set(collection, "license", license);
+  }
+
+  public JsonObject getLicense(){
+    return collection.getJsonObject("license", null);
+  }
 
 }
