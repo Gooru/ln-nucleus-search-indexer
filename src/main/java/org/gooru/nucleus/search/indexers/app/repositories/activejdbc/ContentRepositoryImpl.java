@@ -8,6 +8,7 @@ import java.util.Set;
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.javalite.activejdbc.Base;
 import org.postgresql.util.PGobject;
@@ -33,7 +34,8 @@ public class ContentRepositoryImpl implements ContentRepository {
     String collectionId = null;
 
     if (result != null) {
-      returnValue = new JsonObject(result.toJson(false));
+    //  returnValue = new JsonObject(result.toJson(false));
+      returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
       collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
     }
     
