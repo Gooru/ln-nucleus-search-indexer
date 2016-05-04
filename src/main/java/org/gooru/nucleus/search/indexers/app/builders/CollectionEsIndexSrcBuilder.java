@@ -88,16 +88,19 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
           JsonObject metadataAsMap = new JsonObject();
           for (String fieldName : metadata.fieldNames()) {
             String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
-            JsonArray references = metadata.getJsonArray(fieldName);
-            if (references != null) {
-              JsonArray value = new JsonArray();
-              String referenceIds = references.toString();
-              List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
-              for (Map metaMap : metacontent) {
-                value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+            // Temp logic to only process array fields
+            if(fieldName.contains("[")){
+              JsonArray references = metadata.getJsonArray(fieldName);
+              if (references != null) {
+                JsonArray value = new JsonArray();
+                String referenceIds = references.toString();
+                List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
+                for (Map metaMap : metacontent) {
+                  value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+                }
+                if (value != null && !value.isEmpty()) metadataAsMap.put(key, value);
+                if (metadataAsMap != null && !metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
               }
-              if (value != null && !value.isEmpty()) metadataAsMap.put(key, value);
-              if (metadataAsMap != null && !metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
             }
           }
         }
