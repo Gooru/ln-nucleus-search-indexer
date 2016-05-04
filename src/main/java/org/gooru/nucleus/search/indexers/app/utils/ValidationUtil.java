@@ -72,7 +72,7 @@ public final class ValidationUtil {
   }
 
   public static void rejectIfInvalidJsonCollaboratorUpdate(JsonObject json) throws InvalidRequestException {
-    JsonArray collaborators = json.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getJsonArray(EventsConstants.EVT_PAYLOAD_COLLABORATORS);
+    JsonArray collaborators = json.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getJsonArray(EventsConstants.EVT_PAYLOAD_COLLABORATORS);
     if (collaborators == null || collaborators.size() < 0) {
       LOGGER.error(ErrorMsgConstants.INVALID_COLLABORATORS_EVENT_JSON + " Event json : " + json);
       throw new InvalidRequestException(ErrorMsgConstants.INVALID_COLLABORATORS_EVENT_JSON);

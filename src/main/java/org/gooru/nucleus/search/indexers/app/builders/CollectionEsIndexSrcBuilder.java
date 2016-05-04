@@ -188,6 +188,28 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 
       collectionEo.setStatistics(statisticsEo.getStatistics());
 
+      // Set license
+      Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
+      if(licenseId != null){
+        List<Map> metacontent = getIndexRepo().getLicenseMetadata(licenseId);
+        if(metacontent != null && metacontent.size() > 0){
+          LicenseEo license = new LicenseEo();
+          for (Map metaMap : metacontent) {
+            license.setName(metaMap.get(EntityAttributeConstants.LABEL).toString());
+            if(metaMap.get(EntityAttributeConstants.META_DATA_INFO) != null){
+              JsonObject metadataInfo = (JsonObject) metaMap.get(EntityAttributeConstants.META_DATA_INFO);
+              license.setCode(metadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
+              license.setDefinition(metadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
+              license.setIcon(metadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
+              license.setUrl(metadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
+            }
+          }
+          if(license.getLicense() != null){
+            collectionEo.setLicense(license.getLicense());
+          }
+        }
+      }
+
       //TODO Add logic to store taxonomy transformation and some statistics
       LOGGER.debug("CEISB->build : collection Eo source : " + collectionEo.getCollectionJson().toString());
 
