@@ -1,14 +1,14 @@
 package org.gooru.nucleus.search.indexers.app.processors.event.handlers;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import org.gooru.nucleus.search.indexers.app.constants.ContentFormat;
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
-import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandler;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class ResourceEventsHandler extends BaseEventHandler implements IndexEventHandler {
 
@@ -85,7 +85,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       // Decrease used in collection count of parent resource
       String parentContentId = getParentContentIdContextObj(eventJson);
       if(parentContentId != null ){
-    	  resourceIndexHandler.decreaseCount(parentContentId, ScoreConstants.USED_IN_COLLECTION_COUNT);
+        resourceIndexHandler.indexDocument(parentContentId);
       }
       
       // Re-index all the collections deleted resource mapped with.
@@ -116,10 +116,12 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
 
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
         resourceIndexHandler.indexDocument(resourceId);
-        resourceIndexHandler.increaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, parentContentId);
+        // update used in collection count 
+        resourceIndexHandler.indexDocument(parentContentId);
         LOGGER.debug("REH->handleCopy : Re-indexed question id : " + resourceId);
       } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
-        resourceIndexHandler.increaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, parentContentId);
+        // update used in collection count
+        resourceIndexHandler.indexDocument(parentContentId);
       }
     } catch (Exception e) {
       LOGGER.error("Failed to handle copy event for resource id : " + resourceId);
@@ -153,11 +155,14 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
 
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
         resourceIndexHandler.indexDocument(resourceId);
-        resourceIndexHandler.increaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, parentContentId);
+        
+        // update used in collection count
+        resourceIndexHandler.indexDocument(parentContentId);
         LOGGER.debug(
           "Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : " + parentContentId);
       } else {
-        resourceIndexHandler.increaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, parentContentId);
+        // update used in collection count
+        resourceIndexHandler.indexDocument(parentContentId);
         LOGGER.debug("Incremented used in collection count on item.add  resource id : " + parentContentId);
       }
     } catch (Exception e) {
