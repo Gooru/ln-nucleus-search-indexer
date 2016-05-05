@@ -88,7 +88,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   protected void setUser(Map orginalCreator, UserEo userEo) {
     userEo.setUsername(BaseUtil.checkNullAndGetString(orginalCreator, "username"));
     userEo.setUsernameDisplay(BaseUtil.checkNullAndGetString(orginalCreator, "username"));
-    userEo.setUserId(BaseUtil.checkNullAndGetString(orginalCreator, "id"));
+    userEo.setUserId(BaseUtil.checkNullAndGetString(orginalCreator, "userId"));
     userEo.setLastName(BaseUtil.checkNullAndGetString(orginalCreator, "lastname"));
     userEo.setFirstName(BaseUtil.checkNullAndGetString(orginalCreator, "firstname"));
     userEo.setFullName(
