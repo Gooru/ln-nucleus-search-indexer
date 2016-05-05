@@ -242,11 +242,15 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
             license.setName(metaMap.get(EntityAttributeConstants.LABEL).toString());
             if(metaMap.get(EntityAttributeConstants.META_DATA_INFO) != null){
               String metadataInfo = Convert.toString(metaMap.get(EntityAttributeConstants.META_DATA_INFO));
-              JsonObject licenseMetadataInfo = new JsonObject(metadataInfo);
-              license.setCode(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
-              license.setDefinition(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
-              license.setIcon(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
-              license.setUrl(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
+              if(metadataInfo != null && !metadataInfo.isEmpty()){
+                JsonObject licenseMetadataInfo = new JsonObject(metadataInfo).getJsonObject(EntityAttributeConstants.LICENSE);
+                if(licenseMetadataInfo != null){
+                  license.setCode(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
+                  license.setDefinition(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
+                  license.setIcon(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
+                  license.setUrl(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
+                }
+              }
             }
           }
           if(license.getLicense() != null){
