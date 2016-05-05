@@ -78,5 +78,14 @@ public class UserEo {
   public void setProfileVisibility(Boolean profileVisibility) {
     user = JsonUtil.set(user, "profileVisibility", profileVisibility);
   }
+  
+  public String getProfileImage() {
+    return user.getString("profileImage", null);
+  }
+
+  public void setProfileImage(String profileImg) {
+    user = JsonUtil.set(user, "profileImage", profileImg);
+  }
+  
 
 }

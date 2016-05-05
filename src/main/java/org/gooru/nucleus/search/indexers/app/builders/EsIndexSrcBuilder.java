@@ -98,6 +98,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       JsonObject metadata = new JsonObject(orginalCreator.get("metadata").toString());
       userEo.setProfileVisibility(metadata.getBoolean("is_profile_visible", false));
     }
+    userEo.setProfileImage(BaseUtil.checkNullAndGetString(orginalCreator, "thumbnail_path"));
+    
   }
 
   @SuppressWarnings("rawtypes")

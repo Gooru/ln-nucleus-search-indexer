@@ -194,8 +194,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
          oer = info.getInteger(EntityAttributeConstants.OER);
         }
 
-        if(info.getJsonArray(EntityAttributeConstants.COLLABORATOR) != null && info.getJsonArray(EntityAttributeConstants.COLLABORATOR).size() > 0){
-          infoEo.put(EntityAttributeConstants.CONTRIBUTOR_ANALYZED, info.getJsonArray(EntityAttributeConstants.COLLABORATOR));
+        if(info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR) != null && info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR).size() > 0){
+          infoEo.put(EntityAttributeConstants.CONTRIBUTOR_ANALYZED, info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR));
         }
         if(info.getString(EntityAttributeConstants.CRAWLED_SUB) != null && !info.getString(EntityAttributeConstants.CRAWLED_SUB).isEmpty()){
           infoEo.put(EntityAttributeConstants.CRAWLED_SUB_ANALYZED, info.getString(EntityAttributeConstants.CRAWLED_SUB));

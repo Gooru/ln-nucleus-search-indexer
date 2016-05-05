@@ -87,6 +87,11 @@
                      }
                   },
                   "include_in_all":false
+               },
+               "profileImage":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
                }
             }
          },
@@ -130,6 +135,11 @@
                         "analyzer":"snowball"
                      }
                   },
+                  "include_in_all":false
+               },
+               "profileImage":{
+                  "type":"string",
+                  "index":"not_analyzed",
                   "include_in_all":false
                }
             }
@@ -175,6 +185,11 @@
                      }
                   },
                   "include_in_all":false
+               },
+               "profileImage":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
                }
             }
          },
@@ -207,11 +222,6 @@
             "type":"string",
             "analyzer":"gooru_kstem",
             "include_in_all":true
-         },
-         "audience":{
-            "type":"string",
-            "analyzer":"gooru_kstem",
-            "include_in_all":false
          },
          "collaboratorIds":{
             "type":"string",
