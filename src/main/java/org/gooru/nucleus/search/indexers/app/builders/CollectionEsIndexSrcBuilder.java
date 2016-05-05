@@ -110,15 +110,15 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
       String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);
-      Integer collaboratorSize = 0;
+      Integer collaboratorCount  = 0;
       if (collaborator != null) {
         JsonArray collaboratorIds = new JsonArray(collaborator);
         if (collaboratorIds != null) {
           collectionEo.setCollaboratorIds(collaboratorIds);
         }
-        collaboratorSize = collaboratorIds.size();
+        collaboratorCount = collaboratorIds.size();
       }
-      statisticsEo.setCollaboratorCount(collaboratorSize);
+      statisticsEo.setCollaboratorCount(collaboratorCount);
 
       // Set Contents of Collection
       List<Map> resourceMetaAsList = getCollectionRepo().getContentsOfCollection(id);
@@ -161,14 +161,10 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       int remixCount = source.getInteger(ScoreConstants.COLLECTION_REMIX_COUNT);
-      int collaboratorCount = source.getInteger(ScoreConstants.COLLAB_COUNT);
 
       // Use values from statistics index on build index from scratch
-      if (source.getBoolean(IS_BUILD_INDEX) != null && source.getBoolean(IS_BUILD_INDEX)) {
-        statisticsEo.setViewsCount(viewsCount);
-        statisticsEo.setCollectionRemixCount(remixCount);
-        statisticsEo.setCollaboratorCount(collaboratorCount);
-      }
+      statisticsEo.setViewsCount(viewsCount);
+      statisticsEo.setCollectionRemixCount(remixCount);
 
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);

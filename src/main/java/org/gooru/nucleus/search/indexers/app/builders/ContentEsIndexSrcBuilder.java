@@ -155,10 +155,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
       setMetaData(metadataString, contentEo);
 
-      // Set accessibility
-      String accessibility = source.getString(EntityAttributeConstants.ACCESSIBILITY, null);
-      setMetaData(accessibility, contentEo);
-
       // Set Collection info of content
       JsonArray collectionIds = new JsonArray();
       JsonArray collectionTitles = new JsonArray();
@@ -233,10 +229,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       }
 
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
-
-      if (source.getBoolean(IS_BUILD_INDEX) != null && source.getBoolean(IS_BUILD_INDEX)) {
-        statisticsEo.setViewsCount(viewsCount);
-      }
+      statisticsEo.setViewsCount(viewsCount);
 
       // Set license
       Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
