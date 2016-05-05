@@ -339,7 +339,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       String referenceIds = references.toString();
       List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
       for (Map metaMap : metacontent) {
-        value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+        value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
       }
     }
     return value;
