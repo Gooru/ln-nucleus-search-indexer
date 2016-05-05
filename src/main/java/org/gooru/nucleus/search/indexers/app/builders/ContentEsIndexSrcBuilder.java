@@ -20,6 +20,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
+import org.javalite.common.Convert;
 
 import com.google.common.base.CaseFormat;
 
@@ -240,11 +241,12 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
           for (Map metaMap : metacontent) {
             license.setName(metaMap.get(EntityAttributeConstants.LABEL).toString());
             if(metaMap.get(EntityAttributeConstants.META_DATA_INFO) != null){
-              JsonObject metadataInfo = (JsonObject) metaMap.get(EntityAttributeConstants.META_DATA_INFO);
-              license.setCode(metadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
-              license.setDefinition(metadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
-              license.setIcon(metadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
-              license.setUrl(metadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
+              String metadataInfo = Convert.toString(metaMap.get(EntityAttributeConstants.META_DATA_INFO));
+              JsonObject licenseMetadataInfo = new JsonObject(metadataInfo);
+              license.setCode(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
+              license.setDefinition(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
+              license.setIcon(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
+              license.setUrl(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
             }
           }
           if(license.getLicense() != null){
