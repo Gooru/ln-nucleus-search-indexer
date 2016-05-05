@@ -278,14 +278,47 @@
             "properties":{
                "educationalUse":{
                   "type":"string",
+                  "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "readingLevel":{
                   "type":"string",
+                  "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "depthOfKnowledge":{
                   "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               },
+               "momentsOfLearning":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               },
+               "audience":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               },
+               "advertisementLevel":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               },
+               "hazardLevel":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               },
+               "mediaFeature":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               },
+               "grade":{
+                  "type":"string",
+                  "index":"not_analyzed",
                   "include_in_all":false
                }
             }

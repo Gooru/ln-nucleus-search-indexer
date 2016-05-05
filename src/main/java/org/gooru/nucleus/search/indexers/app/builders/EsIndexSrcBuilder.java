@@ -150,13 +150,16 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
                   learningTargetCode = code;
                   learningTargetArray.add(learningTargetCode);
                   List<Map> ltData = getTaxonomyRepo().getDefaultTaxonomyData(learningTargetCode, IndexerConstants.LEARNING_TARGET);
-                  ltDisplayArray.add((ltData != null && ltData.size() > 0) ? ltData.get(0).get(EntityAttributeConstants.CODE).toString() : null);
+                  if(ltData != null && ltData.size() > 0) {
+                    ltDisplayArray.add(ltData.get(0).get(EntityAttributeConstants.CODE).toString());
+                  }
                 }
                 if (standardCode != null) {
                   standardArray.add(standardCode);
                   List<Map> standardData = getTaxonomyRepo().getDefaultTaxonomyData(standardCode, IndexerConstants.STANDARD);
-                  standardDisplayArray.add((standardData != null && standardData.size() > 0)
-                          ? standardData.get(0).get(EntityAttributeConstants.CODE).toString() : null);
+                  if(standardData != null && standardData.size() > 0) {
+                    standardDisplayArray.add(standardData.get(0).get(EntityAttributeConstants.CODE).toString());
+                  }
                 }
               }
             }
