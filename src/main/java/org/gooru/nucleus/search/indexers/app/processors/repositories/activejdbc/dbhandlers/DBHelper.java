@@ -39,8 +39,8 @@ public final class DBHelper {
         try {
           model.set(name, StringEscapeUtils.escapeJava(String.valueOf(v)));
         } catch (Exception e) {
-          LOGGER.warn("Failed to parse value of field '{}', will use default string without conversion ", name);
-          model.set(name, String.valueOf(v));
+            LOGGER.warn("Failed to parse value of field '{}', will use default string without conversion ", name);
+            model.set(name, String.valueOf(v));
         }
       } 
     }

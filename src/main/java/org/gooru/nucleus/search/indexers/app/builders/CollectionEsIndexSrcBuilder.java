@@ -47,7 +47,6 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       collectionEo.setThumbnail(thumbnail);
       String learningObjective = source.getString(EntityAttributeConstants.LEARNING_OBJECTIVE, null);
       collectionEo.setLearningObjective(learningObjective);
-      collectionEo.setAudience(source.getJsonArray(EntityAttributeConstants.AUDIENCE, null));
       collectionEo.setOrientation(source.getString(EntityAttributeConstants.ORIENTATION, null));
       collectionEo.setVisibleOnProfile(source.getBoolean(EntityAttributeConstants.VISIBLE_ON_PROFILE, null));
       collectionEo.setGradingType(source.getString(EntityAttributeConstants.GRADING, null));

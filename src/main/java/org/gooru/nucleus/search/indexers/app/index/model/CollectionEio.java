@@ -156,14 +156,6 @@ public class CollectionEio implements Serializable {
     collection = JsonUtil.set(collection, "learningObjective", learningObjective);
   }
 
-  public JsonArray getAudience() {
-    return collection.getJsonArray("audience", null);
-  }
-
-  public void setAudience(JsonArray audience) {
-    this.collection = JsonUtil.set(collection, "audience", audience);
-  }
-
   public JsonArray getCollaboratorIds() {
     return collection.getJsonArray("collaboratorIds", null);
   }
