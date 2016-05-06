@@ -102,7 +102,6 @@ public class ContentRepositoryImpl implements ContentRepository {
   @SuppressWarnings("rawtypes")
   @Override
   public JsonObject getQuestionAndParentContentIds(String collectionId) {
-    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
     List<Map> contents = Base.findAll(Content.FETCH_QUESTION_AND_PARENT_CONTENT_IDS, collectionId);
     if (contents.size() < 1) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
@@ -122,7 +121,6 @@ public class ContentRepositoryImpl implements ContentRepository {
         }
       }
     }
-    Base.close();
     result.put(IndexerConstants.PARENT_CONTENT_IDS, parentContentIds);
     result.put(IndexerConstants.QUESTION_IDS, questionIds);
     return result;
