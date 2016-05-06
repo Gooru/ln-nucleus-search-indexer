@@ -152,6 +152,14 @@ public class CollectionEio implements Serializable {
     return collection.getString("learningObjective", null);
   }
 
+  public void setLanguageObjective(String learningObjective) {
+    collection = JsonUtil.set(collection, "languageObjective", learningObjective);
+  }
+
+  public String getLanguageObjective() {
+    return collection.getString("languageObjective", null);
+  }
+
   public void setLearningObjective(String learningObjective) {
     collection = JsonUtil.set(collection, "learningObjective", learningObjective);
   }

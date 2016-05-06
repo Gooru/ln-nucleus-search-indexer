@@ -47,5 +47,7 @@ public final class IndexerConstants {
   public static final String RESOURCES = "resources";
   
   public static final String COLLECTIONS = "collections";
+
+  public static final String LANG_OBJECTIVE = "languageObjective";
   
 }

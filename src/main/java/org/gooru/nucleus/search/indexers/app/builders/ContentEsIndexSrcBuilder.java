@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -103,6 +104,11 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       }
       // Set Question
       QuestionEo questionEo = new QuestionEo();
+       
+      if(contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION)){
+        questionEo.setQuestionText(contentEo.getDescription());
+      }
+      
       String answerJson = source.getString(EntityAttributeConstants.ANSWER, null);
       if (answerJson != null) {
         JsonArray answerArray = new JsonArray(answerJson);
@@ -232,6 +238,12 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       statisticsEo.setViewsCount(viewsCount);
 
+      int invalidResource = 0;
+      if(StringUtils.trimToNull(contentEo.getTitle()) == null){
+        invalidResource = 1;
+      }
+      statisticsEo.setInvalidResource(invalidResource);
+      
       // Set license
       Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
       if(licenseId != null){

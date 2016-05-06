@@ -223,6 +223,11 @@
             "analyzer":"gooru_kstem",
             "include_in_all":true
          },
+         "languageObjective":{
+            "type":"string",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":true
+         },
          "collaboratorIds":{
             "type":"string",
             "index":"not_analyzed",

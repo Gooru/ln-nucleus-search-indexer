@@ -38,5 +38,13 @@ public class QuestionEo {
   public void setHint(JsonObject hint) {
     this.question = JsonUtil.set(question, "hint", hint);
   }
+  
+  public void setQuestionText(String questionText){
+    this.question = JsonUtil.set(question, "questionText", questionText);
+  }
+  
+  public String getQuestionText(){
+    return question.getString("questionText", null);
+  }
 
 }

@@ -281,6 +281,11 @@
                         "include_in_all":false
                      }
                   }
+               },
+               "questionText":{
+				  "type":"string",
+				  "analyzer":"snowball",
+				  "include_in_all":false
                }
             }
          },

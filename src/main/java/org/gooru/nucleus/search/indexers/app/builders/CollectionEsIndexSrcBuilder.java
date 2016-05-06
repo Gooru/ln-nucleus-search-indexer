@@ -1,24 +1,29 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import scala.Array;
-
-import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
-import org.gooru.nucleus.search.indexers.app.constants.IndexType;
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
-import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
-import org.gooru.nucleus.search.indexers.app.index.model.*;
-import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
-import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
-
-import com.google.common.base.CaseFormat;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexType;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
+import org.gooru.nucleus.search.indexers.app.index.model.CollectionContentEo;
+import org.gooru.nucleus.search.indexers.app.index.model.CollectionEio;
+import org.gooru.nucleus.search.indexers.app.index.model.LicenseEo;
+import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
+import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
+import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
+import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
+import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
+import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
+
+import com.google.common.base.CaseFormat;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 /**
  * @author SearchTeam
@@ -91,8 +96,13 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
           JsonObject metadataAsMap = new JsonObject();
           for (String fieldName : metadata.fieldNames()) {
             String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
-            // Temp logic to only process array fields
             Object metaValue = metadata.getValue(fieldName);
+
+            if(key.equalsIgnoreCase(IndexerConstants.LANG_OBJECTIVE)){
+              collectionEo.setLanguageObjective((String)metaValue);
+            }
+            
+            // Temp logic to only process array fields
             if(metaValue instanceof JsonArray){
               JsonArray references = metadata.getJsonArray(fieldName);
               if (references != null) {
