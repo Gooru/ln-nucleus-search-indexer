@@ -12,6 +12,8 @@ import org.gooru.nucleus.search.indexers.app.index.model.*;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
+import com.google.common.base.CaseFormat;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +90,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         if (metadata != null) {
           JsonObject metadataAsMap = new JsonObject();
           for (String fieldName : metadata.fieldNames()) {
-            String key = IndexerConstants.getMetadataIndexAttributeName(fieldName);
+            String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
             // Temp logic to only process array fields
             Object metaValue = metadata.getValue(fieldName);
             if(metaValue instanceof JsonArray){
