@@ -5,6 +5,7 @@ import org.gooru.nucleus.search.indexers.app.constants.*;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
+import org.gooru.nucleus.search.indexers.app.services.CrawlerService;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
@@ -28,6 +29,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNull(result, ErrorMsgConstants.RESOURCE_DATA_NULL);
       LOGGER.debug("RIH->indexDocument: getIndexDataContent() returned:" + result);
+      //Extract text while indexing ==>> IndexService.instance().buildInfoIndex(resourceId, result);
       IndexService.instance().indexDocuments(resourceId, indexName, getIndexType(), result);
     } catch (Exception ex) {
       LOGGER.error("RIH->indexDocument: Re-index failed for resource : " + resourceId + " Exception " + ex);

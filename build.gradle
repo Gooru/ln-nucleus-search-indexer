@@ -68,12 +68,11 @@ dependencies {
     compile "org.postgresql:postgresql:${postgresVersion}"
     compile "org.javalite:activejdbc:${activejdbcVersion}"
     compile "org.javalite:activejdbc-instrumentation:${activejdbcVersion}"
-//	compile "org.mvel:mvel2:${mvelVersion}"
 	compile "commons-lang:commons-lang:2.6"
 	compile "org.apache.commons:commons-lang3:3.0"
 	compile "org.elasticsearch:elasticsearch-lang-mvel:1.5.0"
-	
-    
+	compile "org.jsoup:jsoup:1.8.3"
+	compile "com.itextpdf:itextpdf:5.5.8"
 	
     // Test dependencies
     testCompile "junit:junit:${junitVersion}"

@@ -84,7 +84,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (TaxonomyRepositoryImpl) TaxonomyRepository.instance();
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({ "rawtypes"})
   protected void setUser(Map orginalCreator, UserEo userEo) {
     userEo.setUsername(BaseUtil.checkNullAndGetString(orginalCreator, "username"));
     userEo.setUsernameDisplay(BaseUtil.checkNullAndGetString(orginalCreator, "username"));
@@ -99,7 +99,6 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       userEo.setProfileVisibility(metadata.getBoolean("is_profile_visible", false));
     }
     userEo.setProfileImage(BaseUtil.checkNullAndGetString(orginalCreator, "thumbnail_path"));
-    
   }
 
   @SuppressWarnings("rawtypes")

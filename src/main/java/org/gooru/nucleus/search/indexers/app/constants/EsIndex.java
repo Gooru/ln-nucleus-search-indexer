@@ -16,7 +16,8 @@ public enum EsIndex {
   DICTIONARY("dictionary"),
   USER("user"),
   CONTENT_PROVIDER("content_provider", new String[]{"publisher", "aggregator"}),
-  STATISTICS("statistics");
+  STATISTICS("statistics"),
+  CONTENT_INFO("contentinfo");
 
   private final String name;
 

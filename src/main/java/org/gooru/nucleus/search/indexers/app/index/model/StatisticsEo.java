@@ -37,7 +37,6 @@ public class StatisticsEo {
     this.statistics = JsonUtil.set(statistics, "usedInCollectionCount", usedInCollectionCount);
   }
 
-
   public Integer getInvalidResource() {
     return statistics.getInteger("invalidResource", 0);
   }
