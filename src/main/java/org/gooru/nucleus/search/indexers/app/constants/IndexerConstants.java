@@ -11,6 +11,8 @@ public final class IndexerConstants {
   public static final String TYPE_ASSESSMENT = "assessment";
 
   public static final String TYPE_STATISTICS = "statistics";
+  
+  public static final String TYPE_CONTENT_INFO = "contentinfo";
 
   public static final String COLLECTION_IDS = "collection_ids";
 

@@ -289,6 +289,18 @@
                }
             }
          },
+         "resourceInfo":{
+            "properties":{
+               "text":{
+                  "type":"string",
+                  "analyzer":"snowball",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               }
+            }
+         },
          "metadata":{
             "properties":{
                "educationalUse":{

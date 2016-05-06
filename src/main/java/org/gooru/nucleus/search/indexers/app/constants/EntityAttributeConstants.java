@@ -64,6 +64,8 @@ public final class EntityAttributeConstants {
   public static final String LICENSE_ICON = "icon";
   public static final String LICENSE_DEFINITION = "definition";
   public static final String LICENSE_URL = "url";
+  public static final String TEXT = "text";
+  public static final String RESOURCE_INFO = "resourceInfo";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
@@ -16,10 +17,14 @@ import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
 import org.gooru.nucleus.search.indexers.app.index.model.HintEo;
 import org.gooru.nucleus.search.indexers.app.index.model.LicenseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.QuestionEo;
+import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 import org.javalite.common.Convert;
 
@@ -297,6 +302,14 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       contentEo.setStatistics(statisticsEo.getStatistics());
 
+      //Set Extracted Text
+      String extractedText = getExtractedText(id);
+      if(extractedText != null) {
+        ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
+        resourceInfoJson.setText(extractedText);
+        contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
+      }
+
       /*
        * //TODO Add logic to store taxonomy transformation and below details
        * statisticsEo.setInvalidResource(invalidResource);
@@ -310,6 +323,19 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       throw new Exception(e);
     }
     return contentEo.getContentJson();
+  }
+
+  private String getExtractedText(String id) {
+    Map<String, Object> contentInfoDocument =
+            IndexService.instance().getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+    if (BaseUtil.isNotNull(contentInfoDocument, EntityAttributeConstants.RESOURCE_INFO)) {
+      @SuppressWarnings("unchecked")
+      Map<String, Object> resourceInfo = (Map<String, Object>) contentInfoDocument.get(EntityAttributeConstants.RESOURCE_INFO);
+      if (BaseUtil.isNotNull(resourceInfo, EntityAttributeConstants.TEXT)) {
+        return resourceInfo.get(EntityAttributeConstants.TEXT).toString().trim();
+      }
+    }
+    return null;
   }
 
   @SuppressWarnings("unchecked")
