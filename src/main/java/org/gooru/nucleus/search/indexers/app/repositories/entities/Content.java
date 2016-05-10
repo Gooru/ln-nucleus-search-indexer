@@ -27,5 +27,7 @@ public class Content extends Model {
   public static final String FETCH_QUESTION_AND_PARENT_CONTENT_IDS =
     "select parent_content_id, id, content_format from content where collection_id = ?::uuid";
   public static final String CONTENT_FORMAT = "content_format";
+  public static final String IS_DELETED = "is_deleted";
+
 
 }

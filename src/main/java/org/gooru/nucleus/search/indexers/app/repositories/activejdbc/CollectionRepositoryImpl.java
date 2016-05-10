@@ -28,7 +28,7 @@ public class CollectionRepositoryImpl implements CollectionRepository {
 
     JsonObject returnValue = null;
 
-    if (result != null) {
+    if (result != null && !result.getBoolean(Collection.IS_DELETED)) {
       returnValue = new JsonObject(result.toJson(false));
     }
     LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);

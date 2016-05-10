@@ -85,7 +85,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         List<Map> owner = getUserRepo().getUserDetails(ownerId);
         if (owner != null && owner.size() > 0) {
           setUser(owner.get(0), ownerEo);
-          collectionEo.setOriginalCreator(ownerEo.getUser());
+          collectionEo.setOwner(ownerEo.getUser());
         }
       }
       // Set Metadata

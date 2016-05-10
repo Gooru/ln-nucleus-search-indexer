@@ -33,7 +33,7 @@ public class ContentRepositoryImpl implements ContentRepository {
     JsonObject returnValue = null;
     String collectionId = null;
 
-    if (result != null) {
+    if (result != null && !result.getBoolean(Content.IS_DELETED)) {
       DBHelper.getInstance().escapeSplChars(result);
       returnValue = new JsonObject(result.toJson(false));
       collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
