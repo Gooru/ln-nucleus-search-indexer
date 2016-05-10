@@ -304,7 +304,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       //Set Extracted Text
       String extractedText = getExtractedText(id);
-      if(extractedText != null) {
+      if (extractedText != null) {
         ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
         resourceInfoJson.setText(extractedText);
         contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
@@ -325,14 +325,16 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     return contentEo.getContentJson();
   }
 
+  @SuppressWarnings("unchecked")
   private String getExtractedText(String id) {
     Map<String, Object> contentInfoDocument =
             IndexService.instance().getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-    if (BaseUtil.isNotNull(contentInfoDocument, EntityAttributeConstants.RESOURCE_INFO)) {
-      @SuppressWarnings("unchecked")
-      Map<String, Object> resourceInfo = (Map<String, Object>) contentInfoDocument.get(EntityAttributeConstants.RESOURCE_INFO);
-      if (BaseUtil.isNotNull(resourceInfo, EntityAttributeConstants.TEXT)) {
-        return resourceInfo.get(EntityAttributeConstants.TEXT).toString().trim();
+    if (contentInfoDocument != null) {
+      if (BaseUtil.isNotNull(contentInfoDocument, EntityAttributeConstants.RESOURCE_INFO)) {
+        Map<String, Object> resourceInfo = (Map<String, Object>) contentInfoDocument.get(EntityAttributeConstants.RESOURCE_INFO);
+        if (BaseUtil.isNotNull(resourceInfo, EntityAttributeConstants.TEXT)) {
+          return resourceInfo.get(EntityAttributeConstants.TEXT).toString().trim();
+        }
       }
     }
     return null;
