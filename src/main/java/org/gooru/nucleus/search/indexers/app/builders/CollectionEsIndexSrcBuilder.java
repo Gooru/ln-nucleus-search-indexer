@@ -95,30 +95,33 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         if (metadata != null) {
           JsonObject metadataAsMap = new JsonObject();
           for (String fieldName : metadata.fieldNames()) {
-            String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
-            Object metaValue = metadata.getValue(fieldName);
+            if(!fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)){
+              String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
+              Object metaValue = metadata.getValue(fieldName);
 
-            if(key.equalsIgnoreCase(IndexerConstants.LANG_OBJECTIVE)){
-              collectionEo.setLanguageObjective((String)metaValue);
-            }
-            
-            // Temp logic to only process array fields
-            if(metaValue instanceof JsonArray){
-              JsonArray references = metadata.getJsonArray(fieldName);
-              if (references != null) {
-                JsonArray value = new JsonArray();
-                String referenceIds = references.toString();
-                List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
-                for (Map metaMap : metacontent) {
-                  value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+              if(key.equalsIgnoreCase(IndexerConstants.LANG_OBJECTIVE)){
+                collectionEo.setLanguageObjective((String)metaValue);
+              }
+              
+              // Temp logic to only process array fields
+              if(metaValue instanceof JsonArray){
+                JsonArray references = metadata.getJsonArray(fieldName);
+                if (references != null) {
+                  JsonArray value = new JsonArray();
+                  String referenceIds = references.toString();
+                  List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
+                  for (Map metaMap : metacontent) {
+                    value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
+                  }
+                  if (value != null && !value.isEmpty()) metadataAsMap.put(key, value);
+                  if (metadataAsMap != null && !metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
                 }
-                if (value != null && !value.isEmpty()) metadataAsMap.put(key, value);
-                if (metadataAsMap != null && !metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
               }
             }
           }
         }
       }
+      
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
       String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);
