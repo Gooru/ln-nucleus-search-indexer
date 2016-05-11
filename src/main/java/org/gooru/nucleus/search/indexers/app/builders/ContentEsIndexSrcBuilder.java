@@ -251,29 +251,9 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       
       // Set license
       Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
-      if(licenseId != null){
-        List<Map> metacontent = getIndexRepo().getLicenseMetadata(licenseId);
-        if(metacontent != null && metacontent.size() > 0){
-          LicenseEo license = new LicenseEo();
-          for (Map metaMap : metacontent) {
-            license.setName(metaMap.get(EntityAttributeConstants.LABEL).toString());
-            if(metaMap.get(EntityAttributeConstants.META_DATA_INFO) != null){
-              String metadataInfo = Convert.toString(metaMap.get(EntityAttributeConstants.META_DATA_INFO));
-              if(metadataInfo != null && !metadataInfo.isEmpty()){
-                JsonObject licenseMetadataInfo = new JsonObject(metadataInfo).getJsonObject(EntityAttributeConstants.LICENSE);
-                if(licenseMetadataInfo != null){
-                  license.setCode(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
-                  license.setDefinition(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
-                  license.setIcon(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
-                  license.setUrl(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
-                }
-              }
-            }
-          }
-          if(license.getLicense() != null){
-            contentEo.setLicense(license.getLicense());
-          }
-        }
+      JsonObject license = getLicenseData(licenseId);
+      if(license != null){
+        contentEo.setLicense(license);
       }
 
       // Set ranking fields

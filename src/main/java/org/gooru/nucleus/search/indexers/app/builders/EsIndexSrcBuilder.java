@@ -7,6 +7,7 @@ import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.CodeEo;
+import org.gooru.nucleus.search.indexers.app.index.model.LicenseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepository;
@@ -20,6 +21,7 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRep
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
+import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,4 +245,31 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     }
   }
 
+  protected JsonObject getLicenseData(Integer licenseId){
+    if(licenseId != null){
+      List<Map> metacontent = getIndexRepo().getLicenseMetadata(licenseId);
+      if(metacontent != null && metacontent.size() > 0){
+        LicenseEo license = new LicenseEo();
+        for (Map metaMap : metacontent) {
+          license.setName(metaMap.get(EntityAttributeConstants.LABEL).toString());
+          if(metaMap.get(EntityAttributeConstants.META_DATA_INFO) != null){
+            String metadataInfo = Convert.toString(metaMap.get(EntityAttributeConstants.META_DATA_INFO));
+            if(metadataInfo != null && !metadataInfo.isEmpty()){
+              JsonObject licenseMetadataInfo = new JsonObject(metadataInfo).getJsonObject(EntityAttributeConstants.LICENSE);
+              if(licenseMetadataInfo != null){
+                license.setCode(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_CODE));
+                license.setDefinition(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_DEFINITION));
+                license.setIcon(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_ICON));
+                license.setUrl(licenseMetadataInfo.getString(EntityAttributeConstants.LICENSE_URL));
+              }
+            }
+          }
+        }
+        return license.getLicense();
+      }
+    }
+    return null;
+  }
+  
+  
 }
