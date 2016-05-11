@@ -33,7 +33,7 @@ ext {
     logbackVersion = '1.0.13'
     kafkaVersion = '0.8.1.1'
     guavaVersion = '18.0'
-    elasticsearchVersion = '2.2.0'
+    elasticsearchVersion = '2.2.1'
     flexjsonVersion = '2.1'
     hikariVersion = '2.4.3'
     postgresVersion = '9.4-1206-jdbc42'
