@@ -25,6 +25,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
+import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.IdIterator;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.IndexScriptBuilder;
@@ -108,15 +109,24 @@ public class EsIndexServiceImpl implements IndexService {
         if ((typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION))) {
           if (!body.isEmpty()) {
             try {
-              Map<String, Object> existingDocument = getDocument(indexableId, indexName, typeName);
-              Map<String, Object> statisticsMap = null;
-              if(existingDocument != null){
-            	  statisticsMap = (Map<String, Object>) existingDocument.get(ScoreConstants.STATISTICS_FIELD);
+              // Get statistics and extracted text data from backup index
+              Map<String, Object> contentInfoAsMap =
+                      getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+              Map<String, Object> statisticsAsMap = null;
+              Map<String, Object> resourceInfoAsMap = null;
+              if (contentInfoAsMap != null) {
+                statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
+                LOGGER.debug("statistics index data : " + statisticsAsMap);
+                body.put("isBuildIndex", true);
+                if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
+                  resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
+                }
               }
-        	  setExistingStatisticsData(body, statisticsMap, typeName);
-
+              setExistingStatisticsData(body, statisticsAsMap, typeName);
+              setResourceInfoData(body, resourceInfoAsMap, typeName);
+              
               getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute()
-                         .actionGet();
+                      .actionGet();
             } catch (Exception e) {
               LOGGER.info("Exception while indexing");
               throw new Exception(e);
@@ -150,7 +160,7 @@ public class EsIndexServiceImpl implements IndexService {
                  .execute().actionGet();
 
       //Update Statistics Index
-      getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.STATISTICS), IndexerConstants.TYPE_STATISTICS, id)
+      getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
                  .setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)).execute().actionGet();
     } catch (Exception e) {
       LOGGER.error("Update documentByFields Failed!, Exception : " + e);
@@ -163,23 +173,31 @@ public class EsIndexServiceImpl implements IndexService {
     String indexName = getIndexByType(typeName);
     new IdIterator(idString) {
 
+      @SuppressWarnings("unchecked")
       @Override
       public void execute(String indexableId) throws Exception {
         try {
           // Fetch data from DB for given content Id
           ProcessorContext context = new ProcessorContext(indexableId, getExectueOperation(typeName));
           JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-          ValidationUtil.rejectIfNull(result, "DB return null data for id " + indexableId);          
-          // Get statistics data from backup index
-          Map<String, Object> statisticsMap =
-            getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.STATISTICS), IndexerConstants.TYPE_STATISTICS);
-          LOGGER.debug("statistics index data : " + statisticsMap);
-          result.put("isBuildIndex", true);
-          setExistingStatisticsData(result, statisticsMap, typeName);
+          ValidationUtil.rejectIfNull(result, "DB return null data for id " + indexableId);
+          // Get statistics and extracted text data from backup index
+          Map<String, Object> contentInfoAsMap =
+                  getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+          if (contentInfoAsMap != null) {
+              Map<String, Object> statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
+              LOGGER.debug("statistics index data : " + statisticsAsMap);
+              result.put("isBuildIndex", true);
+              setExistingStatisticsData(result, statisticsAsMap, typeName);
+            if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
+              Map<String, Object> resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
+              setResourceInfoData(result, resourceInfoAsMap, typeName);
+            }
+          }
           LOGGER.debug("index source data : " + result.toString());
 
           getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(result)).execute()
-                     .actionGet();
+                  .actionGet();
           LOGGER.debug("EISI->indexDocument : Indexed " + typeName + " id  : " + indexableId);
         } catch (Exception ex) {
           LOGGER.error("EISI->Re-index failed for " + typeName + " id : " + indexableId + " Exception ", ex);
@@ -214,6 +232,16 @@ public class EsIndexServiceImpl implements IndexService {
     source.put(ScoreConstants.VIEW_COUNT, viewsCount);
     source.put(ScoreConstants.COLLAB_COUNT, collabCount);
     source.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);
+  }
+  
+  private void setResourceInfoData(JsonObject source, Map<String, Object> resourceInfoMap, String typeName) {
+    String text = null;
+    if (resourceInfoMap != null) {
+      if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) && BaseUtil.isNotNull(resourceInfoMap, IndexerConstants.TEXT)) {
+        text = resourceInfoMap.get(IndexerConstants.TEXT).toString().trim();
+      }
+    }
+    source.put(IndexerConstants.TEXT, text);
   }
 
   @Override

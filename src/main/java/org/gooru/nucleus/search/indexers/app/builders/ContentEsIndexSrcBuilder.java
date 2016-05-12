@@ -15,7 +15,6 @@ import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.AnswerEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
 import org.gooru.nucleus.search.indexers.app.index.model.HintEo;
-import org.gooru.nucleus.search.indexers.app.index.model.LicenseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.QuestionEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
@@ -26,7 +25,6 @@ import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
-import org.javalite.common.Convert;
 
 import com.google.common.base.CaseFormat;
 
@@ -283,7 +281,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       contentEo.setStatistics(statisticsEo.getStatistics());
 
       //Set Extracted Text
-      String extractedText = getExtractedText(id);
+      String extractedText = source.getString(IndexerConstants.TEXT);
       if (extractedText != null) {
         ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
         resourceInfoJson.setText(extractedText);
@@ -310,10 +308,10 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     Map<String, Object> contentInfoDocument =
             IndexService.instance().getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
     if (contentInfoDocument != null) {
-      if (BaseUtil.isNotNull(contentInfoDocument, EntityAttributeConstants.RESOURCE_INFO)) {
-        Map<String, Object> resourceInfo = (Map<String, Object>) contentInfoDocument.get(EntityAttributeConstants.RESOURCE_INFO);
-        if (BaseUtil.isNotNull(resourceInfo, EntityAttributeConstants.TEXT)) {
-          return resourceInfo.get(EntityAttributeConstants.TEXT).toString().trim();
+      if (BaseUtil.isNotNull(contentInfoDocument, IndexerConstants.RESOURCE_INFO)) {
+        Map<String, Object> resourceInfo = (Map<String, Object>) contentInfoDocument.get(IndexerConstants.RESOURCE_INFO);
+        if (BaseUtil.isNotNull(resourceInfo, IndexerConstants.TEXT)) {
+          return resourceInfo.get(IndexerConstants.TEXT).toString().trim();
         }
       }
     }
