@@ -52,4 +52,11 @@ public final class IndexerConstants {
 
   public static final String LANG_OBJECTIVE = "languageObjective";
   
+  public static final String TEXT = "text";
+  
+  public static final String RESOURCE_INFO = "resourceInfo";
+  
+  public static final String STATISTICS = "statistics";
+
+  
 }
