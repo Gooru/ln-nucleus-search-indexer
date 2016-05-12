@@ -157,7 +157,9 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
         resourceIndexHandler.indexDocument(resourceId);
         
         // update used in collection count
-        resourceIndexHandler.indexDocument(parentContentId);
+        if(parentContentId != null){
+          resourceIndexHandler.indexDocument(parentContentId);
+        }
         LOGGER.debug(
           "Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : " + parentContentId);
       } else {

@@ -11,6 +11,7 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHelper;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.javalite.activejdbc.Base;
+import org.javalite.common.Convert;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,10 +115,10 @@ public class ContentRepositoryImpl implements ContentRepository {
       for (Map content : contents) {
         if (content.get(Content.CONTENT_FORMAT) != null && content.get(Content.CONTENT_FORMAT).equals(Content.CONTENT_FORMAT_QUESTION) &&
           content.get(EntityAttributeConstants.ID) != null) {
-          questionIds.add(content.get(EntityAttributeConstants.ID));
+          questionIds.add(Convert.toString(content.get(EntityAttributeConstants.ID)));
         }
         if (content.get(EntityAttributeConstants.PARENT_CONTENT_ID) != null) {
-          parentContentIds.add(content.get(EntityAttributeConstants.PARENT_CONTENT_ID));
+          parentContentIds.add(Convert.toString(content.get(EntityAttributeConstants.PARENT_CONTENT_ID)));
         }
       }
     }
