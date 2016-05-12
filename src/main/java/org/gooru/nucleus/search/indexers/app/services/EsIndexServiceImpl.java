@@ -112,16 +112,18 @@ public class EsIndexServiceImpl implements IndexService {
               // Get statistics and extracted text data from backup index
               Map<String, Object> contentInfoAsMap =
                       getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+              Map<String, Object> statisticsAsMap = null;
+              Map<String, Object> resourceInfoAsMap = null;
               if (contentInfoAsMap != null) {
-                  Map<String, Object> statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
-                  LOGGER.debug("statistics index data : " + statisticsAsMap);
-                  body.put("isBuildIndex", true);
-                  setExistingStatisticsData(body, statisticsAsMap, typeName);
+                statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
+                LOGGER.debug("statistics index data : " + statisticsAsMap);
+                body.put("isBuildIndex", true);
                 if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
-                  Map<String, Object> resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
-                  setResourceInfoData(body, resourceInfoAsMap, typeName);
+                  resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
                 }
               }
+              setExistingStatisticsData(body, statisticsAsMap, typeName);
+              setResourceInfoData(body, resourceInfoAsMap, typeName);
               
               getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute()
                       .actionGet();
