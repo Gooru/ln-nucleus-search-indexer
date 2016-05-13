@@ -372,19 +372,20 @@ public class EsIndexServiceImpl implements IndexService {
       ContentInfoEio contentInfoEo = new ContentInfoEio();
       contentInfoEo.setId(id);
       contentInfoEo.setContentFormat(contentFormat);
+      contentInfoEo.setIndexUpdatedTime(new Date(System.currentTimeMillis()));
       
       ResourceInfoEo resourceInfo = new ResourceInfoEo();
       resourceInfo.setText(text.trim());
       contentInfoEo.setResourceInfo(resourceInfo.getResourceInfo());
 
       Map<String, Object> contentInfoAsMap = getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-      contentInfoEo.setStatistics(buildStatisticsData(contentFormat, contentInfoEo, contentInfoAsMap));
+      contentInfoEo.setStatistics(buildStatisticsData(contentFormat, contentInfoAsMap));
       return contentInfoEo.getContentInfoJson();
     }
     return null;
   }
 
-  private JsonObject buildStatisticsData(String contentFormat, ContentInfoEio contentInfoEo, Map<String, Object> contentInfoAsMap) {
+  private JsonObject buildStatisticsData(String contentFormat, Map<String, Object> contentInfoAsMap) {
     Map<String, Object> statisticsAsMap = null;
     if (contentInfoAsMap != null) {
       statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
@@ -394,10 +395,10 @@ public class EsIndexServiceImpl implements IndexService {
     int remixCount = 0;
 
     if (statisticsAsMap != null) {
-      if (contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
         viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
       }
-      if (contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
         viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
         collaboratorCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLAB_COUNT));
         remixCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));

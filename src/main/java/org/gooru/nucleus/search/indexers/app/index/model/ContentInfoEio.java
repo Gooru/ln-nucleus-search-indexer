@@ -1,5 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
+import java.util.Date;
+
 import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 import io.vertx.core.json.JsonObject;
@@ -26,6 +28,14 @@ public class ContentInfoEio {
   
   public String getContentFormat() {
     return contentInfo.getString("contentFormat", null);
+  }
+
+  public void setIndexUpdatedTime(Date indexUpdatedTime) {
+    contentInfo = JsonUtil.set(contentInfo, "indexUpdatedTime", indexUpdatedTime);
+  }
+  
+  public String getIndexUpdatedTime() {
+    return contentInfo.getString("indexUpdatedTime", null);
   }
 
   public void setContentFormat(String contentFormat) {
