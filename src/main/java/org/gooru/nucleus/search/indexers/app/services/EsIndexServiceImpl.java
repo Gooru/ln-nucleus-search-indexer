@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -22,7 +23,9 @@ import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
+import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
+import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
@@ -322,31 +325,28 @@ public class EsIndexServiceImpl implements IndexService {
   }
   
   public void buildInfoIndex(String id) {
-    ProcessorContext context = new ProcessorContext(id, ExecuteOperationConstants.GET_RESOURCE);
-    JsonObject inputJson = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-    ValidationUtil.rejectIfNull(inputJson, ErrorMsgConstants.RESOURCE_DATA_NULL);
-    LOGGER.debug("EISI->indexDocument: getIndexDataContent() returned:" + inputJson);
-
+    JsonObject inputJson = getContentFromRepo(id);
     if (inputJson != null && !inputJson.isEmpty()) {
       String url = inputJson.getString(EntityAttributeConstants.URL, null);
       String contentFormat = inputJson.getString(EntityAttributeConstants.CONTENT_FORMAT);
+      
       if (url != null) {
+        //Extract text from URL
         long extractionStartTime = System.currentTimeMillis();
         String text = CrawlerService.instance().extractUrl(url);
         LOGGER.info("Time to extract url for id : {} is {}ms ", (System.currentTimeMillis() - extractionStartTime), id);
-        ContentEio contentEo = new ContentEio();
-        contentEo.setId(id);
-        contentEo.setContentFormat(contentFormat);
-        ResourceInfoEo resourceInfo = new ResourceInfoEo();
-        resourceInfo.setText(text);
-        contentEo.setResourceInfo(resourceInfo.getResourceInfo());
-        if (text.trim() != null) {
+
+        //Build contentInfo index source
+        JsonObject contentInfoJson = buildContentInfoEsIndexSrc(id, contentFormat, text);
+        
+        //Index text when available
+        if (contentInfoJson != null) {
           try {
             getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-                    .setSource(contentEo.toString()).execute();
+                    .setSource(contentInfoJson.toString()).execute();
             indexDocuments(id, IndexNameHolder.getIndexName(EsIndex.RESOURCE), IndexerConstants.TYPE_RESOURCE, inputJson);
           } catch (Exception e) {
-            LOGGER.error("Text Extraction : Re-index failed for " + contentFormat + " id : " + id + " Exception ", e.getMessage());
+            LOGGER.error("Text Extraction : Indexing failed for id : " + id + " Exception ", e.getMessage());
           }
         } else {
           LOGGER.info("Text Extraction : Extracted text is null for id {}", id);
@@ -355,6 +355,57 @@ public class EsIndexServiceImpl implements IndexService {
       }
     }
   }
+
+  private JsonObject getContentFromRepo(String id) {
+    ProcessorContext context = new ProcessorContext(id, ExecuteOperationConstants.GET_RESOURCE);
+    JsonObject inputJson = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+    ValidationUtil.rejectIfNull(inputJson, ErrorMsgConstants.RESOURCE_DATA_NULL);
+    LOGGER.debug("EISI->indexDocument: getIndexDataContent() returned:" + inputJson);
+    return inputJson;
+  }
+
+  private JsonObject buildContentInfoEsIndexSrc(String id, String contentFormat, String text) {
+    if (StringUtils.isNotBlank(text)) {
+      ContentInfoEio contentInfoEo = new ContentInfoEio();
+      contentInfoEo.setId(id);
+      contentInfoEo.setContentFormat(contentFormat);
+      
+      ResourceInfoEo resourceInfo = new ResourceInfoEo();
+      resourceInfo.setText(text.trim());
+      contentInfoEo.setResourceInfo(resourceInfo.getResourceInfo());
+
+      Map<String, Object> contentInfoAsMap = getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+      contentInfoEo.setStatistics(buildStatisticsData(contentFormat, contentInfoEo, contentInfoAsMap));
+      return contentInfoEo.getContentInfoJson();
+    }
+    return null;
+  }
+
+  private JsonObject buildStatisticsData(String contentFormat, ContentInfoEio contentInfoEo, Map<String, Object> contentInfoAsMap) {
+    Map<String, Object> statisticsAsMap = null;
+    if (contentInfoAsMap != null) {
+      statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
+    }
+    long viewsCount = 0L;
+    int collaboratorCount = 0;
+    int remixCount = 0;
+
+    if (statisticsAsMap != null) {
+      if (contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+        viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
+      }
+      if (contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+        viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
+        collaboratorCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLAB_COUNT));
+        remixCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));
+      }
+    }
+    StatisticsEo statisticEo = new StatisticsEo();
+    statisticEo.setViewsCount(viewsCount);
+    statisticEo.setCollaboratorCount(collaboratorCount);
+    statisticEo.setCollectionRemixCount(remixCount);
+    return statisticEo.getStatistics();
+  }
   
   public void buildInfoIndex(String id, JsonObject source) {
     if (source != null && !source.isEmpty()) {
@@ -362,16 +413,11 @@ public class EsIndexServiceImpl implements IndexService {
       String contentFormat = source.getString(EntityAttributeConstants.CONTENT_FORMAT);
       if (url != null) {
         String text = CrawlerService.instance().extractUrl(url);
-        ContentEio contentEo = new ContentEio();
-        contentEo.setId(id);
-        contentEo.setContentFormat(contentFormat);
-        ResourceInfoEo resourceInfo = new ResourceInfoEo();
-        resourceInfo.setText(text);
-        contentEo.setResourceInfo(resourceInfo.getResourceInfo());
+        JsonObject contentInfoJson = buildContentInfoEsIndexSrc(id, contentFormat, text);
         if (text.trim() != null) {
           try {
             getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-                    .setSource(contentEo.toString()).execute();
+                    .setSource(contentInfoJson.toString()).execute();
           } catch (Exception e) {
             LOGGER.error("Text Extraction : Re-index failed for " + contentFormat + " id : " + id + " Exception ", e.getMessage());
           }
