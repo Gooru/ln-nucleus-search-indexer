@@ -12,7 +12,6 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.CollectionContentEo;
 import org.gooru.nucleus.search.indexers.app.index.model.CollectionEio;
-import org.gooru.nucleus.search.indexers.app.index.model.LicenseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;

@@ -99,7 +99,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         }
       }
     } catch (Exception e) {
-      LOGGER.error("CEH->handlePostDelete : Failed to re-index associated resources that is mapped to this collection : " + collectionId);
+      LOGGER.error("CEH->handlePostDelete : Failed to re-index associated resources that is mapped to this collection : " + collectionId + "    Exception : " + e);
       INDEX_FAILURES_LOGGER.error("Failed to re-index associated resources that is mapped to this collection : " + collectionId);
     }
   }

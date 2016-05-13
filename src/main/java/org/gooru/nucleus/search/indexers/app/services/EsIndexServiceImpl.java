@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -266,6 +267,8 @@ public class EsIndexServiceImpl implements IndexService {
           LOGGER.debug("script : " + scriptQuery.toString());
           LOGGER.debug("param fields : " + paramsField.toString());
           bulkRequest.add(getClient().prepareUpdate(getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)), getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
+         // update to content info index 
+          bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
         }
       }
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -273,7 +276,7 @@ public class EsIndexServiceImpl implements IndexService {
         BulkItemResponse[] responses =  bulkResponse.getItems();
         for(BulkItemResponse response : responses){
           if(response.isFailed()){
-            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId());
+            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
           }
         }
         throw new Exception(bulkResponse.buildFailureMessage());
