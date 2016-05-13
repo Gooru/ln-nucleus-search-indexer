@@ -11,6 +11,11 @@
             "analyzer":"keyword_lowercase",
             "include_in_all":false
          },
+         "indexUpdatedTime":{
+            "type":"date",
+            "format":"dateOptionalTime",
+            "include_in_all":false
+         },
          "statistics":{
             "properties":{
                "usedInCollectionCount":{
