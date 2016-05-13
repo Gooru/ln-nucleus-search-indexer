@@ -15,7 +15,7 @@ public class CrawlerServiceImpl implements CrawlerService {
   protected static final Logger LOGGER = LoggerFactory.getLogger(CrawlerServiceImpl.class);
 
   public String extractUrl(String url) {
-    String text = "";
+    String text = null;
     if (url.contains(".png") || url.contains(".jpg") || url.contains(".jpeg") || url.contains(".ppt")) {
       return text;
     }
