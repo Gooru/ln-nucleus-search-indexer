@@ -270,7 +270,7 @@ public class EsIndexServiceImpl implements IndexService {
         BulkItemResponse[] responses =  bulkResponse.getItems();
         for(BulkItemResponse response : responses){
           if(response.isFailed()){
-            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId());
+            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
           }
         }
         throw new Exception(bulkResponse.buildFailureMessage());
