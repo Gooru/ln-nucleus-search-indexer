@@ -116,17 +116,14 @@ public class EsIndexServiceImpl implements IndexService {
               // Get statistics and extracted text data from backup index
               Map<String, Object> contentInfoAsMap =
                       getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-              Map<String, Object> statisticsAsMap = null;
               Map<String, Object> resourceInfoAsMap = null;
               if (contentInfoAsMap != null) {
-                statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
-                LOGGER.debug("statistics index data : " + statisticsAsMap);
                 body.put("isBuildIndex", true);
                 if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
                   resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
                 }
               }
-              setExistingStatisticsData(body, statisticsAsMap, typeName);
+              setExistingStatisticsData(body, contentInfoAsMap, typeName);
               setResourceInfoData(body, resourceInfoAsMap, typeName);
               
               getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute()
@@ -188,11 +185,10 @@ public class EsIndexServiceImpl implements IndexService {
           // Get statistics and extracted text data from backup index
           Map<String, Object> contentInfoAsMap =
                   getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+          setExistingStatisticsData(result, contentInfoAsMap, typeName);
+          result.put("isBuildIndex", true);
+
           if (contentInfoAsMap != null) {
-              Map<String, Object> statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
-              LOGGER.debug("statistics index data : " + statisticsAsMap);
-              result.put("isBuildIndex", true);
-              setExistingStatisticsData(result, statisticsAsMap, typeName);
             if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
               Map<String, Object> resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
               setResourceInfoData(result, resourceInfoAsMap, typeName);
@@ -217,19 +213,24 @@ public class EsIndexServiceImpl implements IndexService {
     return ElasticSearchRegistry.getFactory().getClient();
   }
 
-  private void setExistingStatisticsData(JsonObject source, Map<String, Object> statisticsMap, String typeName) {
+  private void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap, String typeName) {
+
     long viewsCount = 0L;
     int collabCount = 0;
     int remixCount = 0;
 
-    if (statisticsMap != null) {
-      if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
-        viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
-      }
-      if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
-        viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
-        collabCount = getInteger(statisticsMap.get(ScoreConstants.COLLAB_COUNT));
-        remixCount = getInteger(statisticsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));
+    if (contentInfoAsMap != null) {
+      Map<String, Object> statisticsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
+      if(statisticsMap != null){
+        LOGGER.debug("statistics index data : " + statisticsMap);
+        if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+          viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
+        }
+        if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+          viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
+          collabCount = getInteger(statisticsMap.get(ScoreConstants.COLLAB_COUNT));
+          remixCount = getInteger(statisticsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));
+        }
       }
     }
 
