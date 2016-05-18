@@ -268,7 +268,7 @@
          },
          "description":{
             "type":"string",
-            "index":"gooru_kstem",
+            "analyzer":"gooru_kstem",
             "include_in_all":true
          },
          "thumbnail":{
