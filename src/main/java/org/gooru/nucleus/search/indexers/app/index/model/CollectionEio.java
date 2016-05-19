@@ -267,5 +267,14 @@ public class CollectionEio implements Serializable {
   public JsonObject getLicense(){
     return collection.getJsonObject("license", null);
   }
+  
+  public JsonObject getCourse() {
+    return collection.getJsonObject("course", null);
+  }
+
+  public void setCourse(JsonObject course) {
+    collection = JsonUtil.set(collection, "course", course);
+  }
+
 
 }

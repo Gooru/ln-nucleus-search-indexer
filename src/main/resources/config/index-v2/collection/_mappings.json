@@ -402,6 +402,26 @@
                }
             }
          },
+         "course":{
+            "properties":{
+               "id":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "title":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "titleSnowball":{
+                        "type":"string",
+                        "analyzer":"snowball"
+                     }
+                  },
+                  "include_in_all":false
+               }
+            }
+         },
          "url":{
             "type":"string",
             "index":"not_analyzed",
@@ -473,8 +493,6 @@
                   "type":"integer",
                   "include_in_all":false
                }
-
-
             }
          },
          "collectionContents":{
@@ -531,33 +549,33 @@
             }
          },
          "license":{
-         	"properties":{
-         		"code":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"definition":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"icon":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"url":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"name":{
-         			"type" : "string",
-         			"analyzer" : "keyword_lowercase",
-         			"include_in_all" : false
-         		}
-         	}
+            "properties":{
+               "code":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "definition":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "icon":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "url":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "name":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               }
+            }
          }
       }
    }

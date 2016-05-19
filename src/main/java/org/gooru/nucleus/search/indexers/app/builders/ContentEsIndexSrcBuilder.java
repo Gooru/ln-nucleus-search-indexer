@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
-import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.AnswerEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
+import org.gooru.nucleus.search.indexers.app.index.model.CourseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.HintEo;
 import org.gooru.nucleus.search.indexers.app.index.model.QuestionEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
@@ -21,9 +21,6 @@ import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
-import org.gooru.nucleus.search.indexers.app.services.IndexService;
-import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
-import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
 import com.google.common.base.CaseFormat;
@@ -169,7 +166,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       JsonArray collectionIds = new JsonArray();
       JsonArray collectionTitles = new JsonArray();
       String collectionId = source.getString(EntityAttributeConstants.COLLECTION_ID, null);
-      String collectionTitle = source.getString(EntityAttributeConstants.COLLECTION_TITLE, null);
+      String collectionTitle = source.getString(IndexerConstants.COLLECTION_TITLE, null);
       if (collectionId != null) {
         collectionIds.add(collectionId);
       }
@@ -237,7 +234,12 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if(displayGuide != null){
         contentEo.setDisplayGuide(displayGuide);
       }
-
+      
+      CourseEo course = new CourseEo(); 
+      course.setId(source.getString(EntityAttributeConstants.COURSE_ID, null));
+      course.setTitle(source.getString(IndexerConstants.COURSE_TITLE, null));
+      contentEo.setCourse(course.getCourseJson());
+      
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       statisticsEo.setViewsCount(viewsCount);
 
@@ -282,15 +284,12 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       //Set Extracted Text
       String extractedText = source.getString(IndexerConstants.TEXT);
-      if (extractedText != null) {
-        ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
-        resourceInfoJson.setText(extractedText);
-        contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
-      }
+      ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
+      resourceInfoJson.setText(extractedText);
+      contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
 
       /*
        * //TODO Add logic to store taxonomy transformation and below details
-       * statisticsEo.setInvalidResource(invalidResource);
        * statisticsEo.setHasAdvertisement(hasAdvertisement);
        * statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
        */
@@ -301,21 +300,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       throw new Exception(e);
     }
     return contentEo.getContentJson();
-  }
-
-  @SuppressWarnings("unchecked")
-  private String getExtractedText(String id) {
-    Map<String, Object> contentInfoDocument =
-            IndexService.instance().getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-    if (contentInfoDocument != null) {
-      if (BaseUtil.isNotNull(contentInfoDocument, IndexerConstants.RESOURCE_INFO)) {
-        Map<String, Object> resourceInfo = (Map<String, Object>) contentInfoDocument.get(IndexerConstants.RESOURCE_INFO);
-        if (BaseUtil.isNotNull(resourceInfo, IndexerConstants.TEXT)) {
-          return resourceInfo.get(IndexerConstants.TEXT).toString().trim();
-        }
-      }
-    }
-    return null;
   }
 
   @SuppressWarnings("unchecked")
@@ -346,7 +330,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
             }
           }
         }
-        
       }
     }
   }
