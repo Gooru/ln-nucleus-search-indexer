@@ -190,12 +190,13 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       rankingFields.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, collectionEo.getOriginalCollectionId());
 
       JsonObject taxJson = collectionEo.getTaxonomy();
-      int hasStandard = 0;
-      if (taxJson != null) {
-        hasStandard = taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD);
+      int hasNoStandard = 1;
+      
+      if (taxJson != null && taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD) != null && taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD) == 1) {
+        hasNoStandard = 0;
       }
 
-      rankingFields.put(ScoreConstants.TAX_HAS_STANDARD, hasStandard);
+      rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
 
       statisticsEo.setPreComputedWeight(PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields)));
 

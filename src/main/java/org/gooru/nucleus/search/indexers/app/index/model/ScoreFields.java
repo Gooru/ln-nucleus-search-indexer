@@ -60,8 +60,8 @@ public class ScoreFields {
       this.hasNoThumbnail = (int) scoreFieldsMap.get(ScoreConstants.HAS_NO_THUMBNAIL);
     }
 
-    if (scoreFieldsMap.get(ScoreConstants.TAX_HAS_STANDARD) != null) {
-      this.hasNoStandard = (int) scoreFieldsMap.get(ScoreConstants.TAX_HAS_STANDARD);
+    if (scoreFieldsMap.get(ScoreConstants.TAX_HAS_NO_STANDARD) != null) {
+      this.hasNoStandard = (int) scoreFieldsMap.get(ScoreConstants.TAX_HAS_NO_STANDARD);
     }
 
     if (scoreFieldsMap.get(ScoreConstants.HAS_21ST_CENTURY_SKILL) != null) {
