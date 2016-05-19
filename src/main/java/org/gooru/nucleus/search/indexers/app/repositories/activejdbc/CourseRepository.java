@@ -1,13 +1,11 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.util.List;
-import java.util.Map;
+import io.vertx.core.json.JsonObject;
 
 public interface CourseRepository {
 
   static CourseRepository instance() {
     return new CourseRepositoryImpl();
   }
-  @SuppressWarnings("rawtypes")
-  List<Map> getCourse(String courseId);
+  JsonObject getCourse(String courseId);
 }

@@ -22,7 +22,6 @@ public class CollectionRepositoryImpl implements CollectionRepository {
   private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
 
-  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject getCollection(String contentID) {
     LOGGER.debug("CollectionRepositoryImpl : getCollection : " + contentID);
@@ -38,10 +37,10 @@ public class CollectionRepositoryImpl implements CollectionRepository {
     }
     
     // Set course title
-    if (courseId != null && returnValue != null) {
-      List<Map> courseData = CourseRepository.instance().getCourse(courseId);
-      if (courseData != null && courseData.size() > 0) {
-        returnValue.put(IndexerConstants.COURSE_TITLE, courseData.get(0).get(EntityAttributeConstants.TITLE).toString());
+    if (courseId != null) {
+      JsonObject courseData = CourseRepository.instance().getCourse(courseId);
+      if (courseData != null && !courseData.isEmpty()) {
+        returnValue.put(IndexerConstants.COURSE_TITLE, courseData.getString(EntityAttributeConstants.TITLE));
       }
     }
     

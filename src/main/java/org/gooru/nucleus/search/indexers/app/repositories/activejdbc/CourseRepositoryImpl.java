@@ -1,29 +1,42 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
 
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
-import org.javalite.activejdbc.Base;
+import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.vertx.core.json.JsonObject;
 
 public class CourseRepositoryImpl implements CourseRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CourseRepositoryImpl.class);
+  private static final String UUID_TYPE = "uuid";
 
-  @SuppressWarnings("rawtypes")
   @Override
-  public List<Map> getCourse(String courseId) {
-    List<Map> resultSet = null;
-    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
-    resultSet = Base.findAll(Course.GET_COURSE_QUERY, courseId);
-    if (resultSet.size() < 1) {
-      LOGGER.warn("Course info for id : {} not present in DB", courseId);
+  public JsonObject getCourse(String courseId) {
+    Course result = Course.findById(getPGObject("id", UUID_TYPE, courseId));
+    LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
+
+    JsonObject returnValue = null;
+
+    if (result != null && !result.getBoolean(Course.IS_DELETED)) {
+      returnValue = new JsonObject(result.toJson(false));
     }
-    Base.close();
-    return resultSet;
+    return returnValue;
+  }
+  
+  private PGobject getPGObject(String field, String type, String value) {
+    PGobject pgObject = new PGobject();
+    pgObject.setType(type);
+    try {
+      pgObject.setValue(value);
+      return pgObject;
+    } catch (SQLException e) {
+      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
+      return null;
+    }
   }
 
 }
