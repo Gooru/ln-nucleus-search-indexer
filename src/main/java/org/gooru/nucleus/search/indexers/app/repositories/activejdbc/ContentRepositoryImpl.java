@@ -24,7 +24,6 @@ public class ContentRepositoryImpl implements ContentRepository {
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
 
-  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject getResource(String contentID) {
     LOGGER.debug("ContentRepositoryImpl:getResource: " + contentID);
@@ -39,7 +38,7 @@ public class ContentRepositoryImpl implements ContentRepository {
       DBHelper.getInstance().escapeSplChars(result);
       returnValue = new JsonObject(result.toJson(false));
       collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
-      courseId = returnValue.getString(EntityAttributeConstants.COURSE_ID);
+      courseId = returnValue.getString(EntityAttributeConstants.COURSE_ID, null);
     }
     if (returnValue != null) {
       // Set collection title
@@ -51,9 +50,9 @@ public class ContentRepositoryImpl implements ContentRepository {
       }
       // Set course title
       if (courseId != null) {
-        List<Map> courseData = CourseRepository.instance().getCourse(courseId);
-        if (courseData != null && courseData.size() > 0) {
-          returnValue.put(IndexerConstants.COURSE_TITLE, courseData.get(0).get(EntityAttributeConstants.TITLE).toString());
+        JsonObject courseData = CourseRepository.instance().getCourse(courseId);
+        if (courseData != null && !courseData.isEmpty()) {
+          returnValue.put(IndexerConstants.COURSE_TITLE, courseData.getString(EntityAttributeConstants.TITLE));
         }
       }
     }
