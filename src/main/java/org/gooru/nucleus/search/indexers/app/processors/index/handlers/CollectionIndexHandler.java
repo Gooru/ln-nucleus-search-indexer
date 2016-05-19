@@ -117,7 +117,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
 
     Map<String, Object> taxonomy = (Map<String, Object>) result.get(ScoreConstants.TAXONOMY_FIELD);
     ((Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD))
-      .put(ScoreConstants.TAX_HAS_STANDARD, taxonomy.get(ScoreConstants.TAX_HAS_STANDARD));
+      .put(ScoreConstants.TAX_HAS_NO_STANDARD, taxonomy.get(EntityAttributeConstants.TAXONOMY_HAS_STD));
     ((Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD))
       .put(ScoreConstants.ORIGINAL_CONTENT_FIELD, result.get(ScoreConstants.ORIGINAL_CONTENT_FIELD));
     return (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
