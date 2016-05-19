@@ -60,6 +60,12 @@ public final class IndexerConstants {
 
   public static final String COLLECTION_TITLE = "collection_title";
 
-  public static final String COURSE_TITLE = "course_title";
+  public static final String RESOURCE_COURSE = "resource_course";
+  
+  public static final String RESOURCE_COURSE_ID = "resource_course_id";
+
+  public static final String COLLECTION_COURSE = "collection_course";
+  
+  public static final String COLLECTION_COURSE_ID = "collection_course_id";
 
 }

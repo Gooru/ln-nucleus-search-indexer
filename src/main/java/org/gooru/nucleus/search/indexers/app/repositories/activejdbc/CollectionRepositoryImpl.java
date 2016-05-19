@@ -40,7 +40,8 @@ public class CollectionRepositoryImpl implements CollectionRepository {
     if (courseId != null) {
       JsonObject courseData = CourseRepository.instance().getCourse(courseId);
       if (courseData != null && !courseData.isEmpty()) {
-        returnValue.put(IndexerConstants.COURSE_TITLE, courseData.getString(EntityAttributeConstants.TITLE));
+        returnValue.put(IndexerConstants.COLLECTION_COURSE_ID, courseId);
+        returnValue.put(IndexerConstants.COLLECTION_COURSE, courseData.getString(EntityAttributeConstants.TITLE));
       }
     }
     
