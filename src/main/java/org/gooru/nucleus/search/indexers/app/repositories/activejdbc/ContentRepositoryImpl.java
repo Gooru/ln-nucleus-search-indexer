@@ -24,6 +24,7 @@ public class ContentRepositoryImpl implements ContentRepository {
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
 
+  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject getResource(String contentID) {
     LOGGER.debug("ContentRepositoryImpl:getResource: " + contentID);
@@ -33,23 +34,30 @@ public class ContentRepositoryImpl implements ContentRepository {
 
     JsonObject returnValue = null;
     String collectionId = null;
-
+    String courseId = null;
     if (result != null && !result.getBoolean(Content.IS_DELETED)) {
       DBHelper.getInstance().escapeSplChars(result);
       returnValue = new JsonObject(result.toJson(false));
       collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
+      courseId = returnValue.getString(EntityAttributeConstants.COURSE_ID);
     }
-    
-    // Set collection title
-    if(collectionId != null && returnValue != null){
-      JsonObject collection = CollectionRepository.instance().getCollection(collectionId);
-      if(collection != null){
-        returnValue.put(EntityAttributeConstants.COLLECTION_TITLE, collection.getString(EntityAttributeConstants.TITLE));
+    if (returnValue != null) {
+      // Set collection title
+      if (collectionId != null) {
+        JsonObject collection = CollectionRepository.instance().getCollection(collectionId);
+        if (collection != null) {
+          returnValue.put(IndexerConstants.COLLECTION_TITLE, collection.getString(EntityAttributeConstants.TITLE));
+        }
+      }
+      // Set course title
+      if (courseId != null) {
+        List<Map> courseData = CourseRepository.instance().getCourse(courseId);
+        if (courseData != null && courseData.size() > 0) {
+          returnValue.put(IndexerConstants.COURSE_TITLE, courseData.get(0).get(EntityAttributeConstants.TITLE).toString());
+        }
       }
     }
-    
     LOGGER.debug("ContentRepositoryImpl:getResource:findById returned: " + returnValue);
-
     return returnValue;
   }
 

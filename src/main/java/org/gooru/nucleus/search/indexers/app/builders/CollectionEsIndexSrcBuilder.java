@@ -12,6 +12,7 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.CollectionContentEo;
 import org.gooru.nucleus.search.indexers.app.index.model.CollectionEio;
+import org.gooru.nucleus.search.indexers.app.index.model.CourseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
@@ -164,14 +165,11 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setContentCount(questionCount + resourceCount);
 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
-      if (taxonomy != null) {
-        JsonArray taxonomyArray = new JsonArray(taxonomy);
-        TaxonomyEo taxonomyEo = new TaxonomyEo();
-        if (taxonomyArray.size() > 0) {
-          addTaxnomy(taxonomyArray, taxonomyEo);
-        }
-        collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
-      }
+      JsonArray taxonomyArray = null;
+      if (taxonomy != null) taxonomyArray = new JsonArray(taxonomy);
+      TaxonomyEo taxonomyEo = new TaxonomyEo();
+      addTaxnomy(taxonomyArray, taxonomyEo);
+      collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       int remixCount = source.getInteger(ScoreConstants.COLLECTION_REMIX_COUNT);
@@ -210,6 +208,12 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         collectionEo.setLicense(license);
       }
 
+      //Set course
+      CourseEo course = new CourseEo(); 
+      course.setId(source.getString(EntityAttributeConstants.COURSE_ID, null));
+      course.setTitle(source.getString(IndexerConstants.COURSE_TITLE, null));
+      collectionEo.setCourse(course.getCourseJson());
+      
       //TODO Add logic to store taxonomy transformation and some statistics
       LOGGER.debug("CEISB->build : collection Eo source : " + collectionEo.getCollectionJson().toString());
 

@@ -31,7 +31,6 @@ public final class EntityAttributeConstants {
   public static final String EXPLANATION = "explanation";
   public static final String THUMBNAIL = "thumbnail";
   public static final String COLLECTION_ID = "collection_id";
-  public static final String COLLECTION_TITLE = "collection_title";
   public static final String SEQUENCE_ID = "sequence_id";
   public static final String IS_COPYRIGHT_OWNER = "is_copyright_owner";
   public static final String COPYRIGHT_OWNER = "copyright_owner";
@@ -65,6 +64,7 @@ public final class EntityAttributeConstants {
   public static final String LICENSE_DEFINITION = "definition";
   public static final String LICENSE_URL = "url";
   public static final String TWENTY_ONE_CENTURY_SKILL = "twenty_one_century_skill";
+  public static final String COURSE_ID = "course_id";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

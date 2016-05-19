@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
@@ -20,6 +22,7 @@ public class CollectionRepositoryImpl implements CollectionRepository {
   private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
 
+  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject getCollection(String contentID) {
     LOGGER.debug("CollectionRepositoryImpl : getCollection : " + contentID);
@@ -27,13 +30,23 @@ public class CollectionRepositoryImpl implements CollectionRepository {
     LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
 
     JsonObject returnValue = null;
+    String courseId = null;
 
     if (result != null && !result.getBoolean(Collection.IS_DELETED)) {
       returnValue = new JsonObject(result.toJson(false));
+      courseId = returnValue.getString(EntityAttributeConstants.COURSE_ID);
     }
+    
+    // Set course title
+    if (courseId != null && returnValue != null) {
+      List<Map> courseData = CourseRepository.instance().getCourse(courseId);
+      if (courseData != null && courseData.size() > 0) {
+        returnValue.put(IndexerConstants.COURSE_TITLE, courseData.get(0).get(EntityAttributeConstants.TITLE).toString());
+      }
+    }
+    
     LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);
     return returnValue;
-
   }
 
   @Override
