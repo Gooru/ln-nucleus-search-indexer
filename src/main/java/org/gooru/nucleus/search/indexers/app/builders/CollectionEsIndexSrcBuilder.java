@@ -210,8 +210,8 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 
       //Set course
       CourseEo course = new CourseEo(); 
-      course.setId(source.getString(EntityAttributeConstants.COURSE_ID, null));
-      course.setTitle(source.getString(IndexerConstants.COURSE_TITLE, null));
+      course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
+      course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
       collectionEo.setCourse(course.getCourseJson());
       
       //TODO Add logic to store taxonomy transformation and some statistics

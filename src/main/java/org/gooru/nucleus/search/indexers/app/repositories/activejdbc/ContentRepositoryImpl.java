@@ -52,7 +52,8 @@ public class ContentRepositoryImpl implements ContentRepository {
       if (courseId != null) {
         JsonObject courseData = CourseRepository.instance().getCourse(courseId);
         if (courseData != null && !courseData.isEmpty()) {
-          returnValue.put(IndexerConstants.COURSE_TITLE, courseData.getString(EntityAttributeConstants.TITLE));
+          returnValue.put(IndexerConstants.RESOURCE_COURSE_ID, courseId);
+          returnValue.put(IndexerConstants.RESOURCE_COURSE, courseData.getString(EntityAttributeConstants.TITLE));
         }
       }
     }

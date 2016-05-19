@@ -236,8 +236,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       }
       
       CourseEo course = new CourseEo(); 
-      course.setId(source.getString(EntityAttributeConstants.COURSE_ID, null));
-      course.setTitle(source.getString(IndexerConstants.COURSE_TITLE, null));
+      course.setId(source.getString(IndexerConstants.RESOURCE_COURSE_ID, null));
+      course.setTitle(source.getString(IndexerConstants.RESOURCE_COURSE, null));
       contentEo.setCourse(course.getCourseJson());
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
@@ -284,9 +284,11 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       //Set Extracted Text
       String extractedText = source.getString(IndexerConstants.TEXT);
-      ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
-      resourceInfoJson.setText(extractedText);
-      contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
+      if (extractedText != null) {
+        ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
+        resourceInfoJson.setText(extractedText);
+        contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
+      }
 
       /*
        * //TODO Add logic to store taxonomy transformation and below details
