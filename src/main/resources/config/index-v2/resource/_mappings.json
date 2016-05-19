@@ -425,6 +425,14 @@
                   ],
                   "include_in_all":false
                },
+               "leafInternalCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
                "subject":{
                   "type":"nested",
                   "include_in_parent":true,
@@ -488,6 +496,44 @@
                   "type":"string",
                   "analyzer":"snowball",
                   "include_in_all":false
+               },
+               "taxonomySet":{
+                  "properties":{
+                     "subject":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "course":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "domain":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "curriculum":{
+                        "properties":{
+                           "curriculumCode":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumDesc":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumName":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           }
+                        }
+                     }
+                  }
                }
             }
          },
