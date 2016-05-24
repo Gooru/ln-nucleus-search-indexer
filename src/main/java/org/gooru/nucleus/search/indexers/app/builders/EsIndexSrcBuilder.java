@@ -206,7 +206,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
             .put(IndexerConstants.CURRICULUM_DESC, leafSLDesc != null ? leafSLDesc : new JsonArray())
             .put(IndexerConstants.CURRICULUM_NAME, new JsonArray());
     taxonomyDataSet.setCurriculum(curriculumTaxonomy);
-    taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.toString());
+    taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.getTaxonomyJson().toString());
     taxonomyEo.setTaxonomySet(taxonomyDataSet.getTaxonomyJson());
   }
 
