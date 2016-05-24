@@ -37,12 +37,19 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepository {
     }
     List<Map> taxMetaList = null;
     if (query != null) {
-      Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
-      taxMetaList = Base.findAll(query, codeId);
-      if (taxMetaList.size() < 1) {
-        LOGGER.warn("Taxonomy info for {} level for id : {} not present in DB", level, codeId);
+      try{
+        Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+        taxMetaList = Base.findAll(query, codeId);
+        if (taxMetaList.size() < 1) {
+          LOGGER.warn("Taxonomy info for {} level for id : {} not present in DB", level, codeId);
+        }
       }
-      Base.close();
+      catch(Exception ex){
+        LOGGER.error("Failed to fetch taxonomy details ", ex);
+      }
+      finally {
+        Base.close();
+      }
     }
     return taxMetaList;
   }
