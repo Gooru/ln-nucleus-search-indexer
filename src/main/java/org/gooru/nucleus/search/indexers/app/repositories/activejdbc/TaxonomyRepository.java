@@ -9,6 +9,6 @@ public interface TaxonomyRepository {
   static TaxonomyRepository instance() {
     return new TaxonomyRepositoryImpl();
   }
-  List<Map> getDefaultTaxonomyData(String codeId, String label);
+  List<Map> getTaxonomyData(String codeId, String label);
 
 }

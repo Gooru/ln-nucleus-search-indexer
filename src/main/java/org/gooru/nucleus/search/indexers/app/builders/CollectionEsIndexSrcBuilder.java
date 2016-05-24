@@ -165,10 +165,14 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setContentCount(questionCount + resourceCount);
 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
-      JsonArray taxonomyArray = null;
-      if (taxonomy != null) taxonomyArray = new JsonArray(taxonomy);
+      JsonObject taxonomyObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
-      addTaxnomy(taxonomyArray, taxonomyEo);
+      try {
+        if (taxonomy != null) taxonomyObject = new JsonObject(taxonomy);
+        addTaxonomy(taxonomyObject, taxonomyEo);
+      } catch (Exception e) {
+        LOGGER.error("Unable to convert Taxonomy to JsonObject", e.getMessage());
+      }
       collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);

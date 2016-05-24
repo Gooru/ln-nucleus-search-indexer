@@ -13,7 +13,7 @@ public class CourseEo {
   }
 
   public JsonObject getCourseJson() {
-    return course;
+    return !course.isEmpty() ? course : null;
   }
   
   public String getId() {

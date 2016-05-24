@@ -2,6 +2,9 @@ package org.gooru.nucleus.search.indexers.app.index.model;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+
+import java.util.stream.Collectors;
+
 import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 public class TaxonomyEo extends JsonObject {
@@ -21,7 +24,7 @@ public class TaxonomyEo extends JsonObject {
   }
 
   public void setSubject(JsonArray subject) {
-    taxonomy = JsonUtil.set(taxonomy, "subject", subject);
+    taxonomy = JsonUtil.set(taxonomy, "subject", new JsonArray(subject.stream().distinct().collect(Collectors.toList())));
   }
 
   public JsonArray getCourse() {
@@ -29,7 +32,7 @@ public class TaxonomyEo extends JsonObject {
   }
 
   public void setCourse(JsonArray course) {
-    taxonomy = JsonUtil.set(taxonomy, "course", course);
+    taxonomy = JsonUtil.set(taxonomy, "course", new JsonArray(course.stream().distinct().collect(Collectors.toList())));
   }
 
   public JsonArray getDomain() {
@@ -37,7 +40,7 @@ public class TaxonomyEo extends JsonObject {
   }
 
   public void setDomain(JsonArray domain) {
-    taxonomy = JsonUtil.set(taxonomy, "domain", domain);
+    taxonomy = JsonUtil.set(taxonomy, "domain", new JsonArray(domain.stream().distinct().collect(Collectors.toList())));
   }
 
   public JsonArray getStandards() {
@@ -45,7 +48,7 @@ public class TaxonomyEo extends JsonObject {
   }
 
   public void setStandards(JsonArray standards) {
-    taxonomy = JsonUtil.set(taxonomy, "standards", standards);
+    taxonomy = JsonUtil.set(taxonomy, "standards", new JsonArray(standards.stream().distinct().collect(Collectors.toList())));
   }
 
   public JsonArray getLearningTargets() {
@@ -53,7 +56,7 @@ public class TaxonomyEo extends JsonObject {
   }
 
   public void setLearningTargets(JsonArray learningTargets) {
-    this.taxonomy = JsonUtil.set(taxonomy, "learningTargets", learningTargets);
+    this.taxonomy = JsonUtil.set(taxonomy, "learningTargets", new JsonArray(learningTargets.stream().distinct().collect(Collectors.toList())));
   }
   
   public JsonArray getStandardsDisplay() {
@@ -61,7 +64,7 @@ public class TaxonomyEo extends JsonObject {
   }
 
   public void setStandardsDisplay(JsonArray standardsDisplay) {
-    taxonomy = JsonUtil.set(taxonomy, "standardsDisplay", standardsDisplay);
+    taxonomy = JsonUtil.set(taxonomy, "standardsDisplay", new JsonArray(standardsDisplay.stream().distinct().collect(Collectors.toList())));
   }
 
   public JsonArray getLearningTargetsDisplay() {
@@ -69,7 +72,15 @@ public class TaxonomyEo extends JsonObject {
   }
 
   public void setLearningTargetsDisplay(JsonArray ltDisplay) {
-    this.taxonomy = JsonUtil.set(taxonomy, "ltDisplay", ltDisplay);
+    this.taxonomy = JsonUtil.set(taxonomy, "ltDisplay", new JsonArray(ltDisplay.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getLeafInternalCodes() {
+    return taxonomy.getJsonArray("leafInternalCodes", null);
+  }
+
+  public void setLeafInternalCodes(JsonArray leafInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "leafInternalCodes", new JsonArray(leafInternalCodes.stream().distinct().collect(Collectors.toList())));
   }
   
   public String getTaxonomyDataSet() {
@@ -78,6 +89,14 @@ public class TaxonomyEo extends JsonObject {
 
   public void setTaxonomyDataSet(String taxonomyDataSet) {
     taxonomy = JsonUtil.set(taxonomy, "taxonomyDataSet", taxonomyDataSet);
+  }
+  
+  public JsonObject getTaxonomySet() {
+    return taxonomy.getJsonObject("taxonomySet", null);
+  }
+
+  public void setTaxonomySet(JsonObject taxonomySet) {
+    taxonomy = JsonUtil.set(taxonomy, "taxonomySet", taxonomySet);
   }
 
   public String getTaxonomySkills() {

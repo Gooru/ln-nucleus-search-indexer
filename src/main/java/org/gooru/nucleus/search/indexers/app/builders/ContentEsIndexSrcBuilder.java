@@ -185,10 +185,14 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
-      JsonArray taxonomyArray = null;
-      if (taxonomy != null) taxonomyArray = new JsonArray(taxonomy);
+      JsonObject taxonomyObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
-      addTaxnomy(taxonomyArray, taxonomyEo);
+      try {
+        if (taxonomy != null) taxonomyObject = new JsonObject(taxonomy);
+        addTaxonomy(taxonomyObject, taxonomyEo);
+      } catch (Exception e) {
+        LOGGER.error("Unable to convert Taxonomy to JsonObject", e.getMessage());
+      }
       contentEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 
       // Set info
