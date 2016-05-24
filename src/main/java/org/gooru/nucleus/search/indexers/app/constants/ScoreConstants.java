@@ -9,7 +9,7 @@ public final class ScoreConstants {
   public static final String PC_WEIGHT = "preComputedWeight";
   public static final String HAS_NO_THUMBNAIL = "hasNoThumbnail";
   public static final String SATS_HAS_NO_DESC = "hasNoDescription";
-  public static final String TAX_HAS_STANDARD = "hasStandard";
+  public static final String TAX_HAS_NO_STANDARD = "hasNoStandard";
   public static final String RESOURCE_COUNT = "resourceCount";
   public static final String QUESTION_COUNT = "questionCount";
   public static final String COLLAB_COUNT = "collaboratorCount";

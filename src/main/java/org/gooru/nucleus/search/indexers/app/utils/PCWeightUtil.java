@@ -54,7 +54,6 @@ public final class PCWeightUtil {
       scollectionMvelInputs.put("questionCount", rankingData.getQuestionCount());
       scollectionMvelInputs.put("resourceCount", rankingData.getResouceCount());
       scollectionMvelInputs.put("maxViewCount", ScoreConstants.MAX_COLLECTION_VIEWS_99PERSENT_VAL);
-
       VariableResolverFactory inputFactory = new MapVariableResolverFactory(scollectionMvelInputs);
       Double scPreComputedWeight = 0.0;
       scPreComputedWeight = (Double) MVEL.executeExpression(scollectionScoreCompiled, inputFactory);

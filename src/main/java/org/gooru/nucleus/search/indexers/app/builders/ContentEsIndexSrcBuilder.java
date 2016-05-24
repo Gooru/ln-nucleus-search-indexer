@@ -273,12 +273,14 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       rankingFields.put(ScoreConstants.OER, oer);
 
       JsonObject taxJson = contentEo.getTaxonomy();
-      int hasStandard = 0;
-      if (taxJson != null) {
-        hasStandard = taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD);
+      
+      int hasNoStandard = 1;
+      
+      if (taxJson != null && taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD) != null && taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD) == 1) {
+        hasNoStandard = 0;
       }
 
-      rankingFields.put(ScoreConstants.TAX_HAS_STANDARD, hasStandard);
+      rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
 
       double pcWeight = PCWeightUtil.getResourcePcWeight(new ScoreFields(rankingFields));
       LOGGER.debug("CEISB->build : PC weight : " + pcWeight);
