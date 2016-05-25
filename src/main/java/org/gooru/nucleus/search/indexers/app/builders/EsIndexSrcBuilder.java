@@ -1,7 +1,10 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
@@ -26,11 +29,8 @@ import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 /**
  * @author Renuka
@@ -137,54 +137,52 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         String learningTargetCode = null;
         List<Map> standardData = null;
         
-        if (codes.length > 0) {
-          if (codes.length == 2) {
-            subjectCode = code;
-          } else if (codes.length >= 2) {
-            subjectCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 2));
-            if (codes.length == 3) {
-              courseCode = code;
-            } else if (codes.length >= 4) {
-              courseCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 3));
-              if (codes.length == 4) {
-                domainCode = code;
-              } else if (codes.length >= 5) {
-                domainCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 4));
-                if (codes.length == 5) {
-                  standardCode = code;
-                  leafSLInternalCodes.add(code);
-                  leafSLDisplayCodes.add(taxonomyObject.getString(code));
-                  standardData = getTaxonomyRepo().getTaxonomyData(standardCode, IndexerConstants.STANDARD);
-                  if(standardData != null && standardData.size() > 0) {
-                    leafSLDesc.add(standardData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
-                  }
-                } else if (codes.length == 6) {
-                  standardCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 5));
-                  learningTargetCode = code;
-                  learningTargetArray.add(learningTargetCode);
-                  leafSLInternalCodes.add(code);
-                  leafSLDisplayCodes.add(taxonomyObject.getString(code));
-                  List<Map> ltData = getTaxonomyRepo().getTaxonomyData(learningTargetCode, IndexerConstants.LEARNING_TARGET);
-                  if(ltData != null && ltData.size() > 0) {
-                    ltDisplayArray.add(ltData.get(0).get(EntityAttributeConstants.CODE).toString());
-                    leafSLDesc.add(ltData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
-                  }
-                }
-                if (standardCode != null) {
-                  standardArray.add(standardCode);
-                  standardData = getTaxonomyRepo().getTaxonomyData(standardCode, IndexerConstants.STANDARD);
-                  if(standardData != null && standardData.size() > 0) {
-                    standardDisplayArray.add(standardData.get(0).get(EntityAttributeConstants.CODE).toString());
-                  }
-                }
-              }
+        if(codes.length > 0){
+          if(codes.length >= 1){
+            subjectCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 1));
+          }
+          if(codes.length >= 2){
+            courseCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 2));
+          }
+          if(codes.length >= 3){
+            domainCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 3));
+          }
+          if(codes.length == 4){
+            standardCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 4));
+            leafSLInternalCodes.add(code);
+            leafSLDisplayCodes.add(taxonomyObject.getString(code));
+            standardData = getTaxonomyRepo().getTaxonomyData(standardCode, IndexerConstants.STANDARD);
+            if(standardData != null && standardData.size() > 0) {
+              leafSLDesc.add(standardData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
+            }
+          }else if(codes.length == 5){
+            learningTargetCode = code;
+            standardCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 4));
+            learningTargetArray.add(learningTargetCode);
+            leafSLInternalCodes.add(code);
+            leafSLDisplayCodes.add(taxonomyObject.getString(code));
+            List<Map> ltData = getTaxonomyRepo().getTaxonomyData(learningTargetCode, IndexerConstants.LEARNING_TARGET);
+            if(ltData != null && ltData.size() > 0) {
+              ltDisplayArray.add(ltData.get(0).get(EntityAttributeConstants.CODE).toString());
+              leafSLDesc.add(ltData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
             }
           }
+          
+          if (codes.length >= 4 && standardCode != null) {
+            standardArray.add(standardCode);
+            standardData = getTaxonomyRepo().getTaxonomyData(standardCode, IndexerConstants.STANDARD);
+            if(standardData != null && standardData.size() > 0) {
+              standardDisplayArray.add(standardData.get(0).get(EntityAttributeConstants.CODE).toString());
+            }
+          }
+
         }
+        
         setTaxonomyMeta(subjectArray, courseArray, domainArray, subjectLabelArray, courseLabelArray, domainLabelArray, subjectCode, courseCode,
                 domainCode);
       }
     }
+    
     if (subjectArray.size() > 0) taxonomyEo.setSubject(subjectArray);
     if (courseArray.size() > 0)  taxonomyEo.setCourse(courseArray);
     if (domainArray.size() > 0)  taxonomyEo.setDomain(domainArray);
