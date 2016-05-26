@@ -113,8 +113,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonArray standardArray = new JsonArray();
     JsonArray learningTargetArray = new JsonArray();
     JsonArray leafSLInternalCodes = new JsonArray();
-    List<String> leafSLDisplayCodes = new ArrayList<>();
-    List<String> leafSLDesc = new ArrayList<>();
+    List<String> standardDesc = new ArrayList<>();
     
     JsonArray standardDisplayArray = new JsonArray();
     JsonArray ltDisplayArray = new JsonArray();
@@ -128,8 +127,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 
     if (taxonomyObject != null && !taxonomyObject.isEmpty()) {
       for (String code : taxonomyObject.fieldNames()) {
+        
         String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
-
         String subjectCode = null;
         String courseCode = null;
         String domainCode = null;
@@ -138,44 +137,43 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         List<Map> standardData = null;
         
         if(codes.length > 0){
-          if(codes.length >= 1){
+          
+          if(codes.length == 1){
+            subjectCode = code;
+          }else if(codes.length > 1){
             subjectCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 1));
           }
-          if(codes.length >= 2){
+          if(codes.length == 2){
+            courseCode = code;
+          }else if(codes.length > 2){
             courseCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 2));
           }
-          if(codes.length >= 3){
+          if(codes.length == 3){
+            domainCode = code;
+          }else if(codes.length > 3){
             domainCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 3));
           }
-          if(codes.length == 4){
-            standardCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 4));
+          if(codes.length == 4 ){
+            standardCode = code;
             leafSLInternalCodes.add(code);
-            leafSLDisplayCodes.add(taxonomyObject.getString(code));
             standardData = getTaxonomyRepo().getTaxonomyData(standardCode, IndexerConstants.STANDARD);
             if(standardData != null && standardData.size() > 0) {
-              leafSLDesc.add(standardData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
+              if(standardData.get(0).get(EntityAttributeConstants.DESCRIPTION) != null){
+                standardDesc.add(standardData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
+              }
+              standardDisplayArray.add(standardData.get(0).get(EntityAttributeConstants.CODE).toString());
             }
-          }else if(codes.length == 5){
+            standardArray.add(standardCode);
+          }
+          if(codes.length == 5){
             learningTargetCode = code;
-            standardCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 4));
             learningTargetArray.add(learningTargetCode);
             leafSLInternalCodes.add(code);
-            leafSLDisplayCodes.add(taxonomyObject.getString(code));
             List<Map> ltData = getTaxonomyRepo().getTaxonomyData(learningTargetCode, IndexerConstants.LEARNING_TARGET);
             if(ltData != null && ltData.size() > 0) {
               ltDisplayArray.add(ltData.get(0).get(EntityAttributeConstants.CODE).toString());
-              leafSLDesc.add(ltData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
             }
           }
-          
-          if (codes.length >= 4 && standardCode != null) {
-            standardArray.add(standardCode);
-            standardData = getTaxonomyRepo().getTaxonomyData(standardCode, IndexerConstants.STANDARD);
-            if(standardData != null && standardData.size() > 0) {
-              standardDisplayArray.add(standardData.get(0).get(EntityAttributeConstants.CODE).toString());
-            }
-          }
-
         }
         
         setTaxonomyMeta(subjectArray, courseArray, domainArray, subjectLabelArray, courseLabelArray, domainLabelArray, subjectCode, courseCode,
@@ -192,17 +190,24 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       taxonomyEo.setHasStandard(1);
       taxonomyEo.setStandards(standardArray);
       taxonomyEo.setStandardsDisplay(standardDisplayArray);
+    }
+    
+    if(learningTargetArray.size() > 0){
+      taxonomyEo.setHasStandard(1);
       taxonomyEo.setLearningTargets(learningTargetArray);
       taxonomyEo.setLearningTargetsDisplay(ltDisplayArray);
+    }
+    
+    if(leafSLInternalCodes.size() > 0){
       taxonomyEo.setLeafInternalCodes(leafSLInternalCodes);
     }
     
     taxonomyDataSet.setSubject(subjectLabelArray);
     taxonomyDataSet.setCourse(courseLabelArray);
     taxonomyDataSet.setDomain(domainLabelArray);
-    curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, leafSLDisplayCodes != null ? leafSLDisplayCodes : new JsonArray())
-            .put(IndexerConstants.CURRICULUM_DESC, leafSLDesc != null ? leafSLDesc : new JsonArray())
-            .put(IndexerConstants.CURRICULUM_NAME, new JsonArray());
+    curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
+            .put(IndexerConstants.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
+            .put(IndexerConstants.CURRICULUM_NAME, new JsonArray()).put(IndexerConstants.LEARNING_TARGET, ltDisplayArray != null ? ltDisplayArray : new JsonArray());
     taxonomyDataSet.setCurriculum(curriculumTaxonomy);
     taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.getTaxonomyJson().toString());
     taxonomyEo.setTaxonomySet(taxonomyDataSet.getTaxonomyJson());
