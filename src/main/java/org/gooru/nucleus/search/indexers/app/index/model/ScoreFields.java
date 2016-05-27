@@ -35,6 +35,10 @@ public class ScoreFields {
   private String url;
   
   private int oer = 0;
+  
+  private int isPublished = 0;
+  
+  private static final String PUBLISHED = "published";
 
   public ScoreFields(Map<String, Object> scoreFieldsMap) {
     if (scoreFieldsMap.get(ScoreConstants.VIEW_COUNT) != null) {
@@ -86,6 +90,13 @@ public class ScoreFields {
     
     if (scoreFieldsMap.get(ScoreConstants.OER) != null) {
       this.oer = (int) scoreFieldsMap.get(ScoreConstants.OER);
+    }
+    
+    if(scoreFieldsMap.get(ScoreConstants.PUBLISH_STATUS) != null){
+     String publishStatus = (String) scoreFieldsMap.get(ScoreConstants.PUBLISH_STATUS);
+     if(publishStatus.equalsIgnoreCase(PUBLISHED)){
+       isPublished = 1;
+     }
     }
 
   }
@@ -163,5 +174,9 @@ public class ScoreFields {
 
   public int getOer() {
     return oer;
+  }
+
+  public int getIsPublished() {
+    return isPublished;
   }
 }

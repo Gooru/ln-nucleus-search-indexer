@@ -27,11 +27,12 @@ public final class PCWeightUtil {
       float oerScore = (rankingData.getOer() == 1) ? 1f : 0f;
       float skillScore = (rankingData.getHas21stCenturySkills()) ? 1f : 0f;
       float viewsScore = rankingData.getViewsCount() / ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
+      float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f ;
       
-      float usageSignalWeight = (float) ((normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2 * 0.6);
-      float otherSignalWeight = (float) (((descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore) / 7) * 0.4);
-
-      return (double) normalizeValue(usageSignalWeight + otherSignalWeight);
+      float usageSignalWeight = (float) ((normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2 * 0.5);
+      float otherSignalWeight = (float) (((descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore) / 7) * 0.3);
+      float publishStatusWeight = (float) (publishStatusScore * 0.2);
+      return (double) normalizeValue(usageSignalWeight + otherSignalWeight + publishStatusWeight);
     } catch (Exception e) {
       throw new Exception(e);
     }
@@ -54,6 +55,7 @@ public final class PCWeightUtil {
       scollectionMvelInputs.put("questionCount", rankingData.getQuestionCount());
       scollectionMvelInputs.put("resourceCount", rankingData.getResouceCount());
       scollectionMvelInputs.put("maxViewCount", ScoreConstants.MAX_COLLECTION_VIEWS_99PERSENT_VAL);
+      scollectionMvelInputs.put("isPublished", rankingData.getIsPublished());
       VariableResolverFactory inputFactory = new MapVariableResolverFactory(scollectionMvelInputs);
       Double scPreComputedWeight = 0.0;
       scPreComputedWeight = (Double) MVEL.executeExpression(scollectionScoreCompiled, inputFactory);

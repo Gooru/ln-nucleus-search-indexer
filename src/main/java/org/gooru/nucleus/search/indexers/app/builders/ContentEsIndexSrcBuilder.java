@@ -271,7 +271,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       rankingFields.put(ScoreConstants.RESOURCE_URL_FIELD, contentEo.getUrl());
       rankingFields.put(ScoreConstants.HAS_21ST_CENTURY_SKILL, statisticsEo.getHas21stCenturySkills());
       rankingFields.put(ScoreConstants.OER, oer);
-   //   rankingFields.put(ScoreConstants.PUBLISH_STATUS, contentEo.getPublishStatus());
+      rankingFields.put(ScoreConstants.PUBLISH_STATUS, contentEo.getPublishStatus());
 
       JsonObject taxJson = contentEo.getTaxonomy();
       
