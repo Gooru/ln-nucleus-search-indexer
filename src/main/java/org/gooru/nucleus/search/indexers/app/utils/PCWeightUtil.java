@@ -29,10 +29,9 @@ public final class PCWeightUtil {
       float viewsScore = rankingData.getViewsCount() / ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
       float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f ;
       
-      float usageSignalWeight = (float) ((normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2 * 0.5);
-      float otherSignalWeight = (float) (((descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore) / 7) * 0.3);
-      float publishStatusWeight = (float) (publishStatusScore * 0.2);
-      return (double) normalizeValue(usageSignalWeight + otherSignalWeight + publishStatusWeight);
+      float usageSignalWeight = (float) ((normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore) ) / 2 * 0.7);
+      float otherSignalWeight = (float) (((descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore + publishStatusScore) / 8) * 0.3);
+      return (double) normalizeValue(usageSignalWeight + otherSignalWeight);
     } catch (Exception e) {
       throw new Exception(e);
     }
@@ -88,3 +87,4 @@ public final class PCWeightUtil {
 
 
 }
+
