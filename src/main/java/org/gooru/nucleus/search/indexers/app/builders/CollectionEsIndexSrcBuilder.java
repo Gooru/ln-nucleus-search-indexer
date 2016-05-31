@@ -192,7 +192,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       rankingFields.put(ScoreConstants.DESCRIPTION_FIELD, learningObjective);
       rankingFields.put(ScoreConstants.SATS_HAS_NO_DESC, statisticsEo.getHasNoDescription());
       rankingFields.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, collectionEo.getOriginalCollectionId());
-
+      rankingFields.put(ScoreConstants.PUBLISH_STATUS, collectionEo.getPublishStatus());
       JsonObject taxJson = collectionEo.getTaxonomy();
       int hasNoStandard = 1;
       
