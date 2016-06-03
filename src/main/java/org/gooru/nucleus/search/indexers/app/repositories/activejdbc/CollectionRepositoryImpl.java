@@ -7,6 +7,7 @@ import java.util.Map;
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHelper;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.LazyList;
@@ -32,6 +33,7 @@ public class CollectionRepositoryImpl implements CollectionRepository {
     String courseId = null;
 
     if (result != null && !result.getBoolean(Collection.IS_DELETED)) {
+      DBHelper.getInstance().escapeSplChars(result);
       returnValue = new JsonObject(result.toJson(false));
       courseId = returnValue.getString(EntityAttributeConstants.COURSE_ID);
     }
