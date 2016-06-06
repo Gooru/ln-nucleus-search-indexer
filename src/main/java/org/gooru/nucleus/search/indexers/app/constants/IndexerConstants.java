@@ -35,6 +35,8 @@ public final class IndexerConstants {
   public static final String STANDARD = "standard";
   
   public static final String LEARNING_TARGET = "learningTarget";
+  
+  public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
 
   public static final String CURRICULUM_CODE = "curriculumCode";
 

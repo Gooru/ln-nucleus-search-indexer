@@ -65,6 +65,7 @@ public final class EntityAttributeConstants {
   public static final String LICENSE_URL = "url";
   public static final String TWENTY_ONE_CENTURY_SKILL = "twenty_one_century_skill";
   public static final String COURSE_ID = "course_id";
+  public static final String FRAMEWORK_CODE = "framework_code";
 
   private EntityAttributeConstants() {
     throw new AssertionError();
