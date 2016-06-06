@@ -42,7 +42,13 @@ public class ScoreFields {
 
   public ScoreFields(Map<String, Object> scoreFieldsMap) {
     if (scoreFieldsMap.get(ScoreConstants.VIEW_COUNT) != null) {
-      this.viewsCount = (Long) scoreFieldsMap.get(ScoreConstants.VIEW_COUNT);
+      Object viewCount = scoreFieldsMap.get(ScoreConstants.VIEW_COUNT);
+      if(viewCount instanceof Integer){
+        this.viewsCount = ((Integer) viewCount).longValue();
+      }
+      else if(viewCount instanceof Long){
+        this.viewsCount = (Long) viewCount;
+      }
     }
     if (scoreFieldsMap.get(ScoreConstants.USED_IN_COLLECTION_COUNT) != null) {
       this.resourceUsedCollectionCount = (int) scoreFieldsMap.get(ScoreConstants.USED_IN_COLLECTION_COUNT);

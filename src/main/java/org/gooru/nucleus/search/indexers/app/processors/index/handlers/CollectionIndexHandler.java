@@ -146,7 +146,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
       handleCount(collectionId, field, operationType, count, scoreValues, fieldsMap);
       indexDocumentByFields(fieldsMap, scoreValues, collectionId);
     } catch (Exception e) {
-      LOGGER.error("CIH->handleCount : Update fields values failed for fields : " + field + " collection id :" + collectionId);
+      LOGGER.error("CIH->handleCount : Update fields values failed for fields : " + field + " collection id :" + collectionId, e);
       throw new Exception(e);
     }
   }
