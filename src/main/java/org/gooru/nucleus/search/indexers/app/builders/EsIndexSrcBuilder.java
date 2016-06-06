@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
@@ -105,7 +106,6 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     userEo.setProfileImage(BaseUtil.checkNullAndGetString(orginalCreator, "thumbnail_path"));
   }
 
-  @SuppressWarnings("rawtypes")
   protected void addTaxonomy(JsonObject taxonomyObject, TaxonomyEo taxonomyEo) {
     JsonArray subjectArray = new JsonArray();
     JsonArray courseArray = new JsonArray();
@@ -114,9 +114,11 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonArray learningTargetArray = new JsonArray();
     JsonArray leafSLInternalCodes = new JsonArray();
     List<String> standardDesc = new ArrayList<>();
-    
+    List<String> ltDescArray = new ArrayList<>();
+
     JsonArray standardDisplayArray = new JsonArray();
     JsonArray ltDisplayArray = new JsonArray();
+    JsonArray frameworkCodeArray = new JsonArray();
     
     JsonArray subjectLabelArray = new JsonArray();
     JsonArray courseLabelArray = new JsonArray();
@@ -127,15 +129,12 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 
     if (taxonomyObject != null && !taxonomyObject.isEmpty()) {
       for (String code : taxonomyObject.fieldNames()) {
-        
+        JsonObject displayCodeJson = taxonomyObject.getJsonObject(code);
         String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
         String subjectCode = null;
         String courseCode = null;
         String domainCode = null;
-        String standardCode = null;
-        String learningTargetCode = null;
-        List<Map> standardData = null;
-        
+                
         if(codes.length > 0){
           
           if(codes.length == 1){
@@ -153,26 +152,19 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
           }else if(codes.length > 3){
             domainCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 3));
           }
-          if(codes.length == 4 ){
-            standardCode = code;
+          if (codes.length == 4) {
+            standardArray.add(code);
             leafSLInternalCodes.add(code);
-            standardData = getTaxonomyRepo().getTaxonomyData(standardCode, IndexerConstants.STANDARD);
-            if(standardData != null && standardData.size() > 0) {
-              if(standardData.get(0).get(EntityAttributeConstants.DESCRIPTION) != null){
-                standardDesc.add(standardData.get(0).get(EntityAttributeConstants.DESCRIPTION).toString());
-              }
-              standardDisplayArray.add(standardData.get(0).get(EntityAttributeConstants.CODE).toString());
-            }
-            standardArray.add(standardCode);
+            standardDesc.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
+            standardDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+            frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
           }
-          if(codes.length == 5){
-            learningTargetCode = code;
-            learningTargetArray.add(learningTargetCode);
+          if (codes.length == 5) {
+            learningTargetArray.add(code);
             leafSLInternalCodes.add(code);
-            List<Map> ltData = getTaxonomyRepo().getTaxonomyData(learningTargetCode, IndexerConstants.LEARNING_TARGET);
-            if(ltData != null && ltData.size() > 0) {
-              ltDisplayArray.add(ltData.get(0).get(EntityAttributeConstants.CODE).toString());
-            }
+            ltDescArray.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
+            ltDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+            frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
           }
         }
         
@@ -207,7 +199,9 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     taxonomyDataSet.setDomain(domainLabelArray);
     curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
             .put(IndexerConstants.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
-            .put(IndexerConstants.CURRICULUM_NAME, new JsonArray()).put(IndexerConstants.LEARNING_TARGET, ltDisplayArray != null ? ltDisplayArray : new JsonArray());
+            .put(IndexerConstants.CURRICULUM_NAME, frameworkCodeArray != null ? frameworkCodeArray.stream().distinct().collect(Collectors.toList()) : new JsonArray())
+            .put(IndexerConstants.LEARNING_TARGET, ltDisplayArray != null ? ltDisplayArray : new JsonArray())
+            .put(IndexerConstants.LEARNING_TARGET_DESC, ltDescArray != null ? ltDescArray : new JsonArray());
     taxonomyDataSet.setCurriculum(curriculumTaxonomy);
     taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.getTaxonomyJson().toString());
     taxonomyEo.setTaxonomySet(taxonomyDataSet.getTaxonomyJson());
