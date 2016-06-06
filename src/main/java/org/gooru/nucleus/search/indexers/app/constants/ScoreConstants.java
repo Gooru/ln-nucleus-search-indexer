@@ -25,6 +25,7 @@ public final class ScoreConstants {
   public static final String VIEWS_COUNT_FIELD = "statistics.viewsCount";
   public static final String OER = "oer";
   public static final String PUBLISH_STATUS = "publishStatus";
+  public static final String LEARNING_OBJ = "learningObjective";
 
   public static final String[] DEMOTE_DOMAINS = {"wikipedia"};
 

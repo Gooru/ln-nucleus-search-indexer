@@ -114,13 +114,21 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
     if (result == null || result.get(ScoreConstants.STATISTICS_FIELD) == null) {
       throw new RuntimeException("Invalid Request");
     }
-
+    Map<String,Object> rankingFields = (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
     Map<String, Object> taxonomy = (Map<String, Object>) result.get(ScoreConstants.TAXONOMY_FIELD);
-    ((Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD))
-      .put(ScoreConstants.TAX_HAS_NO_STANDARD, taxonomy.get(EntityAttributeConstants.TAXONOMY_HAS_STD));
-    ((Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD))
-      .put(ScoreConstants.ORIGINAL_CONTENT_FIELD, result.get(ScoreConstants.ORIGINAL_CONTENT_FIELD));
-    return (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
+    
+    int hasNoStandard = 1;
+    
+    if (taxonomy != null && taxonomy.get(EntityAttributeConstants.TAXONOMY_HAS_STD) != null && (int)taxonomy.get(EntityAttributeConstants.TAXONOMY_HAS_STD) == 1) {
+      hasNoStandard = 0;
+    }
+
+    rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
+    rankingFields.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, result.get(ScoreConstants.ORIGINAL_CONTENT_FIELD));
+    rankingFields.put(ScoreConstants.PUBLISH_STATUS, result.get(ScoreConstants.PUBLISH_STATUS));
+    rankingFields.put(ScoreConstants.DESCRIPTION_FIELD, result.get(ScoreConstants.LEARNING_OBJ));
+
+    return rankingFields;
   }
 
   private void indexDocumentByFields(Map<String, Object> fieldsMap, Map<String, Object> rankingFields, String collectionId) throws Exception {
@@ -138,7 +146,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
       handleCount(collectionId, field, operationType, count, scoreValues, fieldsMap);
       indexDocumentByFields(fieldsMap, scoreValues, collectionId);
     } catch (Exception e) {
-      LOGGER.error("CIH->handleCount : Update fields values failed for fields : " + field + " collection id :" + collectionId);
+      LOGGER.error("CIH->handleCount : Update fields values failed for fields : " + field + " collection id :" + collectionId, e);
       throw new Exception(e);
     }
   }

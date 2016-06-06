@@ -1,18 +1,24 @@
 package org.gooru.nucleus.search.indexers.app.processors.index.handlers;
 
-import io.vertx.core.json.JsonObject;
-import org.gooru.nucleus.search.indexers.app.constants.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
+import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
-import org.gooru.nucleus.search.indexers.app.services.CrawlerService;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
-import java.util.HashMap;
-import java.util.Map;
+import io.vertx.core.json.JsonObject;
 
 public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandler {
 
@@ -98,14 +104,27 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
       throw new RuntimeException("Invalid Request");
     }
 
+    Map<String, Object> rankingFields = (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
     Map<String, Object> taxonomy = (Map<String, Object>) result.get(ScoreConstants.TAXONOMY_FIELD);
-    ((Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD))
-      .put(ScoreConstants.TAX_HAS_NO_STANDARD, taxonomy.get(EntityAttributeConstants.TAXONOMY_HAS_STD));
-    ((Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD))
-      .put(ScoreConstants.RESOURCE_URL_FIELD, result.get(ScoreConstants.RESOURCE_URL_FIELD));
-    ((Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD))
-      .put(ScoreConstants.DESCRIPTION_FIELD, result.get(ScoreConstants.DESCRIPTION_FIELD));
-    return (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
+    
+    int hasNoStandard = 1;
+    if (taxonomy != null && taxonomy.get(EntityAttributeConstants.TAXONOMY_HAS_STD) != null && (int)taxonomy.get(EntityAttributeConstants.TAXONOMY_HAS_STD) == 1) {
+      hasNoStandard = 0;
+    }
+
+    int oer = 0;
+    Map<String, Object> infoMap = (Map<String, Object>) result.get(IndexFields.INFO);
+    if(infoMap != null && infoMap.get(IndexFields.OER) != null ){
+      oer = (int) infoMap.get(IndexFields.OER);
+    }
+
+    rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
+    rankingFields.put(ScoreConstants.PUBLISH_STATUS, result.get(ScoreConstants.PUBLISH_STATUS));
+    rankingFields.put(ScoreConstants.DESCRIPTION_FIELD, result.get(ScoreConstants.DESCRIPTION_FIELD));
+    rankingFields.put(ScoreConstants.RESOURCE_URL_FIELD, result.get(ScoreConstants.RESOURCE_URL_FIELD));
+    rankingFields.put(ScoreConstants.OER, oer);
+
+    return rankingFields;
   }
 
   private void indexDocumentByFields(Map<String, Object> fieldsMap, Map<String, Object> rankingFields, String resourceId) throws Exception {
