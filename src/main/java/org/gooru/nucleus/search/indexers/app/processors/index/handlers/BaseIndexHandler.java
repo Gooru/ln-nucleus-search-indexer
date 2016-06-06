@@ -8,7 +8,7 @@ public class BaseIndexHandler {
 
   protected void handleCount(String resourceId, String field, String operationType, int count, Map<String, Object> scoreValues,
                              Map<String, Object> fieldsMap) {
-    int value = (int) scoreValues.get(field);
+    Object value =  scoreValues.get(field);
     if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_INCR)) {
       scoreValues.put(field, incrementValue(value));
     } else if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_DECR)) {
@@ -20,16 +20,28 @@ public class BaseIndexHandler {
     fieldsMap.put(fieldName, value);
   }
 
-  private int incrementValue(Integer value) {
+  private Object incrementValue(Object value) {
     if (value != null) {
-      return value + 1;
+      if(value instanceof Integer){
+        value = ((Integer)value ) + 1;
+      }
+      if(value instanceof Long){
+        value = ((Long)value) + 1;
+      }
+      return value;
     }
     return 0;
   }
 
-  private int decrementValue(Integer value) {
+  private Object decrementValue(Object value) {
     if (value != null) {
-      return value - 1;
+      if(value instanceof Integer){
+        value = ((Integer)value ) - 1;
+      }
+      if(value instanceof Long){
+        value = ((Long)value) - 1;
+      }
+      return value;
     }
     return 0;
   }
