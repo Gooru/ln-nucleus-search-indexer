@@ -127,7 +127,6 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
     rankingFields.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, result.get(ScoreConstants.ORIGINAL_CONTENT_FIELD));
     rankingFields.put(ScoreConstants.PUBLISH_STATUS, result.get(ScoreConstants.PUBLISH_STATUS));
     rankingFields.put(ScoreConstants.DESCRIPTION_FIELD, result.get(ScoreConstants.LEARNING_OBJ));
-
     return rankingFields;
   }
 
@@ -135,7 +134,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
     //Calculate PC weight
     double pcWeight = PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields));
     LOGGER.debug("New PC weight : " + pcWeight + " for collection id : " + collectionId);
-    fieldsMap.put("preComputedWeight", pcWeight);
+    fieldsMap.put(ScoreConstants.PC_WEIGHT_FIELD, pcWeight);
     IndexService.instance().indexDocumentByFields(collectionId, indexName, getIndexType(), fieldsMap);
   }
 

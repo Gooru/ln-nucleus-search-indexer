@@ -131,7 +131,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     //Calculate PC weight
     double pcWeight = PCWeightUtil.getResourcePcWeight(new ScoreFields(rankingFields));
     LOGGER.debug("New PC weight : " + pcWeight + " for resource id : " + resourceId);
-    fieldsMap.put("preComputedWeight", pcWeight);
+    fieldsMap.put(ScoreConstants.PC_WEIGHT_FIELD, pcWeight);
     IndexService.instance().indexDocumentByFields(resourceId, indexName, getIndexType(), fieldsMap);
   }
 

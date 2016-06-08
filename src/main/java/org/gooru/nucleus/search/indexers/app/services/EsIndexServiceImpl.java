@@ -12,6 +12,7 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.engine.DocumentMissingException;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptService.ScriptType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
@@ -154,15 +155,28 @@ public class EsIndexServiceImpl implements IndexService {
     try {
       Map<String, Object> paramsField = new HashMap<>();
       StringBuffer scriptQuery = new StringBuffer();
+      LOGGER.debug("incoming fields values: " + fieldValues.values().toString());
+
       IndexScriptBuilder.buildScript(id, paramsField, scriptQuery, fieldValues);
       LOGGER.debug("Index name : " + indexName + " type : " + typeName + " id :" + id);
       LOGGER.debug("Index update script : " + scriptQuery.toString());
+      LOGGER.debug("Index params fields : " + paramsField.values().toString());
       getClient().prepareUpdate(indexName, typeName, id).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField))
                  .execute().actionGet();
 
       //Update Statistics Index
-      getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-                 .setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)).execute().actionGet();
+      try{
+        getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
+        .setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)).execute().actionGet();
+      }
+      catch(Exception ex){
+        if(ex instanceof DocumentMissingException){
+          getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
+          .setSource(buildContentInfoIndexSrc(id, typeName, fieldValues)).execute().actionGet();
+        }else {
+          throw new Exception(ex);
+        }
+      }
     } catch (Exception e) {
       LOGGER.error("Update documentByFields Failed!, Exception : " + e);
       throw new Exception(e);
@@ -386,6 +400,18 @@ public class EsIndexServiceImpl implements IndexService {
     return null;
   }
 
+  private String buildContentInfoIndexSrc(String id, String contentFormat, Map<String, Object> data){
+    ContentInfoEio contentInfoEo = new ContentInfoEio();
+    contentInfoEo.setId(id);
+    contentInfoEo.setContentFormat(contentFormat);
+    contentInfoEo.setIndexUpdatedTime(new Date(System.currentTimeMillis()));
+    Map<String, Object> indexData = new HashMap<>();
+    indexData.put(IndexerConstants.STATISTICS, data);
+    contentInfoEo.setStatistics(buildStatisticsData(contentFormat, indexData));
+    LOGGER.debug("content info index source : " + contentInfoEo.getContentInfoJson().toString());
+    return contentInfoEo.getContentInfoJson().toString();
+  }
+  
   private JsonObject buildStatisticsData(String contentFormat, Map<String, Object> contentInfoAsMap) {
     Map<String, Object> statisticsAsMap = null;
     if (contentInfoAsMap != null) {

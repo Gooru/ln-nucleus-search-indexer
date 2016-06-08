@@ -17,6 +17,7 @@ public final class EventsConstants {
   public static final String EVT_PAYLOAD_COLLABORATORS = "collaborators";
   public static final String EVT_REF_PARENT_GOORU_IDS = "referenceParentGooruIds";
   public static final String EVT_PAYLOAD_USER_ID = "id";
+  public static final String EVT_PAYLOAD_OBJECT_DATA_COLLECTION_ID = "collection_id";
 
 
   public static final String ITEM_CREATE = "item.create";

@@ -127,20 +127,22 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       if (questionIds != null && questionIds.size() > 0) {
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
-          resourceIndexHandler.indexDocument((String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Re-indexed question id : " + iter.next());
+          String questionId = (String) iter.next();
+          resourceIndexHandler.indexDocument(questionId);
+          LOGGER.debug("CEH->handleCopy : Re-indexed question id : " + questionId);
         }
       }
 
       if (resourceIds != null && resourceIds.size() > 0) {
         Iterator<Object> iter = resourceIds.iterator();
         while (iter.hasNext()) {
-          resourceIndexHandler.increaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, (String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Incremented used in collection count id : " + iter.next());
+          String resourceId = (String) iter.next();
+          resourceIndexHandler.increaseCount(resourceId, ScoreConstants.USED_IN_COLLECTION_COUNT);
+          LOGGER.debug("CEH->handleCopy : Incremented used in collection count id : " + resourceId);
         }
       }
     } catch (Exception e) {
-      LOGGER.error("Failed to handle copy event for collection id : " + collectionId);
+      LOGGER.error("Failed to handle copy event for collection id : " + collectionId, e);
       throw new Exception(e);
     }
   }

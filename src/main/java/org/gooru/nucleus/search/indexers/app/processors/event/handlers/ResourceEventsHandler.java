@@ -33,8 +33,11 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       switch (eventName) {
 
         case EventsConstants.ITEM_CREATE:
-        case EventsConstants.ITEM_UPDATE:
           handleReIndex(resourceId);
+          break;
+          
+        case EventsConstants.ITEM_UPDATE:
+          handleItemUpdate(resourceId);
           break;
 
         case EventsConstants.ITEM_DELETE:
@@ -66,6 +69,17 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     }
   }
 
+  
+
+  private void handleItemUpdate(String resourceId) throws Exception {
+    resourceIndexHandler.indexDocument(resourceId);
+    LOGGER.debug("REH->handleReIndex : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
+    String collectionId = getCollectionId(eventJson);
+    if(collectionId != null && !collectionId.isEmpty()){
+      collectionIndexHandler.indexDocument(collectionId);
+      LOGGER.debug("REH->handleReIndex : Indexed parent collection of resource: " + resourceId + " collection id  : " + collectionId);
+    }
+  }
 
   private void handleReIndex(String resourceId) throws Exception {
     resourceIndexHandler.indexDocument(resourceId);

@@ -9,15 +9,20 @@ public class BaseIndexHandler {
   protected void handleCount(String resourceId, String field, String operationType, int count, Map<String, Object> scoreValues,
                              Map<String, Object> fieldsMap) {
     Object value =  scoreValues.get(field);
+    String fieldName = ScoreConstants.STATISTICS_FIELD + '.' + field;
+
     if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_INCR)) {
-      scoreValues.put(field, incrementValue(value));
+      Object incrCount = incrementValue(value);
+      scoreValues.put(field, incrCount);
+      fieldsMap.put(fieldName, incrCount);
     } else if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_DECR)) {
-      scoreValues.put(field, decrementValue(value));
+      Object decCount  = decrementValue(value);
+      scoreValues.put(field, decCount);
+      fieldsMap.put(fieldName, decCount);
     } else if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_UPDATE)) {
       scoreValues.put(field, count);
+      fieldsMap.put(fieldName, count);
     }
-    String fieldName = ScoreConstants.STATISTICS_FIELD + '.' + field;
-    fieldsMap.put(fieldName, value);
   }
 
   private Object incrementValue(Object value) {
