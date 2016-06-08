@@ -457,6 +457,16 @@
                               "type":"string",
                               "index":"not_analyzed",
                               "include_in_all":false
+                           },
+                           "learningTarget":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "learningTargetDesc":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
                            }
                         }
                      }
