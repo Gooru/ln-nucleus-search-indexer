@@ -94,7 +94,7 @@ public class CollectionRepositoryImpl implements CollectionRepository {
   @Override
   public List<Map> getContentsOfCollection(String collectionId) {
     Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
-    List<Map> collectionMeta = Base.findAll(Collection.FETCH_RESOURCE_META, collectionId);
+    List<Map> collectionMeta = Base.findAll(Collection.FETCH_RESOURCE_META, collectionId, false);
     if (collectionMeta.size() < 1) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
     }
