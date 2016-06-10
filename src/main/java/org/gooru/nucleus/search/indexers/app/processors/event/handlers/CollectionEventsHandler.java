@@ -86,16 +86,18 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       if (questionIds != null && questionIds.size() > 0) {
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
-          resourceIndexHandler.deleteIndexedDocument((String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Deleted questions inside collection id : " + collectionId + " question id : " + iter.next());
+          String questionId = (String) iter.next();
+          resourceIndexHandler.deleteIndexedDocument(questionId);
+          LOGGER.debug("CEH->handleCopy : Deleted questions inside collection id : " + collectionId + " question id : " + questionId);
         }
       }
 
       if (resourceIds != null && resourceIds.size() > 0) {
         Iterator<Object> iter = resourceIds.iterator();
         while (iter.hasNext()) {
-          resourceIndexHandler.decreaseCount(ScoreConstants.USED_IN_COLLECTION_COUNT, (String) iter.next());
-          LOGGER.debug("CEH->handleCopy : Decreased used in collection count id : " + iter.next());
+          String resourceId = (String) iter.next();
+          resourceIndexHandler.decreaseCount(resourceId, ScoreConstants.USED_IN_COLLECTION_COUNT);
+          LOGGER.debug("CEH->handleCopy : Decreased used in collection count id : " + resourceId);
         }
       }
     } catch (Exception e) {

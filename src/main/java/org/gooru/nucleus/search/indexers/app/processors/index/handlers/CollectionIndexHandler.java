@@ -112,7 +112,8 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
   private Map<String, Object> getScoreValues(String collectionId) {
     Map<String, Object> result = IndexService.instance().getDocument(collectionId, indexName, getIndexType());
     if (result == null || result.get(ScoreConstants.STATISTICS_FIELD) == null) {
-      throw new RuntimeException("Invalid Request");
+      LOGGER.debug("Collection/statistics data not available in index !! - Collection id :" + collectionId);
+      return null;
     }
     Map<String,Object> rankingFields = (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
     Map<String, Object> taxonomy = (Map<String, Object>) result.get(ScoreConstants.TAXONOMY_FIELD);
@@ -142,8 +143,10 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
     try {
       Map<String, Object> fieldsMap = new HashMap<>();
       Map<String, Object> scoreValues = getScoreValues(collectionId);
-      handleCount(collectionId, field, operationType, count, scoreValues, fieldsMap);
-      indexDocumentByFields(fieldsMap, scoreValues, collectionId);
+      if(scoreValues != null){
+        handleCount(collectionId, field, operationType, count, scoreValues, fieldsMap);
+        indexDocumentByFields(fieldsMap, scoreValues, collectionId);
+      }
     } catch (Exception e) {
       LOGGER.error("CIH->handleCount : Update fields values failed for fields : " + field + " collection id :" + collectionId, e);
       throw new Exception(e);

@@ -101,7 +101,8 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
   private Map<String, Object> getScoreValues(String resourceId) {
     Map<String, Object> result = IndexService.instance().getDocument(resourceId, indexName, getIndexType());
     if (result == null || result.get(ScoreConstants.STATISTICS_FIELD) == null) {
-      throw new RuntimeException("Invalid Request");
+      LOGGER.debug("Resource/statistics data not available in index !! - Resource id :" + resourceId);
+      return null;
     }
 
     Map<String, Object> rankingFields = (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
@@ -139,8 +140,10 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     try {
       Map<String, Object> fieldsMap = new HashMap<>();
       Map<String, Object> scoreValues = getScoreValues(resourceId);
-      handleCount(resourceId, field, operationType, count, scoreValues, fieldsMap);
-      indexDocumentByFields(fieldsMap, scoreValues, resourceId);
+      if(scoreValues != null){
+        handleCount(resourceId, field, operationType, count, scoreValues, fieldsMap);
+        indexDocumentByFields(fieldsMap, scoreValues, resourceId);
+      }
     } catch (Exception e) {
       LOGGER.error("RIH->handleCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
       throw new Exception(e);
