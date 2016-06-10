@@ -66,6 +66,12 @@ public final class EntityAttributeConstants {
   public static final String TWENTY_ONE_CENTURY_SKILL = "twenty_one_century_skill";
   public static final String COURSE_ID = "course_id";
   public static final String FRAMEWORK_CODE = "framework_code";
+  public static final String ORIGINAL_COURSE_ID = "original_course_id";
+  public static final String PARENT_COURSE_ID = "parent_course_id";
+  public static final String SUBJECT_BUCKET = "subject_bucket";
+  public static final String EDITORIAL_TAGS = "editorial_tags";
+  public static final String SUBJECT_SEQUENCE = "subject_sequence";
+  public static final String TAX_PARENT_TITLE = "parent_title";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

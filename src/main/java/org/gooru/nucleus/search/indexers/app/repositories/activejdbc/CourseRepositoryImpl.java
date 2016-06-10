@@ -3,6 +3,7 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.sql.SQLException;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,19 @@ public class CourseRepositoryImpl implements CourseRepository {
     } catch (SQLException e) {
       LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
       return null;
+    }
+  }
+
+  @Override
+  public Integer getUnitCount(String courseId) {
+    try{
+      Long unitCount = Unit.count(Unit.GET_UNIT_COUNT, courseId, false);
+      LOGGER.debug("Unit count : {} for course : {}", unitCount, courseId);
+      return unitCount != null ? unitCount.intValue() : 0;
+    }
+    catch(Exception e){
+      LOGGER.error("Not able to fetch unit count for course : {}", courseId);
+      return 0;
     }
   }
 

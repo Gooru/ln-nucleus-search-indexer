@@ -8,6 +8,7 @@ import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResul
 import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResult.ExecutionStatus;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +69,10 @@ public class FetchContentHandler implements DBHandler {
           
         case ExecuteOperationConstants.GET_USER_COLLECTIONS:
           result = CollectionRepository.instance().getUserCollections(context.getId());
+          break;
+
+        case ExecuteOperationConstants.GET_COURSE:
+          result = CourseRepository.instance().getCourse(context.getId());
           break;
 
         default:

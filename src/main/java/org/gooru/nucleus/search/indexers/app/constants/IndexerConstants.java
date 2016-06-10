@@ -69,5 +69,9 @@ public final class IndexerConstants {
   public static final String COLLECTION_COURSE = "collection_course";
   
   public static final String COLLECTION_COURSE_ID = "collection_course_id";
+  
+  public static final String TYPE_COURSE = "course";
+
+  public static final String FRAMEWORK_CODE = "frameworkCode";
 
 }

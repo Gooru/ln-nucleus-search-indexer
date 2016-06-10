@@ -10,7 +10,8 @@ public enum IndexType {
   LIBRARY("library"),
   DICTIONARY("dictionary"),
   PUBLISHER("publisher"),
-  AGGREGATOR("aggregator");
+  AGGREGATOR("aggregator"),
+  COURSE("course");
 
   final String type;
 

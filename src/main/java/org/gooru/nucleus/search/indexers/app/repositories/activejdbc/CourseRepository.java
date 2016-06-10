@@ -8,4 +8,7 @@ public interface CourseRepository {
     return new CourseRepositoryImpl();
   }
   JsonObject getCourse(String courseId);
+  
+  Integer getUnitCount(String courseId);
+  
 }
