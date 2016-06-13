@@ -1,245 +1,196 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
-import java.io.Serializable;
 import java.util.Date;
+
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 
 import io.vertx.core.json.JsonObject;
 
-public class CourseEio extends JsonObject implements Serializable {
+public class CourseEio extends JsonObject {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
-
-  private String id;
-
-  private String title;
-  
-  private String originalCourseId;
-  
-  private String parentCourseId;
-  
-  private String createdAt;
-  
-  private String updatedAt;
-  
-  private Date indexUpdatedTime;
-  
-  private JsonObject owner;
-  
-  private JsonObject creator;
-  
-  private JsonObject originalCreator;
-  
-  private CourseStatisticsEo statistics;
-  
-  private JsonObject license;
-  
-  private Boolean visibleOnProfile;
-  
-  private String modifierId;
-  
-  private String subjectBucket;
-  
-  private String description;
-  
-  private int subjectSequence;
-  
-  private int sequenceId;
-  
-  private String thumbnail;
-  
-  private String publishStatus;
-  
-  private String publishDate;
-  
-  private int isFeatured;
-  
-  private JsonObject taxonomy;
 
   public String getId() {
-    return id;
+    return this.getString(IndexFields.ID);
   }
 
   public void setId(String id) {
-    this.id = id;
+    this.put(IndexFields.ID, id);
   }
 
   public String getTitle() {
-    return title;
+    return this.getString(IndexFields.TITLE);
   }
 
   public void setTitle(String title) {
-    this.title = title;
+    this.put(IndexFields.TITLE, title);
   }
 
   public String getOriginalCourseId() {
-    return originalCourseId;
+    return this.getString(IndexFields.ORIGINAL_COURSE_ID);
   }
 
   public void setOriginalCourseId(String originalCourseId) {
-    this.originalCourseId = originalCourseId;
+    this.put(IndexFields.ORIGINAL_COURSE_ID, originalCourseId);
   }
 
   public String getParentCourseId() {
-    return parentCourseId;
+    return this.getString(IndexFields.PARENT_COURSE_ID);
   }
 
   public void setParentCourseId(String parentCourseId) {
-    this.parentCourseId = parentCourseId;
+    this.put(IndexFields.PARENT_COURSE_ID, parentCourseId);
   }
 
   public String getCreatedAt() {
-    return createdAt;
+    return this.getString(IndexFields.CREATED_AT);
   }
 
   public void setCreatedAt(String createdAt) {
-    this.createdAt = createdAt;
+    this.put(IndexFields.CREATED_AT, createdAt);
   }
 
   public String getUpdatedAt() {
-    return updatedAt;
+    return this.getString(IndexFields.UPDATED_AT);
   }
 
   public void setUpdatedAt(String updatedAt) {
-    this.updatedAt = updatedAt;
+    this.put(IndexFields.UPDATED_AT, updatedAt);
   }
 
   public Date getIndexUpdatedTime() {
-    return indexUpdatedTime;
+    return (Date) this.getValue(IndexFields.INDEX_UPDATED_TIME);
   }
 
   public void setIndexUpdatedTime(Date indexUpdatedTime) {
-    this.indexUpdatedTime = indexUpdatedTime;
+    this.put(IndexFields.INDEX_UPDATED_TIME, indexUpdatedTime);
   }
 
   public JsonObject getOwner() {
-    return owner;
+    return this.getJsonObject(IndexFields.OWNER);
   }
 
   public void setOwner(JsonObject owner) {
-    this.owner = owner;
+    this.put(IndexFields.OWNER, owner);
   }
 
   public JsonObject getCreator() {
-    return creator;
+    return this.getJsonObject(IndexFields.CREATOR);
   }
 
   public void setCreator(JsonObject creator) {
-    this.creator = creator;
+    this.put(IndexFields.CREATOR, creator);
   }
 
   public JsonObject getOriginalCreator() {
-    return originalCreator;
+    return this.getJsonObject(IndexFields.ORIGINAL_CREATOR);
   }
 
   public void setOriginalCreator(JsonObject originalCreator) {
-    this.originalCreator = originalCreator;
+    this.put(IndexFields.ORIGINAL_CREATOR, originalCreator);
   }
 
   public CourseStatisticsEo getStatistics() {
-    return statistics;
+    return (CourseStatisticsEo) this.getJsonObject(IndexFields.STATISTICS);
   }
 
   public void setStatistics(CourseStatisticsEo statistics) {
-    this.statistics = statistics;
+    this.put(IndexFields.STATISTICS, statistics);
   }
 
   public Boolean getVisibleOnProfile() {
-    return visibleOnProfile;
+    return this.getBoolean(IndexFields.VISIBLE_ON_PROFILE);
   }
 
   public void setVisibleOnProfile(Boolean visibleOnProfile) {
-    this.visibleOnProfile = visibleOnProfile;
+    this.put(IndexFields.VISIBLE_ON_PROFILE, visibleOnProfile);
   }
 
   public String getModifierId() {
-    return modifierId;
+    return this.getString(IndexFields.MODIFIER_ID);
   }
 
   public void setModifierId(String modifierId) {
-    this.modifierId = modifierId;
+    this.put(IndexFields.MODIFIER_ID, modifierId);
   }
 
   public String getSubjectBucket() {
-    return subjectBucket;
+    return this.getString(IndexFields.SUBJECT_BUCKET);
   }
 
   public void setSubjectBucket(String subjectBucket) {
-    this.subjectBucket = subjectBucket;
+    this.put(IndexFields.SUBJECT_BUCKET, subjectBucket);
   }
 
   public String getDescription() {
-    return description;
+    return this.getString(IndexFields.DESCRIPTION);
   }
 
   public void setDescription(String description) {
-    this.description = description;
+    this.put(IndexFields.DESCRIPTION, description);
   }
 
   public int getSubjectSequence() {
-    return subjectSequence;
+    return this.getInteger(IndexFields.SUBJECT_SEQUENCE);
   }
 
   public void setSubjectSequence(int subjectSequence) {
-    this.subjectSequence = subjectSequence;
+    this.put(IndexFields.SUBJECT_SEQUENCE, subjectSequence);
   }
 
   public int getSequenceId() {
-    return sequenceId;
+    return this.getInteger(IndexFields.SEQUENCE);
   }
 
   public void setSequenceId(int sequenceId) {
-    this.sequenceId = sequenceId;
+    this.put(IndexFields.SEQUENCE, sequenceId);
   }
 
   public String getThumbnail() {
-    return thumbnail;
+    return this.getString(IndexFields.THUMBNAIL);
   }
 
   public void setThumbnail(String thumbnail) {
-    this.thumbnail = thumbnail;
+    this.put(IndexFields.THUMBNAIL, thumbnail);
   }
 
   public String getPublishStatus() {
-    return publishStatus;
+    return this.getString(IndexFields.PUBLISH_STATUS);
   }
 
   public void setPublishStatus(String publishStatus) {
-    this.publishStatus = publishStatus;
+    this.put(IndexFields.PUBLISH_STATUS, publishStatus);
   }
 
   public int getIsFeatured() {
-    return isFeatured;
+    return this.getInteger(IndexFields.IS_FEATURED);
   }
 
   public void setIsFeatured(int isFeatured) {
-    this.isFeatured = isFeatured;
+    this.put(IndexFields.IS_FEATURED, isFeatured);
   }
 
   public JsonObject getTaxonomy() {
-    return taxonomy;
+    return this.getJsonObject(IndexFields.TAXONOMY);
   }
 
   public void setTaxonomy(JsonObject taxonomy) {
-    this.taxonomy = taxonomy;
+    this.put(IndexFields.TAXONOMY, taxonomy);
   }
 
   public JsonObject getLicense() {
-    return license;
+    return this.getJsonObject(IndexFields.LICENSE);
   }
 
   public void setLicense(JsonObject license) {
-    this.license = license;
+    this.put(IndexFields.LICENSE, license);
   }
 
   public String getPublishDate() {
-    return publishDate;
+    return this.getString(IndexFields.PUBLISH_DATE);
   }
 
   public void setPublishDate(String publishDate) {
-    this.publishDate = publishDate;
+    this.put(IndexFields.PUBLISH_DATE, publishDate);
   }
 
 }

@@ -24,7 +24,6 @@ import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
-import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;

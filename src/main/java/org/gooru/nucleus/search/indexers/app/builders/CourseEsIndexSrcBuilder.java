@@ -157,7 +157,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
         courseEio.setLicense(license);
       }
 
-
+      LOGGER.debug("Es source course json ", courseEio.toString());
     }
     catch(Exception e){
       LOGGER.error("build index source for course failed", e);

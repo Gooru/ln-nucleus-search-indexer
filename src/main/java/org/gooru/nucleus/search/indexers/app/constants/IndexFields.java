@@ -81,6 +81,15 @@ public class IndexFields {
 	public static final String SEQUENCE = "sequenceId";
 	public static final String SUBJECT_BUCKET = "subjectBucket";
 	public static final String SUBJECT_SEQUENCE = "subjectSequence";
+  public static final String ORIGINAL_COURSE_ID = "originalCourseId";
+  public static final String PARENT_COURSE_ID = "parentCourseId";
+  public static final String INDEX_UPDATED_TIME ="indexUpdatedTime";
+  public static final String IS_FEATURED = "isFeatured";
+  public static final String PUBLISH_DATE = "publishDate";
+  public static final String PCWEIGHT = "preComputedWeight";
+  
+  
+
 	
 	// license fields
 	

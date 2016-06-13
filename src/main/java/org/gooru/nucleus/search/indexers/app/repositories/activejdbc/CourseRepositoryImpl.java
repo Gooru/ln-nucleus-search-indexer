@@ -2,8 +2,10 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
 
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
+import org.javalite.activejdbc.Base;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,15 +43,18 @@ public class CourseRepositoryImpl implements CourseRepository {
 
   @Override
   public Integer getUnitCount(String courseId) {
+    Integer unitCount = 0;
     try{
-      Long unitCount = Unit.count(Unit.GET_UNIT_COUNT, courseId, false);
-      LOGGER.debug("Unit count : {} for course : {}", unitCount, courseId);
-      return unitCount != null ? unitCount.intValue() : 0;
+      Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+      Long unitCountL = Unit.count(Unit.GET_UNIT_COUNT, courseId, false);
+      LOGGER.debug("Unit count : {} for course : {}", unitCountL, courseId);
+      unitCount =  unitCountL != null ? unitCountL.intValue() : 0;
     }
     catch(Exception e){
-      LOGGER.error("Not able to fetch unit count for course : {}", courseId);
-      return 0;
+      LOGGER.error("Not able to fetch unit count for course : {} error : {}", courseId, e);
     }
+    Base.close();
+    return unitCount;
   }
 
 }

@@ -1,56 +1,48 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
+
 import io.vertx.core.json.JsonObject;
 
 public class CourseStatisticsEo extends JsonObject {
-
-  private int unitCount = 0;
   
-  private int collaboratorCount = 0;
-  
-  private long viewsCount = 0;
-  
-  private long courseRemixCount = 0;
-  
-  private double preComputedWeight = 0.0;
-
   public int getUnitCount() {
-    return unitCount;
+    return this.getInteger(IndexFields.UNIT_COUNT, 0);
   }
 
   public void setUnitCount(int unitCount) {
-    this.unitCount = unitCount;
+    this.put(IndexFields.UNIT_COUNT, unitCount);
   }
 
   public int getCollaboratorCount() {
-    return collaboratorCount;
+    return this.getInteger(IndexFields.COLLABORATOR_COUNT, 0);
   }
 
   public void setCollaboratorCount(int collaboratorCount) {
-    this.collaboratorCount = collaboratorCount;
+    this.put(IndexFields.COLLABORATOR_COUNT, collaboratorCount);
   }
 
   public long getViewsCount() {
-    return viewsCount;
+    return this.getLong(IndexFields.VIEWS_COUNT, 0l);
   }
 
   public void setViewsCount(long viewsCount) {
-    this.viewsCount = viewsCount;
+    this.put(IndexFields.VIEWS_COUNT, viewsCount);
   }
 
   public long getCourseRemixCount() {
-    return courseRemixCount;
+    return this.getLong(IndexFields.COURSE_REMIXCOUNT, 0l);
   }
 
   public void setCourseRemixCount(long courseRemixCount) {
-    this.courseRemixCount = courseRemixCount;
+    this.put(IndexFields.COURSE_REMIXCOUNT, courseRemixCount);
   }
 
   public double getPreComputedWeight() {
-    return preComputedWeight;
+    return this.getDouble(IndexFields.PCWEIGHT, 0.0);
   }
 
   public void setPreComputedWeight(double preComputedWeight) {
-    this.preComputedWeight = preComputedWeight;
+    this.put(IndexFields.PCWEIGHT, preComputedWeight);
   }
 }
