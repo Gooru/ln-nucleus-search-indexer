@@ -59,6 +59,8 @@ public final class IndexerConstants {
   public static final String RESOURCE_INFO = "resourceInfo";
   
   public static final String STATISTICS = "statistics";
+  
+  public static final String STATISTICS_DOT = "statistics.";
 
   public static final String COLLECTION_TITLE = "collection_title";
 

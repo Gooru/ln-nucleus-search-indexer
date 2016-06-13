@@ -414,7 +414,11 @@ public class EsIndexServiceImpl implements IndexService {
     contentInfoEo.setContentFormat(contentFormat);
     contentInfoEo.setIndexUpdatedTime(new Date(System.currentTimeMillis()));
     Map<String, Object> indexData = new HashMap<>();
-    indexData.put(IndexerConstants.STATISTICS, data);
+    Map<String, Object> statistics = new HashMap<>();
+    for(String key : data.keySet()){
+      statistics.put(key.replace(key, IndexerConstants.STATISTICS_DOT), data.get(key));
+    }
+    indexData.put(IndexerConstants.STATISTICS, statistics);
     contentInfoEo.setStatistics(buildStatisticsData(contentFormat, indexData));
     LOGGER.debug("content info index source : " + contentInfoEo.getContentInfoJson().toString());
     return contentInfoEo.getContentInfoJson().toString();
