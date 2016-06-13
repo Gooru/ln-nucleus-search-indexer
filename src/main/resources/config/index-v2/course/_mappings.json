@@ -331,13 +331,12 @@
                         "include_in_all":false
                      }
                   }
-               }
-         	},
-         "frameworkCode":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         }
+               },
+	         "frameworkCode":{
+	            "type":"string",
+	            "index":"not_analyzed",
+	            "include_in_all":false
+	         }
          },
          "isFeatured":{
             "type":"integer",
