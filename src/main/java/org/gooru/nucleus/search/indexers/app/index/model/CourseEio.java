@@ -57,12 +57,12 @@ public class CourseEio extends JsonObject {
     this.put(IndexFields.UPDATED_AT, updatedAt);
   }
 
-  public Date getIndexUpdatedTime() {
-    return (Date) this.getValue(IndexFields.INDEX_UPDATED_TIME);
+  public String getIndexUpdatedTime() {
+    return this.getString(IndexFields.INDEX_UPDATED_TIME);
   }
 
   public void setIndexUpdatedTime(Date indexUpdatedTime) {
-    this.put(IndexFields.INDEX_UPDATED_TIME, indexUpdatedTime);
+    this.put(IndexFields.INDEX_UPDATED_TIME, indexUpdatedTime.toInstant());
   }
 
   public JsonObject getOwner() {
