@@ -5,7 +5,7 @@ import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
 
-@Table("course")
+@Table("unit")
 @IdName("unit_id")
 public class Unit extends Model {
   public static final String GET_UNIT_COUNT = "course_id = ?::uuid and is_deleted = ?";
