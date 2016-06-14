@@ -72,6 +72,8 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
           JsonArray subjectLabelArray = new JsonArray();
           JsonArray courseLabelArray = new JsonArray();
           JsonArray frameworkCode = new JsonArray();
+          JsonArray leafSLInternalCodes = new JsonArray();
+
           TaxonomySetEo taxonomyDataSet = new TaxonomySetEo();
           JsonObject curriculumTaxonomy = new JsonObject();
           List<String> standardDesc = new ArrayList<>();
@@ -106,6 +108,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
               
               standardDisplayArray.add(taxData.getString(EntityAttributeConstants.CODE));
               standardDesc.add(taxData.getString(EntityAttributeConstants.TITLE));
+              leafSLInternalCodes.add(code);
             }
           }
           
@@ -113,8 +116,8 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
             JsonObject taxonomyObj = new JsonObject();
             taxonomyObj.put(IndexerConstants.SUBJECT, subjectArray);
             taxonomyObj.put(IndexerConstants.COURSE, courseArray);
-            taxonomyObj.put(IndexerConstants.FRAMEWORK_CODE, frameworkCode);
-            
+            taxonomyObj.put(IndexerConstants.FRAMEWORK_CODE, frameworkCode.stream().distinct().collect(Collectors.toList()));
+            taxonomyObj.put(IndexFields.LEAF_INTERNAL_CODE, leafSLInternalCodes);
             taxonomyDataSet.setSubject(subjectLabelArray);
             taxonomyDataSet.setCourse(courseLabelArray);
             curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
@@ -122,7 +125,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
                     .put(IndexerConstants.CURRICULUM_NAME, frameworkCode != null ? frameworkCode.stream().distinct().collect(Collectors.toList()) : new JsonArray());
             
             taxonomyDataSet.setCurriculum(curriculumTaxonomy);
-            taxonomyObj.put(IndexFields.TAXONOMY_SET, taxonomyDataSet);
+            taxonomyObj.put(IndexFields.TAXONOMY_SET, taxonomyDataSet.getTaxonomyJson());
             courseEio.setTaxonomy(taxonomyObj);
           }
         }
