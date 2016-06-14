@@ -336,8 +336,42 @@
 	            "type":"string",
 	            "index":"not_analyzed",
 	            "include_in_all":false
-	         }
-         }},
+	         },
+           "taxonomySet":{
+              "properties":{
+                 "subject":{
+                    "type":"string",
+                    "index":"not_analyzed",
+                    "include_in_all":false
+                 },
+                 "course":{
+                    "type":"string",
+                    "index":"not_analyzed",
+                    "include_in_all":false
+                 },
+                 "curriculum":{
+                    "properties":{
+                       "curriculumCode":{
+                          "type":"string",
+                          "index":"not_analyzed",
+                          "include_in_all":false
+                       },
+                       "curriculumDesc":{
+                          "type":"string",
+                          "index":"not_analyzed",
+                          "include_in_all":false
+                       },
+                       "curriculumName":{
+                          "type":"string",
+                          "index":"not_analyzed",
+                          "include_in_all":false
+                       }
+                    }
+                 }
+              }
+           }
+         }
+         },
          "isFeatured":{
             "type":"integer",
             "index":"not_analyzed",
