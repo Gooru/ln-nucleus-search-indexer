@@ -120,7 +120,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonArray standardDisplayArray = new JsonArray();
     JsonArray ltDisplayArray = new JsonArray();
     JsonArray frameworkCodeArray = new JsonArray();
-    
+    JsonArray displayObjectArray = new JsonArray();
+
     JsonArray subjectLabelArray = new JsonArray();
     JsonArray courseLabelArray = new JsonArray();
     JsonArray domainLabelArray = new JsonArray();
@@ -131,6 +132,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     if (taxonomyObject != null && !taxonomyObject.isEmpty()) {
       for (String code : taxonomyObject.fieldNames()) {
         JsonObject displayCodeJson = taxonomyObject.getJsonObject(code);
+        JsonObject displayObject = new JsonObject();
+
         String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
         String subjectCode = null;
         String courseCode = null;
@@ -159,6 +162,9 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
             standardDesc.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
             standardDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
             frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+            
+            setDisplayObject(code, displayCodeJson, displayObject);
+            displayObjectArray.add(displayObject);
           }
           if (codes.length == 5) {
             learningTargetArray.add(code);
@@ -166,6 +172,9 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
             ltDescArray.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
             ltDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
             frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+            
+            setDisplayObject(code, displayCodeJson, displayObject);
+            displayObjectArray.add(displayObject);
           }
         }
         
@@ -201,11 +210,18 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
             .put(IndexerConstants.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
             .put(IndexerConstants.CURRICULUM_NAME, frameworkCodeArray != null ? frameworkCodeArray.stream().distinct().collect(Collectors.toList()) : new JsonArray())
-            .put(IndexerConstants.LEARNING_TARGET, ltDisplayArray != null ? ltDisplayArray : new JsonArray())
-            .put(IndexerConstants.LEARNING_TARGET_DESC, ltDescArray != null ? ltDescArray : new JsonArray());
+            .put(IndexerConstants.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
     taxonomyDataSet.setCurriculum(curriculumTaxonomy);
     taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.getTaxonomyJson().toString());
     taxonomyEo.setTaxonomySet(taxonomyDataSet.getTaxonomyJson());
+  }
+
+  private void setDisplayObject(String code, JsonObject displayCodeJson, JsonObject displayObject) {
+    displayObject.put(EntityAttributeConstants.ID, code);
+    displayObject.put(EntityAttributeConstants.CODE, displayCodeJson.getString(EntityAttributeConstants.CODE));
+    displayObject.put(EntityAttributeConstants.TITLE, displayCodeJson.getString(EntityAttributeConstants.TITLE));
+    displayObject.put(IndexerConstants.FRAMEWORK_CODE, displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+    displayObject.put(IndexerConstants.PARENT_TITLE, displayCodeJson.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
   }
 
   

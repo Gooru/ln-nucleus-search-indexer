@@ -33,11 +33,7 @@ public final class IndexerConstants {
   public static final String DOMAIN = "domain";
   
   public static final String STANDARD = "standard";
-  
-  public static final String LEARNING_TARGET = "learningTarget";
-  
-  public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
-
+    
   public static final String CURRICULUM_CODE = "curriculumCode";
 
   public static final String CURRICULUM_DESC = "curriculumDesc";
@@ -75,5 +71,13 @@ public final class IndexerConstants {
   public static final String TYPE_COURSE = "course";
 
   public static final String FRAMEWORK_CODE = "frameworkCode";
+  
+  public static final String CURRICULUM_INFO = "curriculumInfo";
+  
+  public static final String PARENT_TITLE = "parentTitle";
+    
+  public static final String STANDARD_DESC = "standardDesc";
+  
+  public static final String INTERNAL_CODE = "internalCode";
 
 }

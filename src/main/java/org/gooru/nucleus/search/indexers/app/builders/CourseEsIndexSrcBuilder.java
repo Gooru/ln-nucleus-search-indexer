@@ -73,6 +73,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
           JsonArray courseLabelArray = new JsonArray();
           JsonArray frameworkCode = new JsonArray();
           JsonArray leafSLInternalCodes = new JsonArray();
+          JsonArray displayObjectArray = new JsonArray();
 
           TaxonomySetEo taxonomyDataSet = new TaxonomySetEo();
           JsonObject curriculumTaxonomy = new JsonObject();
@@ -80,6 +81,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
           JsonArray standardDisplayArray = new JsonArray();
 
           for(String code : taxonomyJson.fieldNames()){
+            JsonObject displayObject = new JsonObject();
             String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
             JsonObject taxData = taxonomyJson.getJsonObject(code);
             if(taxData != null && !taxData.isEmpty()){
@@ -109,6 +111,13 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
               standardDisplayArray.add(taxData.getString(EntityAttributeConstants.CODE));
               standardDesc.add(taxData.getString(EntityAttributeConstants.TITLE));
               leafSLInternalCodes.add(code);
+              
+              displayObject.put(EntityAttributeConstants.ID, code);
+              displayObject.put(EntityAttributeConstants.CODE, taxData.getString(EntityAttributeConstants.CODE));
+              displayObject.put(EntityAttributeConstants.TITLE, taxData.getString(EntityAttributeConstants.TITLE));
+              displayObject.put(IndexerConstants.FRAMEWORK_CODE, taxData.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+              displayObject.put(IndexerConstants.PARENT_TITLE, taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
+              displayObjectArray.add(displayObject);
             }
           }
           
@@ -122,8 +131,8 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
             taxonomyDataSet.setCourse(courseLabelArray);
             curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
                     .put(IndexerConstants.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
-                    .put(IndexerConstants.CURRICULUM_NAME, frameworkCode != null ? frameworkCode.stream().distinct().collect(Collectors.toList()) : new JsonArray());
-            
+                    .put(IndexerConstants.CURRICULUM_NAME, frameworkCode != null ? frameworkCode.stream().distinct().collect(Collectors.toList()) : new JsonArray())
+                    .put(IndexerConstants.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
             taxonomyDataSet.setCurriculum(curriculumTaxonomy);
             taxonomyObj.put(IndexFields.TAXONOMY_SET, taxonomyDataSet.getTaxonomyJson());
             courseEio.setTaxonomy(taxonomyObj);
