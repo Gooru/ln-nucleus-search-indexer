@@ -79,5 +79,9 @@ public final class IndexerConstants {
   public static final String STANDARD_DESC = "standardDesc";
   
   public static final String INTERNAL_CODE = "internalCode";
+  
+  public static final String LEARNING_TARGET = "learningTarget";
+  
+  public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
 
 }
