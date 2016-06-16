@@ -3,6 +3,7 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.sql.SQLException;
 
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
+import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHelper;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.javalite.activejdbc.Base;
@@ -24,6 +25,7 @@ public class CourseRepositoryImpl implements CourseRepository {
 
     JsonObject returnValue = null;
     if (result != null && !result.getBoolean(Course.IS_DELETED)) {
+      DBHelper.getInstance().escapeSplChars(result);
       returnValue = new JsonObject(result.toJson(false));
     }
     return returnValue;
