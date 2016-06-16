@@ -35,6 +35,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
 
         case EventsConstants.ITEM_CREATE:
         case EventsConstants.ITEM_UPDATE:
+        case EventsConstants.ITEM_MOVE:          
           handleReIndex(collectionId);
           break;
 
