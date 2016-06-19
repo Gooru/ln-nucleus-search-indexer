@@ -5,10 +5,9 @@ import java.util.Set;
 
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.ModelDelegate;
+import org.javalite.common.Escape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.vertx.core.impl.StringEscapeUtils;
 
 public final class DBHelper {
 
@@ -37,7 +36,7 @@ public final class DBHelper {
       Object v = model.get(name);
       if (v instanceof String){
         try {
-          model.set(name, StringEscapeUtils.escapeJava(String.valueOf(v)));
+          model.set(name, Escape.json(String.valueOf(v)));
         } catch (Exception e) {
             LOGGER.warn("Failed to parse value of field '{}', will use default string without conversion ", name);
             model.set(name, String.valueOf(v));
