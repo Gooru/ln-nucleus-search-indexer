@@ -8,8 +8,8 @@ import java.util.Set;
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
-import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHelper;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
+import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.Base;
 import org.javalite.common.Convert;
 import org.postgresql.util.PGobject;
@@ -35,10 +35,9 @@ public class ContentRepositoryImpl implements ContentRepository {
     String collectionId = null;
     String courseId = null;
     if (result != null && !result.getBoolean(Content.IS_DELETED)) {
-      DBHelper.getInstance().escapeSplChars(result);
-      returnValue = new JsonObject(result.toJson(false));
-      collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
-      courseId = returnValue.getString(EntityAttributeConstants.COURSE_ID, null);
+     returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+     collectionId = returnValue.getString(EntityAttributeConstants.COLLECTION_ID);
+     courseId = returnValue.getString(EntityAttributeConstants.COURSE_ID, null);
     }
     if (returnValue != null) {
       // Set collection title
