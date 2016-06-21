@@ -9,7 +9,6 @@ import org.javalite.activejdbc.LazyList;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.ModelDelegate;
 import org.javalite.common.Convert;
-import org.javalite.common.Escape;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,18 +136,5 @@ class SimpleJsonFormatter implements JsonFormatter {
             array[i++] = elem.toLowerCase();
         }
         return array;
-    }
-    
-    public static void main(String[] args){
-      String s  = "<p>Solve using mental math: 143.2 • 10</p>";
-      String s1 = "Math 7 will target the following cognitive skills:                                                                                                                            Identifying Patterns and Relationships; Precision; Justifying/Constructing an Explanation; Critiquing the Reasoning of Others; and Modeling.";
-      try {
-        System.out.println(StringEscapeUtils.escapeJava(s1));
-        System.out.println(Escape.json(s1));
-
-      } catch (Exception e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
     }
 }
