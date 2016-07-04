@@ -25,7 +25,8 @@ public final class ExecuteOperationConstants {
   public static final String GET_USER_COLLECTIONS = "get_user_collections";
   
   public static final String GET_COURSE = "get_course";
-
+  
+  public static final String GET_USER = "get_user";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

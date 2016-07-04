@@ -6,62 +6,21 @@
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "accountId":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "accountRegisterType":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "accountTypeId":{
-            "type":"integer",
-            "include_in_all":false
-         },
-         "active":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
          "childAccountCount":{
             "type":"integer",
             "include_in_all":false
          },
-         "confirmStatus":{
-            "type":"string"
-         },
-         "createdOn":{
+         "createdAt":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "displayname":{
-            "type":"string"
-         },
-         "districtCode":{
+         "displayName":{
             "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
+            "analyzer":"standard",
+            "include_in_all":true
          },
-         "districtId":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "districtName":{
-            "type":"string",
-            "index":"not_analyzed",
-            "fields":{
-               "name":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase"
-               }
-            },
-            "include_in_all":false
-         },
-         "emailID":{
+         "emailId":{
             "type":"string",
             "analyzer":"keyword_lowercase",
             "include_in_all":true
@@ -71,11 +30,6 @@
             "analyzer":"keyword_lowercase",
             "include_in_all":true
          },
-         "gooruUID":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
          "grade":{
             "type":"string",
             "index":"not_analyzed",
@@ -83,34 +37,29 @@
          },
          "id":{
             "type":"string",
-            "index":"not_analyzed",
             "analyzer":"standard",
             "include_in_all":false
          },
          "indexId":{
-            "type":"string"
+            "type":"string",
+            "analyzer":"standard",
+            "include_in_all":false
          },
          "indexType":{
-            "type":"string"
+            "type":"string",
+            "analyzer":"standard",
+            "include_in_all":false
          },
-         "indexUpdatedDate":{
+         "indexUpdatedTime":{
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false
          },
          "isDeleted":{
-            "type":"string",
-            "norms":{
-               "enabled":false
-            },
+            "type":"boolean",
             "include_in_all":false
          },
-         "lastLogin":{
-            "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
-         },
-         "lastModified":{
+         "updatedAt":{
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false
@@ -120,137 +69,63 @@
             "analyzer":"keyword_lowercase",
             "include_in_all":true
          },
-         "meta":{
-            "properties":{
-               "taxonomyPreference":{
-                  "properties":{
-                     "code":{
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "include_in_all":false
-                     },
-                     "codeId":{
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "include_in_all":false
-                     }
-                  }
-               }
-            }
-         },
-         "network":{
-            "type":"string"
-         },
-         "notes":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "objectType":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "organization":{
-            "properties":{
-               "code":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "analyzer":"standard",
-                  "include_in_all":false
-               },
-               "name":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "analyzer":"standard",
-                  "include_in_all":false
-               },
-               "partyUid":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "analyzer":"standard",
-                  "include_in_all":false
-               }
-            }
-         },
          "parentAccountUserName":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "partyPermissions":{
-            "type":"nested",
-            "properties":{
-               "name":{
-                  "type":"string",
-                  "index":"not_analyzed"
-               },
-               "type":{
-                  "type":"string",
-                  "index":"not_analyzed"
-               },
-               "uId":{
-                  "type":"string",
-                  "index":"not_analyzed"
-               }
-            }
-         },
          "profileVisibility":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"boolean",
             "include_in_all":false
-         },
-         "roleId":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "roleIds":{
-            "type":"string"
-         },
-         "roleSet":{
-            "type":"string"
          },
          "school":{
             "properties":{
-               "code":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "analyzer":"standard",
-                  "include_in_all":false
-               },
-               "name":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "analyzer":"standard",
-                  "include_in_all":false
-               },
-               "schoolUid":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "analyzer":"standard",
-                  "include_in_all":false
-               }
-            }
-         },
-         "stateProvince":{
-            "properties":{
-               "countryCode":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
-               "countryName":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":true
-               },
                "id":{
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
                },
                "name":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":true
+               },
+               "districtId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "district":{
+            "type":"string",
+            "index":"not_analyzed",
+            "fields":{
+               "name":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase"
+               }
+            },
+            "include_in_all":false
+         }
+            }
+         },
+         "stateProvince":{
+            "properties":{
+               "countryId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "country":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":true
+               },
+               "stateId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "state":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
                   "fields":{
@@ -263,7 +138,7 @@
                }
             }
          },
-         "userID":{
+         "userId":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
@@ -279,7 +154,7 @@
          "userPublishedCollectionCount":{
             "type":"long"
          },
-         "userType":{
+         "userCategory":{
             "type":"string",
             "index":"not_analyzed",
             "include_in_all":false

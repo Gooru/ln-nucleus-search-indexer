@@ -9,6 +9,7 @@ import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResul
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,10 @@ public class FetchContentHandler implements DBHandler {
         case ExecuteOperationConstants.GET_COURSE:
           result = CourseRepository.instance().getCourse(context.getId());
           break;
+          
+        case ExecuteOperationConstants.GET_USER:
+          result = UserRepository.instance().getUser(context.getId());
+          break;
 
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
@@ -84,7 +89,7 @@ public class FetchContentHandler implements DBHandler {
         return new ExecutionResult<>(result, ExecutionStatus.SUCCESSFUL);
       }
     } catch (Exception ex) {
-      LOGGER.error("Failed to fetch operation " + operationName + " content Id : " + context.getId() + " Exception : " + ex);
+      LOGGER.error("Failed to fetch operation " + operationName + " Id : " + context.getId() + " Exception : " + ex);
     }
     return new ExecutionResult<>(null, ExecutionStatus.FAILED);
   }
