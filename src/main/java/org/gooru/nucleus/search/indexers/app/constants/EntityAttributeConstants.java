@@ -72,6 +72,26 @@ public final class EntityAttributeConstants {
   public static final String EDITORIAL_TAGS = "editorial_tags";
   public static final String SUBJECT_SEQUENCE = "subject_sequence";
   public static final String TAX_PARENT_TITLE = "parent_title";
+  //User entity attributes
+  public static final String FIRSTNAME = "firstname";
+  public static final String LASTNAME = "lastname";
+  public static final String THUMBNAIL_PATH = "thumbnail_path";
+  public static final String ABOUT_ME = "about_me";
+  public static final String SCHOOL = "school";
+  public static final String SCHOOL_ID = "school_id";
+  public static final String SCHOOL_DISTRICT_ID = "school_district_id";
+  public static final String SCHOOL_DISTRICT = "school_district";
+  public static final String EMAIL_ID = "email_id";
+  public static final String COUNTRY = "country";
+  public static final String COUNTRY_ID = "country_id";
+  public static final String STATE = "state";
+  public static final String STATE_ID = "state_id";
+  public static final String GRADE = "grade";
+  public static final String USER_CATEGORY = "user_category";
+  public static final String USERNAME = "username";
+  public static final String PROFILE_VISIBILITY = "profile_visibility";
+  public static final String STANDARD_PREFERENCE = "standard_preference";
+
 
   private EntityAttributeConstants() {
     throw new AssertionError();

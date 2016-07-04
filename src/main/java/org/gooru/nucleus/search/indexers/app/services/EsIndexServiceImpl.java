@@ -52,14 +52,13 @@ public class EsIndexServiceImpl implements IndexService {
     String indexName = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COLLECTION);
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COURSE);
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_USER)) {
+      indexName = IndexNameHolder.getIndexName(EsIndex.USER);
     }
-
     return indexName;
   }
 
@@ -98,6 +97,8 @@ public class EsIndexServiceImpl implements IndexService {
       return ExecuteOperationConstants.GET_RESOURCE;
     } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)){
       return ExecuteOperationConstants.GET_COURSE;
+    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_USER)){
+      return ExecuteOperationConstants.GET_USER;
     }
     return null;
 
@@ -202,12 +203,12 @@ public class EsIndexServiceImpl implements IndexService {
           JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
           ValidationUtil.rejectIfNull(result, "DB return null data for id " + indexableId);
           // Get statistics and extracted text data from backup index
-          if(!typeName.equalsIgnoreCase(IndexerConstants.COURSE)){
+          if (!(typeName.equalsIgnoreCase(IndexerConstants.COURSE) || typeName.equalsIgnoreCase(IndexerConstants.TYPE_USER))) {
             Map<String, Object> contentInfoAsMap =
                     getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
             setExistingStatisticsData(result, contentInfoAsMap, typeName);
             result.put("isBuildIndex", true);
-            
+
             if (contentInfoAsMap != null) {
               if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
                 Map<String, Object> resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);

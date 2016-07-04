@@ -14,6 +14,8 @@ public final class IndexerConstants {
   
   public static final String TYPE_CONTENT_INFO = "contentinfo";
 
+  public static final String TYPE_USER = "user";
+
   public static final String COLLECTION_IDS = "collection_ids";
 
   public static final String RESOURCE_IDS = "resource_ids";
@@ -83,5 +85,27 @@ public final class IndexerConstants {
   public static final String LEARNING_TARGET = "learningTarget";
   
   public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
+
+  public static final String USERNAME = "username";
+
+  public static final String NAME = "name";
+
+  public static final String ID = "id";
+
+  public static final String DISTRICT = "district";
+
+  public static final String DISTRICT_ID = "districtId";
+
+  public static final String STATE_ID = "stateId";
+
+  public static final String STATE = "state";
+
+  public static final String COUNTRY_ID = "countryId";
+
+  public static final String COUNTRY = "country";
+  
+  public static final String PROFILE_VISIBILITY = "profileVisibility";
+  
+  public static final String STANDARD_PREFERENCE = "standardPreference";
 
 }

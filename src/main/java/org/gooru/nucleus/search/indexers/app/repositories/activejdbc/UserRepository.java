@@ -15,4 +15,8 @@ public interface UserRepository {
   JsonObject getUser(String userID);
 
   List<Map> getUserDetails(String userID);
+
+  JsonObject getUserPreference(String userID);
+
+  JsonObject getUserIdentity(String userID);
 }
