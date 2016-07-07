@@ -5,11 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
-import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.User;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.UserIdentity;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.UserPreference;
 import org.javalite.activejdbc.Base;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -23,66 +19,25 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public JsonObject getUser(String userID) {
+    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
     LOGGER.debug("UserRepositoryImpl : getUser: " + userID);
 
     User result = User.findById(getPGObject("id", UUID_TYPE, userID));
     LOGGER.debug("UserRepositoryImpl : getUser : findById : " + result);
 
     JsonObject returnValue = null;
+    String[] attributes =
+      {"id", "firstname", "lastname", "email_id", "parent_user_id", "user_category", "created_at", "updated_at", "last_login", "birth_date", "grade",
+        "thumbnail_path", "gender", "school_id", "school_district_id", "country_id", "state_id"};
+
+    LOGGER.debug("UserRepositoryImpl : getUser : findById attributes: " + String.join(", ", attributes));
 
     if (result != null) {
-      returnValue = new JsonObject(result.toJson(false));
-    }
-
-    // Set username
-    JsonObject identityData = getUserIdentity(userID);
-    if (identityData != null && !identityData.isEmpty()) {
-      returnValue.put(IndexerConstants.USERNAME, identityData.getString(EntityAttributeConstants.USERNAME));
-    }
-    // Set user preference
-    JsonObject preferenceData = getUserIdentity(userID);
-    if (preferenceData != null && !preferenceData.isEmpty()) {
-      returnValue.put(IndexerConstants.PROFILE_VISIBILITY, preferenceData.getBoolean(EntityAttributeConstants.PROFILE_VISIBILITY));
-      //returnValue.put(IndexerConstants.STANDARD_PREFERENCE, preferenceData.getJsonObject(EntityAttributeConstants.STANDARD_PREFERENCE));
+      returnValue = new JsonObject(result.toJson(false, attributes));
     }
     LOGGER.debug("UserRepositoryImpl : getUser : findById returned: " + returnValue);
 
-    return returnValue;
-  }
-  
-  @Override
-  public JsonObject getUserIdentity(String userID) {
-    LOGGER.debug("UserRepositoryImpl : getUserIdentity: " + userID);
-
-    UserIdentity result = UserIdentity.findById(getPGObject("id", UUID_TYPE, userID));
-    LOGGER.debug("UserRepositoryImpl : getUserIdentity : findById : " + result);
-
-    JsonObject returnValue = null;
-
-    if (result != null) {
-      returnValue = new JsonObject(result.toJson(false));
-    }
-    
-    LOGGER.debug("UserRepositoryImpl : getUserIdentity : findById returned: " + returnValue);
-
-    return returnValue;
-  }
-  
-  @Override
-  public JsonObject getUserPreference(String userID) {
-    LOGGER.debug("UserRepositoryImpl : getUserPreference: " + userID);
-
-    UserPreference result = UserPreference.findById(getPGObject("id", UUID_TYPE, userID));
-    LOGGER.debug("UserRepositoryImpl : getUserPreference : findById : " + result);
-
-    JsonObject returnValue = null;
-
-    if (result != null) {
-      returnValue = new JsonObject(result.toJson(false));
-    }
-    
-    LOGGER.debug("UserRepositoryImpl : getUserPreference : findById returned: " + returnValue);
-
+    Base.close();
     return returnValue;
   }
   
