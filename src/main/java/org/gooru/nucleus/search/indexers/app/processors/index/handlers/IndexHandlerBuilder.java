@@ -13,4 +13,8 @@ public final class IndexHandlerBuilder {
   public static IndexHandler buildCollectionIndexHandler() {
     return new CollectionIndexHandler();
   }
+  
+  public static IndexHandler buildCourseIndexHandler(){
+    return new CourseIndexHandler();
+  }
 }

@@ -11,4 +11,6 @@ public interface CourseRepository {
   
   Integer getUnitCount(String courseId);
   
+  JsonObject getDeletedCourse(String courseId);
+  
 }
