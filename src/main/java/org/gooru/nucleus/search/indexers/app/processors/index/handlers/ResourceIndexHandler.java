@@ -55,7 +55,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
       ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_RESOURCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RESOURCE_NOT_DELETED);
-      IndexService.instance().deleteDocuments(resourceId, indexName, getIndexType());
+      IndexService.instance().deleteDocuments(resourceId, indexName, getIndexType(), result.getString(EntityAttributeConstants.CREATED_AT));
     } catch (Exception ex) {
       LOGGER.error("CIH->deleteIndexedDocument : Delete resource from index failed for resource id : " + resourceId + " Exception : " + ex);
       throw new Exception(ex);
