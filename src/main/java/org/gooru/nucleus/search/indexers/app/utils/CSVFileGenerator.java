@@ -60,8 +60,7 @@ public class CSVFileGenerator {
       stream.println(IndexerConstants.STRING_EMPTY);
     }
     for (Map.Entry<String, Object> entry : map.entrySet()) {
-      Object value = entry.getValue();
-      stream.print(appendDQ(value) + IndexerConstants.COMMA);
+      stream.print(appendDQ(entry.getValue()) + IndexerConstants.COMMA);
     }
     stream.println(IndexerConstants.STRING_EMPTY);
   }

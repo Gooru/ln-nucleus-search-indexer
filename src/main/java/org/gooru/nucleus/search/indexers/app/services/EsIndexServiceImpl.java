@@ -371,18 +371,18 @@ public class EsIndexServiceImpl implements IndexService {
     CSVFileGenerator fileGenerator = new CSVFileGenerator();
     File existingFile = new File(System.getProperty(IndexerConstants.USER_DIR) + File.separator + IndexerConstants.DEFAULT_DELETE_FILENAME + IndexerConstants.CSV_EXT);
     try {
-      validateExistingFileAndLog(deletedItemAsMap, fileGenerator, existingFile);
+      validateExistingFileAndLog(deletedItemAsMap, fileGenerator, existingFile, IndexerConstants.DEFAULT_DELETE_FILENAME);
     } catch (IOException e) {
       LOGGER.info("Error logging deleted item : id=" + key + ", type=" + type + " ,createdAt=" + createdAt);
     }
   }
 
-  private void validateExistingFileAndLog(Map<String, Object> deletedItemAsMap, CSVFileGenerator fileGenerator, File existingFile) throws IOException {
+  private void validateExistingFileAndLog(Map<String, Object> deletedItemAsMap, CSVFileGenerator fileGenerator, File existingFile, String fileName) throws IOException {
     long size = existingFile.length();
       if (size != 0) {
-        fileGenerator.generateCSVFile(false, IndexerConstants.DEFAULT_DELETE_FILENAME, deletedItemAsMap);
+        fileGenerator.generateCSVFile(false, fileName, deletedItemAsMap);
       } else {
-        fileGenerator.generateCSVFile(true, IndexerConstants.DEFAULT_DELETE_FILENAME, deletedItemAsMap);
+        fileGenerator.generateCSVFile(true, fileName, deletedItemAsMap);
       }
   }
   
