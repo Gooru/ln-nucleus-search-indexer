@@ -1,5 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.constants;
 
+import java.util.regex.Pattern;
+
 public final class IndexerConstants {
 
   public static final String TYPE_RESOURCE = "resource";
@@ -83,5 +85,26 @@ public final class IndexerConstants {
   public static final String LEARNING_TARGET = "learningTarget";
   
   public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
+
+  //Export constants
+  public static final String CSV_EXT = ".csv";
+  
+  public static final String STRING_EMPTY = "";
+
+  public static final String COMMA = ",";
+
+  public static final String DOUBLE_QUOTES = "\"";
+
+  public static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("resource|collection");
+
+  public static final String USER_DIR = "user.dir";
+  
+  public static final String DEFAULT_DELETE_FILENAME = "indexer_deletes";
+
+  public static final String CREATED_AT = "createdAt";
+  
+  public static final String TYPE = "type";
+
+  public static final String ID = "id";
 
 }

@@ -65,7 +65,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
       ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_DELETED_COLLECTION);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.COLLECTION_NOT_DELETED);
-      IndexService.instance().deleteDocuments(collectionId, indexName, getIndexType());
+      IndexService.instance().deleteDocuments(collectionId, indexName, getIndexType(), result.getString(EntityAttributeConstants.CREATED_AT));
     } catch (Exception ex) {
       LOGGER.error("CIH->deleteIndexedDocument : Delete collection from index failed for collection id : " + collectionId + " Exception : " + ex);
       throw new Exception(ex);

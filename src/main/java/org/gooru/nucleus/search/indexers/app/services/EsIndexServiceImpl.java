@@ -1,5 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,12 +32,15 @@ import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
+import org.gooru.nucleus.search.indexers.app.utils.CSVFileGenerator;
 import org.gooru.nucleus.search.indexers.app.utils.IdIterator;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.IndexScriptBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.hazelcast.query.impl.Index;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -110,6 +115,15 @@ public class EsIndexServiceImpl implements IndexService {
     }
   }
 
+  @Override
+  public void deleteDocuments(String indexableIds, String indexName, String type, String createdAt) {
+    for (String key : indexableIds.split(",")) {
+      if(IndexerConstants.CONTENT_TYPE_PATTERN.matcher(type).matches() && getClient().prepareDelete(indexName, type, key).execute().actionGet().isFound()) {
+        writeToLogFile(key, type, createdAt);
+      }
+    }
+  }
+  
   @Override
   public void indexDocuments(String indexableIds, String indexName, String typeName, JsonObject body) throws Exception {
 
@@ -349,6 +363,29 @@ public class EsIndexServiceImpl implements IndexService {
     }
   }
   
+  private void writeToLogFile(String key, String type, String createdAt) {
+    Map<String, Object> deletedItemAsMap = new HashMap<>();
+    deletedItemAsMap.put(IndexerConstants.ID, key);
+    deletedItemAsMap.put(IndexerConstants.TYPE, type);
+    deletedItemAsMap.put(IndexerConstants.CREATED_AT, createdAt);
+    CSVFileGenerator fileGenerator = new CSVFileGenerator();
+    File existingFile = new File(System.getProperty(IndexerConstants.USER_DIR) + File.separator + IndexerConstants.DEFAULT_DELETE_FILENAME + IndexerConstants.CSV_EXT);
+    try {
+      validateExistingFileAndLog(deletedItemAsMap, fileGenerator, existingFile, IndexerConstants.DEFAULT_DELETE_FILENAME);
+    } catch (IOException e) {
+      LOGGER.info("Error logging deleted item : id=" + key + ", type=" + type + " ,createdAt=" + createdAt);
+    }
+  }
+
+  private void validateExistingFileAndLog(Map<String, Object> deletedItemAsMap, CSVFileGenerator fileGenerator, File existingFile, String fileName) throws IOException {
+    long size = existingFile.length();
+      if (size != 0) {
+        fileGenerator.generateCSVFile(false, fileName, deletedItemAsMap);
+      } else {
+        fileGenerator.generateCSVFile(true, fileName, deletedItemAsMap);
+      }
+  }
+  
   public void buildInfoIndex(String id) {
     JsonObject inputJson = getContentFromRepo(id);
     if (inputJson != null && !inputJson.isEmpty()) {
@@ -474,3 +511,5 @@ public class EsIndexServiceImpl implements IndexService {
     }
   }
 }
+
+

@@ -26,20 +26,16 @@ public class UserRepositoryImpl implements UserRepository {
     LOGGER.debug("UserRepositoryImpl : getUser : findById : " + result);
 
     JsonObject returnValue = null;
-    String[] attributes =
-      {"id", "firstname", "lastname", "email_id", "parent_user_id", "user_category", "created_at", "updated_at", "last_login", "birth_date", "grade",
-        "thumbnail_path", "gender", "school_id", "school_district_id", "country_id", "state_id"};
-
-    LOGGER.debug("UserRepositoryImpl : getUser : findById attributes: " + String.join(", ", attributes));
 
     if (result != null) {
-      returnValue = new JsonObject(result.toJson(false, attributes));
+      returnValue = new JsonObject(result.toJson(false));
     }
     LOGGER.debug("UserRepositoryImpl : getUser : findById returned: " + returnValue);
 
     Base.close();
     return returnValue;
   }
+  
   
   @SuppressWarnings("rawtypes")
   @Override
