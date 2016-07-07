@@ -26,6 +26,7 @@ public final class ExecuteOperationConstants {
   
   public static final String GET_COURSE = "get_course";
 
+  public static final String GET_DELETED_COURSE = "get_deleted_course";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

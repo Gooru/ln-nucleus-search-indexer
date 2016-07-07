@@ -11,12 +11,10 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.index.engine.DocumentMissingException;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptService.ScriptType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
-import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
@@ -43,7 +41,7 @@ import io.vertx.core.json.JsonObject;
 /**
  * @author SearchTeam
  */
-public class EsIndexServiceImpl implements IndexService {
+public class EsIndexServiceImpl extends BaseIndexService implements IndexService {
 
   public static final Logger INDEX_FAILURES_LOGGER = LoggerFactory.getLogger("org.gooru.nucleus.index.failures");
   private static final Logger LOGGER = LoggerFactory.getLogger(EsIndexServiceImpl.class);
@@ -74,22 +72,6 @@ public class EsIndexServiceImpl implements IndexService {
     return indexType;
   }
 
-  private static int getInteger(Object value) {
-    return value == null ? 0 : (int) value;
-  }
-
-  private static long getLong(Object value) {
-    long views = 0L;
-    if (value != null) {
-      if (value instanceof Integer) {
-        views = (long) (int) value;
-      } else if (value instanceof Long) {
-        views = (long) value;
-      }
-
-    }
-    return views;
-  }
 
   private static String getExectueOperation(String type) {
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
@@ -107,6 +89,10 @@ public class EsIndexServiceImpl implements IndexService {
   public void deleteDocuments(String indexableIds, String indexName, String type) {
     for (String key : indexableIds.split(",")) {
       getClient().prepareDelete(indexName, type, key).execute().actionGet();
+      
+      // Delete from CI index
+      getClient().prepareDelete(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, key).execute().actionGet();
+      
     }
   }
 
@@ -230,9 +216,6 @@ public class EsIndexServiceImpl implements IndexService {
 
   }
 
-  private Client getClient() {
-    return ElasticSearchRegistry.getFactory().getClient();
-  }
 
   private void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap, String typeName) {
 

@@ -72,4 +72,8 @@ public class BaseEventHandler {
   protected IndexHandler getCollectionIndexHandler() {
     return IndexHandlerBuilder.buildCollectionIndexHandler();
   }
+  
+  protected IndexHandler getCourseIndexHandler(){
+    return IndexHandlerBuilder.buildCourseIndexHandler();
+  }
 }

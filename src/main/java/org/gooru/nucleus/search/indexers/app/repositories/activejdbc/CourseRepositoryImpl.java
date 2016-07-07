@@ -1,6 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
@@ -56,6 +57,22 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
     Base.close();
     return unitCount;
+  }
+
+  @Override
+  public JsonObject getDeletedCourse(String courseId) {
+    JsonObject returnValue = null;
+    List<Course> courses = Course.where(Course.FETCH_DELETED_QUERY, courseId, true);
+    if (courses.size() < 1) {
+      LOGGER.warn("Course id: {} not present in DB", courseId);
+    }
+    if(courses.size() > 0){
+      Course course = courses.get(0);
+      if (course != null) {
+        returnValue = new JsonObject(course.toJson(false));
+      }
+    }
+    return returnValue;
   }
 
 }

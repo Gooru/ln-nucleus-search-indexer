@@ -75,6 +75,10 @@ public class FetchContentHandler implements DBHandler {
           result = CourseRepository.instance().getCourse(context.getId());
           break;
 
+        case ExecuteOperationConstants.GET_DELETED_COURSE:
+          result = CourseRepository.instance().getDeletedCourse(context.getId());
+          break;
+
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
           throw new InvalidRequestException();
