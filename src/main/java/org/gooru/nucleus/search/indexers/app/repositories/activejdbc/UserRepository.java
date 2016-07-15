@@ -12,7 +12,7 @@ public interface UserRepository {
     return new UserRepositoryImpl();
   }
   
-  JsonObject getUser(String userId);
+  JsonObject getUser(String userID);
 
   List<Map> getUserDetails(String userID);
 }
