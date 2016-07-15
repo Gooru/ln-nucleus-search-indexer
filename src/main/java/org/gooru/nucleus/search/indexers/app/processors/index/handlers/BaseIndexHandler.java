@@ -25,7 +25,7 @@ public class BaseIndexHandler {
     }
   }
 
-  private Object incrementValue(Object value) {
+  protected Object incrementValue(Object value) {
     if (value != null) {
       if(value instanceof Integer){
         value = ((Integer)value ) + 1;

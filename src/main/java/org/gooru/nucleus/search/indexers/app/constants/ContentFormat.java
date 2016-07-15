@@ -5,7 +5,9 @@ public enum ContentFormat {
   RESOURCE("resource"),
   COLLECTION("collection"),
   ASSESSMENT("assessment"),
-  QUESTION("question");
+  QUESTION("question"),
+  COURSE("course"),
+  UNIT("unit");
 
   final String contentFormat;
 

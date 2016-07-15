@@ -1,15 +1,24 @@
 package org.gooru.nucleus.search.indexers.app.processors.index.handlers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.services.CourseIndexService;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import io.vertx.core.json.JsonObject;
 
-public class CourseIndexHandler  implements IndexHandler {
+public class CourseIndexHandler extends BaseIndexHandler implements IndexHandler {
 
 
   @Override
@@ -49,9 +58,20 @@ public class CourseIndexHandler  implements IndexHandler {
   }
 
   @Override
-  public void increaseCount(String entityId, String field) throws Exception {
-    // TODO Auto-generated method stub
-    
+  public void increaseCount(String courseId, String field) throws Exception {
+    try{
+      Map<String, Object> result = IndexService.instance().getDocument(courseId, IndexNameHolder.getIndexName(EsIndex.COURSE), IndexerConstants.COURSE);
+      if (result != null && result.get(ScoreConstants.STATISTICS_FIELD) != null) {
+        Map<String, Object> indexFields = new HashMap<String, Object>();
+        Map<String, Object> statistics = (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
+        indexFields.put(IndexerConstants.STATISTICS_DOT + IndexFields.COURSE_REMIXCOUNT, incrementValue(statistics.get(IndexFields.COURSE_REMIXCOUNT)));
+        IndexService.instance().indexDocumentByFields(courseId, IndexNameHolder.getIndexName(EsIndex.COURSE), IndexerConstants.COURSE, indexFields);
+      }
+    }
+    catch(Exception e){
+      LOGGER.error("CRIH-> update count failed for course : " + courseId + "Exception " + e);
+      throw new Exception(e);
+    }
   }
 
   @Override

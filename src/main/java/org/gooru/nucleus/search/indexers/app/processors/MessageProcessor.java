@@ -44,6 +44,11 @@ class MessageProcessor implements Processor {
           processCollectionEvents();
         } else if(eventName.equalsIgnoreCase(EventsConstants.EVT_USER_UPDATE) || eventName.equalsIgnoreCase(EventsConstants.EVT_USER_CREATE)){
           processUserEvents();
+        }else if(contentFormat.equalsIgnoreCase(ContentFormat.COURSE.name())){
+          processCourseEvents();
+        }
+        else if(contentFormat.equalsIgnoreCase(ContentFormat.UNIT.name())){
+          processUnitEvents();
         }
         else{
           LOGGER.error("Invalid content type passed in, not able to handle. Event name : " + eventName);
@@ -71,5 +76,14 @@ class MessageProcessor implements Processor {
   private void processResourceEvents() {
     EventHandlerBuilder.buildResourceHandler(eventBody).handleEvents();
   }
+  
+  private void processUnitEvents(){
+    EventHandlerBuilder.buildUnitHandler(eventBody).handleEvents();
+  }
+  
+  private void processCourseEvents(){
+    EventHandlerBuilder.buildCourseHandler(eventBody).handleEvents();
+  }
+  
 
 }
