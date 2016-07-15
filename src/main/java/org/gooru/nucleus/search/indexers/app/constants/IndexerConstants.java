@@ -101,7 +101,7 @@ public final class IndexerConstants {
   
   public static final String DEFAULT_DELETE_FILENAME = "indexer_deletes";
 
-  public static final String CREATED_AT = "createdAt";
+  public static final String CREATED_AT = "created";
   
   public static final String TYPE = "type";
 
