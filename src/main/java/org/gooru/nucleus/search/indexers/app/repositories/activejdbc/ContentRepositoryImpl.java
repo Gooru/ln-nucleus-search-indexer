@@ -29,7 +29,7 @@ public class ContentRepositoryImpl implements ContentRepository {
     LOGGER.debug("ContentRepositoryImpl:getResource: " + contentID);
 
     Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
-    LOGGER.debug("ContentRepositoryImpl:getResource:findById: " + result);
+   // LOGGER.debug("ContentRepositoryImpl:getResource:findById: " + result);
 
     JsonObject returnValue = null;
     String collectionId = null;
@@ -56,7 +56,7 @@ public class ContentRepositoryImpl implements ContentRepository {
         }
       }
     }
-    LOGGER.debug("ContentRepositoryImpl:getResource:findById returned: " + returnValue);
+   // LOGGER.debug("ContentRepositoryImpl:getResource:findById returned: " + returnValue);
     return returnValue;
   }
 
@@ -65,11 +65,11 @@ public class ContentRepositoryImpl implements ContentRepository {
     LOGGER.debug("ContentRepositoryImpl:getQuestion: " + contentID);
 
     Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
-    LOGGER.debug("ContentRepositoryImpl:getResource:findById: " + result);
+  //  LOGGER.debug("ContentRepositoryImpl:getResource:findById: " + result);
 
     JsonObject returnValue = null;
     Set<String> attributes = Content.attributeNames();
-    LOGGER.debug("ContentRepositoryImpl:getQuestion:findById attributes: " + String.join(", ", attributes.toArray(new String[0])));
+   // LOGGER.debug("ContentRepositoryImpl:getQuestion:findById attributes: " + String.join(", ", attributes.toArray(new String[0])));
 
     if (result != null) {
       returnValue = new JsonObject(result.toJson(false, attributes.toArray(new String[0])));

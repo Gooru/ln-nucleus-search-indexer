@@ -2,6 +2,9 @@ package org.gooru.nucleus.search.indexers.app.utils;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+
+import org.gooru.nucleus.search.indexers.app.constants.ContentFormat;
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
@@ -36,6 +39,13 @@ public final class ValidationUtil {
       LOGGER.error(msg);
       throw new InvalidRequestException(msg);
     }
+  }
+  public static void rejectIfNotMappedToCourse(JsonObject json, String msg) throws InvalidRequestException {
+    String contentFormat = json.getString(EntityAttributeConstants.CONTENT_FORMAT);
+    if(contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.getContentFormat()) && json.getString(EntityAttributeConstants.COURSE_ID) == null){
+      LOGGER.error(msg);
+      throw new InvalidRequestException(msg);
+    }  
   }
 
   public static void rejectIfNotDeleted(JsonObject json, String msg) throws InvalidRequestException {

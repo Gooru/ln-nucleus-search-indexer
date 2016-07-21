@@ -27,7 +27,7 @@ public class CollectionRepositoryImpl implements CollectionRepository {
   public JsonObject getCollection(String contentID) {
     LOGGER.debug("CollectionRepositoryImpl : getCollection : " + contentID);
     Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
-    LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
+  //  LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
 
     JsonObject returnValue = null;
     String courseId = null;
@@ -55,18 +55,18 @@ public class CollectionRepositoryImpl implements CollectionRepository {
     LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + contentID);
 
     Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
-    LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + result);
+ //   LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + result);
 
     JsonObject returnValue = null;
     String[] attributes =
       {"id", "title", "created_at", "updated_at", "creator_id", "original_creator_id", "original_collection_id", "publish_date", "format",
         "learning_objective", "collaborator", "orientation", "grading", "setting", "metadata", "taxonomy", "thumbnail", "visible_on_profile",
         "course_id", "unit_id", "lesson_id"};
-    LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById attributes: " + String.join(", ", attributes));
+ //   LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById attributes: " + String.join(", ", attributes));
 
     if (result != null) {
       returnValue = new JsonObject(result.toJson(false, attributes));
-      LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById returned: " + returnValue);
+    //  LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById returned: " + returnValue);
     }
     LOGGER.debug("CollectionRepositoryImpl : getAssessment : afterAddingContainmentInfo : " + returnValue);
 
