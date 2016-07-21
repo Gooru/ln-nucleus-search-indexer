@@ -84,7 +84,7 @@ public class FetchContentHandler implements DBHandler {
           throw new InvalidRequestException();
       }
       if (result != null) {
-        LOGGER.debug("Processed operation : " + operationName + " data : " + result.toString());
+       // LOGGER.debug("Processed operation : " + operationName + " data : " + result.toString());
         return new ExecutionResult<>(result, ExecutionStatus.SUCCESSFUL);
       }
     } catch (Exception ex) {

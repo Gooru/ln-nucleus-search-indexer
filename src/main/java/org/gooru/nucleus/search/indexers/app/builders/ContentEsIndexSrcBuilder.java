@@ -37,7 +37,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
   @Override
   public JsonObject build(JsonObject source, D contentEo) throws Exception {
     try {
-      LOGGER.debug("CEISB->build : source " + source.toString());
+    //  LOGGER.debug("CEISB->build : source " + source.toString());
       String id = source.getString(EntityAttributeConstants.ID);
       contentEo.setId(id);
       contentEo.setIndexId(id);

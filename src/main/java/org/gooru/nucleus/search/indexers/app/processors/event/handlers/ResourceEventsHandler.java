@@ -123,20 +123,13 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   private void handleCopy(String resourceId) throws Exception {
     try {
       ValidationUtil.rejectIfInvalidJsonCopyEvent(eventJson);
-      String contentFormat = getPayLoadObjContentFormat(eventJson);
       String parentContentId = getParentContentIdTargetObj(eventJson);
 
       LOGGER.debug("REH->handleCopy : copy events validation passed, info - target object " + getPayLoadTargetObj(eventJson).toString());
-
-      if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
-        resourceIndexHandler.indexDocument(resourceId);
-        // update used in collection count 
-        resourceIndexHandler.indexDocument(parentContentId);
-        LOGGER.debug("REH->handleCopy : Re-indexed question id : " + resourceId);
-      } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
-        // update used in collection count
-        resourceIndexHandler.indexDocument(parentContentId);
-      }
+      resourceIndexHandler.indexDocument(resourceId);
+      LOGGER.debug("REH->handleCopy : Re-indexed resource id : " + resourceId);
+      // update used in collection count 
+      resourceIndexHandler.indexDocument(parentContentId);
     } catch (Exception e) {
       LOGGER.error("Failed to handle copy event for resource id : " + resourceId);
       throw new Exception(e);
