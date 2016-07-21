@@ -47,7 +47,5 @@ public interface IndexService {
   void buildInfoIndex(String idString, JsonObject source) throws Exception;
   
   void buildInfoIndex(String id);
-
-  void deleteDocuments(String indexableIds, String indexName, String type, String createdAt);
   
 }

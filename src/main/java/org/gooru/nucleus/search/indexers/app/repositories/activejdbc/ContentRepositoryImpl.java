@@ -153,9 +153,11 @@ public class ContentRepositoryImpl implements ContentRepository {
     if (contents.size() < 1) {
       LOGGER.warn("Content id: {} not present in DB", contentId);
     }
-    if (contents.size() > 0 && contents.get(0) != null) {
+    if(contents.size() > 0){
       Content content = contents.get(0);
-      returnValue = new JsonObject(content.toJson(false));
+      if (content != null) {
+        returnValue = new JsonObject(content.toJson(false));
+      }
     }
     return returnValue;
   }
