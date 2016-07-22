@@ -36,7 +36,7 @@ class MessageProcessor implements Processor {
       else{
         String contentFormat = eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
         LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
-        LOGGER.debug("Event body Json : " + eventBody.toString());
+       // LOGGER.debug("Event body Json : " + eventBody.toString());
         
         if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
           processResourceEvents();

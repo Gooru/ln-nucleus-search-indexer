@@ -48,4 +48,6 @@ public interface IndexService {
   
   void buildInfoIndex(String id);
   
+  void updateBrokenStatus(String ids, boolean isUpdateBroken);
+  
 }

@@ -34,7 +34,6 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
       ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_RESOURCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNull(result, ErrorMsgConstants.RESOURCE_DATA_NULL);
-      ValidationUtil.rejectIfNotMappedToCourse(result, ErrorMsgConstants.RESOURCE_NOT_MAPPED);
       //LOGGER.debug("RIH->indexDocument: getIndexDataContent() returned:" + result);
       //Extract text while indexing ==>> IndexService.instance().buildInfoIndex(resourceId, result);
       IndexService.instance().indexDocuments(resourceId, indexName, getIndexType(), result);

@@ -2,6 +2,9 @@ package org.gooru.nucleus.search.indexers.app.processors.event.handlers;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+
+import javax.naming.event.EventContext;
+
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandler;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandlerBuilder;
@@ -63,6 +66,10 @@ public class BaseEventHandler {
 
   protected static String getCollectionId(JsonObject json) {
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COLLECTION_ID);
+  }
+  
+  protected static String getMappedCourseId(JsonObject json){
+    return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_TARGET).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
   }
 
   protected IndexHandler getResourceIndexHandler() {

@@ -1,15 +1,13 @@
 package org.gooru.nucleus.search.indexers.bootstrap;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.RouteConstants;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.http.HttpServer;
+import io.vertx.ext.web.Router;
 
 public class IndexBuilderVerticle extends AbstractVerticle {
 
@@ -26,6 +24,8 @@ public class IndexBuilderVerticle extends AbstractVerticle {
 
     index(router);
     indexContentInfo(router);
+    markBrokenStatus(router);
+    markUnBrokenStatus(router);
     
     // If the port is not present in configuration then we end up
     // throwing as we are casting it to int. This is what we want.
@@ -87,4 +87,47 @@ public class IndexBuilderVerticle extends AbstractVerticle {
       }
     }));
   }
+  
+  private void markBrokenStatus(final Router router) {
+    router.post(RouteConstants.EP_MARK_BROKEN_STATUS).handler(context -> vertx.executeBlocking(future -> {
+      String indexableIds = context.request().getParam(RouteConstants.INDEXABLE_IDS);
+      if (indexableIds != null) {
+        try {
+          IndexService.instance().updateBrokenStatus(indexableIds, true);
+          future.complete("Indexed");
+        } catch (Exception e) {
+          future.fail(e);
+        }
+      }
+    }, result -> {
+      if (result.succeeded()) {
+        context.response().setStatusCode(200).end();
+      } else {
+        LOGGER.error("Re-index failed !!!");
+        context.response().setStatusCode(500).end();
+      }
+    }));
+  }
+  
+  private void markUnBrokenStatus(final Router router) {
+    router.post(RouteConstants.EP_MARK_UNBROKEN_STATUS).handler(context -> vertx.executeBlocking(future -> {
+      String indexableIds = context.request().getParam(RouteConstants.INDEXABLE_IDS);
+      if (indexableIds != null) {
+        try {
+          IndexService.instance().updateBrokenStatus(indexableIds, false);
+          future.complete("Indexed");
+        } catch (Exception e) {
+          future.fail(e);
+        }
+      }
+    }, result -> {
+      if (result.succeeded()) {
+        context.response().setStatusCode(200).end();
+      } else {
+        LOGGER.error("Re-index failed !!!");
+        context.response().setStatusCode(500).end();
+      }
+    }));
+  }
+  
 }

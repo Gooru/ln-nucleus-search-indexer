@@ -8,10 +8,13 @@ public final class RouteConstants {
   // Helper: Entity name constants
   private static final String INDEX = "index";
   private static final String INDEX_INFO = "index/info";
-  // Upload file = /api/nucleus-indexer/{version}/index
+  private static final String MARK_BROKEN = "mark-broken";
+  private static final String MARK_UNBROKEN = "mark-unbroken";
+
   public static final String EP_BUILD_INDEX = API_BASE_ROUTE + INDEX;
-  
   public static final String EP_BUILD_CONTENT_INDEX = API_BASE_ROUTE + INDEX_INFO;
+  public static final String EP_MARK_BROKEN_STATUS = API_BASE_ROUTE + MARK_BROKEN;
+  public static final String EP_MARK_UNBROKEN_STATUS = API_BASE_ROUTE + MARK_UNBROKEN;
   
   public static final String HTTP_PORT = "http.port";
   public static final String INDEXABLE_IDS = "ids";

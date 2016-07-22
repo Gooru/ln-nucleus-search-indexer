@@ -57,9 +57,9 @@ public class KafkaConsumer {
     while (stream.iterator().hasNext()) {
       try {
         final MessageAndMetadata<String, String> msg = stream.iterator().next();
-        String key = msg.key();
+       // String key = msg.key();
         String message = msg.message();
-        LOG.debug("key : " + key + " Index message :" + message);
+       // LOG.debug("key : " + key + " Index message :" + message);
         LOG.info("Continuing message processing");
         ProcessorBuilder.build(new JsonObject(message)).process();
       } catch (Exception e) {

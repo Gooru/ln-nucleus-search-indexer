@@ -40,13 +40,6 @@ public final class ValidationUtil {
       throw new InvalidRequestException(msg);
     }
   }
-  public static void rejectIfNotMappedToCourse(JsonObject json, String msg) throws InvalidRequestException {
-    String contentFormat = json.getString(EntityAttributeConstants.CONTENT_FORMAT);
-    if(contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.getContentFormat()) && json.getString(EntityAttributeConstants.COURSE_ID) == null){
-      LOGGER.error(msg);
-      throw new InvalidRequestException(msg);
-    }  
-  }
 
   public static void rejectIfNotDeleted(JsonObject json, String msg) throws InvalidRequestException {
     if (json == null) {

@@ -27,6 +27,8 @@ public final class ScoreConstants {
   public static final String PUBLISH_STATUS = "publishStatus";
   public static final String LEARNING_OBJ = "learningObjective";
   public static final String PC_WEIGHT_FIELD = "statistics.preComputedWeight";
+  public static final String BROKEN_STATUS = "statistics.statusIsBroken";
+  public static final String BROKEN_STATUS_DISPLAY = "displayGuide.is_broken";
 
   public static final String[] DEMOTE_DOMAINS = {"wikipedia"};
 
