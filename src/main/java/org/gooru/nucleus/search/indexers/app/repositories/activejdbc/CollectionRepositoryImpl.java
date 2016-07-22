@@ -46,7 +46,7 @@ public class CollectionRepositoryImpl implements CollectionRepository {
       }
     }
     
-    LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);
+   // LOGGER.debug("CollectionRepositoryImpl : getCollection : findById returned: " + returnValue);
     return returnValue;
   }
 

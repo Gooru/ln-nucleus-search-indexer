@@ -96,7 +96,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       contentEo.setContentSubFormatEscaped(contentSubTypeEscaped);
       // Set CopyrightOwner
       String copyrightOwner = source.getString(EntityAttributeConstants.COPYRIGHT_OWNER, null);
-      if (copyrightOwner != null) {
+      if (copyrightOwner != null && !copyrightOwner.equalsIgnoreCase(IndexerConstants.EMPTY_ARRAY)) {
         JsonObject copyrightOwnerJson = new JsonObject(copyrightOwner);
         if (copyrightOwnerJson != null) {
           contentEo.setCopyrightOwner(copyrightOwnerJson);

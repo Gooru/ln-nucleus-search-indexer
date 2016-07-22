@@ -22,7 +22,7 @@ public class CourseRepositoryImpl implements CourseRepository {
   @Override
   public JsonObject getCourse(String courseId) {
     Course result = Course.findById(getPGObject("id", UUID_TYPE, courseId));
-    LOGGER.debug("CourseRepositoryImpl : getCourse : " + result);
+    //LOGGER.debug("CourseRepositoryImpl : getCourse : " + result);
 
     JsonObject returnValue = null;
     if (result != null && !result.getBoolean(Course.IS_DELETED)) {

@@ -128,12 +128,18 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     try {
       ValidationUtil.rejectIfInvalidJsonCopyEvent(eventJson);
       String parentContentId = getParentContentIdTargetObj(eventJson);
+      String contentFormat = getPayLoadObjContentFormat(eventJson);
 
-      LOGGER.debug("REH->handleCopy : copy events validation passed, info - target object " + getPayLoadTargetObj(eventJson).toString());
-      resourceIndexHandler.indexDocument(resourceId);
-      LOGGER.debug("REH->handleCopy : Re-indexed resource id : " + resourceId);
-      // update used in collection count 
-      resourceIndexHandler.indexDocument(parentContentId);
+      if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
+         resourceIndexHandler.indexDocument(resourceId);
+         // update used in collection count 
+         resourceIndexHandler.indexDocument(parentContentId);
+         LOGGER.debug("REH>handleCopy : Reindexed question id : " + resourceId);
+       } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
+         // update used in collection count
+         resourceIndexHandler.indexDocument(parentContentId);
+       }
+      
     } catch (Exception e) {
       LOGGER.error("Failed to handle copy event for resource id : " + resourceId);
       throw new Exception(e);
@@ -174,6 +180,11 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
         LOGGER.debug(
           "Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : " + parentContentId);
       } else {
+        String courseId =  getMappedCourseId(eventJson);
+        if(courseId != null && !courseId.isEmpty()){
+          resourceIndexHandler.indexDocument(resourceId);
+        }
+
         // update used in collection count
         resourceIndexHandler.indexDocument(parentContentId);
         LOGGER.debug("Incremented used in collection count on item.add  resource id : " + parentContentId);

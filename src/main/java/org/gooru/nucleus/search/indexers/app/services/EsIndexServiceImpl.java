@@ -20,6 +20,7 @@ import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
@@ -201,7 +202,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
               }
             }
           }
-          LOGGER.debug("index source data : " + result.toString());
+        //  LOGGER.debug("index source data : " + result.toString());
 
           getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(result)).execute()
                   .actionGet();

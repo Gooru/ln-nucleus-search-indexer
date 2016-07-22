@@ -83,5 +83,9 @@ public final class IndexerConstants {
   public static final String LEARNING_TARGET = "learningTarget";
   
   public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
+  
+  public static final String UNPUBLISH_STATUS = "unpublished";
+  
+  public static final String EMPTY_ARRAY = "[\"\"]";
 
 }
