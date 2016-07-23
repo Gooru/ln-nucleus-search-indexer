@@ -72,7 +72,11 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   
 
   private void handleItemUpdate(String resourceId) throws Exception {
-    resourceIndexHandler.indexDocument(resourceId);
+    String courseId =  getMappedCourseIdItemUpdate(eventJson);
+    if(courseId != null && !courseId.isEmpty()){
+      resourceIndexHandler.indexDocument(resourceId);
+    }
+
     LOGGER.debug("REH->handleReIndex : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
     String collectionId = getCollectionId(eventJson);
     if(collectionId != null && !collectionId.isEmpty()){
