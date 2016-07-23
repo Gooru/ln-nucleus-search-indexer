@@ -56,7 +56,6 @@ public class ContentRepositoryImpl implements ContentRepository {
         }
       }
     }
-   // LOGGER.debug("ContentRepositoryImpl:getResource:findById returned: " + returnValue);
     return returnValue;
   }
 
