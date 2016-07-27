@@ -1,9 +1,10 @@
 package org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc;
 
-import io.vertx.core.json.JsonObject;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHandlerBuilder;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.transactions.TransactionExecutor;
+
+import io.vertx.core.json.JsonObject;
 
 public class AJIndexerRepo implements IndexerRepo {
 
@@ -19,15 +20,8 @@ public class AJIndexerRepo implements IndexerRepo {
   }
 
   @Override
-  public JsonObject getIndexDataCollection() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public JsonObject getAssessment() {
-    // TODO Auto-generated method stub
-    return null;
+  public JsonObject trackIndexActions() {
+    return new TransactionExecutor().executeTransaction(new DBHandlerBuilder().buildIndexTrackerHandler(context));
   }
 
 }
