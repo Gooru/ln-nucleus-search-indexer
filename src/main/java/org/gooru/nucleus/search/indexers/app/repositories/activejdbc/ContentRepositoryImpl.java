@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.Base;
-import org.javalite.activejdbc.DB;
 import org.javalite.common.Convert;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepository {
+public class ContentRepositoryImpl implements ContentRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
@@ -81,9 +81,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
 
   @Override
   public JsonObject getContentByType(String contentId, String contentFormat) {
-    DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
-
+    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
     JsonObject returnValue = null;
     List<Content> contents = Content.where(Content.FETCH_CONTENT_QUERY, contentFormat, contentId, false);
     if (contents.size() < 1) {
@@ -93,20 +91,19 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     if (content != null) {
       returnValue = new JsonObject(content.toJson(false));
     }
-    closeDBConn(db);
+    Base.close();
     return returnValue;
   }
 
   @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getCollectionMeta(String parentContentId) {
-    DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
     List<Map> collectionMeta = Base.findAll(Content.FETCH_COLLECTION_META, parentContentId);
     if (collectionMeta.size() < 1) {
       LOGGER.warn("Collections for resource : {} not present in DB", parentContentId);
     }
-    closeDBConn(db);
+    Base.close();
     return collectionMeta;
   }
   

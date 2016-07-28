@@ -3,17 +3,18 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
-import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.Base;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.vertx.core.json.JsonObject;
 
-public class CourseRepositoryImpl extends BaseIndexRepo implements CourseRepository {
+public class CourseRepositoryImpl implements CourseRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CourseRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
@@ -45,9 +46,8 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
   @Override
   public Integer getUnitCount(String courseId) {
     Integer unitCount = 0;
-    DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
       Long unitCountL = Unit.count(Unit.GET_UNIT_COUNT, courseId, false);
       LOGGER.debug("Unit count : {} for course : {}", unitCountL, courseId);
       unitCount =  unitCountL != null ? unitCountL.intValue() : 0;
@@ -55,7 +55,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     catch(Exception e){
       LOGGER.error("Not able to fetch unit count for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    Base.close();
     return unitCount;
   }
 

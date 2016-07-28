@@ -4,12 +4,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.Base;
-import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class CollectionRepositoryImpl extends BaseIndexRepo implements CollectionRepository {
+public class CollectionRepositoryImpl implements CollectionRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
@@ -75,8 +75,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
 
   @Override
   public JsonObject getCollectionByType(String contentID, String format) {
-    DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
     LazyList<Collection> collections = Collection.where(Collection.COLLECTION_QUERY, format, contentID, false);
     if (collections.size() < 1) {
       LOGGER.warn("Collection id: {} not present in DB", contentID);
@@ -86,21 +85,19 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     if (collection != null) {
       returnValue = new JsonObject(collection.toJson(false));
     }
-    closeDBConn(db);
+    Base.close();
     return returnValue;
   }
 
   @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getContentsOfCollection(String collectionId) {
-    DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
-
+    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
     List<Map> collectionMeta = Base.findAll(Collection.FETCH_RESOURCE_META, collectionId, false);
     if (collectionMeta.size() < 1) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
     }
-    closeDBConn(db);
+    Base.close();
     return collectionMeta;
   }
 
