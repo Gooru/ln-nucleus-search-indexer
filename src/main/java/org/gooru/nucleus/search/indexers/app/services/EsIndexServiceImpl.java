@@ -456,4 +456,54 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       LOGGER.info("Text Extraction : Input Jsonobject is null to extract url for id {}", id);
     }
   }
+
+  @Override
+  public void updateBrokenStatus(String ids, boolean markBroken) {
+    try{
+      int brokenStatus = 0;
+      if(markBroken){
+        brokenStatus = 1;
+      }
+      BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+      String[] idArr = ids.split(",");
+      for(String resourceId : idArr){
+        if(!resourceId.isEmpty()){
+          Map<String, Object> paramsField = new HashMap<>();
+          StringBuffer scriptQuery = new StringBuffer();
+          Map<String, Object> fieldValues = new HashMap<>();
+          
+          fieldValues.put(ScoreConstants.BROKEN_STATUS, brokenStatus);
+      //    fieldValues.put(ScoreConstants.BROKEN_STATUS_DISPLAY, brokenStatus);
+          if(markBroken){
+            fieldValues.put(IndexFields.PUBLISH_STATUS, IndexerConstants.UNPUBLISH_STATUS);
+          }
+          IndexScriptBuilder.buildScript(resourceId, paramsField, scriptQuery, fieldValues);
+          LOGGER.debug("script : " + scriptQuery.toString());
+          LOGGER.debug("param fields : " + paramsField.toString());
+          bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.RESOURCE), IndexerConstants.TYPE_RESOURCE, resourceId).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
+        }
+      }
+      
+      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+      BulkItemResponse[] responses =  bulkResponse.getItems();
+      for(BulkItemResponse response : responses){
+        if(response.isFailed()){
+          INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
+        }
+        else if(markBroken){
+          trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
+        }
+      }
+
+      if(bulkResponse.hasFailures()){
+        throw new Exception(bulkResponse.buildFailureMessage());
+      }
+      else {
+        LOGGER.debug("Successfully updated broken status bulk");
+      }
+    }
+    catch(Exception e){
+      LOGGER.error("Failed to update broken status fields ", e.getMessage());
+    }
+  }
 }

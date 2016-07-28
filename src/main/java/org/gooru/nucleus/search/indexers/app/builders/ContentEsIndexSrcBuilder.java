@@ -303,7 +303,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
        * statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
        */
 
-      LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
+     // LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
     } catch (Exception e) {
       LOGGER.error("CEISB->build : Failed to build source : Exception", e);
       throw new Exception(e);
