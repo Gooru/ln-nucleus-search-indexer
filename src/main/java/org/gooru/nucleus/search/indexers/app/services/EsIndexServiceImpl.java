@@ -491,7 +491,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
         }
         else if(markBroken){
-          trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
+        //  trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
         }
       }
 
