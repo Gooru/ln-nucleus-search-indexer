@@ -25,17 +25,7 @@
   	"password" : "nucleus",
   	"autoCommit" : false,
   	"jdbcUrl" : "jdbc:postgresql://localhost:5432/nucleus",
-  	"maximumPoolSize" : 5,
-  	"database" : "nucleus"
-  },
-  "indexTrackerDataSource" : {
-  	"nucleus.ds.type" : "hikari",
-  	"username" : "search",
-  	"password" : "search",
-  	"autoCommit" : false,
-  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/search",
-  	"maximumPoolSize" : 5,
-  	"database" : "search"
+  	"maximumPoolSize" : 5
   },
   "http.port":8080
 

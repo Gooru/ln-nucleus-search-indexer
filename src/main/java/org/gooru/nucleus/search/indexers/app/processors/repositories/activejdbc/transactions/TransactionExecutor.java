@@ -1,14 +1,14 @@
 package org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.transactions;
 
-import java.sql.SQLException;
-
+import io.vertx.core.json.JsonObject;
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers.DBHandler;
 import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResult;
-import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.Base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.vertx.core.json.JsonObject;
+import java.sql.SQLException;
 
 /**
  * Created by ashish on 11/1/16.
@@ -30,26 +30,22 @@ public class TransactionExecutor {
 
   private ExecutionResult<JsonObject> executeWithTransaction(DBHandler handler) {
     ExecutionResult<JsonObject> executionResult;
-    DB db = new DB(handler.getDatabase());
 
     try {
+      Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
       // If we need a read only transaction, then it is time to set up now
-      db.open(handler.getDataSource());
-      
       if (handler.handlerReadOnly()) {
-        db.connection().setReadOnly(true);
+        Base.connection().setReadOnly(true);
       }
-      
-      db.openTransaction();
-      
+      Base.openTransaction();
       executionResult = handler.validateRequest();
       if (executionResult.continueProcessing()) {
         executionResult = handler.executeRequest();
-        db.commitTransaction();
+        Base.commitTransaction();
       }
       return executionResult;
     } catch (Throwable e) {
-      db.rollbackTransaction();
+      Base.rollbackTransaction();
       LOGGER.error("Caught exception, need to rollback and abort", e);
       // Most probably we do not know what to do with this, so send internal error
       return new ExecutionResult<>(new JsonObject(e.getMessage()), ExecutionResult.ExecutionStatus.FAILED);
@@ -57,12 +53,12 @@ public class TransactionExecutor {
       if (handler.handlerReadOnly()) {
         // restore the settings
         try {
-          db.connection().setReadOnly(false);
+          Base.connection().setReadOnly(false);
         } catch (SQLException e) {
           LOGGER.error("Exception while marking connetion to be read/write", e);
         }
       }
-      db.close();
+      Base.close();
     }
   }
 }

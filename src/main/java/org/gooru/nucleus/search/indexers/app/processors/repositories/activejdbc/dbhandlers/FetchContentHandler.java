@@ -1,10 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.processors.repositories.activejdbc.dbhandlers;
 
 import io.vertx.core.json.JsonObject;
-
-import javax.sql.DataSource;
-
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
@@ -102,14 +98,5 @@ public class FetchContentHandler implements DBHandler {
     return true;
   }
 
-  @Override
-  public DataSource getDataSource() {
-    return DataSourceRegistry.getInstance().getDefaultDataSource();
-  }
-  
-  @Override
-  public String getDatabase() {
-    return DataSourceRegistry.getInstance().getDefaultDatabase();
-  }
 
 }

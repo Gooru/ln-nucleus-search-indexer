@@ -1,14 +1,12 @@
 package org.gooru.nucleus.search.indexers.app.repositories.entities;
 
 import org.javalite.activejdbc.Model;
-import org.javalite.activejdbc.annotations.DbName;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
  * @author GooruSearchTeam
  */
-@DbName("nucleus")
 @Table("content")
 @IdName("id")
 public class Content extends Model {

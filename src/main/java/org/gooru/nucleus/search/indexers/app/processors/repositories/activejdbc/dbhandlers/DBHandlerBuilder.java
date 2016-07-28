@@ -7,9 +7,5 @@ public class DBHandlerBuilder {
   public DBHandler buildFetchContentHandler(ProcessorContext context) {
     return new FetchContentHandler(context);
   }
-  
-  public DBHandler buildIndexTrackerHandler(ProcessorContext context) {
-    return new IndexTrackerHandler(context);
-  }
 
 }

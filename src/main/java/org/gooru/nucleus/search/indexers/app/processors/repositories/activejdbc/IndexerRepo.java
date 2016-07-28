@@ -6,6 +6,8 @@ public interface IndexerRepo {
 
   JsonObject getIndexDataContent();
 
-  JsonObject trackIndexActions();
+  JsonObject getIndexDataCollection();
+
+  JsonObject getAssessment();
 
 }

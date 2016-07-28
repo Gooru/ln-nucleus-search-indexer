@@ -1,8 +1,6 @@
 package org.gooru.nucleus.search.indexers.bootstrap;
 
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.RouteConstants;
-import org.gooru.nucleus.search.indexers.app.services.EsIndexServiceImpl;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +26,7 @@ public class IndexBuilderVerticle extends AbstractVerticle {
     indexContentInfo(router);
     markBrokenStatus(router);
     markUnBrokenStatus(router);
-    deleteDocument(router);
-
+    
     // If the port is not present in configuration then we end up
     // throwing as we are casting it to int. This is what we want.
     final int port = config().getInteger(RouteConstants.HTTP_PORT);
@@ -107,27 +104,6 @@ public class IndexBuilderVerticle extends AbstractVerticle {
         context.response().setStatusCode(200).end();
       } else {
         LOGGER.error("Re-index failed !!!");
-        context.response().setStatusCode(500).end();
-      }
-    }));
-  }
-  private void deleteDocument(final Router router) {
-    router.delete(RouteConstants.EP_BUILD_CONTENT_DELETE).handler(context -> vertx.executeBlocking(future -> {
-      String indexableId = context.request().getParam(RouteConstants.INDEXABLE_ID);
-      String type = context.request().getParam(RouteConstants.TYPE);
-      if (indexableId != null) {
-        try {
-          IndexService.instance().deleteDocuments(indexableId, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
-          future.complete("Deleted and Logged");
-        } catch (Exception e) {
-          future.fail(e);
-        }
-      }
-    }, result -> {
-      if (result.succeeded()) {
-        context.response().setStatusCode(200).end();
-      } else {
-        LOGGER.error("Delete failed !!!", result.cause());
         context.response().setStatusCode(500).end();
       }
     }));

@@ -19,16 +19,13 @@ public final class DataSourceRegistry implements Initializer, Finalizer {
 
   private static final String DEFAULT_DATA_SOURCE = "defaultDataSource";
   private static final String DEFAULT_DATA_SOURCE_TYPE = "nucleus.ds.type";
-  private static final String INDEX_TRACKER_DATA_SOURCE = "indexTrackerDataSource";
-  private static final String DATABASE = "database";
   private static final String DS_HIKARI = "hikari";
   private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceRegistry.class);
   // All the elements in this array are supposed to be present in config file
   // as keys as we are going to initialize them with the value associated with
   // that key
-  private final List<String> datasources = Arrays.asList(DEFAULT_DATA_SOURCE, INDEX_TRACKER_DATA_SOURCE);
+  private final List<String> datasources = Arrays.asList(DEFAULT_DATA_SOURCE);
   private final Map<String, DataSource> registry = new HashMap<>();
-  private final Map<String, String> database = new HashMap<>();
   private volatile boolean initialized = false;
 
   private DataSourceRegistry() {
@@ -55,7 +52,6 @@ public final class DataSourceRegistry implements Initializer, Finalizer {
             if (dbConfig != null) {
               DataSource ds = initializeDataSource(dbConfig);
               registry.put(datasource, ds);
-              database.put(datasource, dbConfig.getString(DATABASE));
             }
           }
           initialized = true;
@@ -68,18 +64,6 @@ public final class DataSourceRegistry implements Initializer, Finalizer {
     return registry.get(DEFAULT_DATA_SOURCE);
   }
 
-  public DataSource getIndexTrackerDataSource() {
-    return registry.get(INDEX_TRACKER_DATA_SOURCE);
-  }
-  
-  public String getIndexTrackerDatabase() {
-    return database.get(INDEX_TRACKER_DATA_SOURCE);
-  }
-  
-  public String getDefaultDatabase() {
-    return database.get(DEFAULT_DATA_SOURCE);
-  }
-  
   public DataSource getDataSourceByName(String name) {
     if (name != null) {
       return registry.get(name);

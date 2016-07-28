@@ -72,10 +72,6 @@ public final class EntityAttributeConstants {
   public static final String EDITORIAL_TAGS = "editorial_tags";
   public static final String SUBJECT_SEQUENCE = "subject_sequence";
   public static final String TAX_PARENT_TITLE = "parent_title";
-  
-  //Index tracker constants
-  public static final String GOORU_OID = "gooru_oid";
-  public static final String INDEX_TYPE = "index_type";
 
   private EntityAttributeConstants() {
     throw new AssertionError();
