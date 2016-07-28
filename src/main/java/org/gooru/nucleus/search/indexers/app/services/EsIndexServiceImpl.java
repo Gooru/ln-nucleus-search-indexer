@@ -504,14 +504,19 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.RESOURCE), IndexerConstants.TYPE_RESOURCE, resourceId).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
         }
       }
+      
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-      if(bulkResponse.hasFailures()){
-        BulkItemResponse[] responses =  bulkResponse.getItems();
-        for(BulkItemResponse response : responses){
-          if(response.isFailed()){
-            INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
-          }
+      BulkItemResponse[] responses =  bulkResponse.getItems();
+      for(BulkItemResponse response : responses){
+        if(response.isFailed()){
+          INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
         }
+        else if(markBroken){
+          trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
+        }
+      }
+
+      if(bulkResponse.hasFailures()){
         throw new Exception(bulkResponse.buildFailureMessage());
       }
       else {
