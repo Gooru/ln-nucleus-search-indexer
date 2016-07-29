@@ -21,13 +21,18 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
+  private static final String EXTERNAL_ASSESSMENT = "assessment-external";
 
   @Override
   public JsonObject getCollection(String contentID) {
     LOGGER.debug("CollectionRepositoryImpl : getCollection : " + contentID);
-    Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
-  //  LOGGER.debug("CollectionRepositoryImpl : getCollection : " + result);
-
+    Collection result = null;
+    LazyList<Collection>  list = Collection.where(Collection.GET_COLLECTION, EXTERNAL_ASSESSMENT, contentID, false);
+    
+    if(list != null && list.size() > 0){
+      result = list.get(0);
+    }
+   
     JsonObject returnValue = null;
     String courseId = null;
 

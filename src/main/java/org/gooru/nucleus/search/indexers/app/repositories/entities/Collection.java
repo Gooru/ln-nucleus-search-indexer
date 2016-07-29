@@ -15,6 +15,8 @@ public class Collection extends Model {
   public static final String COLLECTION = "collection";
 
   public static final String ASSESSEMENT = "assessment";
+  
+  public static final String GET_COLLECTION = "format != ?::content_container_type and id = ?::uuid and is_deleted = ?";
 
   public static final String COLLECTION_QUERY = "format = ?::content_container_type and id = ?::uuid and is_deleted = ?";
 
