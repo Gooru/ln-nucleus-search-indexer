@@ -1,12 +1,14 @@
 package org.gooru.nucleus.search.indexers.app.repositories.entities;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.DbName;
 import org.javalite.activejdbc.annotations.IdName;
 import org.javalite.activejdbc.annotations.Table;
 
 /**
  * @author GooruSearchTeam
  */
+@DbName("nucleus")
 @Table("content")
 @IdName("id")
 public class Content extends Model {
@@ -25,7 +27,7 @@ public class Content extends Model {
       "collection.id = content.collection_id where content.content_format = ?::content_format_type and content.id = ?::uuid and content.is_deleted " +
       "= ?;";
   public static final String FETCH_QUESTION_AND_PARENT_CONTENT_IDS =
-    "select parent_content_id, id, content_format from content where collection_id = ?::uuid";
+    "collection_id = ?::uuid";
   public static final String CONTENT_FORMAT = "content_format";
   public static final String IS_DELETED = "is_deleted";
 
