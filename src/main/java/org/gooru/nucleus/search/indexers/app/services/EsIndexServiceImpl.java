@@ -1,9 +1,11 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
@@ -47,7 +49,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   public static final Logger INDEX_FAILURES_LOGGER = LoggerFactory.getLogger("org.gooru.nucleus.index.failures");
   private static final Logger LOGGER = LoggerFactory.getLogger(EsIndexServiceImpl.class);
 
-  private static String getIndexByType(String type) {
+  public static String getIndexByType(String type) {
     String indexName = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COLLECTION);
@@ -62,7 +64,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     return indexName;
   }
 
-  private static String  getIndexTypeByType(String type) {
+  public static String  getIndexTypeByType(String type) {
     String indexType = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexType = IndexerConstants.TYPE_COLLECTION;
@@ -94,6 +96,24 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       // Delete from CI index
       getClient().prepareDelete(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, key).execute().actionGet();
       
+      trackDeletes(type, key);
+    }
+  }
+
+  private void trackDeletes(String type, String key) {
+    JsonObject deleteJson = new JsonObject();
+    deleteJson.put(EntityAttributeConstants.GOORU_OID, key);
+    deleteJson.put(EntityAttributeConstants.INDEX_TYPE, type);
+    ProcessorContext context = null;
+    if (type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+      context = new ProcessorContext(key, null, ExecuteOperationConstants.SAVE_DELETED_RESOURCE, null, deleteJson);
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+      context = new ProcessorContext(key, null, ExecuteOperationConstants.SAVE_DELETED_COLLECTION, null, deleteJson);
+    }
+    if (context != null) {
+      RepoBuilder.buildIndexerRepo(context).trackIndexActions();
+    } else {
+      LOGGER.info("Type : {}, We are tracking only resources and collections now", type);
     }
   }
 
@@ -492,7 +512,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
         }
         else if(markBroken){
-        //  trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
+          trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
         }
       }
 

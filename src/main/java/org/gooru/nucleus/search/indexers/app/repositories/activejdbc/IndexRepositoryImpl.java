@@ -1,39 +1,41 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
-import org.javalite.activejdbc.Base;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Map;
 
-public class IndexRepositoryImpl implements IndexRepository {
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
+import org.javalite.activejdbc.DB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(IndexRepositoryImpl.class);
 
   @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getMetadata(String referenceIds) {
-    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
-    List<Map> metadataReference = Base.findAll(Content.FETCH_METADATA, referenceIds);
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+    List<Map> metadataReference = db.findAll(Content.FETCH_METADATA, referenceIds);
     if (metadataReference.size() < 1) {
       LOGGER.warn("Metadata Reference id: {} not present in DB", referenceIds);
     }
-    Base.close();
+    closeDBConn(db);
     return metadataReference;
   }
 
   @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getLicenseMetadata(int metadataId) {
-    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
-    List<Map> metadataReference = Base.findAll(Content.FETCH_LICENSE_METADATA, metadataId);
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+
+    List<Map> metadataReference = db.findAll(Content.FETCH_LICENSE_METADATA, metadataId);
     if (metadataReference.size() < 1) {
       LOGGER.warn("Metadata Reference id: {} not present in DB", metadataId);
     }
-    Base.close();
+    closeDBConn(db);
     return metadataReference;
   }
 

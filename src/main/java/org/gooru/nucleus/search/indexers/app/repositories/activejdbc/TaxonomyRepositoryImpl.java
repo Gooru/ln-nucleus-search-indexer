@@ -3,14 +3,14 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.util.List;
 import java.util.Map;
 
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TaxonomyRepositoryImpl implements TaxonomyRepository {
+public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TaxonomyRepositoryImpl.class);
 
@@ -37,9 +37,10 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepository {
     }
     List<Map> taxMetaList = null;
     if (query != null) {
+      DB db = getDefaultDataSourceDBConnection();
       try{
-        Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
-        taxMetaList = Base.findAll(query, codeId);
+        openConnection(db);
+        taxMetaList = db.findAll(query, codeId);
         if (taxMetaList.size() < 1) {
           LOGGER.warn("Taxonomy info for {} level for id : {} not present in DB", level, codeId);
         }
@@ -48,7 +49,7 @@ public class TaxonomyRepositoryImpl implements TaxonomyRepository {
         LOGGER.error("Failed to fetch taxonomy details ", ex);
       }
       finally {
-        Base.close();
+        closeDBConn(db);
       }
     }
     return taxMetaList;

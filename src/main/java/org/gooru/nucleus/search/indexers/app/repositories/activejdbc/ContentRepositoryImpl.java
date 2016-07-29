@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
-import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.LazyList;
 import org.javalite.common.Convert;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class ContentRepositoryImpl implements ContentRepository {
+public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
@@ -80,7 +80,9 @@ public class ContentRepositoryImpl implements ContentRepository {
 
   @Override
   public JsonObject getContentByType(String contentId, String contentFormat) {
-    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+
     JsonObject returnValue = null;
     List<Content> contents = Content.where(Content.FETCH_CONTENT_QUERY, contentFormat, contentId, false);
     if (contents.size() < 1) {
@@ -90,26 +92,26 @@ public class ContentRepositoryImpl implements ContentRepository {
     if (content != null) {
       returnValue = new JsonObject(content.toJson(false));
     }
-    Base.close();
+    closeDBConn(db);
     return returnValue;
   }
 
   @SuppressWarnings("rawtypes")
   @Override
   public List<Map> getCollectionMeta(String parentContentId) {
-    Base.open(DataSourceRegistry.getInstance().getDefaultDataSource());
-    List<Map> collectionMeta = Base.findAll(Content.FETCH_COLLECTION_META, parentContentId);
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+    List<Map> collectionMeta = db.findAll(Content.FETCH_COLLECTION_META, parentContentId);
     if (collectionMeta.size() < 1) {
       LOGGER.warn("Collections for resource : {} not present in DB", parentContentId);
     }
-    Base.close();
+    closeDBConn(db);
     return collectionMeta;
   }
   
-  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject getQuestionAndParentContentIds(String collectionId) {
-    List<Map> contents = Base.findAll(Content.FETCH_QUESTION_AND_PARENT_CONTENT_IDS, collectionId);
+    LazyList<Content> contents = Content.find(Content.FETCH_QUESTION_AND_PARENT_CONTENT_IDS, collectionId);
     if (contents.size() < 1) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
     }
@@ -118,7 +120,7 @@ public class ContentRepositoryImpl implements ContentRepository {
     JsonArray parentContentIds = new JsonArray();
 
     if (contents.size() > 0) {
-      for (Map content : contents) {
+      for (Content content : contents) {
         if (content.get(Content.CONTENT_FORMAT) != null && content.get(Content.CONTENT_FORMAT).equals(Content.CONTENT_FORMAT_QUESTION) &&
           content.get(EntityAttributeConstants.ID) != null) {
           questionIds.add(Convert.toString(content.get(EntityAttributeConstants.ID)));
