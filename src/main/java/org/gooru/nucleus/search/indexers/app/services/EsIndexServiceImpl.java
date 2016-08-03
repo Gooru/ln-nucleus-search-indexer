@@ -113,7 +113,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     if (context != null) {
       RepoBuilder.buildIndexerRepo(context).trackIndexActions();
     } else {
-      LOGGER.info("Type : {}, We are tracking only resources and collections now", type);
+      LOGGER.info("Request Type : {}, We are currently tracking only resource and collection deletes", type);
     }
   }
 
