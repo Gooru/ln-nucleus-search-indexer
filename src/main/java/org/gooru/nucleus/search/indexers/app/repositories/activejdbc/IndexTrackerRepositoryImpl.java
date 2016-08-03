@@ -19,6 +19,7 @@ public class IndexTrackerRepositoryImpl implements IndexTrackerRepository {
   public void saveDeletedResource(String id, JsonObject data, List<String> attributes) {
     try {
       ResourceIndexDelete.createIt(EntityAttributeConstants.GOORU_OID, UUID.fromString(data.getString(EntityAttributeConstants.GOORU_OID)), EntityAttributeConstants.INDEX_TYPE, data.getString(EntityAttributeConstants.INDEX_TYPE));
+      LOGGER.info("Successfully tracked deleted resource : {}", data.getString(EntityAttributeConstants.GOORU_OID));
     } catch (Exception e) {
       LOGGER.error("Save Failed for ID : {} : Error : {}", data.getString(EntityAttributeConstants.GOORU_OID),  e.getMessage());
     }
@@ -28,6 +29,7 @@ public class IndexTrackerRepositoryImpl implements IndexTrackerRepository {
   public void saveDeletedCollection(String id, JsonObject data, List<String> insertCollectionAllowedFields) {
     try {
       CollectionIndexDelete.createIt(EntityAttributeConstants.GOORU_OID, UUID.fromString(data.getString(EntityAttributeConstants.GOORU_OID)), EntityAttributeConstants.INDEX_TYPE, data.getString(EntityAttributeConstants.INDEX_TYPE));
+      LOGGER.info("Successfully tracked deleted collection : {}", data.getString(EntityAttributeConstants.GOORU_OID));
     } catch (Exception e) {
       LOGGER.error("Save Failed for ID : {} : Error : {}", data.getString(EntityAttributeConstants.GOORU_OID),  e.getMessage());
     }

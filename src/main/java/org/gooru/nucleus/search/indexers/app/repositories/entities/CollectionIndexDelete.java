@@ -12,7 +12,7 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @DbName("search")
 @Table("collection_index_delete_tracker")
-@IdName("gooru_oid")
+@IdName("id")
 public class CollectionIndexDelete extends Model {
 
   public static final List<String> INSERT_COLLECTION_ALLOWED_FIELDS = Arrays.asList("gooru_oid","index_type");
