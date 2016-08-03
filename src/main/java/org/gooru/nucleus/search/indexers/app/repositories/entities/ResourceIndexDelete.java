@@ -13,7 +13,7 @@ import org.javalite.activejdbc.annotations.Table;
  */
 @DbName("search")
 @Table("resource_index_delete_tracker")
-@IdName("gooru_oid")
+@IdName("id")
 public class ResourceIndexDelete extends Model {
 
   public static final List<String> INSERT_RESOURCE_ALLOWED_FIELDS = Arrays.asList("gooru_oid","index_type");
