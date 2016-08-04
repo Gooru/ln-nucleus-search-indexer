@@ -12,7 +12,7 @@ public class BaseIndexHandler {
     String fieldName = ScoreConstants.STATISTICS_FIELD + '.' + field;
 
     if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_INCR)) {
-      Object incrCount = incrementValue(value);
+      Object incrCount = incrementValue(value == null ? 0 : value);
       scoreValues.put(field, incrCount);
       fieldsMap.put(fieldName, incrCount);
     } else if (operationType.equalsIgnoreCase(ScoreConstants.OPERATION_TYPE_DECR)) {
