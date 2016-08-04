@@ -24,12 +24,6 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
         // Get statistics and extracted text data from backup index
         Map<String, Object> contentInfoAsMap = IndexService.instance().getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
         
-        // Create document in CI index.
-        if(contentInfoAsMap == null){
-          getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-          .setSource(buildContentInfoIndexSrc(id, IndexerConstants.TYPE_COURSE, null)).execute().actionGet();
-        }
-        
         setExistingStatisticsData(data, contentInfoAsMap);
         
         getClient().prepareIndex(getIndexName(), IndexerConstants.TYPE_COURSE, id).setSource(EsIndexSrcBuilder.get(IndexerConstants.TYPE_COURSE).buildSource(data)).execute()
