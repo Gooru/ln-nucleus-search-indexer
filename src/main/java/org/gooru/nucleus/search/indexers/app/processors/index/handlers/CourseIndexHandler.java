@@ -64,7 +64,8 @@ public class CourseIndexHandler extends BaseIndexHandler implements IndexHandler
       if (result != null && result.get(ScoreConstants.STATISTICS_FIELD) != null) {
         Map<String, Object> indexFields = new HashMap<String, Object>();
         Map<String, Object> statistics = (Map<String, Object>) result.get(ScoreConstants.STATISTICS_FIELD);
-        indexFields.put(IndexerConstants.STATISTICS_DOT + IndexFields.COURSE_REMIXCOUNT, incrementValue(statistics.get(IndexFields.COURSE_REMIXCOUNT)));
+        Object remixCount = statistics.get(IndexFields.COURSE_REMIXCOUNT);
+        indexFields.put(IndexerConstants.STATISTICS_DOT + IndexFields.COURSE_REMIXCOUNT, incrementValue(remixCount == null ? 0 : remixCount));
         IndexService.instance().indexDocumentByFields(courseId, IndexNameHolder.getIndexName(EsIndex.COURSE), IndexerConstants.COURSE, indexFields);
       }
     }

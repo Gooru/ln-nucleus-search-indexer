@@ -4,7 +4,6 @@ import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandler;
-import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import io.vertx.core.json.JsonObject;
 
@@ -65,10 +64,9 @@ public class CourseEventsHandler extends BaseEventHandler implements IndexEventH
   }
   
   private void handleCopyCourse(String courseId) throws Exception {
-    ValidationUtil.rejectIfInvalidJsonCopyEvent(eventJson);
-    String parentCourseId = getParentContentIdTargetObj(eventJson);
-    courseIndexHandler.indexDocument(parentCourseId);
-    courseIndexHandler.increaseCount(courseId, IndexFields.COURSE_REMIXCOUNT);
+    String parentCourseId = getOriginalContentIdTargetObj(eventJson);
+    courseIndexHandler.indexDocument(courseId);
+    courseIndexHandler.increaseCount(parentCourseId, IndexFields.COURSE_REMIXCOUNT);
     LOGGER.debug("CREH->handleCopy : Indexed course! event name : " + eventName + " course id : " + courseId);
   }
 
