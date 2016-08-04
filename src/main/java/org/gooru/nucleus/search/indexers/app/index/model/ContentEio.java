@@ -227,6 +227,14 @@ public class ContentEio implements Serializable {
   public void setCopyrightOwner(JsonObject copyrightOwner) {
     content = JsonUtil.set(content, "copyrightOwner", copyrightOwner);
   }
+  
+  public JsonArray getCopyrightOwnerList() {
+    return content.getJsonArray("copyrightOwnerList", null);
+  }
+
+  public void setCopyrightOwnerList(JsonArray copyrightOwnerList) {
+    content = JsonUtil.set(content, "copyrightOwnerList", copyrightOwnerList);
+  }
 
   public Boolean getVisibleOnProfile() {
     return content.getBoolean("visibleOnProfile", null);
