@@ -1,11 +1,9 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
@@ -27,7 +25,6 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
-import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
@@ -411,47 +408,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     return null;
   }
 
-  private String buildContentInfoIndexSrc(String id, String contentFormat, Map<String, Object> data){
-    ContentInfoEio contentInfoEo = new ContentInfoEio();
-    contentInfoEo.setId(id);
-    contentInfoEo.setContentFormat(contentFormat);
-    contentInfoEo.setIndexUpdatedTime(new Date(System.currentTimeMillis()));
-    Map<String, Object> indexData = new HashMap<>();
-    Map<String, Object> statistics = new HashMap<>();
-    for(String key : data.keySet()){
-      statistics.put(key.replace(key, IndexerConstants.STATISTICS_DOT), data.get(key));
-    }
-    indexData.put(IndexerConstants.STATISTICS, statistics);
-    contentInfoEo.setStatistics(buildStatisticsData(contentFormat, indexData));
-    LOGGER.debug("content info index source : " + contentInfoEo.getContentInfoJson().toString());
-    return contentInfoEo.getContentInfoJson().toString();
-  }
-  
-  private JsonObject buildStatisticsData(String contentFormat, Map<String, Object> contentInfoAsMap) {
-    Map<String, Object> statisticsAsMap = null;
-    if (contentInfoAsMap != null) {
-      statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
-    }
-    long viewsCount = 0L;
-    int collaboratorCount = 0;
-    int remixCount = 0;
-
-    if (statisticsAsMap != null) {
-      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
-        viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
-      }
-      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
-        viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
-        collaboratorCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLAB_COUNT));
-        remixCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));
-      }
-    }
-    StatisticsEo statisticEo = new StatisticsEo();
-    statisticEo.setViewsCount(viewsCount);
-    statisticEo.setCollaboratorCount(collaboratorCount);
-    statisticEo.setCollectionRemixCount(remixCount);
-    return statisticEo.getStatistics();
-  }
   
   public void buildInfoIndex(String id, JsonObject source) {
     if (source != null && !source.isEmpty()) {

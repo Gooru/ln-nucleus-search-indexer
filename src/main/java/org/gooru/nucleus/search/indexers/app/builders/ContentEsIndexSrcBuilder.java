@@ -37,7 +37,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
   @Override
   public JsonObject build(JsonObject source, D contentEo) throws Exception {
     try {
-    //  LOGGER.debug("CEISB->build : source " + source.toString());
       String id = source.getString(EntityAttributeConstants.ID);
       contentEo.setId(id);
       contentEo.setIndexId(id);
@@ -303,9 +302,9 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
        * statisticsEo.setHas21stCenturySkills(has21stCenturySkills);
        */
 
-     // LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
     } catch (Exception e) {
       LOGGER.error("CEISB->build : Failed to build source : Exception", e);
+      LOGGER.debug("CEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
       throw new Exception(e);
     }
     return contentEo.getContentJson();
