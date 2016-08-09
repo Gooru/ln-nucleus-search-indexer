@@ -286,6 +286,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       Iterator<Object> iter = jsonArr.iterator();
       LOGGER.debug("Batch size : " + jsonArr.size());
       Map<String, Map<String,Object>> viewsData = new HashMap<>();
+      Map<String, String> contentType = new HashMap<>();
       while(iter.hasNext()){
         JsonObject data = (JsonObject) iter.next();
         if(data != null){
@@ -302,6 +303,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
          // update to content info index 
           bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
           viewsData.put(data.getString(EventsConstants.EVT_DATA_ID), fieldValues);
+          contentType.put(data.getString(EventsConstants.EVT_DATA_ID), data.getString(EventsConstants.EVT_DATA_TYPE));
         }
       }
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -313,7 +315,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             // If document missing in contentinfo index. Creating it. 
             if(response.getFailure().getCause() instanceof DocumentMissingException && viewsData.containsKey(response.getId())){
               getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, response.getId())
-              .setSource(buildContentInfoIndexSrc(response.getId(), IndexerConstants.TYPE_CONTENT_INFO, viewsData.get(response.getId()))).execute().actionGet();
+              .setSource(buildContentInfoIndexSrc(response.getId(), contentType.get(response.getId()), viewsData.get(response.getId()))).execute().actionGet();
             }
             else {
               INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
