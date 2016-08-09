@@ -72,11 +72,12 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   
 
   private void handleItemUpdate(String resourceId) throws Exception {
-    String courseId =  getMappedCourseIdItemUpdate(eventJson);
+/*    String courseId =  getMappedCourseIdItemUpdate(eventJson);
     if(courseId != null && !courseId.isEmpty()){
       resourceIndexHandler.indexDocument(resourceId);
     }
 
+*/    
     LOGGER.debug("REH->handleReIndex : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
     String collectionId = getCollectionId(eventJson);
     if(collectionId != null && !collectionId.isEmpty()){
@@ -180,11 +181,11 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
         LOGGER.debug(
           "Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : " + parentContentId);
       } else {
-        String courseId =  getMappedCourseId(eventJson);
+/*        String courseId =  getMappedCourseId(eventJson);
         if(courseId != null && !courseId.isEmpty()){
           resourceIndexHandler.indexDocument(resourceId);
         }
-
+*/
         // update used in collection count
         resourceIndexHandler.indexDocument(parentContentId);
         LOGGER.debug("Incremented used in collection count on item.add  resource id : " + parentContentId);
