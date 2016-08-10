@@ -124,18 +124,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           if (!body.isEmpty()) {
             try {
               // Get statistics and extracted text data from backup index
-              Map<String, Object> contentInfoAsMap =
-                      getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-              Map<String, Object> resourceInfoAsMap = null;
-              if (contentInfoAsMap != null) {
-                body.put("isBuildIndex", true);
-                if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
-                  resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
-                }
-              }
-              setExistingStatisticsData(body, contentInfoAsMap, typeName);
-              setResourceInfoData(body, resourceInfoAsMap, typeName);
-              
+              setResourceStasInfoData(body, indexableId, typeName);
               getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute()
                       .actionGet();
             } catch (Exception e) {
@@ -148,6 +137,25 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     };
   }
 
+  private void setResourceStasInfoData(JsonObject data, String id, String typeName) throws Exception {
+    try {
+      Map<String, Object> contentInfoAsMap =
+              getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+      Map<String, Object> resourceInfoAsMap = null;
+      if (contentInfoAsMap != null) {
+        data.put("isBuildIndex", true);
+        if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
+          resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
+        }
+      }
+      setExistingStatisticsData(data, contentInfoAsMap, typeName);
+      setResourceInfoData(data, resourceInfoAsMap, typeName);
+    }
+    catch(Exception e){
+      throw new Exception(e);
+    }
+  }
+  
   @Override
   public void refreshIndex(String indexName) {
     getClient().admin().indices().refresh(new RefreshRequest(indexName));
@@ -277,6 +285,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       BulkRequestBuilder bulkRequest = getClient().prepareBulk();
       Iterator<Object> iter = jsonArr.iterator();
       LOGGER.debug("Batch size : " + jsonArr.size());
+      Map<String, Map<String,Object>> viewsData = new HashMap<>();
+      Map<String, String> contentType = new HashMap<>();
       while(iter.hasNext()){
         JsonObject data = (JsonObject) iter.next();
         if(data != null){
@@ -292,6 +302,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           bulkRequest.add(getClient().prepareUpdate(getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)), getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
          // update to content info index 
           bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
+          viewsData.put(data.getString(EventsConstants.EVT_DATA_ID), fieldValues);
+          contentType.put(data.getString(EventsConstants.EVT_DATA_ID), data.getString(EventsConstants.EVT_DATA_TYPE));
         }
       }
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -299,7 +311,16 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         BulkItemResponse[] responses =  bulkResponse.getItems();
         for(BulkItemResponse response : responses){
           if(response.isFailed()){
-            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
+            
+            // If document missing in contentinfo index. Creating it. 
+            if(response.getFailure().getCause() instanceof DocumentMissingException && viewsData.containsKey(response.getId())){
+              getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, response.getId())
+              .setSource(buildContentInfoIndexSrc(response.getId(), contentType.get(response.getId()), viewsData.get(response.getId()))).execute().actionGet();
+            }
+            else {
+              INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
+            }
+            
           }
         }
         throw new Exception(bulkResponse.buildFailureMessage());
@@ -316,16 +337,25 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   @Override
   public void bulkIndexDocuments(JsonArray jsonArr, String indexType, String index) {
     try{
+      
+      if(!indexType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || !indexType.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)){
+        throw new Exception("Invalid type in bulkIndexDocuments() !");
+      }
+      
       int batchIndex = 0;
       boolean contIndex = true;
       int batchSize = jsonArr.size();
-
+      
+      LOGGER.debug("bulkIndexDocuments()-> index type : "+indexType +" total batch size : " + batchSize);
       while(contIndex){
         BulkRequestBuilder bulkRequest = getClient().prepareBulk();
         for(int bulkReqIndex=batchIndex; bulkReqIndex < 50; bulkReqIndex++){
           JsonObject data = jsonArr.getJsonObject(bulkReqIndex);
           if(data != null){
-            bulkRequest.add(getClient().prepareIndex(index, indexType, data.getString("id")).setSource(data));
+            // Get statistics and extracted text data from backup index
+            setResourceStasInfoData(data, data.getString(EntityAttributeConstants.ID), indexType);
+            
+            bulkRequest.add(getClient().prepareIndex(index, indexType, data.getString(EntityAttributeConstants.ID)).setSource(EsIndexSrcBuilder.get(indexType).buildSource(data)));
           }
           batchIndex++;
         }
@@ -338,6 +368,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             }
           }
           throw new Exception(bulkResponse.buildFailureMessage());
+        }
+        else {
+          LOGGER.debug("bulkIndexDocuments() -> Successfully Completed for batch size : 50 !");
         }
       }
       

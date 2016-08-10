@@ -51,7 +51,7 @@ public class BaseIndexService {
     Map<String, Object> statistics = new HashMap<>();
     if(data != null){
       for(String key : data.keySet()){
-        statistics.put(key.replace(key, IndexerConstants.STATISTICS_DOT), data.get(key));
+        statistics.put(key.replace(IndexerConstants.STATISTICS_DOT, ""), data.get(key));
       }
     }
     indexData.put(IndexerConstants.STATISTICS, statistics);

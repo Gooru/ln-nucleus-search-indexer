@@ -68,14 +68,14 @@ public class BaseEventHandler {
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COLLECTION_ID);
   }
   
-  protected static String getMappedCourseId(JsonObject json){
+/*  protected static String getMappedCourseId(JsonObject json){
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_TARGET).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
   }
 
   protected static String getMappedCourseIdItemUpdate(JsonObject json){
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COURSE_ID);
   }
-
+*/
   protected IndexHandler getResourceIndexHandler() {
     return IndexHandlerBuilder.buildResourceIndexHandler();
   }
