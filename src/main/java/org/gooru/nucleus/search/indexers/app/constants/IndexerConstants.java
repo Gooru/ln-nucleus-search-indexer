@@ -22,6 +22,8 @@ public final class IndexerConstants {
 
   public static final String PARENT_CONTENT_IDS = "parent_content_ids";
 
+  public static final String ORIGINAL_CONTENT_IDS = "original_content_ids";
+
   public static final String CODE_ID = "codeId";
 
   public static final String LABEL = "label";

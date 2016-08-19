@@ -1,15 +1,13 @@
 package org.gooru.nucleus.search.indexers.app.processors.event.handlers;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-
-import javax.naming.event.EventContext;
-
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandler;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandlerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class BaseEventHandler {
 

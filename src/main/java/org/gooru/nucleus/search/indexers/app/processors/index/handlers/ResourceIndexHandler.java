@@ -158,6 +158,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     return IndexerConstants.TYPE_RESOURCE;
   }
 
+  //TODO Need to change query - get original resources and all questions associated with user
   @Override
   public void updateUserDocuments(String userId) throws Exception {
     try {

@@ -111,27 +111,26 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   }
   
   @Override
-  public JsonObject getQuestionAndParentContentIds(String collectionId) {
+  public JsonObject getQuestionAndOriginalContentIds(String collectionId) {
     LazyList<Content> contents = Content.find(Content.FETCH_QUESTION_AND_PARENT_CONTENT_IDS, collectionId);
     if (contents.size() < 1) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
     }
     JsonObject result = new JsonObject();
     JsonArray questionIds = new JsonArray();
-    JsonArray parentContentIds = new JsonArray();
+    JsonArray originalContentIds = new JsonArray();
 
     if (contents.size() > 0) {
       for (Content content : contents) {
         if (content.get(Content.CONTENT_FORMAT) != null && content.get(Content.CONTENT_FORMAT).equals(Content.CONTENT_FORMAT_QUESTION) &&
           content.get(EntityAttributeConstants.ID) != null) {
           questionIds.add(Convert.toString(content.get(EntityAttributeConstants.ID)));
-        }
-        if (content.get(EntityAttributeConstants.PARENT_CONTENT_ID) != null) {
-          parentContentIds.add(Convert.toString(content.get(EntityAttributeConstants.PARENT_CONTENT_ID)));
+        } else if (content.get(EntityAttributeConstants.ORIGINAL_CONTENT_ID) != null) {
+          originalContentIds.add(Convert.toString(content.get(EntityAttributeConstants.ORIGINAL_CONTENT_ID)));
         }
       }
     }
-    result.put(IndexerConstants.PARENT_CONTENT_IDS, parentContentIds);
+    result.put(IndexerConstants.ORIGINAL_CONTENT_IDS, originalContentIds);
     result.put(IndexerConstants.QUESTION_IDS, questionIds);
     return result;
   }
@@ -173,7 +172,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
         LOGGER.warn("User resources not present in DB for user id: {} not present in DB", userId);
       }
       for(Content content : contents){
-        contentArray.add(content.toJson(false));
+        contentArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("resources", contentArray);

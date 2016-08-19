@@ -19,7 +19,7 @@ public interface ContentRepository {
 
   List<Map> getCollectionMeta(String parentContentId);
 
-  JsonObject getQuestionAndParentContentIds(String collectionId);
+  JsonObject getQuestionAndOriginalContentIds(String collectionId);
   
   JsonObject getDeletedContent(String contentId);
   

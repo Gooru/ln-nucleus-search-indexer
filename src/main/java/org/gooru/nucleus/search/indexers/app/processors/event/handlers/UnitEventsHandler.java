@@ -30,7 +30,7 @@ public class UnitEventsHandler extends BaseEventHandler implements IndexEventHan
           courseId = eventJson.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COURSE_ID);
           courseIndexHandler.indexDocument(courseId);
           break;
-          
+        //TODO delete associated collections and questions which are not already deleted 
         case EventsConstants.ITEM_DELETE:
           courseId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
           courseIndexHandler.indexDocument(courseId);
