@@ -76,12 +76,16 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     }
 
 */    
+    String contentFormat = getPayLoadObjContentFormat(eventJson);
+    if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
+      resourceIndexHandler.indexDocument(resourceId);
+      LOGGER.debug("REH->handleItemUpdate : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
+    }
     //Index collection with updated information of resource metadata
-    LOGGER.debug("REH->handleReIndex : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
     String collectionId = getCollectionId(eventJson);
     if(collectionId != null && !collectionId.isEmpty()){
       collectionIndexHandler.indexDocument(collectionId);
-      LOGGER.debug("REH->handleReIndex : Indexed parent collection of resource: " + resourceId + " collection id  : " + collectionId);
+      LOGGER.debug("REH->handleItemUpdate : Indexed parent collection of resource: " + resourceId + " collection id  : " + collectionId);
     }
   }
 
