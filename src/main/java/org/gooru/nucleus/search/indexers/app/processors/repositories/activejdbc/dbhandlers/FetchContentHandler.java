@@ -67,8 +67,12 @@ public class FetchContentHandler implements DBHandler {
           result = CollectionRepository.instance().getDeletedCollection(context.getId());
           break;
 
-        case ExecuteOperationConstants.GET_USER_RESOURCES:
-          result = ContentRepository.instance().getUserResources(context.getId());
+        case ExecuteOperationConstants.GET_USER_QUESTIONS:
+          result = ContentRepository.instance().getUserQuestions(context.getId());
+          break;
+        
+        case ExecuteOperationConstants.GET_USER_ORIGINAL_RESOURCES:
+          result = ContentRepository.instance().getUserOriginalResources(context.getId());
           break;
           
         case ExecuteOperationConstants.GET_USER_COLLECTIONS:

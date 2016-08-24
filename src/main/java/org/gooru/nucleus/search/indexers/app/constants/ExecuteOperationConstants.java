@@ -20,7 +20,7 @@ public final class ExecuteOperationConstants {
   
   public static final String GET_DELETED_COLLECTION = "get_deleted_collection";
   
-  public static final String GET_USER_RESOURCES = "get_user_resources";
+  public static final String GET_USER_ORIGINAL_RESOURCES = "get_user_original_resources";
   
   public static final String GET_USER_COLLECTIONS = "get_user_collections";
   
@@ -30,6 +30,8 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_DELETED_COURSE = "get_deleted_course";
   public static final String SAVE_DELETED_COLLECTION = "save_deleted_collection";
+
+  public static final String GET_USER_QUESTIONS = "get_user_questions";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

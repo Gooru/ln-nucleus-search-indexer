@@ -158,24 +158,37 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     return IndexerConstants.TYPE_RESOURCE;
   }
 
-  //TODO Need to change query - get original resources and all questions associated with user
   @Override
   public void updateUserDocuments(String userId) throws Exception {
     try {
       LOGGER.debug("RIH->updateUserDocuments : Processing update user documents  : " + userId);
-      ProcessorContext context = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_RESOURCES);
-      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-      if(result != null && result.getJsonArray(IndexerConstants.RESOURCES) != null && result.getJsonArray(IndexerConstants.RESOURCES).size() > 0){
-        IndexService.instance().bulkIndexDocuments(result.getJsonArray(IndexerConstants.RESOURCES), getIndexType(), getIndexName());
-      }
-      else {
-        LOGGER.debug("RIH->updateUserDocuments : DB returned 0 resources,  user Id  : " + userId);
-      }
+      indexUserOriginalResources(userId);
+      indexUserQuestions(userId);
     } catch (Exception ex) {
       LOGGER.error("RIH->updateUserDocuments : Re-index user resources failed for user : " + userId + " Exception : " + ex);
       throw new Exception(ex);
     }
 
+  }
+
+  private void indexUserOriginalResources(String userId) {
+    ProcessorContext context = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_ORIGINAL_RESOURCES);
+    JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+    if(result != null && result.getJsonArray(IndexerConstants.RESOURCES) != null && result.getJsonArray(IndexerConstants.RESOURCES).size() > 0){
+      IndexService.instance().bulkIndexDocuments(result.getJsonArray(IndexerConstants.RESOURCES), getIndexType(), getIndexName());
+    } else {
+      LOGGER.debug("RIH->indexUserOriginalResources : DB returned 0 resources,  user Id  : " + userId);
+    }
+  }
+
+  private void indexUserQuestions(String userId) {
+    ProcessorContext questionContext = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_QUESTIONS);
+    JsonObject questionResult = RepoBuilder.buildIndexerRepo(questionContext).getIndexDataContent();
+    if(questionResult != null && questionResult.getJsonArray(IndexerConstants.QUESTIONS) != null && questionResult.getJsonArray(IndexerConstants.QUESTIONS).size() > 0){
+      IndexService.instance().bulkIndexDocuments(questionResult.getJsonArray(IndexerConstants.QUESTIONS), getIndexType(), getIndexName());
+    } else {
+      LOGGER.debug("RIH->indexUserQuestions : DB returned 0 questions,  user Id  : " + userId);
+    }
   }
 
 }

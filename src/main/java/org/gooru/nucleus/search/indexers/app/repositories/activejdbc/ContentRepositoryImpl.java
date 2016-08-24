@@ -164,9 +164,24 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   }
 
   @Override
-  public JsonObject getUserResources(String userId) {
+  public JsonObject getUserQuestions(String userId) {
     JsonArray contentArray = new JsonArray();
-    List<Content> contents = Content.where(Content.FETCH_USER_RESOURCES, userId, userId, false);
+    List<Content> contents = Content.where(Content.FETCH_USER_QUESTIONS, Content.CONTENT_FORMAT_QUESTION, userId, userId, false);
+    if(contents != null){
+      if (contents.size() < 1) {
+        LOGGER.warn("User questions not present in DB for user id: {} not present in DB", userId);
+      }
+      for(Content content : contents){
+        contentArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
+      }
+    }
+    return new JsonObject().put("questions", contentArray);
+  }
+  
+  @Override
+  public JsonObject getUserOriginalResources(String userId) {
+    JsonArray contentArray = new JsonArray();
+    List<Content> contents = Content.where(Content.FETCH_USER_ORIGINAL_RESOURCES, Content.CONTENT_FORMAT_RESOURCE, userId, false);
     if(contents != null){
       if (contents.size() < 1) {
         LOGGER.warn("User resources not present in DB for user id: {} not present in DB", userId);
