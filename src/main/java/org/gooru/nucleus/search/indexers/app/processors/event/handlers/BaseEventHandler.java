@@ -57,6 +57,10 @@ public class BaseEventHandler {
   protected static String getParentContentIdContextObj(JsonObject json) {
 	return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_PARENT_CONTENT_ID);
   }
+  
+  protected static String getOriginalContentIdContextObj(JsonObject json) {
+    return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_ORIGINAL_CONTENT_ID);
+  }
 
   protected static JsonArray getCollaborators(JsonObject json) {
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getJsonArray(EventsConstants.EVT_PAYLOAD_COLLABORATORS);

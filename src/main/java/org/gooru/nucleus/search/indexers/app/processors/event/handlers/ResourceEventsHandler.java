@@ -107,7 +107,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       // Decrease used in collection count of parent resource
       String parentContentId = getParentContentIdContextObj(eventJson);
       String contentFormat = getPayLoadObjContentFormat(eventJson);
-      String originalContentId = getOriginalContentIdTargetObj(eventJson); 
+      String originalContentId = getOriginalContentIdContextObj(eventJson); 
 
       if (parentContentId != null && contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
         resourceIndexHandler.indexDocument(parentContentId);
