@@ -115,15 +115,21 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
         resourceIndexHandler.indexDocument(originalContentId);
       }
       
-      // Re-index all the collections deleted resource mapped with.
-      JsonObject payload = getPayLoadObj(eventJson);
-      JsonArray collectionIds = payload.getJsonArray(EventsConstants.EVT_REF_PARENT_GOORU_IDS);
-
-      if (collectionIds == null || collectionIds.size() == 0) {
-        LOGGER.debug("Zero collections mapped with this deleted resource id : " + resourceId);
+      // Re-index all collections of deleted copied resource mapped with      
+      String collectionId = getCollectionIdContextObj(eventJson); 
+      if (collectionId == null) {
+        LOGGER.debug("if this is copied, zero collections mapped with this deleted resource id : " + resourceId);
         return;
       }
-
+      collectionIndexHandler.indexDocument(collectionId);
+      
+      // Re-index all collections of deleted original resource mapped with
+      JsonObject payload = getPayLoadObj(eventJson);
+      JsonArray collectionIds = payload.getJsonArray(EventsConstants.EVT_REF_PARENT_GOORU_IDS);
+      if (collectionIds == null || collectionIds.size() == 0) {
+        LOGGER.debug("if this is original, zero collections mapped with this deleted resource id : " + resourceId);
+        return;
+      }
       JsonObject idsJson = new JsonObject();
       idsJson.put(IndexerConstants.COLLECTION_IDS, collectionIds);
       collectionIndexHandler.indexDocuments(idsJson);

@@ -38,6 +38,7 @@ public final class EventsConstants {
   public static final String EVT_DATA_ID = "id";
   public static final String EVT_DATA_TYPE = "type";
   public static final String EVT_DATA_VIEW_COUNT = "viewsCount";
+  public static final String EVT_PAYLOAD_COLLECTION_GOORU_ID = "collectionGooruId";
 
   private EventsConstants() {
     throw new AssertionError();
