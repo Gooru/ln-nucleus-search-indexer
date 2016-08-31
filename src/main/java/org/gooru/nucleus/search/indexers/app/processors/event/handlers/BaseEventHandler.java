@@ -74,6 +74,9 @@ public class BaseEventHandler {
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COLLECTION_ID);
   }
   
+  protected static String getOrignalContentIdFromData(JsonObject json) {
+    return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_ORIGINAL_CONTENT_ID, null);
+  }
 /*  protected static String getMappedCourseId(JsonObject json){
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_TARGET).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
   }

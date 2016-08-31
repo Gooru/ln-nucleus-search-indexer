@@ -77,7 +77,11 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
 
 */    
     String contentFormat = getPayLoadObjContentFormat(eventJson);
+    String originalContentId = getOrignalContentIdFromData(eventJson);
     if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
+      resourceIndexHandler.indexDocument(resourceId);
+      LOGGER.debug("REH->handleItemUpdate : Indexed question! event name : " + eventName + " question id : " + resourceId);
+    } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId == null) {
       resourceIndexHandler.indexDocument(resourceId);
       LOGGER.debug("REH->handleItemUpdate : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
     }
