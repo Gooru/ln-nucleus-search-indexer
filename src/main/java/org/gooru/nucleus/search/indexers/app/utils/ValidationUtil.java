@@ -1,15 +1,14 @@
 package org.gooru.nucleus.search.indexers.app.utils;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-
-import org.gooru.nucleus.search.indexers.app.constants.ContentFormat;
-import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import javassist.NotFoundException;
 
 public final class ValidationUtil {
 
@@ -38,6 +37,13 @@ public final class ValidationUtil {
     if (json == null) {
       LOGGER.error(msg);
       throw new InvalidRequestException(msg);
+    }
+  }
+  
+  public static void rejectIfNotFound(JsonObject json, String msg) throws NotFoundException {
+    if (json == null) {
+      LOGGER.error(msg);
+      throw new NotFoundException(msg);
     }
   }
 

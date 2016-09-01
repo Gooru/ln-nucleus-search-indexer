@@ -26,6 +26,7 @@ import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
+import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.IdIterator;
@@ -50,11 +51,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     String indexName = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COLLECTION);
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COURSE);
     }
 
@@ -65,9 +64,10 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     String indexType = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexType = IndexerConstants.TYPE_COLLECTION;
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexType = IndexerConstants.TYPE_RESOURCE;
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
+      indexType = IndexerConstants.TYPE_COURSE;
     }
     return indexType;
   }
@@ -93,11 +93,11 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       // Delete from CI index
       getClient().prepareDelete(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, key).execute().actionGet();
       
-      trackDeletes(type, key);
+      trackDeletes(key, type);
     }
   }
 
-  private void trackDeletes(String type, String key) {
+  private void trackDeletes(String key, String type) {
     JsonObject deleteJson = new JsonObject();
     deleteJson.put(EntityAttributeConstants.GOORU_OID, key);
     deleteJson.put(EntityAttributeConstants.INDEX_TYPE, type);
@@ -111,6 +111,24 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       RepoBuilder.buildIndexerRepo(context).trackIndexActions();
     } else {
       LOGGER.info("Request Type : {}, We are currently tracking only resource and collection deletes", type);
+    }
+  }
+  
+  @Override
+  public void deleteDocuments(String key, String type) throws Exception {
+    switch (type) {
+    case IndexerConstants.TYPE_RESOURCE:
+      ResourceIndexService.instance().deleteIndexedResource(key, type);
+      break;
+    case IndexerConstants.TYPE_COLLECTION:
+      CollectionIndexService.instance().deleteIndexedCollection(key, type);
+      break;
+    case IndexerConstants.TYPE_COURSE:
+      CourseIndexService.instance().deleteIndexedCourse(key, type);
+      break;
+    default:
+      LOGGER.error("Invalid type passed in, not able to delete");
+      throw new InvalidRequestException("Invalid type : " + type);
     }
   }
 
@@ -212,7 +230,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           // Fetch data from DB for given content Id
           ProcessorContext context = new ProcessorContext(indexableId, getExectueOperation(typeName));
           JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-          ValidationUtil.rejectIfNull(result, "DB return null data for id " + indexableId);
+          ValidationUtil.rejectIfNotFound(result, "Invalid format type or DB returned null data for id " + indexableId);
           // Get statistics and extracted text data from backup index
           if(!typeName.equalsIgnoreCase(IndexerConstants.COURSE)){
             Map<String, Object> contentInfoAsMap =
@@ -383,7 +401,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
   }
   
-  public void buildInfoIndex(String id) {
+  public void buildInfoIndex(String id) throws Exception {
     JsonObject inputJson = getContentFromRepo(id);
     if (inputJson != null && !inputJson.isEmpty()) {
       String url = inputJson.getString(EntityAttributeConstants.URL, null);
@@ -415,10 +433,10 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
   }
 
-  private JsonObject getContentFromRepo(String id) {
+  private JsonObject getContentFromRepo(String id) throws Exception {
     ProcessorContext context = new ProcessorContext(id, ExecuteOperationConstants.GET_RESOURCE);
     JsonObject inputJson = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-    ValidationUtil.rejectIfNull(inputJson, ErrorMsgConstants.RESOURCE_DATA_NULL);
+    ValidationUtil.rejectIfNotFound(inputJson, ErrorMsgConstants.RESOURCE_DATA_NULL);
     LOGGER.debug("EISI->indexDocument: getIndexDataContent() returned:" + inputJson);
     return inputJson;
   }
@@ -483,7 +501,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           Map<String, Object> fieldValues = new HashMap<>();
           
           fieldValues.put(ScoreConstants.BROKEN_STATUS, brokenStatus);
-      //    fieldValues.put(ScoreConstants.BROKEN_STATUS_DISPLAY, brokenStatus);
           if(markBroken){
             fieldValues.put(IndexFields.PUBLISH_STATUS, IndexerConstants.UNPUBLISH_STATUS);
           }
@@ -501,7 +518,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
         }
         else if(markBroken){
-          trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
+          trackDeletes(response.getId(), IndexerConstants.TYPE_RESOURCE);
         }
       }
 
@@ -516,4 +533,5 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       LOGGER.error("Failed to update broken status fields ", e.getMessage());
     }
   }
+
 }

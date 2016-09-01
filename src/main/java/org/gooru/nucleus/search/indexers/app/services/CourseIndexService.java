@@ -11,5 +11,7 @@ public interface CourseIndexService {
   public void indexDocument(String id, JsonObject data) throws Exception;
   
   public void deleteDocument(String id) throws Exception;
+
+  void deleteIndexedCourse(String key, String type) throws Exception;
   
 }

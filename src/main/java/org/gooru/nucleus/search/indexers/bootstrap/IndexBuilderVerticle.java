@@ -1,6 +1,5 @@
 package org.gooru.nucleus.search.indexers.bootstrap;
 
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.RouteConstants;
 import org.gooru.nucleus.search.indexers.app.services.EsIndexServiceImpl;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
@@ -117,7 +116,7 @@ public class IndexBuilderVerticle extends AbstractVerticle {
       String type = context.request().getParam(RouteConstants.TYPE);
       if (indexableId != null) {
         try {
-          IndexService.instance().deleteDocuments(indexableId, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+          IndexService.instance().deleteDocuments(indexableId, type);
           future.complete("Deleted and Logged");
         } catch (Exception e) {
           future.fail(e);

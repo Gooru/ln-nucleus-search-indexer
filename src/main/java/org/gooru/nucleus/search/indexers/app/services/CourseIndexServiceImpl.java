@@ -3,10 +3,15 @@ package org.gooru.nucleus.search.indexers.app.services;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
+import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
+import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
+import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
+import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +71,20 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
     }
     catch(Exception e){
       LOGGER.error("Failed to delete course from index");
+      throw new Exception(e);
+    }
+  }
+  
+  @Override
+  public void deleteIndexedCourse(String key, String type) throws Exception {
+    try {
+      LOGGER.debug("CISI->deleteIndexedCourse : Processing delete course for id : " + key);
+      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_COURSE);
+      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+      ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.COURSE_NOT_DELETED);
+      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+    } catch (Exception e) {
+      LOGGER.error("CISI-> Delete failed for course : " + key + " Exception " + e);
       throw new Exception(e);
     }
   }

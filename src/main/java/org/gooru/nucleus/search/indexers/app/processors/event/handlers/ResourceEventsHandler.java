@@ -200,13 +200,13 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
 
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
         resourceIndexHandler.indexDocument(resourceId);
-        
+
         // update used in collection count
-        if(parentContentId != null){
+        if (parentContentId != null) {
           resourceIndexHandler.indexDocument(parentContentId);
         }
-        LOGGER.debug(
-          "Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : " + parentContentId);
+        LOGGER.debug("Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : "
+                + parentContentId);
       } else {
 /*        String courseId =  getMappedCourseId(eventJson);
         if(courseId != null && !courseId.isEmpty()){
