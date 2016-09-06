@@ -20,7 +20,7 @@ public final class EventsConstants {
   public static final String EVT_PAYLOAD_USER_ID = "id";
   public static final String EVT_PAYLOAD_OBJECT_DATA_COLLECTION_ID = "collection_id";
   public static final String EVT_PAYLOAD_OBJECT_DATA_COURSE_ID = "course_id";
-
+  public static final String EVT_PAYLOAD_OBJECT_DATA_ORIGINAL_CONTENT_ID = "original_content_id";
 
   public static final String ITEM_CREATE = "item.create";
   public static final String ITEM_UPDATE = "item.update";
@@ -38,6 +38,7 @@ public final class EventsConstants {
   public static final String EVT_DATA_ID = "id";
   public static final String EVT_DATA_TYPE = "type";
   public static final String EVT_DATA_VIEW_COUNT = "viewsCount";
+  public static final String EVT_PAYLOAD_COLLECTION_GOORU_ID = "collectionGooruId";
 
   private EventsConstants() {
     throw new AssertionError();

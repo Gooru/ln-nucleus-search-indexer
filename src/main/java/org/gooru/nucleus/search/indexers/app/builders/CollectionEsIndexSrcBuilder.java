@@ -220,10 +220,10 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       collectionEo.setCourse(course.getCourseJson());
       
       //TODO Add logic to store taxonomy transformation and some statistics
-     // LOGGER.debug("CEISB->build : collection Eo source : " + collectionEo.getCollectionJson().toString());
 
     } catch (Exception e) {
       LOGGER.error("ColEISB->build : Collection re-index failed : exception :", e);
+      LOGGER.debug("CEISB->build : collection Eo source : " + collectionEo.getCollectionJson().toString());
       throw new Exception(e);
 
     }

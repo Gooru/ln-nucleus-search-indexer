@@ -110,7 +110,7 @@ public class ScoreFields {
   public static String getDomainName(String url) throws URISyntaxException {
     URI uri = new URI(url);
     String domain = uri.getHost();
-    return domain.startsWith("www.") ? domain.substring(4) : domain;
+    return (domain != null && domain.startsWith("www.")) ? domain.substring(4) : domain;
   }
 
   public Long getViewsCount() {

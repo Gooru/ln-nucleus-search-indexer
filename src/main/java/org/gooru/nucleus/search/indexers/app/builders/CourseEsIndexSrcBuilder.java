@@ -37,7 +37,6 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
   @Override
   protected JsonObject build(JsonObject source, D courseEio) throws Exception {
     try{
-      LOGGER.debug("CEISB->build : course index source : " + source.toString());
       String id = source.getString(EntityAttributeConstants.ID);
 
       courseEio.setId(id);
@@ -186,6 +185,8 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       Integer unitCount = CourseRepository.instance().getUnitCount(id);
       CourseStatisticsEo statistics = new CourseStatisticsEo();
       statistics.setUnitCount(unitCount);
+      statistics.setViewsCount(source.getLong(IndexFields.VIEWS_COUNT));
+      statistics.setCourseRemixCount(source.getInteger(IndexFields.COURSE_REMIXCOUNT));
       courseEio.setStatistics(statistics);
       
       // Set license
@@ -195,10 +196,10 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
         courseEio.setLicense(license);
       }
 
-      LOGGER.debug("Es source course json ", courseEio.toString());
     }
     catch(Exception e){
       LOGGER.error("build index source for course failed", e);
+      LOGGER.debug("Es source course json ", courseEio.toString());
       throw new Exception(e);
     }
     return courseEio;

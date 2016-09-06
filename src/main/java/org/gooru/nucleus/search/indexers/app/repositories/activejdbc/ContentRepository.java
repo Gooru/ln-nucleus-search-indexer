@@ -19,10 +19,12 @@ public interface ContentRepository {
 
   List<Map> getCollectionMeta(String parentContentId);
 
-  JsonObject getQuestionAndParentContentIds(String collectionId);
+  JsonObject getQuestionAndOriginalContentIds(String collectionId);
   
   JsonObject getDeletedContent(String contentId);
   
-  JsonObject getUserResources(String userId);
+  JsonObject getUserQuestions(String userId);
+
+  JsonObject getUserOriginalResources(String userId);
 
 }

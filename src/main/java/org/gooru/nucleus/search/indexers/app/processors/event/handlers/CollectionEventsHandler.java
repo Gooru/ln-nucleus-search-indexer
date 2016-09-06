@@ -17,7 +17,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
   private String eventName;
   private final IndexHandler collectionIndexHandler;
   private final IndexHandler resourceIndexHandler;
-
+  
   public CollectionEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
     this.collectionIndexHandler = getCollectionIndexHandler();
@@ -64,7 +64,6 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
     }
   }
 
-
   private void handleReIndex(String collectionId) throws Exception {
     collectionIndexHandler.indexDocument(collectionId);
     LOGGER.debug("CEH->handleReIndex : Indexed collection! event name : " + eventName + " collection id : " + collectionId);
@@ -80,9 +79,9 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
     try {
       LOGGER.debug("CEH->handlePostDelete : Proceding to index resources that had mapped to the collection : " + collectionId);
       // Index resources inside copied collection
-      JsonObject ids = getCollectionQuestionIdsAndParentIds(collectionId);
+      JsonObject ids = getCollectionQuestionIdsAndOriginalContentIds(collectionId);
       JsonArray questionIds = ids.getJsonArray(IndexerConstants.QUESTION_IDS);
-      JsonArray resourceIds = ids.getJsonArray(IndexerConstants.PARENT_CONTENT_IDS);
+      JsonArray resourceIds = ids.getJsonArray(IndexerConstants.ORIGINAL_CONTENT_IDS);
 
       if (questionIds != null && questionIds.size() > 0) {
         Iterator<Object> iter = questionIds.iterator();
@@ -107,14 +106,15 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
     }
   }
 
-  private JsonObject getCollectionQuestionIdsAndParentIds(String collectionId) {
-    ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_COLLECTION_QUESTION_PARENT_CONTENT_IDS);
+  private JsonObject getCollectionQuestionIdsAndOriginalContentIds(String collectionId) {
+    ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_COLLECTION_QUESTION_ORIGINAL_CONTENT_IDS);
     JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
     LOGGER.debug("CEH->getCollectionResources : Fetched resource data from DB, json : " + result.toString() + " Calling index service !!");
     ValidationUtil.rejectIfNull(result, ErrorMsgConstants.RESOURCE_IDS_NULL);
     return result;
   }
 
+  //TODO Need to clarify - remix count of original content / parent content should be incremented
   private void handleCopy(String collectionId) throws Exception {
     try {
       ValidationUtil.rejectIfInvalidJsonCopyEvent(eventJson);
@@ -123,9 +123,9 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       String originalContentId = getOriginalContentIdTargetObj(eventJson);
       collectionIndexHandler.increaseCount(originalContentId, ScoreConstants.COLLECTION_REMIX_COUNT);
       // Index resources inside copied collection
-      JsonObject ids = getCollectionQuestionIdsAndParentIds(collectionId);
+      JsonObject ids = getCollectionQuestionIdsAndOriginalContentIds(collectionId);
       JsonArray questionIds = ids.getJsonArray(IndexerConstants.QUESTION_IDS);
-      JsonArray resourceIds = ids.getJsonArray(IndexerConstants.PARENT_CONTENT_IDS);
+      JsonArray resourceIds = ids.getJsonArray(IndexerConstants.ORIGINAL_CONTENT_IDS);
 
       if (questionIds != null && questionIds.size() > 0) {
         Iterator<Object> iter = questionIds.iterator();

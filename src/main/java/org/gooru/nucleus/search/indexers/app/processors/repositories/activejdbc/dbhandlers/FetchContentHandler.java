@@ -51,8 +51,8 @@ public class FetchContentHandler implements DBHandler {
           result = ContentRepository.instance().getResource(context.getId());
           break;
 
-        case ExecuteOperationConstants.GET_COLLECTION_QUESTION_PARENT_CONTENT_IDS:
-          result = ContentRepository.instance().getQuestionAndParentContentIds(context.getId());
+        case ExecuteOperationConstants.GET_COLLECTION_QUESTION_ORIGINAL_CONTENT_IDS:
+          result = ContentRepository.instance().getQuestionAndOriginalContentIds(context.getId());
           break;
 
         case ExecuteOperationConstants.GET_COLLECTION:
@@ -67,8 +67,12 @@ public class FetchContentHandler implements DBHandler {
           result = CollectionRepository.instance().getDeletedCollection(context.getId());
           break;
 
-        case ExecuteOperationConstants.GET_USER_RESOURCES:
-          result = ContentRepository.instance().getUserResources(context.getId());
+        case ExecuteOperationConstants.GET_USER_QUESTIONS:
+          result = ContentRepository.instance().getUserQuestions(context.getId());
+          break;
+        
+        case ExecuteOperationConstants.GET_USER_ORIGINAL_RESOURCES:
+          result = ContentRepository.instance().getUserOriginalResources(context.getId());
           break;
           
         case ExecuteOperationConstants.GET_USER_COLLECTIONS:

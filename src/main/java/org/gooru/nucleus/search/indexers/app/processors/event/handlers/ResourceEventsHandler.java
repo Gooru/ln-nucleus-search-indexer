@@ -16,7 +16,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   private String eventName;
   private final IndexHandler resourceIndexHandler;
   private final IndexHandler collectionIndexHandler;
-
+  
   public ResourceEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
     this.collectionIndexHandler = getCollectionIndexHandler();
@@ -61,8 +61,6 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
           throw new InvalidRequestException("Invalid event, not able to handle");
       }
     } catch (Exception ex) {
-      LOGGER.error("REH->handleEvents : Index failed !! event name : " + eventName + " Event data received : " +
-        (eventJson == null ? eventJson : eventJson.toString()) + " Exception : " + ex);
       INDEX_FAILURES_LOGGER
         .error("Re-index failed for resource. Event name : " + eventName + " Event json : " + (eventJson == null ? eventJson : eventJson.toString()) +
           " Exception :" + ex);
@@ -72,16 +70,26 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   
 
   private void handleItemUpdate(String resourceId) throws Exception {
-    String courseId =  getMappedCourseIdItemUpdate(eventJson);
+/*    String courseId =  getMappedCourseIdItemUpdate(eventJson);
     if(courseId != null && !courseId.isEmpty()){
       resourceIndexHandler.indexDocument(resourceId);
     }
 
-    LOGGER.debug("REH->handleReIndex : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
+*/    
+    String contentFormat = getPayLoadObjContentFormat(eventJson);
+    String originalContentId = getOrignalContentIdFromData(eventJson);
+    if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
+      resourceIndexHandler.indexDocument(resourceId);
+      LOGGER.debug("REH->handleItemUpdate : Indexed question! event name : " + eventName + " question id : " + resourceId);
+    } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId == null) {
+      resourceIndexHandler.indexDocument(resourceId);
+      LOGGER.debug("REH->handleItemUpdate : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
+    }
+    //Index collection with updated information of resource metadata
     String collectionId = getCollectionId(eventJson);
     if(collectionId != null && !collectionId.isEmpty()){
       collectionIndexHandler.indexDocument(collectionId);
-      LOGGER.debug("REH->handleReIndex : Indexed parent collection of resource: " + resourceId + " collection id  : " + collectionId);
+      LOGGER.debug("REH->handleItemUpdate : Indexed parent collection of resource: " + resourceId + " collection id  : " + collectionId);
     }
   }
 
@@ -102,19 +110,30 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       
       // Decrease used in collection count of parent resource
       String parentContentId = getParentContentIdContextObj(eventJson);
-      if(parentContentId != null ){
+      String contentFormat = getPayLoadObjContentFormat(eventJson);
+      String originalContentId = getOriginalContentIdContextObj(eventJson); 
+
+      if (parentContentId != null && contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
         resourceIndexHandler.indexDocument(parentContentId);
+      } else if(originalContentId != null ){
+        resourceIndexHandler.indexDocument(originalContentId);
       }
       
-      // Re-index all the collections deleted resource mapped with.
-      JsonObject payload = getPayLoadObj(eventJson);
-      JsonArray collectionIds = payload.getJsonArray(EventsConstants.EVT_REF_PARENT_GOORU_IDS);
-
-      if (collectionIds == null || collectionIds.size() == 0) {
-        LOGGER.debug("Zero collections mapped with this deleted resource id : " + resourceId);
+      // Re-index all collections of deleted copied resource mapped with      
+      String collectionId = getCollectionIdContextObj(eventJson); 
+      if (collectionId == null) {
+        LOGGER.debug("if this is copied, zero collections mapped with this deleted resource id : " + resourceId);
         return;
       }
-
+      collectionIndexHandler.indexDocument(collectionId);
+      
+      // Re-index all collections of deleted original resource mapped with
+      JsonObject payload = getPayLoadObj(eventJson);
+      JsonArray collectionIds = payload.getJsonArray(EventsConstants.EVT_REF_PARENT_GOORU_IDS);
+      if (collectionIds == null || collectionIds.size() == 0) {
+        LOGGER.debug("if this is original, zero collections mapped with this deleted resource id : " + resourceId);
+        return;
+      }
       JsonObject idsJson = new JsonObject();
       idsJson.put(IndexerConstants.COLLECTION_IDS, collectionIds);
       collectionIndexHandler.indexDocuments(idsJson);
@@ -129,6 +148,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       ValidationUtil.rejectIfInvalidJsonCopyEvent(eventJson);
       String parentContentId = getParentContentIdTargetObj(eventJson);
       String contentFormat = getPayLoadObjContentFormat(eventJson);
+      String originalContentId = getOriginalContentIdTargetObj(eventJson); 
 
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
          resourceIndexHandler.indexDocument(resourceId);
@@ -137,7 +157,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
          LOGGER.debug("REH>handleCopy : Reindexed question id : " + resourceId);
        } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
          // update used in collection count
-         resourceIndexHandler.indexDocument(parentContentId);
+         resourceIndexHandler.indexDocument(originalContentId);
        }
       
     } catch (Exception e) {
@@ -149,10 +169,17 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   private void handleMove(String resourceId) throws Exception {
     try {
       ValidationUtil.rejectIfInvalidJsonMoveEvent(eventJson);
+      String originalContentId = getOriginalContentIdTargetObj(eventJson);
+      String contentFormat = getPayLoadObjContentFormat(eventJson);
+      
       JsonObject idsJson = new JsonObject();
       idsJson
         .put(IndexerConstants.COLLECTION_IDS, new JsonArray().add(getParentGooruIdTargetObj(eventJson)).add(getParentGooruIdSourceObj(eventJson)));
-      resourceIndexHandler.indexDocument(resourceId);
+      if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
+        resourceIndexHandler.indexDocument(resourceId);
+      } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId != null) {
+        resourceIndexHandler.indexDocument(originalContentId);
+      }
       collectionIndexHandler.indexDocuments(idsJson);
     } catch (Exception e) {
       LOGGER.error("Failed to handle move event for resource id : " + resourceId);
@@ -166,28 +193,30 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       String parentContentId = getParentContentIdTargetObj(eventJson);
       String contentFormat = getPayLoadObjContentFormat(eventJson);
       String parentGooruId = getParentGooruIdTargetObj(eventJson);
+      String originalContentId = getOriginalContentIdTargetObj(eventJson); 
 
       collectionIndexHandler.indexDocument(parentGooruId);
       LOGGER.debug("Indexed parent collection/assesment on item.add  collection id : " + parentGooruId);
 
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
         resourceIndexHandler.indexDocument(resourceId);
-        
+
         // update used in collection count
-        if(parentContentId != null){
+        if (parentContentId != null) {
           resourceIndexHandler.indexDocument(parentContentId);
         }
-        LOGGER.debug(
-          "Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : " + parentContentId);
+        LOGGER.debug("Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : "
+                + parentContentId);
       } else {
-        String courseId =  getMappedCourseId(eventJson);
+/*        String courseId =  getMappedCourseId(eventJson);
         if(courseId != null && !courseId.isEmpty()){
           resourceIndexHandler.indexDocument(resourceId);
         }
+*/
 
-        // update used in collection count
-        resourceIndexHandler.indexDocument(parentContentId);
-        LOGGER.debug("Incremented used in collection count on item.add  resource id : " + parentContentId);
+        // update used in collection count of original resource
+        resourceIndexHandler.indexDocument(originalContentId);
+        LOGGER.debug("Incremented used in collection count on item.add  resource id : " + originalContentId);
       }
     } catch (Exception e) {
       LOGGER.error("Failed to handle resource add for resource id : " + resourceId);

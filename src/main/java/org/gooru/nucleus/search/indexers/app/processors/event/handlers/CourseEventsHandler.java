@@ -58,11 +58,14 @@ public class CourseEventsHandler extends BaseEventHandler implements IndexEventH
     LOGGER.debug("CREH->handleReIndex : Indexed course! event name : " + eventName + " course id : " + courseId);
   }
   
+  //TODO delete associated collections and questions which has is_deleted=true 
   private void deleteCourse(String courseId) throws Exception {
     courseIndexHandler.deleteIndexedDocument(courseId);
     LOGGER.debug("CREH->handleDelete : Deleted course! event name : " + eventName + " course id : " + courseId);
   }
   
+  //TODO Need to clarify - remix count of original course / parent course should be incremented
+  //TODO Discussion already done and confirmation required - copies of collections and resources are not indexed here considering index overload and lots of duplicates in search.
   private void handleCopyCourse(String courseId) throws Exception {
     String parentCourseId = getOriginalContentIdTargetObj(eventJson);
     courseIndexHandler.indexDocument(courseId);

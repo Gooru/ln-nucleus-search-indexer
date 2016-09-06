@@ -1,11 +1,9 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
@@ -27,8 +25,8 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
-import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
+import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.IdIterator;
@@ -53,11 +51,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     String indexName = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COLLECTION);
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COURSE);
     }
 
@@ -68,9 +64,10 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     String indexType = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexType = IndexerConstants.TYPE_COLLECTION;
-    }
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexType = IndexerConstants.TYPE_RESOURCE;
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
+      indexType = IndexerConstants.TYPE_COURSE;
     }
     return indexType;
   }
@@ -96,11 +93,11 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       // Delete from CI index
       getClient().prepareDelete(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, key).execute().actionGet();
       
-      trackDeletes(type, key);
+      trackDeletes(key, type);
     }
   }
 
-  private void trackDeletes(String type, String key) {
+  private void trackDeletes(String key, String type) {
     JsonObject deleteJson = new JsonObject();
     deleteJson.put(EntityAttributeConstants.GOORU_OID, key);
     deleteJson.put(EntityAttributeConstants.INDEX_TYPE, type);
@@ -116,6 +113,24 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       LOGGER.info("Request Type : {}, We are currently tracking only resource and collection deletes", type);
     }
   }
+  
+  @Override
+  public void deleteDocuments(String key, String type) throws Exception {
+    switch (type) {
+    case IndexerConstants.TYPE_RESOURCE:
+      ResourceIndexService.instance().deleteIndexedResource(key, type);
+      break;
+    case IndexerConstants.TYPE_COLLECTION:
+      CollectionIndexService.instance().deleteIndexedCollection(key, type);
+      break;
+    case IndexerConstants.TYPE_COURSE:
+      CourseIndexService.instance().deleteIndexedCourse(key, type);
+      break;
+    default:
+      LOGGER.error("Invalid type passed in, not able to delete");
+      throw new InvalidRequestException("Invalid type : " + type);
+    }
+  }
 
   @Override
   public void indexDocuments(String indexableIds, String indexName, String typeName, JsonObject body) throws Exception {
@@ -127,18 +142,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           if (!body.isEmpty()) {
             try {
               // Get statistics and extracted text data from backup index
-              Map<String, Object> contentInfoAsMap =
-                      getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-              Map<String, Object> resourceInfoAsMap = null;
-              if (contentInfoAsMap != null) {
-                body.put("isBuildIndex", true);
-                if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
-                  resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
-                }
-              }
-              setExistingStatisticsData(body, contentInfoAsMap, typeName);
-              setResourceInfoData(body, resourceInfoAsMap, typeName);
-              
+              setResourceStasInfoData(body, indexableId, typeName);
               getClient().prepareIndex(indexName, typeName, indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body)).execute()
                       .actionGet();
             } catch (Exception e) {
@@ -151,6 +155,25 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     };
   }
 
+  private void setResourceStasInfoData(JsonObject data, String id, String typeName) throws Exception {
+    try {
+      Map<String, Object> contentInfoAsMap =
+              getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+      Map<String, Object> resourceInfoAsMap = null;
+      if (contentInfoAsMap != null) {
+        data.put("isBuildIndex", true);
+        if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
+          resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
+        }
+      }
+      setExistingStatisticsData(data, contentInfoAsMap, typeName);
+      setResourceInfoData(data, resourceInfoAsMap, typeName);
+    }
+    catch(Exception e){
+      throw new Exception(e);
+    }
+  }
+  
   @Override
   public void refreshIndex(String indexName) {
     getClient().admin().indices().refresh(new RefreshRequest(indexName));
@@ -207,7 +230,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           // Fetch data from DB for given content Id
           ProcessorContext context = new ProcessorContext(indexableId, getExectueOperation(typeName));
           JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-          ValidationUtil.rejectIfNull(result, "DB return null data for id " + indexableId);
+          ValidationUtil.rejectIfNotFound(result, "Invalid format type or DB returned null data for id " + indexableId);
           // Get statistics and extracted text data from backup index
           if(!typeName.equalsIgnoreCase(IndexerConstants.COURSE)){
             Map<String, Object> contentInfoAsMap =
@@ -280,6 +303,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       BulkRequestBuilder bulkRequest = getClient().prepareBulk();
       Iterator<Object> iter = jsonArr.iterator();
       LOGGER.debug("Batch size : " + jsonArr.size());
+      Map<String, Map<String,Object>> viewsData = new HashMap<>();
+      Map<String, String> contentType = new HashMap<>();
       while(iter.hasNext()){
         JsonObject data = (JsonObject) iter.next();
         if(data != null){
@@ -295,6 +320,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           bulkRequest.add(getClient().prepareUpdate(getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)), getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
          // update to content info index 
           bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
+          viewsData.put(data.getString(EventsConstants.EVT_DATA_ID), fieldValues);
+          contentType.put(data.getString(EventsConstants.EVT_DATA_ID), data.getString(EventsConstants.EVT_DATA_TYPE));
         }
       }
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -302,7 +329,16 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         BulkItemResponse[] responses =  bulkResponse.getItems();
         for(BulkItemResponse response : responses){
           if(response.isFailed()){
-            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
+            
+            // If document missing in contentinfo index. Creating it. 
+            if(response.getFailure().getCause() instanceof DocumentMissingException && viewsData.containsKey(response.getId())){
+              getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, response.getId())
+              .setSource(buildContentInfoIndexSrc(response.getId(), contentType.get(response.getId()), viewsData.get(response.getId()))).execute().actionGet();
+            }
+            else {
+              INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
+            }
+            
           }
         }
         throw new Exception(bulkResponse.buildFailureMessage());
@@ -319,16 +355,25 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   @Override
   public void bulkIndexDocuments(JsonArray jsonArr, String indexType, String index) {
     try{
+      
+      if(!indexType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || !indexType.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)){
+        throw new Exception("Invalid type in bulkIndexDocuments() !");
+      }
+      
       int batchIndex = 0;
       boolean contIndex = true;
       int batchSize = jsonArr.size();
-
+      
+      LOGGER.debug("bulkIndexDocuments()-> index type : "+indexType +" total batch size : " + batchSize);
       while(contIndex){
         BulkRequestBuilder bulkRequest = getClient().prepareBulk();
         for(int bulkReqIndex=batchIndex; bulkReqIndex < 50; bulkReqIndex++){
           JsonObject data = jsonArr.getJsonObject(bulkReqIndex);
           if(data != null){
-            bulkRequest.add(getClient().prepareIndex(index, indexType, data.getString("id")).setSource(data));
+            // Get statistics and extracted text data from backup index
+            setResourceStasInfoData(data, data.getString(EntityAttributeConstants.ID), indexType);
+            
+            bulkRequest.add(getClient().prepareIndex(index, indexType, data.getString(EntityAttributeConstants.ID)).setSource(EsIndexSrcBuilder.get(indexType).buildSource(data)));
           }
           batchIndex++;
         }
@@ -342,6 +387,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           }
           throw new Exception(bulkResponse.buildFailureMessage());
         }
+        else {
+          LOGGER.debug("bulkIndexDocuments() -> Successfully Completed for batch size : 50 !");
+        }
       }
       
       if(batchIndex >= batchSize){
@@ -353,7 +401,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
   }
   
-  public void buildInfoIndex(String id) {
+  public void buildInfoIndex(String id) throws Exception {
     JsonObject inputJson = getContentFromRepo(id);
     if (inputJson != null && !inputJson.isEmpty()) {
       String url = inputJson.getString(EntityAttributeConstants.URL, null);
@@ -385,10 +433,10 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
   }
 
-  private JsonObject getContentFromRepo(String id) {
+  private JsonObject getContentFromRepo(String id) throws Exception {
     ProcessorContext context = new ProcessorContext(id, ExecuteOperationConstants.GET_RESOURCE);
     JsonObject inputJson = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-    ValidationUtil.rejectIfNull(inputJson, ErrorMsgConstants.RESOURCE_DATA_NULL);
+    ValidationUtil.rejectIfNotFound(inputJson, ErrorMsgConstants.RESOURCE_DATA_NULL);
     LOGGER.debug("EISI->indexDocument: getIndexDataContent() returned:" + inputJson);
     return inputJson;
   }
@@ -411,47 +459,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     return null;
   }
 
-  private String buildContentInfoIndexSrc(String id, String contentFormat, Map<String, Object> data){
-    ContentInfoEio contentInfoEo = new ContentInfoEio();
-    contentInfoEo.setId(id);
-    contentInfoEo.setContentFormat(contentFormat);
-    contentInfoEo.setIndexUpdatedTime(new Date(System.currentTimeMillis()));
-    Map<String, Object> indexData = new HashMap<>();
-    Map<String, Object> statistics = new HashMap<>();
-    for(String key : data.keySet()){
-      statistics.put(key.replace(key, IndexerConstants.STATISTICS_DOT), data.get(key));
-    }
-    indexData.put(IndexerConstants.STATISTICS, statistics);
-    contentInfoEo.setStatistics(buildStatisticsData(contentFormat, indexData));
-    LOGGER.debug("content info index source : " + contentInfoEo.getContentInfoJson().toString());
-    return contentInfoEo.getContentInfoJson().toString();
-  }
-  
-  private JsonObject buildStatisticsData(String contentFormat, Map<String, Object> contentInfoAsMap) {
-    Map<String, Object> statisticsAsMap = null;
-    if (contentInfoAsMap != null) {
-      statisticsAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
-    }
-    long viewsCount = 0L;
-    int collaboratorCount = 0;
-    int remixCount = 0;
-
-    if (statisticsAsMap != null) {
-      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
-        viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
-      }
-      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
-        viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
-        collaboratorCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLAB_COUNT));
-        remixCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));
-      }
-    }
-    StatisticsEo statisticEo = new StatisticsEo();
-    statisticEo.setViewsCount(viewsCount);
-    statisticEo.setCollaboratorCount(collaboratorCount);
-    statisticEo.setCollectionRemixCount(remixCount);
-    return statisticEo.getStatistics();
-  }
   
   public void buildInfoIndex(String id, JsonObject source) {
     if (source != null && !source.isEmpty()) {
@@ -494,7 +501,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           Map<String, Object> fieldValues = new HashMap<>();
           
           fieldValues.put(ScoreConstants.BROKEN_STATUS, brokenStatus);
-      //    fieldValues.put(ScoreConstants.BROKEN_STATUS_DISPLAY, brokenStatus);
           if(markBroken){
             fieldValues.put(IndexFields.PUBLISH_STATUS, IndexerConstants.UNPUBLISH_STATUS);
           }
@@ -512,7 +518,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
         }
         else if(markBroken){
-          trackDeletes(IndexerConstants.TYPE_RESOURCE, response.getId());
+          trackDeletes(response.getId(), IndexerConstants.TYPE_RESOURCE);
         }
       }
 
@@ -527,4 +533,5 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       LOGGER.error("Failed to update broken status fields ", e.getMessage());
     }
   }
+
 }

@@ -16,7 +16,6 @@ public class Content extends Model {
   public static final String CONTENT_FORMAT_QUESTION = "question";
   public static final String FETCH_CONTENT_QUERY = "content_format = ?::content_format_type and id = ?::uuid and is_deleted = ?";
   public static final String FETCH_DELETED_QUERY = "id = ?::uuid and is_deleted = ?";
-  public static final String FETCH_USER_RESOURCES = "creator_id = ?::uuid or original_creator_id = ?::uuid and is_deleted = ?";
   public static final String FETCH_METADATA = "select * from metadata_reference where id = any(string_to_array(?,',')::integer[]);";
   public static final String FETCH_LICENSE_METADATA = "select * from metadata_reference where id = ?";
   public static final String FETCH_COLLECTION_META =
@@ -30,6 +29,7 @@ public class Content extends Model {
     "collection_id = ?::uuid";
   public static final String CONTENT_FORMAT = "content_format";
   public static final String IS_DELETED = "is_deleted";
-
+  public static final String FETCH_USER_QUESTIONS = "content_format = ?::content_format_type and (creator_id = ?::uuid or original_creator_id = ?::uuid) and is_deleted = ?";
+  public static final String FETCH_USER_ORIGINAL_RESOURCES = "content_format = ?::content_format_type and original_content_id is null and creator_id = ?::uuid and is_deleted = ?";
 
 }

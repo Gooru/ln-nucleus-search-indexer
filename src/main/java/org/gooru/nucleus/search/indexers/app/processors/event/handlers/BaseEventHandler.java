@@ -1,15 +1,13 @@
 package org.gooru.nucleus.search.indexers.app.processors.event.handlers;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-
-import javax.naming.event.EventContext;
-
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandler;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandlerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class BaseEventHandler {
 
@@ -59,6 +57,14 @@ public class BaseEventHandler {
   protected static String getParentContentIdContextObj(JsonObject json) {
 	return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_PARENT_CONTENT_ID);
   }
+  
+  protected static String getOriginalContentIdContextObj(JsonObject json) {
+    return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_ORIGINAL_CONTENT_ID);
+  }
+  
+  protected static String getCollectionIdContextObj(JsonObject json) {
+    return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_COLLECTION_GOORU_ID, null);
+  }
 
   protected static JsonArray getCollaborators(JsonObject json) {
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getJsonArray(EventsConstants.EVT_PAYLOAD_COLLABORATORS);
@@ -68,14 +74,17 @@ public class BaseEventHandler {
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COLLECTION_ID);
   }
   
-  protected static String getMappedCourseId(JsonObject json){
+  protected static String getOrignalContentIdFromData(JsonObject json) {
+    return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_ORIGINAL_CONTENT_ID, null);
+  }
+/*  protected static String getMappedCourseId(JsonObject json){
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_TARGET).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
   }
 
   protected static String getMappedCourseIdItemUpdate(JsonObject json){
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COURSE_ID);
   }
-
+*/
   protected IndexHandler getResourceIndexHandler() {
     return IndexHandlerBuilder.buildResourceIndexHandler();
   }

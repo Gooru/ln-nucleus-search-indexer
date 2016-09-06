@@ -3,10 +3,10 @@
  */
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.util.Map;
+
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.util.Map;
 
 /**
  * @author Renuka
@@ -46,8 +46,10 @@ public interface IndexService {
   
   void buildInfoIndex(String idString, JsonObject source) throws Exception;
   
-  void buildInfoIndex(String id);
+  void buildInfoIndex(String id) throws Exception;
   
   void updateBrokenStatus(String ids, boolean isUpdateBroken);
+
+  void deleteDocuments(String key, String type) throws Exception;
   
 }
