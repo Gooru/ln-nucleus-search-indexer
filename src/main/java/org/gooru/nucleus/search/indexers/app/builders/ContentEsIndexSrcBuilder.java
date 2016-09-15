@@ -228,8 +228,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       // Set display guide values
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
-      JsonObject displayGuide = null; 
-      if (displayGuideString != null) displayGuide = source.getJsonObject(displayGuideString);
+      JsonObject displayGuide = null;
+      if (displayGuideString != null) displayGuide = new JsonObject(displayGuideString);
       statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
 
@@ -247,7 +247,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       //Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
       JsonObject editorialTags = null; 
-      if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = source.getJsonObject(editorialStr);
+      if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = new JsonObject(editorialStr);
       statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : 0);
       statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : 0);
       
