@@ -593,6 +593,14 @@
                "contentCount":{
                   "type":"integer",
                   "include_in_all":false
+               },
+               "contentQualityIndicator":{
+                  "type":"integer",
+                  "include_in_all":false
+               },
+               "publisherQualityIndicator":{
+                  "type":"integer",
+                  "include_in_all":false
                }
             }
          },

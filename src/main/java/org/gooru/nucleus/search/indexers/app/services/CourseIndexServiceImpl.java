@@ -44,7 +44,8 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
     return IndexNameHolder.getIndexName(EsIndex.COURSE);
   }
   
-  private void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap) {
+  @Override
+  public void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap) {
     long viewsCount = 0L;
     int remixCount = 0;
 

@@ -238,10 +238,18 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         contentEo.setDisplayGuide(displayGuide);
       }
       
+      //Set CUL course mapped
       CourseEo course = new CourseEo(); 
       course.setId(source.getString(IndexerConstants.RESOURCE_COURSE_ID, null));
       course.setTitle(source.getString(IndexerConstants.RESOURCE_COURSE, null));
       contentEo.setCourse(course.getCourseJson());
+      
+      //Set Editorial tag
+      String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
+      JsonObject editorialTags = null; 
+      if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = source.getJsonObject(editorialStr);
+      statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : 0);
+      statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : 0);
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       statisticsEo.setViewsCount(viewsCount);

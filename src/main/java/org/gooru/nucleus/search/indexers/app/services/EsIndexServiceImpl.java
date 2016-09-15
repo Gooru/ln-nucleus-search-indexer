@@ -232,9 +232,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
           ValidationUtil.rejectIfNotFound(result, "Invalid format type or DB returned null data for id " + indexableId);
           // Get statistics and extracted text data from backup index
+          Map<String, Object> contentInfoAsMap =
+                  getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
           if(!typeName.equalsIgnoreCase(IndexerConstants.COURSE)){
-            Map<String, Object> contentInfoAsMap =
-                    getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
             setExistingStatisticsData(result, contentInfoAsMap, typeName);
             result.put("isBuildIndex", true);
             
@@ -244,6 +244,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
                 setResourceInfoData(result, resourceInfoAsMap, typeName);
               }
             }
+          } else if (typeName.equalsIgnoreCase(IndexerConstants.COURSE)) {
+            CourseIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
           }
         //  LOGGER.debug("index source data : " + result.toString());
 
@@ -273,8 +275,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         LOGGER.debug("statistics index data : " + statisticsMap);
         if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
           viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
-        }
-        if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+        } else if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
           viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
           collabCount = getInteger(statisticsMap.get(ScoreConstants.COLLAB_COUNT));
           remixCount = getInteger(statisticsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));
@@ -299,51 +300,57 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
 
   @Override
   public void bulkIndexStatisticsField(JsonArray jsonArr) {
-    try{
+    try {
       BulkRequestBuilder bulkRequest = getClient().prepareBulk();
       Iterator<Object> iter = jsonArr.iterator();
       LOGGER.debug("Batch size : " + jsonArr.size());
-      Map<String, Map<String,Object>> viewsData = new HashMap<>();
+      Map<String, Map<String, Object>> viewsData = new HashMap<>();
       Map<String, String> contentType = new HashMap<>();
-      while(iter.hasNext()){
+      while (iter.hasNext()) {
         JsonObject data = (JsonObject) iter.next();
-        if(data != null){
+        if (data != null) {
           LOGGER.debug("received index message from insights : " + data.toString());
           Map<String, Object> paramsField = new HashMap<>();
           StringBuffer scriptQuery = new StringBuffer();
           Map<String, Object> fieldValues = new HashMap<>();
-          
+
           fieldValues.put(ScoreConstants.VIEWS_COUNT_FIELD, data.getLong(EventsConstants.EVT_DATA_VIEW_COUNT));
           IndexScriptBuilder.buildScript(data.getString(EventsConstants.EVT_DATA_ID), paramsField, scriptQuery, fieldValues);
           LOGGER.debug("script : " + scriptQuery.toString());
           LOGGER.debug("param fields : " + paramsField.toString());
-          bulkRequest.add(getClient().prepareUpdate(getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)), getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
-         // update to content info index 
-          bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, data.getString(EventsConstants.EVT_DATA_ID)).setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
+          bulkRequest.add(getClient()
+                  .prepareUpdate(getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)),
+                          getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID))
+                  .setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
+          // update to content info index
+          bulkRequest.add(getClient()
+                  .prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO,
+                          data.getString(EventsConstants.EVT_DATA_ID))
+                  .setScript(new Script(scriptQuery.toString(), ScriptType.INLINE, "groovy", paramsField)));
           viewsData.put(data.getString(EventsConstants.EVT_DATA_ID), fieldValues);
           contentType.put(data.getString(EventsConstants.EVT_DATA_ID), data.getString(EventsConstants.EVT_DATA_TYPE));
         }
       }
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-      if(bulkResponse.hasFailures()){
-        BulkItemResponse[] responses =  bulkResponse.getItems();
-        for(BulkItemResponse response : responses){
-          if(response.isFailed()){
-            
-            // If document missing in contentinfo index. Creating it. 
-            if(response.getFailure().getCause() instanceof DocumentMissingException && viewsData.containsKey(response.getId())){
+      if (bulkResponse.hasFailures()) {
+        BulkItemResponse[] responses = bulkResponse.getItems();
+        for (BulkItemResponse response : responses) {
+          if (response.isFailed()) {
+
+            // If document missing in contentinfo index. Creating it.
+            if (response.getFailure().getCause() instanceof DocumentMissingException && viewsData.containsKey(response.getId())) {
               getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, response.getId())
-              .setSource(buildContentInfoIndexSrc(response.getId(), contentType.get(response.getId()), viewsData.get(response.getId()))).execute().actionGet();
+                      .setSource(buildContentInfoIndexSrc(response.getId(), contentType.get(response.getId()), viewsData.get(response.getId())))
+                      .execute().actionGet();
+            } else {
+              INDEX_FAILURES_LOGGER
+                      .error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception " + response.getFailureMessage());
             }
-            else {
-              INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
-            }
-            
+
           }
         }
         throw new Exception(bulkResponse.buildFailureMessage());
-      }
-      else {
+      } else {
         LOGGER.debug("Successfully updated view count bulk");
       }
     }
