@@ -92,4 +92,6 @@ public final class IndexerConstants {
 
   public static final String QUESTIONS = "questions";
 
+  public static final String TWENTY_ONE_CENTURY_SKILL = "twentyOneCenturySkill";
+
 }

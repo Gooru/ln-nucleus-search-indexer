@@ -225,7 +225,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
       statisticsEo.setHasNoDescription(description != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount(collectionIds.size());
-
+      boolean has21CenturySkill = (contentEo.getMetadata().containsKey(IndexerConstants.TWENTY_ONE_CENTURY_SKILL) && !contentEo.getMetadata().getJsonArray("twentyOneCenturySkill").isEmpty()) ? true : false;
+      statisticsEo.setHas21stCenturySkills(has21CenturySkill);
       // Set display guide values
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
       JsonObject displayGuide = null;
@@ -335,15 +336,15 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if (data != null) {
         JsonObject dataMap = new JsonObject();
         for (String fieldName : data.fieldNames()) {
-          if(!fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)){
-            // Temp logic to only process array fields
-            Object metaValue = data.getValue(fieldName);
-            if(metaValue instanceof JsonArray){
-              JsonArray value = extractMetaValues(data, fieldName);
-              String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
-              if(value != null && !value.isEmpty()) dataMap.put(key, value);
-              if(dataMap != null && !dataMap.isEmpty()) contentEo.setMetadata(dataMap);
-            }
+          // Temp logic to only process array fields
+          Object metaValue = data.getValue(fieldName);
+          if (metaValue instanceof JsonArray) {
+            JsonArray value = extractMetaValues(data, fieldName);
+            String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
+            if (value != null && !value.isEmpty())
+              dataMap.put(key, value);
+            if (dataMap != null && !dataMap.isEmpty())
+              contentEo.setMetadata(dataMap);
           }
         }
       }
@@ -356,9 +357,16 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     JsonArray references = metadata.getJsonArray(fieldName);
     if (references != null) {
       String referenceIds = references.toString();
-      List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
-      for (Map metaMap : metacontent) {
-        value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
+      List<Map> metacontent = null;
+      if (fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)) {
+        metacontent = getIndexRepo().getTwentyOneCenturySkill(referenceIds.substring(1, referenceIds.length() - 1));
+      } else {
+        metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
+      }
+      if (metacontent != null) {
+        for (Map metaMap : metacontent) {
+          value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
+        }
       }
     }
     return value;

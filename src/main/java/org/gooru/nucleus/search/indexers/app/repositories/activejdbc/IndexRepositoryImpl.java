@@ -38,5 +38,18 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     closeDBConn(db);
     return metadataReference;
   }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public List<Map> getTwentyOneCenturySkill(String referenceIds) {
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+    List<Map> metadataReference = db.findAll(Content.FETCH_TWENTY_ONE_CENTURY_SKILL, referenceIds);
+    if (metadataReference.size() < 1) {
+      LOGGER.warn("Metadata Reference id: {} not present in DB", referenceIds);
+    }
+    closeDBConn(db);
+    return metadataReference;
+  }
 
 }

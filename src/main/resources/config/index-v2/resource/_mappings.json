@@ -358,6 +358,11 @@
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
+               },
+               "twentyOneCenturySkill":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
                }
             }
          },

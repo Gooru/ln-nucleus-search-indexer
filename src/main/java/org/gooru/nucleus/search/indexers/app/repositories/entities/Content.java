@@ -31,5 +31,6 @@ public class Content extends Model {
   public static final String IS_DELETED = "is_deleted";
   public static final String FETCH_USER_QUESTIONS = "content_format = ?::content_format_type and (creator_id = ?::uuid or original_creator_id = ?::uuid) and is_deleted = ?";
   public static final String FETCH_USER_ORIGINAL_RESOURCES = "content_format = ?::content_format_type and original_content_id is null and creator_id = ?::uuid and is_deleted = ?";
+  public static final String FETCH_TWENTY_ONE_CENTURY_SKILL = "select * from twenty_one_century_skill where id = any(string_to_array(?,',')::integer[]);";
 
 }
