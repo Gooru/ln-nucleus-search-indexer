@@ -2,6 +2,10 @@ package org.gooru.nucleus.search.indexers.app.constants;
 
 public final class IndexerConstants {
 
+  public static final String DEFAULT_DATABASE_NAME = "nucleus";
+
+  public static final String TRACKER_DATABASE_NAME = "search";
+  
   public static final String TYPE_RESOURCE = "resource";
 
   public static final String TYPE_QUESTION = "question";
