@@ -225,7 +225,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
       statisticsEo.setHasNoDescription(description != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount(collectionIds.size());
-      boolean has21CenturySkill = (contentEo.getMetadata().containsKey(IndexerConstants.TWENTY_ONE_CENTURY_SKILL) && !contentEo.getMetadata().getJsonArray("twentyOneCenturySkill").isEmpty()) ? true : false;
+      boolean has21CenturySkill = (contentEo.getMetadata().containsKey(IndexerConstants.TWENTY_ONE_CENTURY_SKILL) && !contentEo.getMetadata().getJsonArray(IndexerConstants.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
       statisticsEo.setHas21stCenturySkills(has21CenturySkill);
       // Set display guide values
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
