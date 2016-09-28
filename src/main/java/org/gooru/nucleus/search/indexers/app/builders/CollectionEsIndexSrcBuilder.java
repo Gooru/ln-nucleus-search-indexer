@@ -164,6 +164,13 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setResourceCount(resourceCount);
       statisticsEo.setContentCount(questionCount + resourceCount);
 
+      //Set Editorial tag
+      String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
+      JsonObject editorialTags = null; 
+      if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = new JsonObject(editorialStr);
+      statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : 0);
+      statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : 0);
+      
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       JsonObject taxonomyObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();

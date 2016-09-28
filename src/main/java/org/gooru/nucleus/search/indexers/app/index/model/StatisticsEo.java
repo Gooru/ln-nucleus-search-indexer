@@ -213,4 +213,26 @@ public class StatisticsEo {
     }
     this.statistics = JsonUtil.set(statistics, "contentCount", contentCount);
   }
+  
+  public Integer getContentQualityIndicator() {
+    return statistics.getInteger("contentQualityIndicator", 0);
+  }
+
+  public void setContentQualityIndicator(Integer contentQualityIndicator) {
+    if (contentQualityIndicator == null) {
+      contentQualityIndicator = 0;
+    }
+    this.statistics = JsonUtil.set(statistics, "contentQualityIndicator", contentQualityIndicator);
+  }
+  
+  public Integer getPublisherQualityIndicator() {
+    return statistics.getInteger("publisherQualityIndicator", 0);
+  }
+
+  public void setPublisherQualityIndicator(Integer publisherQualityIndicator) {
+    if (publisherQualityIndicator == null) {
+      publisherQualityIndicator = 0;
+    }
+    this.statistics = JsonUtil.set(statistics, "publisherQualityIndicator", publisherQualityIndicator);
+  }
 }

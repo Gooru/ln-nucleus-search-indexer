@@ -358,6 +358,11 @@
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
+               },
+               "twentyOneCenturySkill":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
                }
             }
          },
@@ -680,6 +685,14 @@
                "has21stCenturySkills":{
                   "type":"boolean",
                   "include_in_all":false
+               },
+               "contentQualityIndicator":{
+                  "type":"integer",
+                  "include_in_all":false
+               },
+               "publisherQualityIndicator":{
+                  "type":"integer",
+                  "include_in_all":false
                }
             }
          },
@@ -706,7 +719,12 @@
                "publisher":{
                   "type":"string",
                   "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "fields":{
+                     "publisherSnowball":{
+                        "type":"string",
+                        "analyzer":"snowball"
+                     }
+                  }
                },
                "aggregator":{
                   "type":"string",

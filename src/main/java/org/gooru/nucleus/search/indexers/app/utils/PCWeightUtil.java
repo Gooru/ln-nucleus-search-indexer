@@ -21,7 +21,7 @@ public final class PCWeightUtil {
       float usedInSCollectionCount = (float) rankingData.getResourceUsedCollectionCount() / ScoreConstants.MAX_RESOURCE_USED_99PERSENT_VAL;
       float frameBreakerScore = (rankingData.getHasFrameBreaker() == 0) ? 1f : ScoreConstants.DEMOTE_FRAME_BREAKER;
       float thumbnailScore = (rankingData.getHasNoThumbnail() == 0) ? 1f : ScoreConstants.DEMOTE_THUMBNAIL;
-      float descScore = computeDiscriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
+      float descScore = computeDescriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
       float domainBoost = (rankingData.getDomainBoost() == 1) ? 1f : ScoreConstants.DEMOTE_DOMAIN;
       float standardScore = (rankingData.getHasNoStandard() == 0) ? 1f : 0f;
       float oerScore = (rankingData.getOer() == 1) ? 1f : 0f;
@@ -65,7 +65,7 @@ public final class PCWeightUtil {
 
   }
 
-  protected static Float computeDiscriptionValue(String description, int hasNoDescription) {
+  protected static Float computeDescriptionValue(String description, int hasNoDescription) {
     Float descriptionScore = -5.0f;
     if (hasNoDescription == 0) {
       descriptionScore = 0.8f;

@@ -13,4 +13,6 @@ public interface IndexRepository {
   List<Map> getMetadata(String referenceIds);
 
   List<Map> getLicenseMetadata(int metadataId);
+
+  List<Map> getTwentyOneCenturySkill(String referenceIds);
 }

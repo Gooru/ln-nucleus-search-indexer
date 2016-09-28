@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.repositories.entities;
 
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.DbName;
 import org.javalite.activejdbc.annotations.IdName;
@@ -8,7 +9,7 @@ import org.javalite.activejdbc.annotations.Table;
 /**
  * @author GooruSearchTeam
  */
-@DbName("nucleus")
+@DbName(IndexerConstants.DEFAULT_DATABASE_NAME)
 @Table("content")
 @IdName("id")
 public class Content extends Model {
@@ -31,5 +32,6 @@ public class Content extends Model {
   public static final String IS_DELETED = "is_deleted";
   public static final String FETCH_USER_QUESTIONS = "content_format = ?::content_format_type and (creator_id = ?::uuid or original_creator_id = ?::uuid) and is_deleted = ?";
   public static final String FETCH_USER_ORIGINAL_RESOURCES = "content_format = ?::content_format_type and original_content_id is null and creator_id = ?::uuid and is_deleted = ?";
+  public static final String FETCH_TWENTY_ONE_CENTURY_SKILL = "select * from twenty_one_century_skill where id = any(string_to_array(?,',')::integer[]);";
 
 }
