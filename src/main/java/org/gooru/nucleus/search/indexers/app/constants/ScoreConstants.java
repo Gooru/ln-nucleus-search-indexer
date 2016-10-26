@@ -29,6 +29,8 @@ public final class ScoreConstants {
   public static final String PC_WEIGHT_FIELD = "statistics.preComputedWeight";
   public static final String BROKEN_STATUS = "statistics.statusIsBroken";
   public static final String BROKEN_STATUS_DISPLAY = "displayGuide.is_broken";
+  public static final String CONTENT_QUALITY_INDICATOR = "contentQualityIndicator";
+  public static final String PUBLISHER_QUALITY_INDICATOR = "publisherQualityIndicator";
 
   public static final String[] DEMOTE_DOMAINS = {"wikipedia"};
 
@@ -50,7 +52,6 @@ public final class ScoreConstants {
   public static final float DEMOTE_FRAME_BREAKER = -5.0f;
   public static final float DEMOTE_THUMBNAIL = -1.0f;
   public static final float DEMOTE_DOMAIN = -3.0f;
-
 
   private ScoreConstants() {
     throw new AssertionError();

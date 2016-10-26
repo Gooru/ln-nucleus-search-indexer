@@ -173,6 +173,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         collectionTitles.add(collectionTitle);
       }
       List<Map> collectionMetaAsList = getContentRepo().getCollectionMeta(id);
+
       if (collectionMetaAsList != null && collectionMetaAsList.size() > 0) {
         for (Map collectionMetaMap : collectionMetaAsList) {
           String usedCollectionId = collectionMetaMap.get(EntityAttributeConstants.ID).toString();
@@ -238,7 +239,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       if(displayGuide != null){
         contentEo.setDisplayGuide(displayGuide);
       }
-      
+
       //Set CUL course mapped
       CourseEo course = new CourseEo(); 
       course.setId(source.getString(IndexerConstants.RESOURCE_COURSE_ID, null));
@@ -280,6 +281,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       rankingFields.put(ScoreConstants.HAS_21ST_CENTURY_SKILL, statisticsEo.getHas21stCenturySkills());
       rankingFields.put(ScoreConstants.OER, oer);
       rankingFields.put(ScoreConstants.PUBLISH_STATUS, contentEo.getPublishStatus());
+      rankingFields.put(ScoreConstants.CONTENT_QUALITY_INDICATOR, statisticsEo.getContentQualityIndicator());
+      rankingFields.put(ScoreConstants.PUBLISHER_QUALITY_INDICATOR, statisticsEo.getPublisherQualityIndicator());
 
       JsonObject taxJson = contentEo.getTaxonomy();
       
