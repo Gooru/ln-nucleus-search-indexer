@@ -32,12 +32,17 @@ public final class PCWeightUtil {
       float skillScore = (rankingData.getHas21stCenturySkills()) ? 1f : 0f;
       float viewsScore = rankingData.getViewsCount() / ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
       float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f;
-      double publisherQualityIndicator = ((double) normalizeValueToFive(rankingData.getPublisherQualityIndicator()) / 5);
-      double contentQualityIndicator = ((double) normalizeValueToFive(rankingData.getContentQualityIndicator()) / 5);
+      Double publisherQualityIndicator = (rankingData.getPublisherQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getPublisherQualityIndicator()) / 5) : null;
+      Double contentQualityIndicator = (rankingData.getContentQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getContentQualityIndicator()) / 5) : null;
 
       double usageSignalWeight = (double) (((double) (normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2) * 0.5);
       double otherSignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore + publishStatusScore) / 8) * 0.2);
-      double editorialTagSignals = (double) (((double) (publisherQualityIndicator + contentQualityIndicator) / 2) * 0.3);
+      double editorialTagSignals = 0;
+      if(contentQualityIndicator != null) {
+        editorialTagSignals = contentQualityIndicator * 0.3;
+      } else if (publisherQualityIndicator != null){
+        editorialTagSignals = publisherQualityIndicator * 0.3;
+      }
       return (double) normalizeValue(usageSignalWeight + otherSignalWeight + editorialTagSignals);
     } catch (Exception e) {
       throw new Exception(e);

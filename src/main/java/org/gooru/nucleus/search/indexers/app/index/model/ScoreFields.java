@@ -38,9 +38,9 @@ public class ScoreFields {
   
   private int isPublished = 0;
 
-  private int publisherQualityIndicator = 0;
+  private Integer publisherQualityIndicator = null;
 
-  private int contentQualityIndicator = 0;
+  private Integer contentQualityIndicator = null;
 
   private static final String PUBLISHED = "published";
 
@@ -110,11 +110,11 @@ public class ScoreFields {
     }
     
     if(scoreFieldsMap.get(ScoreConstants.PUBLISHER_QUALITY_INDICATOR) != null){
-      this.publisherQualityIndicator = (int) scoreFieldsMap.get(ScoreConstants.PUBLISHER_QUALITY_INDICATOR);
+      this.publisherQualityIndicator = (Integer) scoreFieldsMap.get(ScoreConstants.PUBLISHER_QUALITY_INDICATOR);
     }
     
     if(scoreFieldsMap.get(ScoreConstants.CONTENT_QUALITY_INDICATOR) != null){
-      this.contentQualityIndicator = (int) scoreFieldsMap.get(ScoreConstants.CONTENT_QUALITY_INDICATOR);
+      this.contentQualityIndicator = (Integer) scoreFieldsMap.get(ScoreConstants.CONTENT_QUALITY_INDICATOR);
     }
     
   }
@@ -198,19 +198,19 @@ public class ScoreFields {
     return isPublished;
   }
   
-  public int getPublisherQualityIndicator() {
+  public Integer getPublisherQualityIndicator() {
     return publisherQualityIndicator;
   }
 
-  public void setPublisherQualityIndicator(int publisherQualityIndicator) {
+  public void setPublisherQualityIndicator(Integer publisherQualityIndicator) {
     this.publisherQualityIndicator = publisherQualityIndicator;
   }
 
-  public int getContentQualityIndicator() {
+  public Integer getContentQualityIndicator() {
     return contentQualityIndicator;
   }
 
-  public void setContentQualityIndicator(int contentQualityIndicator) {
+  public void setContentQualityIndicator(Integer contentQualityIndicator) {
     this.contentQualityIndicator = contentQualityIndicator;
   }
 

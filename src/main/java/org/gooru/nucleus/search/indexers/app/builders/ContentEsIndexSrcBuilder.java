@@ -250,8 +250,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
       JsonObject editorialTags = null; 
       if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = new JsonObject(editorialStr);
-      statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : 0);
-      statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : 0);
+      statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : null);
+      statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : null);
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       statisticsEo.setViewsCount(viewsCount);
