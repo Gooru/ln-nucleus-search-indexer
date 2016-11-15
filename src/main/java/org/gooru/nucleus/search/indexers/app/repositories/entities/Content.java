@@ -1,6 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.repositories.entities;
 
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.SchemaConstants;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.DbName;
 import org.javalite.activejdbc.annotations.IdName;
@@ -9,9 +9,9 @@ import org.javalite.activejdbc.annotations.Table;
 /**
  * @author GooruSearchTeam
  */
-@DbName(IndexerConstants.DEFAULT_DATABASE_NAME)
-@Table("content")
-@IdName("id")
+@DbName(SchemaConstants.DEFAULT_DATABASE_NAME)
+@Table(SchemaConstants.CONTENT)
+@IdName(SchemaConstants.ID)
 public class Content extends Model {
   public static final String CONTENT_FORMAT_RESOURCE = "resource";
   public static final String CONTENT_FORMAT_QUESTION = "question";
@@ -26,12 +26,10 @@ public class Content extends Model {
     "select content.*, collection.id as collectionId, collection.title as collectionTitle from content content inner join collection collection on " +
       "collection.id = content.collection_id where content.content_format = ?::content_format_type and content.id = ?::uuid and content.is_deleted " +
       "= ?;";
-  public static final String FETCH_QUESTION_AND_PARENT_CONTENT_IDS =
-    "collection_id = ?::uuid";
+  public static final String FETCH_QUESTION_AND_ORIGINAL_RESOURCE_IDS = "collection_id = ?::uuid";
   public static final String CONTENT_FORMAT = "content_format";
   public static final String IS_DELETED = "is_deleted";
   public static final String FETCH_USER_QUESTIONS = "content_format = ?::content_format_type and (creator_id = ?::uuid or original_creator_id = ?::uuid) and is_deleted = ?";
-  public static final String FETCH_USER_ORIGINAL_RESOURCES = "content_format = ?::content_format_type and original_content_id is null and creator_id = ?::uuid and is_deleted = ?";
   public static final String FETCH_TWENTY_ONE_CENTURY_SKILL = "select * from twenty_one_century_skill where id = any(string_to_array(?,',')::integer[]);";
 
 }

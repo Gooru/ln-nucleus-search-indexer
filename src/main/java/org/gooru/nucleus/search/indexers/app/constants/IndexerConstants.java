@@ -1,10 +1,8 @@
 package org.gooru.nucleus.search.indexers.app.constants;
 
+import java.util.regex.Pattern;
+
 public final class IndexerConstants {
-
-  public static final String DEFAULT_DATABASE_NAME = "nucleus";
-
-  public static final String TRACKER_DATABASE_NAME = "search";
   
   public static final String TYPE_RESOURCE = "resource";
 
@@ -17,6 +15,8 @@ public final class IndexerConstants {
   public static final String TYPE_STATISTICS = "statistics";
   
   public static final String TYPE_CONTENT_INFO = "contentinfo";
+  
+  public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
 
   public static final String COLLECTION_IDS = "collection_ids";
 
@@ -97,5 +97,7 @@ public final class IndexerConstants {
   public static final String QUESTIONS = "questions";
 
   public static final String TWENTY_ONE_CENTURY_SKILL = "twentyOneCenturySkill";
+
+  public static final String COMMA = ",";
 
 }

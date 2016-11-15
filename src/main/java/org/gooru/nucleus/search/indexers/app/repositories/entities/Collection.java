@@ -1,6 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.repositories.entities;
 
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.SchemaConstants;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.DbName;
 import org.javalite.activejdbc.annotations.IdName;
@@ -9,9 +9,9 @@ import org.javalite.activejdbc.annotations.Table;
 /**
  * @author GooruSearchTeam
  */
-@DbName(IndexerConstants.DEFAULT_DATABASE_NAME)
-@Table("collection")
-@IdName("id")
+@DbName(SchemaConstants.DEFAULT_DATABASE_NAME)
+@Table(SchemaConstants.COLLECTION)
+@IdName(SchemaConstants.ID)
 public class Collection extends Model {
   public static final String COLLECTION = "collection";
 

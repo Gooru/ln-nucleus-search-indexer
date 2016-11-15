@@ -9,6 +9,10 @@ public final class IndexHandlerBuilder {
   public static IndexHandler buildResourceIndexHandler() {
     return new ResourceIndexHandler();
   }
+  
+  public static IndexHandler buildQuestionIndexHandler() {
+    return new QuestionIndexHandler();
+  }
 
   public static IndexHandler buildCollectionIndexHandler() {
     return new CollectionIndexHandler();

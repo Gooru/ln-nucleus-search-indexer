@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.bootstrap;
 
 import org.gooru.nucleus.search.indexers.app.constants.RouteConstants;
-import org.gooru.nucleus.search.indexers.app.services.EsIndexServiceImpl;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,9 +70,10 @@ public class IndexBuilderVerticle extends AbstractVerticle {
   private void indexContentInfo(final Router router) {
     router.post(RouteConstants.EP_BUILD_CONTENT_INDEX).handler(context -> vertx.executeBlocking(future -> {
       String indexableId = context.request().getParam(RouteConstants.INDEXABLE_ID);
+      String contentFormat = context.request().getParam(RouteConstants.CONTENT_FORMAT);
       if (indexableId != null) {
         try {
-          IndexService.instance().buildInfoIndex(indexableId);
+          IndexService.instance().buildInfoIndex(indexableId, contentFormat);
           future.complete("Extracted and Indexed");
         } catch (Exception e) {
           future.fail(e);

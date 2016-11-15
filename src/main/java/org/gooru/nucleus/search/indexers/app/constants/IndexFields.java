@@ -73,7 +73,13 @@ public class IndexFields {
 	public static final String EDUCATIONAL_USE = "educationalUse";
 	public static final String MOMENTS_OF_LEARNING = "momentsOfLearning";
 	public static final String OER = "oer";
+	public static final String IS_OER = "isOer";
 	public static final String LEAF_INTERNAL_CODE = "leafInternalCodes";
+	
+	public static final String HAS_FRAME_BREAKER = "hasFrameBreaker";
+  public static final String STATUS_IS_BROKEN = "statusIsBroken";
+  public static final String HAS_TWENTY_ONE_CENTURY_SKILLS = "has21stCenturySkills";
+
 	
 	// course fields 
 	

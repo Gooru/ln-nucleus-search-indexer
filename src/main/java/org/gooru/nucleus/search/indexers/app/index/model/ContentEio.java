@@ -197,7 +197,7 @@ public class ContentEio implements Serializable {
   }
 
   public String getThumbnail() {
-    return content.getString("taxonomy", null);
+    return content.getString("thumbnail", null);
   }
 
   public void setThumbnail(String thumbnail) {
