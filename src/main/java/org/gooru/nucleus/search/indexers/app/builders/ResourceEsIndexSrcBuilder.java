@@ -49,8 +49,9 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       }
 
       // Add Audience to metadata
+      JsonObject metadata = null;
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
-      JsonObject metadata = new JsonObject(metadataString);
+      if (metadataString != null) metadata = new JsonObject(metadataString);
       String audience = source.getString(EntityAttributeConstants.AUDIENCE, null);
       if (audience != null) {
         List<Integer> audienceList = new ArrayList<Integer>();

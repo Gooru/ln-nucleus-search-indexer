@@ -7,7 +7,7 @@ public class SchemaConstants {
   public static final String TRACKER_DATABASE_NAME = "search";
   //Table Names
   public static final String CONTENT = "content";
-  public static final String ORIGINAL_RESOURCE = "original_resource_backup";
+  public static final String ORIGINAL_RESOURCE = "original_resource";
   public static final String COLLECTION = "collection";
   public static final String USER_DEMOGRAPHIC = "user_demographic";
   public static final String UNIT = "unit";
