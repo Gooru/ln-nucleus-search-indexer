@@ -52,6 +52,7 @@ public class BaseIndexService {
     Map<String, Object> indexData = new HashMap<>();
     Map<String, Object> statistics = new HashMap<>();
     Map<String, Object> tags = new HashMap<>();
+    Map<String, Object> watsonTags = new HashMap<>();
     boolean isStatistics = false;
     boolean isKeyword = false;
     if(data != null){
@@ -70,8 +71,8 @@ public class BaseIndexService {
       contentInfoEo.setStatistics(buildStatisticsData(contentFormat, indexData));
     } 
     if (isKeyword) {
-      indexData.put(IndexerConstants.WATSON_TAGS, tags);
-      contentInfoEo.setResourceInfo(new JsonObject(indexData));
+      watsonTags.put(IndexerConstants.WATSON_TAGS, tags);
+      contentInfoEo.setResourceInfo(new JsonObject(watsonTags));
     }
     LOGGER.debug("content info index source : " + contentInfoEo.getContentInfoJson().toString());
     return contentInfoEo.getContentInfoJson().toString();

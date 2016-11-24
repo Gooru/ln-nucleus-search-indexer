@@ -13,6 +13,7 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseEio;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseStatisticsEo;
+import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomySetEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
@@ -195,6 +196,19 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       if(license != null){
         courseEio.setLicense(license);
       }
+      
+      //Set Extracted Text
+      ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
+      String extractedText = source.getString(IndexerConstants.TEXT);
+      if (StringUtils.isNotBlank(extractedText)) {
+        resourceInfoJson.setText(extractedText);
+      }
+      JsonObject watsonTags = source.getJsonObject(IndexerConstants.WATSON_TAGS);
+      if (watsonTags != null && !watsonTags.isEmpty()) {
+        resourceInfoJson.setWatsonTags(watsonTags);
+      }
+      if(!resourceInfoJson.getResourceInfo().isEmpty()) courseEio.setResourceInfo(resourceInfoJson.getResourceInfo());
+
 
     }
     catch(Exception e){

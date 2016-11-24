@@ -11,6 +11,7 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.index.engine.DocumentMissingException;
@@ -239,15 +240,14 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           if(!typeName.equalsIgnoreCase(IndexerConstants.COURSE)){
             setExistingStatisticsData(result, contentInfoAsMap, typeName);
             result.put("isBuildIndex", true);
-            
-            if (contentInfoAsMap != null) {
-              if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
-                Map<String, Object> resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
-                setResourceInfoData(result, resourceInfoAsMap, typeName);
-              }
-            }
           } else if (typeName.equalsIgnoreCase(IndexerConstants.COURSE)) {
             CourseIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
+          }
+          if (contentInfoAsMap != null) {
+            if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
+              Map<String, Object> resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);
+              setResourceInfoData(result, resourceInfoAsMap, typeName);
+            }
           }
         //  LOGGER.debug("index source data : " + result.toString());
 
@@ -285,13 +285,16 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       updateRequest.index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO)).type(IndexerConstants.TYPE_CONTENT_INFO).id(id).doc(contentInfoSource);
       UpdateResponse response = getClient().update(updateRequest).get();
       if (response.isCreated())
-        LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " updated!");
+        LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document updated!");
 
     } catch (Exception ex) {
       if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
         LOGGER.debug("Caught Document Missing Exception!!");
-        getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
+        IndexResponse createResponse = getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
                 .setSource(buildContentInfoIndexSrc(id, typeName, contentSource)).execute().actionGet();
+        if (createResponse.isCreated())
+          LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document created!");
+
       } else {
         throw new Exception(ex);
       }
@@ -306,12 +309,14 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       updateRequest.index(indexName).type(typeName).id(id).doc(contentInfoSource);
       UpdateResponse response = getClient().update(updateRequest).get();
       if (response.isCreated())
-        LOGGER.info("Index " + indexName + " updated!");
+        LOGGER.info("Index " + indexName + " : document updated!");
 
     } catch (Exception ex) {
       if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
         LOGGER.debug("Caught Document Missing Exception!");
-        getClient().prepareIndex(indexName, typeName, id).setSource(buildContentInfoIndexSrc(id, typeName, contentSource)).execute().actionGet();
+        IndexResponse createResponse = getClient().prepareIndex(indexName, typeName, id).setSource(buildContentInfoIndexSrc(id, typeName, contentSource)).execute().actionGet();
+        if (createResponse.isCreated())
+          LOGGER.info("Index " + indexName + " : document created!");
       } else {
         throw new Exception(ex);
       }
