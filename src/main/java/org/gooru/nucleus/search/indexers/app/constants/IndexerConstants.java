@@ -98,4 +98,14 @@ public final class IndexerConstants {
 
   public static final String TWENTY_ONE_CENTURY_SKILL = "twentyOneCenturySkill";
 
+  public static final String COMMA = ",";
+  
+  public static final String WATSON_TAGS = "watsonTags";
+
+  public static final String INFO_WATSON_TAGS_DOT = "resourceInfo.watsonTags.";
+  
+  public static final String INDEX_UPDATED_TIME = "indexUpdatedTime";
+  
+  public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
 }

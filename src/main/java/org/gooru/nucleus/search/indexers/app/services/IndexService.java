@@ -51,5 +51,7 @@ public interface IndexService {
   void updateBrokenStatus(String ids, boolean isUpdateBroken);
 
   void deleteDocuments(String key, String type) throws Exception;
+
+  void indexDocumentByField(String id, String indexName, String typeName, Map<String, Object> fieldValues, Map<String, Object> contentInfoSource) throws Exception;
   
 }

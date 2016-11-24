@@ -17,7 +17,8 @@
   	"auto.commit.interval.ms":"1000",
   	"fetch.size" : "1048576",
   	"auto.offset.reset" : "smallest",
-  	"index.topic":"prodIndex" 
+  	"index.nucleus.topic":"[CORE TOPIC NAME]",
+  	"index.keyword.topic":"[WATSON TOPIC NAME]" 
   },
   "defaultDataSource" : {
   	"nucleus.ds.type" : "hikari",

@@ -9,7 +9,8 @@ public final class KafkaProperties {
   public static final String AUTOCOMMIT_INTERVAL_MS = "auto.commit.interval.ms";
   public static final String FETCH_SIZE = "fetch.size";
   public static final String AUTO_OFFSET_RESET = "auto.offset.reset";
-  public static final String INDEX_TOPIC = "index.topic";
+  public static final String INDEX_NUCLEUS_TOPIC = "index.nucleus.topic";
+  public static final String INDEX_KEYWORD_TOPIC = "index.keyword.topic";
 
   private KafkaProperties() {
     throw new AssertionError();

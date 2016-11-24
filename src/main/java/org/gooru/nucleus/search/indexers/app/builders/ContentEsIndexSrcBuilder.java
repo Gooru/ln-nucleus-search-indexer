@@ -298,12 +298,16 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       contentEo.setStatistics(statisticsEo.getStatistics());
 
       //Set Extracted Text
+      ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
       String extractedText = source.getString(IndexerConstants.TEXT);
-      if (extractedText != null) {
-        ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
+      if (StringUtils.isNotBlank(extractedText)) {
         resourceInfoJson.setText(extractedText);
-        contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
       }
+      JsonObject watsonTags = source.getJsonObject(IndexerConstants.WATSON_TAGS);
+      if (watsonTags != null && !watsonTags.isEmpty()) {
+        resourceInfoJson.setWatsonTags(watsonTags);
+      }
+      if(!resourceInfoJson.getResourceInfo().isEmpty()) contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
 
       /*
        * //TODO Add logic to store taxonomy transformation and below details

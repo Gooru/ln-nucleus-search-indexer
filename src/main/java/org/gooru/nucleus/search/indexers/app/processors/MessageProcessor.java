@@ -26,14 +26,17 @@ class MessageProcessor implements Processor {
   public void process() {
     try {
       String eventName = eventBody.getString(EventsConstants.EVT_OBJECT_EVENT_NAME);
-      if(!eventName.equalsIgnoreCase(EventsConstants.EVT_UPDATE_VIEWS_COUNT)){
+      if(!eventName.equalsIgnoreCase(EventsConstants.EVT_UPDATE_VIEWS_COUNT) 
+              || !EventsConstants.EVT_OF_KEYWORD_MANAGER.matcher(eventName).matches()){
         ValidationUtil.rejectIfInvalidEventJson(eventBody);
       }
       
-      if(eventName.equalsIgnoreCase(EventsConstants.EVT_UPDATE_VIEWS_COUNT)){
+      if(EventsConstants.EVT_OF_KEYWORD_MANAGER.matcher(eventName).matches()) {
+        LOGGER.debug("Event body Json : " + eventBody);
+        processKeywordEvents();
+      } else if(eventName.equalsIgnoreCase(EventsConstants.EVT_UPDATE_VIEWS_COUNT)){
         processInsightsStatsEvents();
-      }
-      else{
+      } else{
         String contentFormat = eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
         LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
         LOGGER.debug("Event body Json : " + eventBody.toString());
@@ -60,7 +63,6 @@ class MessageProcessor implements Processor {
     }
   }
 
-
   private void processInsightsStatsEvents() {
     EventHandlerBuilder.buildStatisticsHandler(eventBody).handleEvents();
   }
@@ -85,5 +87,8 @@ class MessageProcessor implements Processor {
     EventHandlerBuilder.buildCourseHandler(eventBody).handleEvents();
   }
   
+  private void processKeywordEvents() {
+    EventHandlerBuilder.buildKeywordsHandler(eventBody).handleEvents();
+  }
 
 }

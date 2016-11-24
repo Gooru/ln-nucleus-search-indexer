@@ -309,6 +309,36 @@
                      "customSpellCheckerSuggest"
                   ],
                   "include_in_all":false
+               },
+               "watsonTags":{
+                  "properties":{
+                     "taxonomies":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "concepts":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "entities":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "keywords":{
+                        "type":"string",
+                        "analyzer":"standard",
+                        "fields":{
+                           "keywordsSnowball":{
+                              "type":"string",
+                              "analyzer":"snowball"
+                           }
+                        },
+                        "include_in_all":false
+                     }
+                  }
                }
             }
          },

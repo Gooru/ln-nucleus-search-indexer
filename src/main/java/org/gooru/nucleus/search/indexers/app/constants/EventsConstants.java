@@ -1,5 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.constants;
 
+import java.util.regex.Pattern;
+
 public final class EventsConstants {
 
   // Event payload field names
@@ -39,7 +41,17 @@ public final class EventsConstants {
   public static final String EVT_DATA_TYPE = "type";
   public static final String EVT_DATA_VIEW_COUNT = "viewsCount";
   public static final String EVT_PAYLOAD_COLLECTION_GOORU_ID = "collectionGooruId";
-
+  
+  // Events pushed by keyword manager
+  public static final Pattern EVT_OF_KEYWORD_MANAGER = Pattern.compile("resourceIndexUpdate|resourceIndexUpdateAlt|courseIndexUpdate|courseIndexUpdateAlt|collectionIndexUpdate|collectionIndexUpdateAlt"); 
+  public static final String RESOURCE_UPDATE = "resourceIndexUpdate";
+  public static final String RESOURCE_UPDATE_ALT = "resourceIndexUpdateAlt";
+  public static final String COURSE_UPDATE = "courseIndexUpdate";
+  public static final String COURSE_UPDATE_ALT = "courseIndexUpdateAlt";
+  public static final String COLLECTION_UPDATE = "collectionIndexUpdate";
+  public static final String COLLECTION_UPDATE_ALT = "collectionIndexUpdateAlt";
+  public static final String EVT_ENHANCED_METADATA = "enhanced_metadata";
+  
   private EventsConstants() {
     throw new AssertionError();
   }

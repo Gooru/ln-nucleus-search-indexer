@@ -11,6 +11,8 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.index.engine.DocumentMissingException;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptService.ScriptType;
@@ -262,7 +264,60 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
 
   }
 
+  @Override
+  public void indexDocumentByField(String id, String indexName, String typeName, Map<String, Object> contentSource, Map<String, Object> contentInfoSource) throws Exception {
+    try {
+      LOGGER.debug("Incoming fields : " + contentSource.toString());
+      LOGGER.debug("Index name : " + indexName + " type : " + typeName + " id :" + id);
+      updateContentIndex(id, indexName, typeName, contentSource, contentInfoSource);
+      updateContentInfoIndex(id, typeName, contentSource, contentInfoSource);
+    } catch (Exception e) {
+      LOGGER.error("Update documentByField Failed!, Exception : " + e);
+      throw new Exception(e);
+    }
+  }
 
+  private void updateContentInfoIndex(String id, String typeName, Map<String, Object> contentSource, Map<String, Object> contentInfoSource)
+          throws Exception {
+    try {
+      LOGGER.debug("Indexing: " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " Index");
+      UpdateRequest updateRequest = new UpdateRequest();
+      updateRequest.index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO)).type(IndexerConstants.TYPE_CONTENT_INFO).id(id).doc(contentInfoSource);
+      UpdateResponse response = getClient().update(updateRequest).get();
+      if (response.isCreated())
+        LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " updated!");
+
+    } catch (Exception ex) {
+      if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
+        LOGGER.debug("Caught Document Missing Exception!!");
+        getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
+                .setSource(buildContentInfoIndexSrc(id, typeName, contentSource)).execute().actionGet();
+      } else {
+        throw new Exception(ex);
+      }
+    }
+  }
+
+  private void updateContentIndex(String id, String indexName, String typeName, Map<String, Object> contentSource,
+          Map<String, Object> contentInfoSource) throws Exception {
+    try {
+      LOGGER.debug("Indexing: " + indexName + " Index");
+      UpdateRequest updateRequest = new UpdateRequest();
+      updateRequest.index(indexName).type(typeName).id(id).doc(contentInfoSource);
+      UpdateResponse response = getClient().update(updateRequest).get();
+      if (response.isCreated())
+        LOGGER.info("Index " + indexName + " updated!");
+
+    } catch (Exception ex) {
+      if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
+        LOGGER.debug("Caught Document Missing Exception!");
+        getClient().prepareIndex(indexName, typeName, id).setSource(buildContentInfoIndexSrc(id, typeName, contentSource)).execute().actionGet();
+      } else {
+        throw new Exception(ex);
+      }
+    }
+  }
+  
   private void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap, String typeName) {
 
     long viewsCount = 0L;
@@ -288,14 +343,19 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     source.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);
   }
   
+  @SuppressWarnings("unchecked")
   private void setResourceInfoData(JsonObject source, Map<String, Object> resourceInfoMap, String typeName) {
     String text = null;
+    JsonObject watsonTagsAsMap = null;
     if (resourceInfoMap != null) {
       if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) && BaseUtil.isNotNull(resourceInfoMap, IndexerConstants.TEXT)) {
         text = resourceInfoMap.get(IndexerConstants.TEXT).toString().trim();
+      } else if (BaseUtil.isNotNull(resourceInfoMap, IndexerConstants.WATSON_TAGS)) {
+        watsonTagsAsMap = new JsonObject((Map<String, Object>) resourceInfoMap.get(IndexerConstants.WATSON_TAGS));
       }
     }
     source.put(IndexerConstants.TEXT, text);
+    source.put(IndexerConstants.WATSON_TAGS, watsonTagsAsMap);
   }
 
   @Override
