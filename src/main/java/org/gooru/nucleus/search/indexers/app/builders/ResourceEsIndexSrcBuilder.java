@@ -51,9 +51,9 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       // Add Audience to metadata
       JsonObject metadata = null;
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
-      if (metadataString != null) metadata = new JsonObject(metadataString);
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
       String audience = source.getString(EntityAttributeConstants.AUDIENCE, null);
-      if (audience != null) {
+      if (StringUtils.isNotBlank(audience) && !audience.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
         List<Integer> audienceList = new ArrayList<Integer>();
         for (String audienceNum : audience.substring(1, (audience.length() - 1)).split(IndexerConstants.COMMA)) {
           audienceList.add(Integer.parseInt(audienceNum.trim()));
@@ -95,7 +95,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       // Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
       JsonObject editorialTags = null;
-      if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = new JsonObject(editorialStr);
+      if (StringUtils.isNotBlank(editorialStr) && !editorialStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) editorialTags = new JsonObject(editorialStr);
       statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : null);
       statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : null);
 

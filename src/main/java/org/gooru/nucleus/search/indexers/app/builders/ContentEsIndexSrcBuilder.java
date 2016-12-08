@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -111,7 +112,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       JsonObject taxonomyObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
       try {
-        if (taxonomy != null) taxonomyObject = new JsonObject(taxonomy);
+        if (StringUtils.isNotBlank(taxonomy) && !taxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) taxonomyObject = new JsonObject(taxonomy);
         addTaxonomy(taxonomyObject, taxonomyEo);
       } catch (Exception e) {
         LOGGER.error("Unable to convert Taxonomy to JsonObject", e);
@@ -120,24 +121,24 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       // Set info
       String infoStr = source.getString(EntityAttributeConstants.INFO);
-      if(infoStr != null){
+      if (StringUtils.isNotBlank(infoStr) && !infoStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
         JsonObject info = new JsonObject(infoStr);
         JsonObject infoEo = new JsonObject();
-
-        if(info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR) != null && info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR).size() > 0){
+        if (info.containsKey(EntityAttributeConstants.CONTRIBUTOR) && info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR) != null && info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR).size() > 0) {
           infoEo.put(EntityAttributeConstants.CONTRIBUTOR_ANALYZED, info.getJsonArray(EntityAttributeConstants.CONTRIBUTOR));
         }
-        if(info.getString(EntityAttributeConstants.CRAWLED_SUB) != null && !info.getString(EntityAttributeConstants.CRAWLED_SUB).isEmpty()){
+        if (info.containsKey(EntityAttributeConstants.CRAWLED_SUB) && StringUtils.isNotBlank(info.getString(EntityAttributeConstants.CRAWLED_SUB))) {
           infoEo.put(EntityAttributeConstants.CRAWLED_SUB_ANALYZED, info.getString(EntityAttributeConstants.CRAWLED_SUB));
         }
 
         // Change underscore fields names to camel case
-        for(String fieldName : info.fieldNames()){
-          if(info.getValue(fieldName) != null){
+        for (String fieldName : info.fieldNames()) {
+          if (info.getValue(fieldName) != null) {
             infoEo.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName), info.getValue(fieldName));
           }
         }
         contentEo.setInfo(infoEo);
+
       }  
       
       // Set license

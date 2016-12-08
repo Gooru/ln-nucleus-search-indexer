@@ -100,4 +100,6 @@ public final class IndexerConstants {
 
   public static final String COMMA = ",";
 
+  public static final String STR_NULL = "null";
+
 }
