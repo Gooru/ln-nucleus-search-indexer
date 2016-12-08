@@ -194,7 +194,6 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       LOGGER.debug("QEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
       throw new Exception(e);
     }
-    LOGGER.debug("QEISB -> build : content Eo source : " + contentEo.getContentJson().toString());
     return contentEo.getContentJson();
   }
 
