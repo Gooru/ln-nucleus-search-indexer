@@ -20,25 +20,25 @@ import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import io.vertx.core.json.JsonObject;
 
-public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandler {
+public class QuestionIndexHandler extends BaseIndexHandler implements IndexHandler {
 
   private final String indexName;
 
-  public ResourceIndexHandler() {
+  public QuestionIndexHandler() {
     this.indexName = getIndexName();
   }
 
   @Override
   public void indexDocument(String resourceId) throws Exception {
     try {
-      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_RESOURCE);
+      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_QUESTION);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-      ValidationUtil.rejectIfNull(result, ErrorMsgConstants.ORIGINAL_RESOURCE_DATA_NULL);
-      //LOGGER.debug("RIH->indexDocument: getIndexDataContent() returned:" + result);
+      ValidationUtil.rejectIfNull(result, ErrorMsgConstants.QUESTION_DATA_NULL);
+      //LOGGER.debug("QIH->indexDocument: getIndexDataContent() returned:" + result);
       //Extract text while indexing ==>> IndexService.instance().buildInfoIndex(resourceId, result);
       IndexService.instance().indexDocuments(resourceId, indexName, getIndexType(), result);
     } catch (Exception ex) {
-      LOGGER.error("RIH->indexDocument: Re-index failed for resource : " + resourceId + " Exception " + ex);
+      LOGGER.error("QIH->indexDocument: Re-index failed for question : " + resourceId + " Exception " + ex);
       throw new Exception(ex);
     }
   }
@@ -51,13 +51,13 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
   @Override
   public void deleteIndexedDocument(String resourceId) throws Exception {
     try {
-      LOGGER.debug("CIH->deleteIndexedDocument : Processing delete resource for id : " + resourceId);
-      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_RESOURCE);
+      LOGGER.debug("QIH->deleteIndexedDocument : Processing delete question for id : " + resourceId);
+      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_QUESTION);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-      ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RESOURCE_NOT_DELETED);
+      ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.QUESTION_NOT_DELETED);
       IndexService.instance().deleteDocuments(resourceId, indexName, getIndexType());
     } catch (Exception ex) {
-      LOGGER.error("CIH->deleteIndexedDocument : Delete resource from index failed for resource id : " + resourceId + " Exception : " + ex);
+      LOGGER.error("QIH->deleteIndexedDocument : Delete question from index failed for question id : " + resourceId + " Exception : " + ex);
       throw new Exception(ex);
     }
   }
@@ -67,7 +67,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     try {
       handleCount(resourceId, field, 0, ScoreConstants.OPERATION_TYPE_INCR);
     } catch (Exception e) {
-      LOGGER.error("RIH->increaseCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
+      LOGGER.error("QIH->increaseCount : Update fields values failed for fields : " + field + " question id :" + resourceId);
       throw new Exception(e);
     }
   }
@@ -77,7 +77,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     try {
       handleCount(resourceId, field, 0, ScoreConstants.OPERATION_TYPE_DECR);
     } catch (Exception e) {
-      LOGGER.error("RIH->decreaseCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
+      LOGGER.error("QIH->decreaseCount : Update fields values failed for fields : " + field + " question id :" + resourceId);
       throw new Exception(e);
     }
   }
@@ -87,7 +87,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
     try {
       handleCount(resourceId, field, count, ScoreConstants.OPERATION_TYPE_UPDATE);
     } catch (Exception e) {
-      LOGGER.error("RIH->updateCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
+      LOGGER.error("QIH->updateCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
       throw new Exception(e);
     }
   }
@@ -145,7 +145,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
         indexDocumentByFields(fieldsMap, scoreValues, resourceId);
       }
     } catch (Exception e) {
-      LOGGER.error("RIH->handleCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
+      LOGGER.error("QIH->handleCount : Update fields values failed for fields : " + field + " resource id :" + resourceId);
       throw new Exception(e);
     }
   }
@@ -155,28 +155,28 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
   }
 
   private String getIndexType() {
-    return IndexerConstants.TYPE_RESOURCE;
+    return IndexerConstants.TYPE_QUESTION;
   }
 
   @Override
   public void updateUserDocuments(String userId) throws Exception {
     try {
-      LOGGER.debug("RIH->updateUserDocuments : Processing update user resources  : " + userId);
-      indexUserOriginalResources(userId);
+      LOGGER.debug("QIH->updateUserDocuments : Processing update user questions  : " + userId);
+      indexUserQuestions(userId);
     } catch (Exception ex) {
-      LOGGER.error("RIH->updateUserDocuments : Re-index user resources failed for user : " + userId + " Exception : " + ex);
+      LOGGER.error("QIH->updateUserDocuments : Re-index user questions failed for user : " + userId + " Exception : " + ex);
       throw new Exception(ex);
     }
 
   }
-
-  private void indexUserOriginalResources(String userId) {
-    ProcessorContext context = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_ORIGINAL_RESOURCES);
-    JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-    if(result != null && result.getJsonArray(IndexerConstants.RESOURCES) != null && result.getJsonArray(IndexerConstants.RESOURCES).size() > 0){
-      IndexService.instance().bulkIndexDocuments(result.getJsonArray(IndexerConstants.RESOURCES), getIndexType(), getIndexName());
+  
+  private void indexUserQuestions(String userId) {
+    ProcessorContext questionContext = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_QUESTIONS);
+    JsonObject questionResult = RepoBuilder.buildIndexerRepo(questionContext).getIndexDataContent();
+    if(questionResult != null && questionResult.getJsonArray(IndexerConstants.QUESTIONS) != null && questionResult.getJsonArray(IndexerConstants.QUESTIONS).size() > 0){
+      IndexService.instance().bulkIndexDocuments(questionResult.getJsonArray(IndexerConstants.QUESTIONS), getIndexType(), getIndexName());
     } else {
-      LOGGER.debug("RIH->indexUserOriginalResources : DB returned 0 resources,  user Id  : " + userId);
+      LOGGER.debug("QIH->indexUserQuestions : DB returned 0 questions,  user Id  : " + userId);
     }
   }
 

@@ -15,12 +15,14 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   private final JsonObject eventJson;
   private String eventName;
   private final IndexHandler resourceIndexHandler;
+  private final IndexHandler questionIndexHandler;
   private final IndexHandler collectionIndexHandler;
   
   public ResourceEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
     this.collectionIndexHandler = getCollectionIndexHandler();
     this.resourceIndexHandler = getResourceIndexHandler();
+    this.questionIndexHandler = getQuestionIndexHandler();
   }
 
   @Override
@@ -79,7 +81,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     String contentFormat = getPayLoadObjContentFormat(eventJson);
     String originalContentId = getOrignalContentIdFromData(eventJson);
     if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
-      resourceIndexHandler.indexDocument(resourceId);
+      questionIndexHandler.indexDocument(resourceId);
       LOGGER.debug("REH->handleItemUpdate : Indexed question! event name : " + eventName + " question id : " + resourceId);
     } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId == null) {
       resourceIndexHandler.indexDocument(resourceId);
@@ -94,12 +96,22 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
   }
 
   private void handleReIndex(String resourceId) throws Exception {
-    resourceIndexHandler.indexDocument(resourceId);
+    String contentFormat = getPayLoadObjContentFormat(eventJson);
+    if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
+      resourceIndexHandler.indexDocument(resourceId);
+    } else if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
+      questionIndexHandler.indexDocument(resourceId);
+    }
     LOGGER.debug("REH->handleReIndex : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
   }
 
   private void handleDelete(String resourceId) throws Exception {
-    resourceIndexHandler.deleteIndexedDocument(resourceId);
+    String contentFormat = getPayLoadObjContentFormat(eventJson);
+    if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
+      resourceIndexHandler.deleteIndexedDocument(resourceId);
+    } else if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
+      questionIndexHandler.deleteIndexedDocument(resourceId);
+    }
     LOGGER.debug("REH->handleDelete : Deleted resource from index! event name : " + eventName + " resource id : " + resourceId);
     handlePostDelete(resourceId);
   }
@@ -114,7 +126,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       String originalContentId = getOriginalContentIdContextObj(eventJson); 
 
       if (parentContentId != null && contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
-        resourceIndexHandler.indexDocument(parentContentId);
+        questionIndexHandler.indexDocument(parentContentId);
       } else if(originalContentId != null ){
         resourceIndexHandler.indexDocument(originalContentId);
       }
@@ -151,11 +163,11 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       String originalContentId = getOriginalContentIdTargetObj(eventJson); 
 
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
-         resourceIndexHandler.indexDocument(resourceId);
+        questionIndexHandler.indexDocument(resourceId);
          // update used in collection count 
-         resourceIndexHandler.indexDocument(parentContentId);
+        questionIndexHandler.indexDocument(parentContentId);
          LOGGER.debug("REH>handleCopy : Reindexed question id : " + resourceId);
-       } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
+       } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId != null) {
          // update used in collection count
          resourceIndexHandler.indexDocument(originalContentId);
        }
@@ -176,7 +188,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       idsJson
         .put(IndexerConstants.COLLECTION_IDS, new JsonArray().add(getParentGooruIdTargetObj(eventJson)).add(getParentGooruIdSourceObj(eventJson)));
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
-        resourceIndexHandler.indexDocument(resourceId);
+        questionIndexHandler.indexDocument(resourceId);
       } else if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId != null) {
         resourceIndexHandler.indexDocument(originalContentId);
       }
@@ -199,11 +211,11 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       LOGGER.debug("Indexed parent collection/assesment on item.add  collection id : " + parentGooruId);
 
       if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name())) {
-        resourceIndexHandler.indexDocument(resourceId);
+        questionIndexHandler.indexDocument(resourceId);
 
         // update used in collection count
         if (parentContentId != null) {
-          resourceIndexHandler.indexDocument(parentContentId);
+          questionIndexHandler.indexDocument(parentContentId);
         }
         LOGGER.debug("Indexed question on item.add  question id : " + resourceId + " Incremented used in collection count question id : "
                 + parentContentId);

@@ -3,6 +3,7 @@ package org.gooru.nucleus.search.indexers.app.constants;
 public enum IndexType {
 
   COLLECTION("collection"),
+  QUESTION("question"),
   RESOURCE("resource"),
   USER("user"),
   SEARCH_QUERY("searchquery"),

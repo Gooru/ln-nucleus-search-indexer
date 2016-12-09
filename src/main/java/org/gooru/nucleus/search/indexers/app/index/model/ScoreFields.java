@@ -37,7 +37,11 @@ public class ScoreFields {
   private int oer = 0;
   
   private int isPublished = 0;
-  
+
+  private Integer publisherQualityIndicator = null;
+
+  private Integer contentQualityIndicator = null;
+
   private static final String PUBLISHED = "published";
 
   public ScoreFields(Map<String, Object> scoreFieldsMap) {
@@ -104,7 +108,15 @@ public class ScoreFields {
        isPublished = 1;
      }
     }
-
+    
+    if(scoreFieldsMap.get(ScoreConstants.PUBLISHER_QUALITY_INDICATOR) != null){
+      this.publisherQualityIndicator = (Integer) scoreFieldsMap.get(ScoreConstants.PUBLISHER_QUALITY_INDICATOR);
+    }
+    
+    if(scoreFieldsMap.get(ScoreConstants.CONTENT_QUALITY_INDICATOR) != null){
+      this.contentQualityIndicator = (Integer) scoreFieldsMap.get(ScoreConstants.CONTENT_QUALITY_INDICATOR);
+    }
+    
   }
 
   public static String getDomainName(String url) throws URISyntaxException {
@@ -185,4 +197,21 @@ public class ScoreFields {
   public int getIsPublished() {
     return isPublished;
   }
+  
+  public Integer getPublisherQualityIndicator() {
+    return publisherQualityIndicator;
+  }
+
+  public void setPublisherQualityIndicator(Integer publisherQualityIndicator) {
+    this.publisherQualityIndicator = publisherQualityIndicator;
+  }
+
+  public Integer getContentQualityIndicator() {
+    return contentQualityIndicator;
+  }
+
+  public void setContentQualityIndicator(Integer contentQualityIndicator) {
+    this.contentQualityIndicator = contentQualityIndicator;
+  }
+
 }

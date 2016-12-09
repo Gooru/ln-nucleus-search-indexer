@@ -13,6 +13,7 @@ import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResul
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,11 +49,15 @@ public class FetchContentHandler implements DBHandler {
     try {
       switch (operationName) {
         case ExecuteOperationConstants.GET_RESOURCE:
+          result = OriginalResourceRepository.instance().getResource(context.getId());
+          break;
+
+        case ExecuteOperationConstants.GET_QUESTION:
           result = ContentRepository.instance().getResource(context.getId());
           break;
 
-        case ExecuteOperationConstants.GET_COLLECTION_QUESTION_ORIGINAL_CONTENT_IDS:
-          result = ContentRepository.instance().getQuestionAndOriginalContentIds(context.getId());
+        case ExecuteOperationConstants.GET_COLLECTION_QUESTION_AND_ORIGINAL_RESOURCE_IDS:
+          result = ContentRepository.instance().getQuestionAndOriginalResourceIds(context.getId());
           break;
 
         case ExecuteOperationConstants.GET_COLLECTION:
@@ -60,6 +65,10 @@ public class FetchContentHandler implements DBHandler {
           break;
 
         case ExecuteOperationConstants.GET_DELETED_RESOURCE:
+          result = OriginalResourceRepository.instance().getDeletedContent(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_QUESTION:
           result = ContentRepository.instance().getDeletedContent(context.getId());
           break;
 
@@ -72,7 +81,7 @@ public class FetchContentHandler implements DBHandler {
           break;
         
         case ExecuteOperationConstants.GET_USER_ORIGINAL_RESOURCES:
-          result = ContentRepository.instance().getUserOriginalResources(context.getId());
+          result = OriginalResourceRepository.instance().getUserOriginalResources(context.getId());
           break;
           
         case ExecuteOperationConstants.GET_USER_COLLECTIONS:

@@ -26,7 +26,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
 
   @Override
   public JsonObject getResource(String contentID) {
-    LOGGER.debug("ContentRepositoryImpl:getResource: " + contentID);
+    LOGGER.debug("ContentRepositoryImpl:getQuestion: " + contentID);
 
     Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
    // LOGGER.debug("ContentRepositoryImpl:getResource:findById: " + result);
@@ -111,8 +111,8 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   }
   
   @Override
-  public JsonObject getQuestionAndOriginalContentIds(String collectionId) {
-    LazyList<Content> contents = Content.find(Content.FETCH_QUESTION_AND_PARENT_CONTENT_IDS, collectionId);
+  public JsonObject getQuestionAndOriginalResourceIds(String collectionId) {
+    LazyList<Content> contents = Content.find(Content.FETCH_QUESTION_AND_ORIGINAL_RESOURCE_IDS, collectionId);
     if (contents.size() < 1) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
     }
@@ -177,20 +177,5 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     }
     return new JsonObject().put("questions", contentArray);
   }
-  
-  @Override
-  public JsonObject getUserOriginalResources(String userId) {
-    JsonArray contentArray = new JsonArray();
-    List<Content> contents = Content.where(Content.FETCH_USER_ORIGINAL_RESOURCES, Content.CONTENT_FORMAT_RESOURCE, userId, false);
-    if(contents != null){
-      if (contents.size() < 1) {
-        LOGGER.warn("User resources not present in DB for user id: {} not present in DB", userId);
-      }
-      for(Content content : contents){
-        contentArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
-      }
-    }
-    return new JsonObject().put("resources", contentArray);
-  }
-
+ 
 }
