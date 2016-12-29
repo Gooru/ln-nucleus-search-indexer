@@ -4,7 +4,7 @@ public final class IndexerConstants {
 
   public static final String DEFAULT_DATABASE_NAME = "nucleus";
 
-  public static final String TRACKER_DATABASE_NAME = "reports-db";
+  public static final String TRACKER_DATABASE_NAME = "reports_db";
   
   public static final String TYPE_RESOURCE = "resource";
 
