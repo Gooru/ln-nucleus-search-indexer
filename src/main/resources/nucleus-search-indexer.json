@@ -10,15 +10,14 @@
     "elasticsearch.host" : "localhost:9300"
   },
   "defaultKafkaSettings" : {
-  	"zookeeper.connect": "localhost:2181",
+  	"bootstrap.servers":"localhost:9092"
   	"group.id": "indexGroup",
   	"zookeeper.session.timeout.ms": "10000",
-  	"zookeeper.sync.time.ms":"200",
+  	"enable.auto.commit":true,
   	"auto.commit.interval.ms":"1000",
-  	"fetch.size" : "1048576",
-  	"auto.offset.reset" : "smallest",
-  	"index.nucleus.topic":"[CORE TOPIC NAME]",
-  	"index.keyword.topic":"[WATSON TOPIC NAME]" 
+  	"auto.offset.reset" : "earliest",
+  	"consumer.topics":"[CORE TOPIC NAME,WATSON TOPIC NAME]" 
+  	"thead.pool.size":10
   },
   "defaultDataSource" : {
   	"nucleus.ds.type" : "hikari",
@@ -34,10 +33,10 @@
   	"username" : "search",
   	"password" : "search",
   	"autoCommit" : false,
-  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/search",
+  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/reports_db",
   	"maximumPoolSize" : 5,
-  	"database" : "search"
+  	"database" : "reports_db"
   },
-  "http.port":8080
+  "http.port":8081
 
 }
