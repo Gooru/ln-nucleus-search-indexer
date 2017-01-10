@@ -48,6 +48,7 @@ public final class EntityAttributeConstants {
   public static final String CODE = "code";
   public static final String IS_BROKEN = "is_broken";
   public static final String IS_FRAME_BREAKER = "is_frame_breaker";
+  public static final String IS_I_FRAME_BREAKER = "is_iframe_breaker";
   public static final String ACCESSIBILITY = "accessibility";
   public static final String DISPLAY_GUIDE = "display_guide";
   public static final String INFO = "info";
@@ -78,6 +79,7 @@ public final class EntityAttributeConstants {
   //Index tracker constants
   public static final String GOORU_OID = "gooru_oid";
   public static final String INDEX_TYPE = "index_type";
+  public static final String LANGUAGE = "language";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

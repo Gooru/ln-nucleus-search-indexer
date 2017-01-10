@@ -14,7 +14,7 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_COLLECTION_IDS = "get_collection_ids";
 
-  public static final String GET_COLLECTION_QUESTION_ORIGINAL_CONTENT_IDS = "get_collection_question_ids_and_content_parent_ids";
+  public static final String GET_COLLECTION_QUESTION_AND_ORIGINAL_RESOURCE_IDS = "get_collection_question_ids_and_content_parent_ids";
 
   public static final String GET_DELETED_RESOURCE = "get_deleted_resource";
   
@@ -29,9 +29,12 @@ public final class ExecuteOperationConstants {
   public static final String SAVE_DELETED_RESOURCE = "save_deleted_resource";
 
   public static final String GET_DELETED_COURSE = "get_deleted_course";
+  
   public static final String SAVE_DELETED_COLLECTION = "save_deleted_collection";
 
   public static final String GET_USER_QUESTIONS = "get_user_questions";
+
+  public static final String GET_DELETED_QUESTION = "get_deleted_question";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

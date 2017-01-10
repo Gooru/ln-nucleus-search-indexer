@@ -63,7 +63,7 @@ public class BaseEventHandler {
   }
   
   protected static String getCollectionIdContextObj(JsonObject json) {
-    return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_COLLECTION_GOORU_ID, null);
+    return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_COLLECTION_GOORU_ID);
   }
 
   protected static JsonArray getCollaborators(JsonObject json) {
@@ -75,7 +75,7 @@ public class BaseEventHandler {
   }
   
   protected static String getOrignalContentIdFromData(JsonObject json) {
-    return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_ORIGINAL_CONTENT_ID, null);
+    return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_ORIGINAL_CONTENT_ID);
   }
 /*  protected static String getMappedCourseId(JsonObject json){
     return getPayLoadObj(json).getJsonObject(EventsConstants.EVT_PAYLOAD_TARGET).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
@@ -87,6 +87,10 @@ public class BaseEventHandler {
 */
   protected IndexHandler getResourceIndexHandler() {
     return IndexHandlerBuilder.buildResourceIndexHandler();
+  }
+  
+  protected IndexHandler getQuestionIndexHandler() {
+    return IndexHandlerBuilder.buildQuestionIndexHandler();
   }
 
   protected IndexHandler getCollectionIndexHandler() {

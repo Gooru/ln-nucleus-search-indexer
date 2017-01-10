@@ -1,16 +1,20 @@
 package org.gooru.nucleus.search.indexers.app.utils;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.mvel2.MVEL;
 import org.mvel2.integration.VariableResolverFactory;
 import org.mvel2.integration.impl.MapVariableResolverFactory;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PCWeightUtil {
+
+  protected static final Logger LOGGER = LoggerFactory.getLogger(PCWeightUtil.class);
 
   private PCWeightUtil() {
     throw new AssertionError();
@@ -27,11 +31,19 @@ public final class PCWeightUtil {
       float oerScore = (rankingData.getOer() == 1) ? 1f : 0f;
       float skillScore = (rankingData.getHas21stCenturySkills()) ? 1f : 0f;
       float viewsScore = rankingData.getViewsCount() / ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
-      float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f ;
-      
-      float usageSignalWeight = (float) ((normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore) ) / 2 * 0.7);
-      float otherSignalWeight = (float) (((descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore + publishStatusScore) / 8) * 0.3);
-      return (double) normalizeValue(usageSignalWeight + otherSignalWeight);
+      float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f;
+      Double publisherQualityIndicator = (rankingData.getPublisherQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getPublisherQualityIndicator()) / 5) : null;
+      Double contentQualityIndicator = (rankingData.getContentQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getContentQualityIndicator()) / 5) : null;
+
+      double usageSignalWeight = (double) (((double) (normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2) * 0.5);
+      double otherSignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore + publishStatusScore) / 8) * 0.2);
+      double editorialTagSignals = 0;
+      if(contentQualityIndicator != null) {
+        editorialTagSignals = contentQualityIndicator * 0.3;
+      } else if (publisherQualityIndicator != null){
+        editorialTagSignals = publisherQualityIndicator * 0.3;
+      }
+      return (double) normalizeValue(usageSignalWeight + otherSignalWeight + editorialTagSignals);
     } catch (Exception e) {
       throw new Exception(e);
     }
@@ -84,7 +96,24 @@ public final class PCWeightUtil {
     }
     return score;
   }
-
+  
+  private static Double normalizeValue(Double score) {
+    if (score > 1) {
+      score = 1.0;
+    } else if (score < 0) {
+      score = 0.0;
+    }
+    return score;
+  }
+  
+  private static double normalizeValueToFive(double score) {
+    if (score > 5) {
+      score = 5.0;
+    } else if (score < 0) {
+      score = 0.0;
+    }
+    return score;
+  }
 
 }
 

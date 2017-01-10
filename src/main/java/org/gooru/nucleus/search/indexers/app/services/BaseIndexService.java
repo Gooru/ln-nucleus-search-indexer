@@ -90,7 +90,7 @@ public class BaseIndexService {
     int remixCount = 0;
 
     if (statisticsAsMap != null) {
-      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+      if (contentFormat != null && IndexerConstants.RESOURCE_FORMATS.matcher(contentFormat).matches()) {
         viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
         StatisticsEo statisticEo = new StatisticsEo();
         statisticEo.setViewsCount(viewsCount);

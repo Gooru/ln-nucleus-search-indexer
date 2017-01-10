@@ -28,4 +28,18 @@ public class ResourceIndexServiceImpl implements ResourceIndexService {
       throw new Exception(ex);
     }
   }
+  
+  @Override
+  public void deleteIndexedQuestion(String key, String type) throws Exception {
+    try {
+      LOGGER.debug("RISI->deleteIndexedQuestion : Processing delete question for id : " + key);
+      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION);
+      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+      ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.QUESTION_NOT_DELETED);
+      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+    } catch (Exception ex) {
+      LOGGER.error("RISI->deleteIndexedQuestion : Delete question from index failed for question id : " + key + " Exception : " + ex);
+      throw new Exception(ex);
+    }
+  }
 }

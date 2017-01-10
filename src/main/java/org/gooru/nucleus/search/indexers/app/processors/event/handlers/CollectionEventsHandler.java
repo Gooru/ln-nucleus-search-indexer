@@ -17,11 +17,13 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
   private String eventName;
   private final IndexHandler collectionIndexHandler;
   private final IndexHandler resourceIndexHandler;
+  private final IndexHandler questionIndexHandler;
   
   public CollectionEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
     this.collectionIndexHandler = getCollectionIndexHandler();
     this.resourceIndexHandler = getResourceIndexHandler();
+    this.questionIndexHandler = getQuestionIndexHandler();
   }
 
   @Override
@@ -87,7 +89,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
           String questionId = (String) iter.next();
-          resourceIndexHandler.deleteIndexedDocument(questionId);
+          questionIndexHandler.deleteIndexedDocument(questionId);
           LOGGER.debug("CEH->handleCopy : Deleted questions inside collection id : " + collectionId + " question id : " + questionId);
         }
       }
@@ -107,7 +109,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
   }
 
   private JsonObject getCollectionQuestionIdsAndOriginalContentIds(String collectionId) {
-    ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_COLLECTION_QUESTION_ORIGINAL_CONTENT_IDS);
+    ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_COLLECTION_QUESTION_AND_ORIGINAL_RESOURCE_IDS);
     JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
     LOGGER.debug("CEH->getCollectionResources : Fetched resource data from DB, json : " + result.toString() + " Calling index service !!");
     ValidationUtil.rejectIfNull(result, ErrorMsgConstants.RESOURCE_IDS_NULL);
@@ -131,7 +133,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
           String questionId = (String) iter.next();
-          resourceIndexHandler.indexDocument(questionId);
+          questionIndexHandler.indexDocument(questionId);
           LOGGER.debug("CEH->handleCopy : Re-indexed question id : " + questionId);
         }
       }

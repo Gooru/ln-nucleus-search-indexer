@@ -11,11 +11,13 @@ public class UserEventsHandler extends BaseEventHandler implements IndexEventHan
   private final JsonObject eventJson;
   private String eventName;
   private final IndexHandler resourceIndexHandler;
+  private final IndexHandler questionIndexHandler;
   private final IndexHandler collectionIndexHandler;
 
   public UserEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
     this.resourceIndexHandler = getResourceIndexHandler();
+    this.questionIndexHandler = getQuestionIndexHandler();
     this.collectionIndexHandler = getCollectionIndexHandler();
   }
 
@@ -59,6 +61,12 @@ public class UserEventsHandler extends BaseEventHandler implements IndexEventHan
       resourceIndexHandler.updateUserDocuments(userId);
     } catch (Exception e) {
       LOGGER.error("UEH->handleUserUpdate : Failed to re-index user resources ", e);
+    }
+    
+    try {
+      questionIndexHandler.updateUserDocuments(userId);
+    } catch (Exception e) {
+      LOGGER.error("UEH->handleUserUpdate : Failed to re-index user questions ", e);
     }
     
     try{

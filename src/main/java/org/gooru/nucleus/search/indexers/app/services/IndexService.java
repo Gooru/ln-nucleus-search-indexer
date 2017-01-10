@@ -44,10 +44,8 @@ public interface IndexService {
 
   void bulkIndexDocuments(JsonArray jsonArr, String indexType, String index);
   
-  void buildInfoIndex(String idString, JsonObject source) throws Exception;
-  
-  void buildInfoIndex(String id) throws Exception;
-  
+  void buildInfoIndex(String idString, String contentFormat) throws Exception;
+    
   void updateBrokenStatus(String ids, boolean isUpdateBroken);
 
   void deleteDocuments(String key, String type) throws Exception;
