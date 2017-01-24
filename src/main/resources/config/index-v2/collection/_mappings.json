@@ -238,6 +238,20 @@
             "analyzer":"snowball",
             "include_in_all":true
          },
+         "tenant":{
+            "properties":{
+               "tenantRootId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "tenantId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               }
+            }
+         },
          "metadata":{
             "properties":{
                "educationalUse":{

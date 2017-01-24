@@ -396,6 +396,20 @@
                }
             }
          },
+         "tenant":{
+            "properties":{
+               "tenantRootId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "tenantId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               }
+            }
+         },
          "grade":{
             "type":"string",
             "index":"not_analyzed",
