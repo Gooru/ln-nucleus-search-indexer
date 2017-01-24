@@ -160,6 +160,14 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       }
       if(!resourceInfoJson.getResourceInfo().isEmpty()) contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
 
+      //Set Content Tenant
+      String tenantId = source.getString(EntityAttributeConstants.TENANT);
+      String tenantRoot = source.getString(EntityAttributeConstants.TENANT_ROOT);
+      JsonObject tenant = new JsonObject();
+      tenant.put(IndexerConstants.TENANT_ID, tenantId);
+      tenant.put(IndexerConstants.TENANT_ROOT_ID, tenantRoot);
+      contentEo.setTenant(tenant);
+      
       /*
        * //TODO Add logic to store below details
        * statisticsEo.setHasAdvertisement(hasAdvertisement);

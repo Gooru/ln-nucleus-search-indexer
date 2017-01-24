@@ -226,6 +226,14 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
       collectionEo.setCourse(course.getCourseJson());
       
+      //Set Collection Tenant 
+      String tenantId = source.getString(EntityAttributeConstants.TENANT);
+      String tenantRoot = source.getString(EntityAttributeConstants.TENANT_ROOT);
+      JsonObject tenant = new JsonObject();
+      tenant.put(IndexerConstants.TENANT_ID, tenantId);
+      tenant.put(IndexerConstants.TENANT_ROOT_ID, tenantRoot);
+      collectionEo.setTenant(tenant);
+      
       //TODO Add logic to store taxonomy transformation and some statistics
 
     } catch (Exception e) {

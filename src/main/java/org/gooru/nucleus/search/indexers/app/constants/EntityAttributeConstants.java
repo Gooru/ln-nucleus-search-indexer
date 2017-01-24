@@ -75,7 +75,9 @@ public final class EntityAttributeConstants {
   public static final String TAX_PARENT_TITLE = "parent_title";
   public static final String CONTENT_QUALITY_INDICATOR = "content_quality_indicator";
   public static final String PUBLISHER_QUALITY_INDICATOR = "publisher_quality_indicator";
-
+  public static final String TENANT = "tenant";
+  public static final String TENANT_ROOT = "tenant_root";
+  
   //Index tracker constants
   public static final String GOORU_OID = "gooru_oid";
   public static final String INDEX_TYPE = "index_type";

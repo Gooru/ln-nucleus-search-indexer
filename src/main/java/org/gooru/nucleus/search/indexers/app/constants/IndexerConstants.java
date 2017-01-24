@@ -109,5 +109,9 @@ public final class IndexerConstants {
   public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
   public static final String STR_NULL = "null";
+  
+  public static final String TENANT_ID = "tenantId";
+
+  public static final String TENANT_ROOT_ID = "tenantRootId";
 
 }
