@@ -455,6 +455,20 @@
             "type":"integer",
             "index":"not_analyzed",
             "include_in_all":false
+         },
+         "tenant":{
+            "properties":{
+               "tenantRootId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "tenantId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               }
+            }
          }
       }
    }

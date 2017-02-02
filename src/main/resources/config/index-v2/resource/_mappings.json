@@ -218,11 +218,6 @@
             "type":"string",
             "analyzer":"standard",
             "fields":{
-               "descriptionKStemSnowball":{
-                  "type":"string",
-                  "index_analyzer":"gooru_kstem",
-                  "search_analyzer":"snowball"
-               },
                "descriptionKStem":{
                   "type":"string",
                   "analyzer":"gooru_kstem"

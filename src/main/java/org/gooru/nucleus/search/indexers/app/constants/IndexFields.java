@@ -106,6 +106,7 @@ public class IndexFields {
 	public static final String LICENSE_URL = "url";
 	public static final String LICENSE_NAME = "name";
   public static final String RESOURCE_INFO = "resourceInfo";
-	
+  public static final String TENANT = "tenant";
+
 
 }

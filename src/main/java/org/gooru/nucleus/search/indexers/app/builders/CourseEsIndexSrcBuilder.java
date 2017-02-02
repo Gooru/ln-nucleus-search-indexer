@@ -209,6 +209,13 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       }
       if(!resourceInfoJson.getResourceInfo().isEmpty()) courseEio.setResourceInfo(resourceInfoJson.getResourceInfo());
 
+      //Set Content Tenant
+      String tenantId = source.getString(EntityAttributeConstants.TENANT);
+      String tenantRoot = source.getString(EntityAttributeConstants.TENANT_ROOT);
+      JsonObject tenant = new JsonObject();
+      tenant.put(IndexerConstants.TENANT_ID, tenantId);
+      tenant.put(IndexerConstants.TENANT_ROOT_ID, tenantRoot);
+      courseEio.setTenant(tenant);
 
     }
     catch(Exception e){

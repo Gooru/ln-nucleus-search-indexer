@@ -3,7 +3,6 @@ package org.gooru.nucleus.search.indexers.app.index.model;
 import java.util.Date;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
-import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 import io.vertx.core.json.JsonObject;
 
@@ -200,6 +199,14 @@ public class CourseEio extends JsonObject {
 
   public void setResourceInfo(JsonObject resourceInfo) {
     this.put(IndexFields.RESOURCE_INFO, resourceInfo);
+  }
+  
+  public JsonObject getTenant() {
+    return this.getJsonObject(IndexFields.TENANT, null);
+  }
+
+  public void setTenant(JsonObject tenant) {
+    this.put(IndexFields.TENANT, tenant);
   }
 
 }

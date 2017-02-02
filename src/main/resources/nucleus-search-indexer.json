@@ -10,13 +10,13 @@
     "elasticsearch.host" : "localhost:9300"
   },
   "defaultKafkaSettings" : {
-  	"bootstrap.servers":"localhost:9092"
+  	"bootstrap.servers":"localhost:9092",
   	"group.id": "indexGroup",
   	"zookeeper.session.timeout.ms": "10000",
   	"enable.auto.commit":true,
   	"auto.commit.interval.ms":"1000",
   	"auto.offset.reset" : "earliest",
-  	"consumer.topics":"[CORE TOPIC NAME,WATSON TOPIC NAME]" 
+  	"consumer.topics":"[CORE TOPIC NAME,WATSON TOPIC NAME]" ,
   	"thead.pool.size":10
   },
   "defaultDataSource" : {
