@@ -52,8 +52,9 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       }
       
       // Set Metadata
+      JsonObject metadata = null;
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
-      JsonObject metadata = new JsonObject(metadataString);
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
       setMetaData(metadata, contentEo);
       
       // Set Question
@@ -64,7 +65,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       }
       
       String answerJson = source.getString(EntityAttributeConstants.ANSWER, null);
-      if (answerJson != null) {
+      if (answerJson != null && !answerJson.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
         JsonArray answerArray = new JsonArray(answerJson);
         if (answerArray != null && answerArray.size() > 0) {
           AnswerEo answerEo = new AnswerEo();
@@ -84,7 +85,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         }
       }
       String hintDetail = source.getString(EntityAttributeConstants.HINT_EXPLANATION_DETAIL, null);
-      if (hintDetail != null) {
+      if (hintDetail != null && !hintDetail.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
         JsonObject hintExplanationDetail = new JsonObject(hintDetail);
         if (hintExplanationDetail != null) {
           JsonArray hintArray = hintExplanationDetail.getJsonArray(EntityAttributeConstants.HINT, null);
@@ -131,7 +132,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       // Set display guide values
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
       JsonObject displayGuide = null;
-      if (displayGuideString != null) displayGuide = new JsonObject(displayGuideString);
+      if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
       statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
 
@@ -143,7 +144,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       //Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
       JsonObject editorialTags = null; 
-      if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = new JsonObject(editorialStr);
+      if (editorialStr != null && !editorialStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) editorialTags = new JsonObject(editorialStr);
       statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : null);
       statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : null);
       
