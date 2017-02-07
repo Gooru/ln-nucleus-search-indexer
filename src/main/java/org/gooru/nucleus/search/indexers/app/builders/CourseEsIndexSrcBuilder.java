@@ -155,9 +155,9 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
       if (originalCreatorId != null) {
         UserEo orginalCreatorEo = new UserEo();
-        List<Map> orginalCreator = getUserRepo().getUserDetails(originalCreatorId);
-        if (orginalCreator != null && orginalCreator.size() > 0) {
-          setUser(orginalCreator.get(0), orginalCreatorEo);
+        JsonObject orginalCreator = getUserRepo().getUser(originalCreatorId);
+        if (orginalCreator != null && !orginalCreator.isEmpty()) {
+          setUser(orginalCreator, orginalCreatorEo);
           courseEio.setOriginalCreator(orginalCreatorEo.getUser());
         }
       }
@@ -165,9 +165,9 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {
         UserEo creatorEo = new UserEo();
-        List<Map> creator = getUserRepo().getUserDetails(creatorId);
-        if (creator != null && creator.size() > 0) {
-          setUser(creator.get(0), creatorEo);
+        JsonObject creator = getUserRepo().getUser(creatorId);
+        if (creator != null && !creator.isEmpty()) {
+          setUser(creator, creatorEo);
           courseEio.setCreator(creatorEo.getUser());
         }
       }
@@ -175,9 +175,9 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       String ownerId = source.getString(EntityAttributeConstants.OWNER_ID, null);
       if (ownerId != null) {
         UserEo ownerEo = new UserEo();
-        List<Map> owner = getUserRepo().getUserDetails(ownerId);
-        if (owner != null && owner.size() > 0) {
-          setUser(owner.get(0), ownerEo);
+        JsonObject owner = getUserRepo().getUser(ownerId);
+        if (owner != null && !owner.isEmpty()) {
+          setUser(owner, ownerEo);
           courseEio.setOwner(ownerEo.getUser());
         }
       }

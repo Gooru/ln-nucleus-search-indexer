@@ -44,9 +44,9 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
       if (originalCreatorId != null) {
         UserEo orginalCreatorEo = new UserEo();
-        List<Map> orginalCreator = getUserRepo().getUserDetails(originalCreatorId);
-        if (orginalCreator != null && orginalCreator.size() > 0) {
-          setUser(orginalCreator.get(0), orginalCreatorEo);
+        JsonObject creator = getUserRepo().getUser(originalCreatorId);
+        if (creator != null && !creator.isEmpty()) {
+          setUser(creator, orginalCreatorEo);
           contentEo.setOriginalCreator(orginalCreatorEo.getUser());
         }
       }

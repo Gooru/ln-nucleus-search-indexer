@@ -9,7 +9,7 @@ public class SchemaConstants {
   public static final String CONTENT = "content";
   public static final String ORIGINAL_RESOURCE = "original_resource";
   public static final String COLLECTION = "collection";
-  public static final String USER_DEMOGRAPHIC = "user_demographic";
+  public static final String USERS = "users";
   public static final String UNIT = "unit";
   public static final String COURSE = "course";
   public static final String RESOURCE_INDEX_DELETE_TRACKER = "resource_index_delete_tracker";

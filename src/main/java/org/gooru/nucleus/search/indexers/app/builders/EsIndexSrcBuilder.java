@@ -91,21 +91,29 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (TaxonomyRepositoryImpl) TaxonomyRepository.instance();
   }
 
-  @SuppressWarnings({ "rawtypes"})
-  protected void setUser(Map orginalCreator, UserEo userEo) {
-    userEo.setUsername(BaseUtil.checkNullAndGetString(orginalCreator, "username"));
-    userEo.setUsernameDisplay(BaseUtil.checkNullAndGetString(orginalCreator, "username"));
-    userEo.setUserId(BaseUtil.checkNullAndGetString(orginalCreator, "userId"));
-    userEo.setLastName(BaseUtil.checkNullAndGetString(orginalCreator, "lastname"));
-    userEo.setFirstName(BaseUtil.checkNullAndGetString(orginalCreator, "firstname"));
-    userEo.setFullName(
-            BaseUtil.checkNullAndGetString(orginalCreator, "firstname") + ' ' + BaseUtil.checkNullAndGetString(orginalCreator, "lastname"));
-    userEo.setEmailId(BaseUtil.checkNullAndGetString(orginalCreator, "email_id"));
-    if (orginalCreator.get("metadata") != null) {
-      JsonObject metadata = new JsonObject(orginalCreator.get("metadata").toString());
-      userEo.setProfileVisibility(metadata.getBoolean("is_profile_visible", false));
+  protected void setUser(JsonObject user, UserEo userEo) {
+    userEo.setUsername(user.getString("username"));
+    userEo.setUsernameDisplay(user.getString("username"));
+    userEo.setUserId(user.getString("id"));
+    userEo.setLastName(user.getString("last_name"));
+    userEo.setFirstName(user.getString("first_name"));
+    userEo.setFullName(user.getString("first_name") + ' ' + user.getString("last_name"));
+    userEo.setEmailId(user.getString("email"));
+    if (user.containsKey("metadata") && user.getString("metadata")!= null) {
+      String metadataString = user.getString("metadata");
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
+        JsonObject metadata = new JsonObject(user.getString("metadata"));
+        userEo.setProfileVisibility(metadata.getBoolean("is_profile_visible", false));
+      }
     }
-    userEo.setProfileImage(BaseUtil.checkNullAndGetString(orginalCreator, "thumbnail_path"));
+    userEo.setProfileImage(user.getString("thumbnail_path"));
+    //Set User Tenant
+    String tenantId = user.getString(EntityAttributeConstants.TENANT_ID);
+    String tenantRoot = user.getString(EntityAttributeConstants.TENANT_ROOT);
+    JsonObject tenant = new JsonObject();
+    tenant.put(IndexerConstants.TENANT_ID, tenantId);
+    tenant.put(IndexerConstants.TENANT_ROOT_ID, tenantRoot);
+    userEo.setTenant(tenant);
   }
 
   protected void addTaxonomy(JsonObject taxonomyObject, TaxonomyEo taxonomyEo) {
