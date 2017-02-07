@@ -1,8 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.User;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
@@ -25,14 +23,14 @@ public class UserRepositoryImpl extends BaseIndexRepo implements UserRepository 
     LOGGER.debug("UserRepositoryImpl : getUser: " + userID);
 
     User result = User.findById(getPGObject("id", UUID_TYPE, userID));
-    LOGGER.debug("UserRepositoryImpl : getUser : findById : " + result);
+    //LOGGER.debug("UserRepositoryImpl : getUser : findById : " + result);
 
     JsonObject returnValue = null;
     
     if (result != null) {
       returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
     }
-    LOGGER.debug("UserRepositoryImpl : getUser : findById returned: " + returnValue);
+    //LOGGER.debug("UserRepositoryImpl : getUser : findById returned: " + returnValue);
 
     closeDBConn(db);
     return returnValue;
