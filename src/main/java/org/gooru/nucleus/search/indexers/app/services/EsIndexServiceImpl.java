@@ -491,12 +491,15 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
 
         //Build contentInfo index source
         JsonObject contentInfoJson = buildContentInfoEsIndexSrc(id, contentFormat, text);
-        
+
         //Index text when available
         if (contentInfoJson != null) {
           try {
             getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
                     .setSource(contentInfoJson.toString()).execute();
+            
+            // Get statistics and extracted text data from backup index
+            setResourceStasInfoData(inputJson, id, IndexerConstants.TYPE_RESOURCE);
             indexDocuments(id, IndexNameHolder.getIndexName(EsIndex.RESOURCE), IndexerConstants.TYPE_RESOURCE, inputJson);
           } catch (Exception e) {
             LOGGER.error("Text Extraction : Indexing failed for id : " + id + " Exception ", e.getMessage());
