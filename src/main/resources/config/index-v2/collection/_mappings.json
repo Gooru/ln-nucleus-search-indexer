@@ -416,6 +416,14 @@
                   ],
                   "include_in_all":false
                },
+               "leafDisplayCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
                "subject":{
                   "type":"nested",
                   "include_in_parent":true,
@@ -469,6 +477,30 @@
                         "include_in_all":false
                      }
                   }
+               },
+               "allEquivalentInternalCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "allEquivalentDisplayCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "allEquivalentFrameworkCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
                },
                "taxonomyDataSet":{
                   "type":"string",

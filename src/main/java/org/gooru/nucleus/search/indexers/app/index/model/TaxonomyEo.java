@@ -115,7 +115,47 @@ public class TaxonomyEo extends JsonObject {
     if (hasStandard == null) {
       hasStandard = 0;
     }
-    this.taxonomy = JsonUtil.set(taxonomy, "hasStandard", hasStandard);
+    taxonomy = JsonUtil.set(taxonomy, "hasStandard", hasStandard);
+  }
+  
+  public JsonArray getLeafDisplayCodes() {
+    return taxonomy.getJsonArray("leafDisplayCodes", null);
+  }
+
+  public void setLeafDisplayCodes(JsonArray leafDisplayCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "leafDisplayCodes", new JsonArray(leafDisplayCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getAllEquivalentCompetencies() {
+    return taxonomy.getJsonArray("allEquivalentCompetencies", null);
+  }
+
+  public void setAllEquivalentCompetencies(JsonArray allEquivalentCompetencies) {
+    taxonomy = JsonUtil.set(taxonomy, "allEquivalentCompetencies", new JsonArray(allEquivalentCompetencies.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getAllEquivalentInternalCodes() {
+    return taxonomy.getJsonArray("allEquivalentInternalCodes", null);
+  }
+
+  public void setAllEquivalentInternalCodes(JsonArray allEquivalentInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "allEquivalentInternalCodes", new JsonArray(allEquivalentInternalCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getAllEquivalentDisplayCodes() {
+    return taxonomy.getJsonArray("allEquivalentDisplayCodes", null);
+  }
+
+  public void setAllEquivalentDisplayCodes(JsonArray allEquivalentDisplayCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "allEquivalentDisplayCodes", new JsonArray(allEquivalentDisplayCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getAllEquivalentFrameworkCodes() {
+    return taxonomy.getJsonArray("allEquivalentFrameworkCodes", null);
+  }
+
+  public void setAllEquivalentFrameworkCodes(JsonArray allEquivalentFrameworkCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "allEquivalentFrameworkCodes", new JsonArray(allEquivalentFrameworkCodes.stream().distinct().collect(Collectors.toList())));
   }
 
 }
