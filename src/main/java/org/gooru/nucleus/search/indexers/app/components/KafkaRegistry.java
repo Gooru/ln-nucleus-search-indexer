@@ -63,12 +63,9 @@ public final class KafkaRegistry implements Initializer, Finalizer {
     LOGGER.debug("Setting Kafka Properties..");
     final Properties properties = new Properties();
     properties.put(KafkaProperties.KAFKA_SERVERS, kafkaConfig.getString(KafkaProperties.KAFKA_SERVERS));
-    properties.put(KafkaProperties.ZK_CONSUMER_GROUP, kafkaConfig.getString(KafkaProperties.ZK_CONSUMER_GROUP));
-    properties.put(KafkaProperties.ZK_SESSION_TIME_OUT_MS, kafkaConfig.getString(KafkaProperties.ZK_SESSION_TIME_OUT_MS));
-    properties.put(KafkaProperties.ENABLE_AUTO_COMMIT, kafkaConfig.getBoolean(KafkaProperties.ENABLE_AUTO_COMMIT));
-    properties.put(KafkaProperties.AUTOCOMMIT_INTERVAL_MS, kafkaConfig.getString(KafkaProperties.AUTOCOMMIT_INTERVAL_MS));
-    properties.put(KafkaProperties.AUTO_OFFSET_RESET, kafkaConfig.getString(KafkaProperties.AUTO_OFFSET_RESET));
-
+    properties.put(KafkaProperties.SESSION_TIME_OUT_MS, kafkaConfig.getString(KafkaProperties.SESSION_TIME_OUT_MS));
+    properties.put(KafkaProperties.GROUP_ID, kafkaConfig.getString(KafkaProperties.GROUP_ID));
+    
     properties.put(KafkaProperties.KAFKA_KEY_DESERIALIZER, StringDeserializer.class.getName());
     properties.put(KafkaProperties.KAFKA_VALUE_DESERIALIZER, StringDeserializer.class.getName());
 
