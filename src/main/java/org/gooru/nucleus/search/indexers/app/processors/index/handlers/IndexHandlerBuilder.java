@@ -10,8 +10,8 @@ public final class IndexHandlerBuilder {
     return new ResourceIndexHandler();
   }
   
-  public static IndexHandler buildQuestionIndexHandler() {
-    return new QuestionIndexHandler();
+  public static IndexHandler buildQuestionAndCopiedResourceIndexHandler() {
+    return new QuestionAndCopiedResourceIndexHandler();
   }
 
   public static IndexHandler buildCollectionIndexHandler() {

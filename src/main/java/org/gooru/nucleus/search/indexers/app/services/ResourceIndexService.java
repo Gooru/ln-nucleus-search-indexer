@@ -7,5 +7,6 @@ public interface ResourceIndexService {
   }
   void deleteIndexedResource(String key, String type) throws Exception;
   void deleteIndexedQuestion(String key, String type) throws Exception;
+  void deleteIndexedCopiedResource(String key, String type) throws Exception;
 
 }

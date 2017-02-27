@@ -17,13 +17,13 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
   private String eventName;
   private final IndexHandler collectionIndexHandler;
   private final IndexHandler resourceIndexHandler;
-  private final IndexHandler questionIndexHandler;
+  private final IndexHandler questionAndCopiedResourceIndexHandler;
   
   public CollectionEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
     this.collectionIndexHandler = getCollectionIndexHandler();
     this.resourceIndexHandler = getResourceIndexHandler();
-    this.questionIndexHandler = getQuestionIndexHandler();
+    this.questionAndCopiedResourceIndexHandler = getQuestionAndCopiedResourceIndexHandler();
   }
 
   @Override
@@ -83,23 +83,33 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       // Index resources inside copied collection
       JsonObject ids = getCollectionQuestionIdsAndOriginalContentIds(collectionId);
       JsonArray questionIds = ids.getJsonArray(IndexerConstants.QUESTION_IDS);
-      JsonArray resourceIds = ids.getJsonArray(IndexerConstants.ORIGINAL_CONTENT_IDS);
+      JsonArray originalResourceIds = ids.getJsonArray(IndexerConstants.ORIGINAL_CONTENT_IDS);
+      JsonArray copiedResourceIds = ids.getJsonArray(IndexerConstants.COPIED_RESOURCE_IDS);
 
       if (questionIds != null && questionIds.size() > 0) {
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
           String questionId = (String) iter.next();
-          questionIndexHandler.deleteIndexedDocument(questionId);
+          questionAndCopiedResourceIndexHandler.deleteIndexedDocument(questionId);
           LOGGER.debug("CEH->handleCopy : Deleted questions inside collection id : " + collectionId + " question id : " + questionId);
         }
       }
+      
+      if (copiedResourceIds != null && copiedResourceIds.size() > 0) {
+        Iterator<Object> iter = copiedResourceIds.iterator();
+        while (iter.hasNext()) {
+          String copiedResourceId = (String) iter.next();
+          questionAndCopiedResourceIndexHandler.deleteIndexedDocument(copiedResourceId);
+          LOGGER.debug("CEH->handleCopy : Deleted copiedResourceId inside collection id : " + collectionId + " copiedResource id : " + copiedResourceId);
+        }
+      }
 
-      if (resourceIds != null && resourceIds.size() > 0) {
-        Iterator<Object> iter = resourceIds.iterator();
+      if (originalResourceIds != null && originalResourceIds.size() > 0) {
+        Iterator<Object> iter = originalResourceIds.iterator();
         while (iter.hasNext()) {
           String resourceId = (String) iter.next();
           resourceIndexHandler.decreaseCount(resourceId, ScoreConstants.USED_IN_COLLECTION_COUNT);
-          LOGGER.debug("CEH->handleCopy : Decreased used in collection count id : " + resourceId);
+          LOGGER.debug("CEH->handleCopy : Decreased used in collection count of original resource id : " + resourceId);
         }
       }
     } catch (Exception e) {
@@ -128,13 +138,23 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       JsonObject ids = getCollectionQuestionIdsAndOriginalContentIds(collectionId);
       JsonArray questionIds = ids.getJsonArray(IndexerConstants.QUESTION_IDS);
       JsonArray resourceIds = ids.getJsonArray(IndexerConstants.ORIGINAL_CONTENT_IDS);
+      JsonArray copiedResourceIds = ids.getJsonArray(IndexerConstants.COPIED_RESOURCE_IDS);
 
       if (questionIds != null && questionIds.size() > 0) {
         Iterator<Object> iter = questionIds.iterator();
         while (iter.hasNext()) {
           String questionId = (String) iter.next();
-          questionIndexHandler.indexDocument(questionId);
+          questionAndCopiedResourceIndexHandler.indexDocument(questionId);
           LOGGER.debug("CEH->handleCopy : Re-indexed question id : " + questionId);
+        }
+      }
+      
+      if (copiedResourceIds != null && copiedResourceIds.size() > 0) {
+        Iterator<Object> iter = copiedResourceIds.iterator();
+        while (iter.hasNext()) {
+          String copiedResourceId = (String) iter.next();
+          questionAndCopiedResourceIndexHandler.indexDocument(copiedResourceId);
+          LOGGER.debug("CEH->handleCopy : Re-indexed copiedResource id : " + copiedResourceId);
         }
       }
 
@@ -143,7 +163,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         while (iter.hasNext()) {
           String resourceId = (String) iter.next();
           resourceIndexHandler.increaseCount(resourceId, ScoreConstants.USED_IN_COLLECTION_COUNT);
-          LOGGER.debug("CEH->handleCopy : Incremented used in collection count id : " + resourceId);
+          LOGGER.debug("CEH->handleCopy : Incremented used in collection count of original resource id : " + resourceId);
         }
       }
     } catch (Exception e) {

@@ -23,18 +23,18 @@ import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import io.vertx.core.json.JsonObject;
 
-public class QuestionIndexHandler extends BaseIndexHandler implements IndexHandler {
+public class QuestionAndCopiedResourceIndexHandler extends BaseIndexHandler implements IndexHandler {
 
   private final String indexName;
 
-  public QuestionIndexHandler() {
+  public QuestionAndCopiedResourceIndexHandler() {
     this.indexName = getIndexName();
   }
 
   @Override
   public void indexDocument(String resourceId) throws Exception {
     try {
-      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_QUESTION);
+      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_QUESTION_OR_COPIED_RESOURCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNull(result, ErrorMsgConstants.QUESTION_DATA_NULL);
       //LOGGER.debug("QIH->indexDocument: getIndexDataContent() returned:" + result);
@@ -55,7 +55,7 @@ public class QuestionIndexHandler extends BaseIndexHandler implements IndexHandl
   public void deleteIndexedDocument(String resourceId) throws Exception {
     try {
       LOGGER.debug("QIH->deleteIndexedDocument : Processing delete question for id : " + resourceId);
-      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_QUESTION);
+      ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_COPIED_RESOURCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.QUESTION_NOT_DELETED);
       IndexService.instance().deleteDocuments(resourceId, indexName, getIndexType());
@@ -170,6 +170,13 @@ public class QuestionIndexHandler extends BaseIndexHandler implements IndexHandl
       LOGGER.error("QIH->updateUserDocuments : Re-index user questions failed for user : " + userId + " Exception : " + ex);
       throw new Exception(ex);
     }
+    try {
+      LOGGER.debug("QIH->updateUserDocuments : Processing update user copied resources  : " + userId);
+      indexUserCopiedResources(userId);
+    } catch (Exception ex) {
+      LOGGER.error("QIH->updateUserDocuments : Re-index user copied resourcesfailed for user : " + userId + " Exception : " + ex);
+      throw new Exception(ex);
+    }
 
   }
   
@@ -180,6 +187,16 @@ public class QuestionIndexHandler extends BaseIndexHandler implements IndexHandl
       IndexService.instance().bulkIndexDocuments(questionResult.getJsonArray(IndexerConstants.QUESTIONS), getIndexType(), getIndexName());
     } else {
       LOGGER.debug("QIH->indexUserQuestions : DB returned 0 questions,  user Id  : " + userId);
+    }
+  }
+  
+  private void indexUserCopiedResources(String userId) {
+    ProcessorContext questionContext = new ProcessorContext(userId, ExecuteOperationConstants.GET_USER_COPIED_RESOURCES);
+    JsonObject result = RepoBuilder.buildIndexerRepo(questionContext).getIndexDataContent();
+    if(result != null && result.getJsonArray(IndexerConstants.COPIED_RESOURCES) != null && result.getJsonArray(IndexerConstants.COPIED_RESOURCES).size() > 0){
+      IndexService.instance().bulkIndexDocuments(result.getJsonArray(IndexerConstants.COPIED_RESOURCES), getIndexType(), getIndexName());
+    } else {
+      LOGGER.debug("QIH->indexUserCopiedResources : DB returned 0 copied resources,  user Id  : " + userId);
     }
   }
 

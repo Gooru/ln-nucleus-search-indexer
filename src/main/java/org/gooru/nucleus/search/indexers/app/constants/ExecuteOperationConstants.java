@@ -4,7 +4,7 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_RESOURCE = "get_resource";
 
-  public static final String GET_QUESTION = "get_question";
+  public static final String GET_QUESTION_OR_COPIED_RESOURCE = "get_question_or_copied_resource";
 
   public static final String GET_CONTENT_BY_TYPE = "get_content_by_type";
 
@@ -34,7 +34,9 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_USER_QUESTIONS = "get_user_questions";
 
-  public static final String GET_DELETED_QUESTION = "get_deleted_question";
+  public static final String GET_DELETED_QUESTION_OR_COPIED_RESOURCE = "get_deleted_question";
+  
+  public static final String GET_USER_COPIED_RESOURCES = "get_user_copied_resources";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

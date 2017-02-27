@@ -25,7 +25,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRep
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepositoryImpl;
-import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +49,9 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
 
   private static void registerESIndexSrcBuilders() {
-    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionAndCopiedResourceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RESOURCE.getType(), new ResourceEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.COPIED_RESOURCE.getType(), new QuestionAndCopiedResourceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COURSE.getType(), new CourseEsIndexSrcBuilder<>());
   }

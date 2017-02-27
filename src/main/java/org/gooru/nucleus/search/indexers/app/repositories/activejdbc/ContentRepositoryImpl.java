@@ -25,8 +25,8 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   private static final String UUID_TYPE = "uuid";
 
   @Override
-  public JsonObject getResource(String contentID) {
-    LOGGER.debug("ContentRepositoryImpl:getQuestion: " + contentID);
+  public JsonObject getQuestionOrCopiedResource(String contentID) {
+    LOGGER.debug("ContentRepositoryImpl:getQuestionOrCopiedResource: " + contentID);
 
     Content result = Content.findById(getPGObject("id", UUID_TYPE, contentID));
    // LOGGER.debug("ContentRepositoryImpl:getResource:findById: " + result);
@@ -119,18 +119,22 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     JsonObject result = new JsonObject();
     JsonArray questionIds = new JsonArray();
     JsonArray originalContentIds = new JsonArray();
+    JsonArray copiedResourceIds = new JsonArray();
 
     if (contents.size() > 0) {
       for (Content content : contents) {
-        if (content.get(Content.CONTENT_FORMAT) != null && content.get(Content.CONTENT_FORMAT).equals(Content.CONTENT_FORMAT_QUESTION) &&
-          content.get(EntityAttributeConstants.ID) != null) {
-          questionIds.add(Convert.toString(content.get(EntityAttributeConstants.ID)));
+        if (content.get(Content.CONTENT_FORMAT) != null && content.get(EntityAttributeConstants.ID) != null) {
+          if (content.get(Content.CONTENT_FORMAT).equals(Content.CONTENT_FORMAT_QUESTION))
+            questionIds.add(Convert.toString(content.get(EntityAttributeConstants.ID)));
+          if (content.get(Content.CONTENT_FORMAT).equals(Content.CONTENT_FORMAT_RESOURCE))
+            copiedResourceIds.add(Convert.toString(content.get(EntityAttributeConstants.ID)));
         } else if (content.get(EntityAttributeConstants.ORIGINAL_CONTENT_ID) != null) {
           originalContentIds.add(Convert.toString(content.get(EntityAttributeConstants.ORIGINAL_CONTENT_ID)));
         }
       }
     }
     result.put(IndexerConstants.ORIGINAL_CONTENT_IDS, originalContentIds);
+    result.put(IndexerConstants.COPIED_RESOURCE_IDS, copiedResourceIds);
     result.put(IndexerConstants.QUESTION_IDS, questionIds);
     return result;
   }
@@ -166,16 +170,31 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   @Override
   public JsonObject getUserQuestions(String userId) {
     JsonArray contentArray = new JsonArray();
-    List<Content> contents = Content.where(Content.FETCH_USER_QUESTIONS, Content.CONTENT_FORMAT_QUESTION, userId, userId, false);
+    List<Content> contents = Content.where(Content.FETCH_USER_CONTENTS, Content.CONTENT_FORMAT_QUESTION, userId, userId, false);
     if(contents != null){
       if (contents.size() < 1) {
-        LOGGER.warn("User questions not present in DB for user id: {} not present in DB", userId);
+        LOGGER.warn("User questions not present in DB for user id: {}", userId);
       }
       for(Content content : contents){
         contentArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("questions", contentArray);
+  }
+  
+  @Override
+  public JsonObject getUserCopiedResources(String userId) {
+    JsonArray contentArray = new JsonArray();
+    List<Content> contents = Content.where(Content.FETCH_USER_CONTENTS, Content.CONTENT_FORMAT_RESOURCE, userId, userId, false);
+    if(contents != null){
+      if (contents.size() < 1) {
+        LOGGER.warn("User copied resources not present in DB for user id: {}", userId);
+      }
+      for(Content content : contents){
+        contentArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
+      }
+    }
+    return new JsonObject().put(IndexerConstants.COPIED_RESOURCES, contentArray);
   }
  
 }

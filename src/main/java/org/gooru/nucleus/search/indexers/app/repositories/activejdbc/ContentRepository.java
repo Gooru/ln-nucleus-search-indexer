@@ -11,7 +11,7 @@ public interface ContentRepository {
     return new ContentRepositoryImpl();
   }
 
-  JsonObject getResource(String contentID);
+  JsonObject getQuestionOrCopiedResource(String contentID);
 
   JsonObject getQuestion(String contentID);
 
@@ -24,5 +24,7 @@ public interface ContentRepository {
   JsonObject getDeletedContent(String contentId);
   
   JsonObject getUserQuestions(String userId);
+
+  JsonObject getUserCopiedResources(String userId);
 
 }
