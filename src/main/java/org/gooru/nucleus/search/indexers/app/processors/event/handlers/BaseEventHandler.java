@@ -89,8 +89,8 @@ public class BaseEventHandler {
     return IndexHandlerBuilder.buildResourceIndexHandler();
   }
   
-  protected IndexHandler getQuestionAndCopiedResourceIndexHandler() {
-    return IndexHandlerBuilder.buildQuestionAndCopiedResourceIndexHandler();
+  protected IndexHandler getQuestionIndexHandler() {
+    return IndexHandlerBuilder.buildQuestionIndexHandler();
   }
 
   protected IndexHandler getCollectionIndexHandler() {

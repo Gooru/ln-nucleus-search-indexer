@@ -54,7 +54,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     String indexName = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COLLECTION);
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || type.equalsIgnoreCase(IndexerConstants.TYPE_COPIED_RESOURCE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COURSE);
@@ -67,7 +67,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     String indexType = null;
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       indexType = IndexerConstants.TYPE_COLLECTION;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE) || type.equalsIgnoreCase(IndexerConstants.TYPE_COPIED_RESOURCE)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       indexType = IndexerConstants.TYPE_RESOURCE;
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexType = IndexerConstants.TYPE_COURSE;
@@ -81,8 +81,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return ExecuteOperationConstants.GET_COLLECTION;
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       return ExecuteOperationConstants.GET_RESOURCE;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_COPIED_RESOURCE)) {
-      return ExecuteOperationConstants.GET_QUESTION_OR_COPIED_RESOURCE;
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION)) {
+      return ExecuteOperationConstants.GET_QUESTION;
     }else if(type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)){
       return ExecuteOperationConstants.GET_COURSE;
     }
@@ -124,9 +124,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     switch (type) {
     case IndexerConstants.TYPE_RESOURCE:
       ResourceIndexService.instance().deleteIndexedResource(key, type);
-      break;
-    case IndexerConstants.TYPE_COPIED_RESOURCE:
-      ResourceIndexService.instance().deleteIndexedCopiedResource(key, type);
       break;
     case IndexerConstants.TYPE_QUESTION:
       ResourceIndexService.instance().deleteIndexedQuestion(key, type);

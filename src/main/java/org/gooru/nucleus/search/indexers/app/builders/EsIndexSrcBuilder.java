@@ -50,9 +50,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
 
   private static void registerESIndexSrcBuilders() {
-    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionAndCopiedResourceEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RESOURCE.getType(), new ResourceEsIndexSrcBuilder<>());
-    esIndexSrcBuilders.put(IndexType.COPIED_RESOURCE.getType(), new QuestionAndCopiedResourceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COURSE.getType(), new CourseEsIndexSrcBuilder<>());
   }

@@ -30,24 +30,10 @@ public class ResourceIndexServiceImpl implements ResourceIndexService {
   }
   
   @Override
-  public void deleteIndexedCopiedResource(String key, String type) throws Exception {
-    try {
-      LOGGER.debug("RISI->deleteIndexedCopiedResource : Processing delete copied resource for id : " + key);
-      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_COPIED_RESOURCE);
-      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-      ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.COPIED_RESOURCE_NOT_DELETED);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
-    } catch (Exception ex) {
-      LOGGER.error("RISI->deleteIndexedCopiedResource : Delete resource from index failed for copied resource id : " + key + " Exception : " + ex);
-      throw new Exception(ex);
-    }
-  }
-  
-  @Override
   public void deleteIndexedQuestion(String key, String type) throws Exception {
     try {
       LOGGER.debug("RISI->deleteIndexedQuestion : Processing delete question for id : " + key);
-      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_COPIED_RESOURCE);
+      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.QUESTION_NOT_DELETED);
       IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));

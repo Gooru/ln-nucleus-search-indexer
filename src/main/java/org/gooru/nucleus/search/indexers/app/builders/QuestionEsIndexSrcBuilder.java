@@ -1,6 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +26,7 @@ import io.vertx.core.json.JsonObject;
 /**
  * @author SearchTeam
  */
-public class QuestionAndCopiedResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio> extends ContentEsIndexSrcBuilder<S, D> {
+public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio> extends ContentEsIndexSrcBuilder<S, D> {
 
   @SuppressWarnings("rawtypes")
   @Override

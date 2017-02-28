@@ -17,7 +17,7 @@ public class UserEventsHandler extends BaseEventHandler implements IndexEventHan
   public UserEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
     this.resourceIndexHandler = getResourceIndexHandler();
-    this.questionIndexHandler = getQuestionAndCopiedResourceIndexHandler();
+    this.questionIndexHandler = getQuestionIndexHandler();
     this.collectionIndexHandler = getCollectionIndexHandler();
   }
 

@@ -4,7 +4,6 @@ public enum IndexType {
 
   COLLECTION("collection"),
   QUESTION("question"),
-  COPIED_RESOURCE("copiedresource"),
   RESOURCE("resource"),
   USER("user"),
   SEARCH_QUERY("searchquery"),

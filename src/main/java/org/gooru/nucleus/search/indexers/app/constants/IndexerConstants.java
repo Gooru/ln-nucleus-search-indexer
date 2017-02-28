@@ -16,9 +16,7 @@ public final class IndexerConstants {
   
   public static final String TYPE_CONTENT_INFO = "contentinfo";
   
-  public static final String TYPE_COPIED_RESOURCE = "copiedresource";
-  
-  public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question|copiedresource");
+  public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
 
   public static final String COLLECTION_IDS = "collection_ids";
 
@@ -85,7 +83,9 @@ public final class IndexerConstants {
   public static final String PARENT_TITLE = "parentTitle";
     
   public static final String STANDARD_DESC = "standardDesc";
-    
+  
+  public static final String INTERNAL_CODE = "internalCode";
+  
   public static final String LEARNING_TARGET = "learningTarget";
   
   public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
@@ -117,9 +117,4 @@ public final class IndexerConstants {
   public static final String DISPLAY_CODE_ID = "displayCodeId";
 
   public static final String INTERNAL_CODE_ID = "internalCodeId";
-
-  public static final String COPIED_RESOURCE_IDS = "copied_resource_ids";
-
-  public static final String COPIED_RESOURCES = "copied_resources";
-
 }
