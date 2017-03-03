@@ -5,6 +5,7 @@ public enum ContentFormat {
   RESOURCE("resource"),
   COLLECTION("collection"),
   ASSESSMENT("assessment"),
+  EXTERNAL_ASSESSMENT("assessment-external"),
   QUESTION("question"),
   COURSE("course"),
   UNIT("unit");

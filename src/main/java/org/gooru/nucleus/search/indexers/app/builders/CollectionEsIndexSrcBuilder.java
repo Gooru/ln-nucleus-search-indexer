@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -164,12 +165,18 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setResourceCount(resourceCount);
       statisticsEo.setContentCount(questionCount + resourceCount);
 
-      //Set Editorial tag
+      // Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
-      JsonObject editorialTags = null; 
-      if (editorialStr != null && !editorialStr.isEmpty()) editorialTags = new JsonObject(editorialStr);
-      statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : 0);
-      statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : 0);
+      JsonObject editorialTags = null;
+      if (StringUtils.isNotBlank(editorialStr) && !editorialStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) editorialTags = new JsonObject(editorialStr);
+      if (editorialTags != null) {
+        if (editorialTags.containsKey(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR)
+                && editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) != null)
+          statisticsEo.setContentQualityIndicator(editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR));
+        if (editorialTags.containsKey(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR)
+                && editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) != null)
+          statisticsEo.setPublisherQualityIndicator(editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR));
+      }
       
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       JsonObject taxonomyObject = null;
