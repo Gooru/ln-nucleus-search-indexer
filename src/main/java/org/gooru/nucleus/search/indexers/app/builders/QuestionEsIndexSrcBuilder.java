@@ -52,8 +52,8 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       }
       
       // Set Metadata
-      JsonObject metadata = null;
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
+      JsonObject metadata = null;
       if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
       setMetaData(metadata, contentEo);
       
@@ -143,10 +143,16 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       
       //Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
-      JsonObject editorialTags = null; 
-      if (editorialStr != null && !editorialStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) editorialTags = new JsonObject(editorialStr);
-      statisticsEo.setContentQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) : null);
-      statisticsEo.setPublisherQualityIndicator(editorialTags != null ? editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) : null);
+      JsonObject editorialTags = null;
+      if (StringUtils.isNotBlank(editorialStr) && !editorialStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) editorialTags = new JsonObject(editorialStr);
+      if (editorialTags != null) {
+        if (editorialTags.containsKey(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR)
+                && editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR) != null)
+          statisticsEo.setContentQualityIndicator(editorialTags.getInteger(EntityAttributeConstants.CONTENT_QUALITY_INDICATOR));
+        if (editorialTags.containsKey(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR)
+                && editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) != null)
+          statisticsEo.setPublisherQualityIndicator(editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR));
+      }
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       statisticsEo.setViewsCount(viewsCount);
