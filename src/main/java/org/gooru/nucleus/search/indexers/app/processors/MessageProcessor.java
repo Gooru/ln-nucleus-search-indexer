@@ -40,7 +40,7 @@ class MessageProcessor implements Processor {
         
         if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
           processResourceEvents();
-        } else if (contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name()) || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name())) {
+        } else if (contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name()) || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.EXTERNAL_ASSESSMENT.name())) {
           processCollectionEvents();
         } else if(eventName.equalsIgnoreCase(EventsConstants.EVT_USER_UPDATE) || eventName.equalsIgnoreCase(EventsConstants.EVT_USER_CREATE)){
           processUserEvents();
