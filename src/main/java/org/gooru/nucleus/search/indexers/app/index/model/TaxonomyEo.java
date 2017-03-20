@@ -126,12 +126,12 @@ public class TaxonomyEo extends JsonObject {
     taxonomy = JsonUtil.set(taxonomy, "leafDisplayCodes", new JsonArray(leafDisplayCodes.stream().distinct().collect(Collectors.toList())));
   }
   
-  public JsonArray getAllEquivalentCompetencies() {
-    return taxonomy.getJsonArray("allEquivalentCompetencies", null);
+  public JsonArray getEquivalentCompetencies() {
+    return taxonomy.getJsonArray("equivalentCompetencies", null);
   }
 
-  public void setAllEquivalentCompetencies(JsonArray allEquivalentCompetencies) {
-    taxonomy = JsonUtil.set(taxonomy, "allEquivalentCompetencies", new JsonArray(allEquivalentCompetencies.stream().distinct().collect(Collectors.toList())));
+  public void setEquivalentCompetencies(JsonArray equivalentCompetencies) {
+    taxonomy = JsonUtil.set(taxonomy, "equivalentCompetencies", new JsonArray(equivalentCompetencies.stream().distinct().collect(Collectors.toList())));
   }
   
   public JsonArray getAllEquivalentInternalCodes() {

@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
 
       // Set frame breaker value
       Integer frameBreaker = (source.getBoolean(EntityAttributeConstants.IS_I_FRAME_BREAKER, false)) ? 1 : 0;
-      if (displayGuideString != null) displayGuide = new JsonObject(displayGuideString);
+      if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
       displayGuide.put(EntityAttributeConstants.IS_FRAME_BREAKER, frameBreaker);
 
       // Set is Broken value

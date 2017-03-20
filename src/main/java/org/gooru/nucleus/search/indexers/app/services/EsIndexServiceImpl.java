@@ -58,6 +58,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COURSE);
+    }else if (type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
+      indexName = IndexNameHolder.getIndexName(EsIndex.CROSSWALK);
     }
 
     return indexName;
@@ -71,20 +73,24 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       indexType = IndexerConstants.TYPE_RESOURCE;
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexType = IndexerConstants.TYPE_COURSE;
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
+      indexType = IndexerConstants.TYPE_CROSSWALK;
     }
     return indexType;
   }
 
 
-  private static String getExectueOperation(String type) {
+  private static String getExecuteOperation(String type) {
     if (type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
       return ExecuteOperationConstants.GET_COLLECTION;
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
       return ExecuteOperationConstants.GET_RESOURCE;
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION)) {
       return ExecuteOperationConstants.GET_QUESTION;
-    }else if(type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)){
+    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)){
       return ExecuteOperationConstants.GET_COURSE;
+    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)){
+      return ExecuteOperationConstants.GET_GDT_MAPPING;
     }
     return null;
 
@@ -235,17 +241,18 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       @Override
       public void execute(String indexableId) throws Exception {
         try {
+          
           // Fetch data from DB for given content Id
-          ProcessorContext context = new ProcessorContext(indexableId, getExectueOperation(typeName));
+          ProcessorContext context = new ProcessorContext(indexableId, getExecuteOperation(typeName));
           JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
           ValidationUtil.rejectIfNotFound(result, "Invalid format type or DB returned null data for id " + indexableId);
           // Get statistics and extracted text data from backup index
           Map<String, Object> contentInfoAsMap =
                   getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-          if(!typeName.equalsIgnoreCase(IndexerConstants.COURSE)){
+          if (!typeName.equalsIgnoreCase(IndexerConstants.TYPE_COURSE) && !typeName.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
             setExistingStatisticsData(result, contentInfoAsMap, typeName);
             result.put("isBuildIndex", true);
-          } else if (typeName.equalsIgnoreCase(IndexerConstants.COURSE)) {
+          } else if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
             CourseIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
           }
           if (contentInfoAsMap != null) {
@@ -254,7 +261,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
               setResourceInfoData(result, resourceInfoAsMap, typeName);
             }
           }
-        //  LOGGER.debug("index source data : " + result.toString());
+
+          // LOGGER.debug("index source data : " + result.toString());
           getClient().prepareIndex(indexName, getIndexTypeByType(typeName), indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(result)).execute()
                   .actionGet();
           LOGGER.debug("EISI->indexDocument : Indexed " + typeName + " id  : " + indexableId);
@@ -513,7 +521,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   }
 
   private JsonObject getContentFromRepo(String id, String contentType) throws Exception {
-    ProcessorContext context = new ProcessorContext(id, getExectueOperation(contentType));
+    ProcessorContext context = new ProcessorContext(id, getExecuteOperation(contentType));
     JsonObject inputJson = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
     ValidationUtil.rejectIfNotFound(inputJson, ErrorMsgConstants.ORIGINAL_RESOURCE_DATA_NULL);
     LOGGER.debug("EISI->indexDocument: getIndexDataContent() returned:" + inputJson);

@@ -5,7 +5,10 @@ import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
+import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,5 +100,23 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       closeDBConn(db);
     }
     return equivalentCodes;
+  }
+  
+  @Override
+  public JsonObject getGdtMapping(String targetCodeId) {
+
+    LOGGER.debug("TaxonomyRepositoryImpl : getGdtMapping : " + targetCodeId);
+    TaxonomyCodeMapping result = null;
+    LazyList<TaxonomyCodeMapping> list = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
+
+    if (list != null && list.size() > 0) {
+      result = list.get(0);
+    }
+
+    JsonObject returnValue = null;
+    if (result != null) {
+      returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+    }
+    return returnValue;
   }
 }

@@ -36,6 +36,8 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_DELETED_QUESTION = "get_deleted_question";
 
+  public static final String GET_GDT_MAPPING = "get_gdt_mapping";
+
   private ExecuteOperationConstants() {
     throw new AssertionError();
   }

@@ -184,6 +184,10 @@
                "copyrightOwnerListSnowball":{
                   "type":"string",
                   "analyzer":"snowball"
+               },
+               "copyrightOwnerListStandard":{
+                  "type":"string",
+                  "analyzer":"standard"
                }
             },
             "include_in_all":false
@@ -601,6 +605,45 @@
                      "customSpellCheckerSuggest"
                   ],
                   "include_in_all":false
+               },
+               "equivalentCompetencies":{
+                  "properties":{
+                     "id":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "code":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "title":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "parentTitle":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "frameworkCode":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "leafInternalCodeId":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "leafDisplayCode":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     }
+                  }
                },
                "taxonomyDataSet":{
                   "type":"string",

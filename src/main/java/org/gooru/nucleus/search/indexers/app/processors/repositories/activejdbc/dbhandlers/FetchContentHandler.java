@@ -14,6 +14,7 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionR
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +96,11 @@ public class FetchContentHandler implements DBHandler {
         case ExecuteOperationConstants.GET_DELETED_COURSE:
           result = CourseRepository.instance().getDeletedCourse(context.getId());
           break;
-
+          
+        case ExecuteOperationConstants.GET_GDT_MAPPING:
+          result = TaxonomyRepository.instance().getGdtMapping(context.getId());
+          break;
+          
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
           throw new InvalidRequestException();

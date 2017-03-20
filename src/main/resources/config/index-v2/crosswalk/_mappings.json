@@ -1,0 +1,29 @@
+{
+   "crosswalk":{
+      "properties":{
+         "indexType":{
+            "type":"string"
+         },
+         "indexUpdatedDate":{
+            "type":"date",
+            "format":"dateOptionalTime",
+            "include_in_all":false
+         },
+         "id":{
+            "type":"string",
+            "index":"not_analyzed",
+            "include_in_all":false
+         },
+         "displayCode":{
+            "type":"string",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
+         "gdtCode":{
+            "type":"string",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         }
+      }
+   }
+}

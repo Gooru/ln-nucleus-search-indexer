@@ -117,4 +117,12 @@ public final class IndexerConstants {
   public static final String DISPLAY_CODE_ID = "displayCodeId";
 
   public static final String INTERNAL_CODE_ID = "internalCodeId";
+  
+  public static final String LEAF_INTERNAL_CODE_ID = "leafInternalCodeId";
+
+  public static final String LEAF_DISPLAY_CODE = "leafDisplayCode";
+  
+  public static final String TYPE_CROSSWALK = "crosswalk";
+
+
 }
