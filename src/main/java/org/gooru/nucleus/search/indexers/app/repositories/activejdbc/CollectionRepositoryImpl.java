@@ -150,4 +150,55 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     return new JsonObject().put("collections", collectionArray);
   }
 
+  @Override
+  public LazyList<Collection> getCollectionsByCourseId(String courseId) {
+    LazyList<Collection> collections = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_COURSE, courseId, false);
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for lesson: {} not present in DB", courseId);
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collections for lesson : {} error : {}", courseId, e);
+    }
+    closeDBConn(db);
+    return collections;
+  }
+  
+  @Override
+  public LazyList<Collection> getCollectionsByLessonId(String lessonId) {
+    LazyList<Collection> collections = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_LESSON, lessonId, false);
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for lesson: {} not present in DB", lessonId);
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collections for lesson : {} error : {}", lessonId, e);
+    }
+    closeDBConn(db);
+    return collections;
+  }
+  
+  @Override
+  public LazyList<Collection> getCollectionsByUnitId(String unitId) {
+    LazyList<Collection> collections = null;
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+    try {
+      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_UNIT, unitId, false);
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for unit: {} not present in DB", unitId);
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collections for unit : {} error : {}", unitId, e);
+    }
+    closeDBConn(db);
+    return collections;
+  }
+
 }

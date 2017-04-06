@@ -107,6 +107,12 @@ public class IndexFields {
 	public static final String LICENSE_NAME = "name";
   public static final String RESOURCE_INFO = "resourceInfo";
   public static final String TENANT = "tenant";
-
+  public static final String COLLECTIONS = "collections";
+  public static final String UNIT_TITLES = "unitTitles";
+  public static final String UNIT_IDS = "unitIds";
+  public static final String LESSON_IDS = "lessonIds";
+  public static final String LESSON_TITLES = "lessonTitles";
+  public static final String INDEX_ID = "indexId";
+  public static final String INDEX_TYPE = "indexType";
 
 }

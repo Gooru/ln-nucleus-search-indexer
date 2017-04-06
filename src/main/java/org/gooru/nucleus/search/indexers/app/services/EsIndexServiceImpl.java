@@ -29,6 +29,7 @@ import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
+import org.gooru.nucleus.search.indexers.app.processors.exceptions.BadRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
@@ -58,8 +59,12 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.COURSE);
-    }else if (type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
       indexName = IndexNameHolder.getIndexName(EsIndex.CROSSWALK);
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_UNIT)) {
+      indexName = IndexNameHolder.getIndexName(EsIndex.UNIT);
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_LESSON)) {
+      indexName = IndexNameHolder.getIndexName(EsIndex.LESSON);
     }
 
     return indexName;
@@ -75,6 +80,10 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       indexType = IndexerConstants.TYPE_COURSE;
     } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
       indexType = IndexerConstants.TYPE_CROSSWALK;
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_UNIT)) {
+      indexType = IndexerConstants.TYPE_UNIT;
+    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_LESSON)) {
+      indexType = IndexerConstants.TYPE_LESSON;
     }
     return indexType;
   }
@@ -91,6 +100,10 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return ExecuteOperationConstants.GET_COURSE;
     } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)){
       return ExecuteOperationConstants.GET_GDT_MAPPING;
+    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_UNIT)){
+      return ExecuteOperationConstants.GET_UNIT;
+    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_LESSON)){
+      return ExecuteOperationConstants.GET_LESSON;
     }
     return null;
 
@@ -249,12 +262,27 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           // Get statistics and extracted text data from backup index
           Map<String, Object> contentInfoAsMap =
                   getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
-          if (!typeName.equalsIgnoreCase(IndexerConstants.TYPE_COURSE) && !typeName.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
-            setExistingStatisticsData(result, contentInfoAsMap, typeName);
-            result.put("isBuildIndex", true);
-          } else if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
-            CourseIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
+          switch(typeName) {
+            case IndexerConstants.TYPE_RESOURCE :
+            case IndexerConstants.TYPE_QUESTION :
+            case IndexerConstants.TYPE_COLLECTION :
+            case IndexerConstants.TYPE_ASSESSMENT :
+              setExistingStatisticsData(result, contentInfoAsMap, typeName);
+              result.put("isBuildIndex", true);
+              break;
+            case IndexerConstants.TYPE_COURSE : 
+              CourseIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
+              break;
+            case IndexerConstants.TYPE_UNIT :
+              UnitIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
+              break;
+            case IndexerConstants.TYPE_LESSON:
+              LessonIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
+              break;
+            default:
+              throw new BadRequestException("Invalid format type! Please pass valid format to index!");
           }
+
           if (contentInfoAsMap != null) {
             if (BaseUtil.isNotNull(contentInfoAsMap, IndexerConstants.RESOURCE_INFO)) {
               Map<String, Object> resourceInfoAsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.RESOURCE_INFO);

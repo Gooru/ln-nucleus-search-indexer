@@ -13,4 +13,8 @@ public interface CourseRepository {
   
   JsonObject getDeletedCourse(String courseId);
   
+  JsonObject getCourseById(String courseId);
+  
+  Boolean isFeatured(String courseId);
+  
 }

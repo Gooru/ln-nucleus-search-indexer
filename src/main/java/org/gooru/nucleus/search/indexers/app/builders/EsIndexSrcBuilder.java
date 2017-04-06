@@ -19,10 +19,16 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionR
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
@@ -55,6 +61,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.COLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COURSE.getType(), new CourseEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.CROSSWALK.getType(), new CrosswalkEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.UNIT.getType(), new UnitEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.LESSON.getType(), new LessonEsIndexSrcBuilder<>());
   }
 
   public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {
@@ -90,6 +98,18 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 
   protected TaxonomyRepositoryImpl getTaxonomyRepo() {
     return (TaxonomyRepositoryImpl) TaxonomyRepository.instance();
+  }
+  
+  protected CourseRepositoryImpl getCourseRepo() {
+    return (CourseRepositoryImpl) CourseRepository.instance();
+  }
+  
+  protected UnitRepositoryImpl getUnitRepo() {
+    return (UnitRepositoryImpl) UnitRepository.instance();
+  }
+  
+  protected LessonRepositoryImpl getLessonRepo() {
+    return (LessonRepositoryImpl) LessonRepository.instance();
   }
 
   protected void setUser(JsonObject user, UserEo userEo) {

@@ -1,5 +1,5 @@
 {
-   "course":{
+   "lesson":{
       "properties":{
          "id":{
             "type":"string",
@@ -20,16 +20,6 @@
                }
             },
             "include_in_all":true
-         },
-         "originalCourseId":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "parentCourseId":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
          },
          "createdAt":{
             "type":"date",
@@ -237,14 +227,6 @@
          },
          "statistics":{
             "properties":{
-               "unitCount":{
-                  "type":"integer",
-                  "include_in_all":false
-               },
-               "lessonCount":{
-                  "type":"integer",
-                  "include_in_all":false
-               },
                "containingCollectionsCount":{
                   "type":"long",
                   "include_in_all":false
@@ -265,15 +247,6 @@
                   "type":"long",
                   "include_in_all":false
                },
-               "courseRemixCount":{
-                  "type":"long",
-                  "include_in_all":false
-               },
-               "collaboratorCount":{
-                  "type":"integer",
-                  "index":"not_analyzed",
-                  "include_in_all":false
-               },
                "isFeatured":{
                   "type":"boolean",
                   "include_in_all":false
@@ -284,71 +257,8 @@
                }
             }
          },
-         "license":{
-         	"properties":{
-         		"code":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"definition":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"icon":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"url":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"name":{
-         			"type" : "string",
-         			"analyzer" : "keyword_lowercase",
-         			"include_in_all" : false
-         		}
-         	}
-         },
-         "visibleOnProfile":{
-            "type":"boolean",
-            "include_in_all":false
-         },
-         "modifierId":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "subjectBucket":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
          "sequenceId":{
             "type":"integer",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "subjectSequence":{
-            "type":"integer",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "description":{
-            "type":"string",
-            "analyzer":"gooru_kstem",
-            "include_in_all":true
-         },
-         "thumbnail":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "publishStatus":{
-            "type":"string",
             "index":"not_analyzed",
             "include_in_all":false
          },
@@ -536,25 +446,45 @@
                }
             }
          },
-         "unitTitles":{
-            "type":"string",
-            "analyzer":"snowball",
-            "include_in_all":false
+         "course":{
+            "properties":{
+               "id":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "title":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "titleSnowball":{
+                        "type":"string",
+                        "analyzer":"snowball"
+                     }
+                  },
+                  "include_in_all":false
+               }
+            }
          },
-         "unitIds":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
-         },
-         "lessonTitles":{
-            "type":"string",
-            "analyzer":"snowball",
-            "include_in_all":false
-         },
-         "lessonIds":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
+         "unit":{
+            "properties":{
+               "id":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "title":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "titleSnowball":{
+                        "type":"string",
+                        "analyzer":"snowball"
+                     }
+                  },
+                  "include_in_all":false
+               }
+            }
          },
          "collectionTitles":{
             "type":"string",

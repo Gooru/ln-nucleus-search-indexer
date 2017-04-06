@@ -124,5 +124,24 @@ public final class IndexerConstants {
   
   public static final String TYPE_CROSSWALK = "crosswalk";
 
+  public static final String UNIT = "unit";
+
+  public static final String LESSON = "lesson";
+
+  public static final String COLLECTION = "collection";
+
+  public static final String ASSESSMENT = "assessment";
+
+  public static final String ASSESSMENT_EXTERNAL = "assessment-external";
+
+  public static final String TYPE_UNIT = "unit";
+  
+  public static final String TYPE_LESSON = "lesson";
+  
+  public static final Pattern MATCH_CUL_CW = Pattern.compile("course|unit|lesson|crosswalk");
+
+  public static final String PUBLISHED = "published";
+
+  public static final String FEATURED = "featured";
 
 }

@@ -38,6 +38,10 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_GDT_MAPPING = "get_gdt_mapping";
 
+  public static final String GET_UNIT = "get_unit";
+
+  public static final String GET_LESSON = "get_lesson";
+
   private ExecuteOperationConstants() {
     throw new AssertionError();
   }

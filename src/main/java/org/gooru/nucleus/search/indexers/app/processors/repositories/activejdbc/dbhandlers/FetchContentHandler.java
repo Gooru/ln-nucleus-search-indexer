@@ -13,8 +13,10 @@ import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResul
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +101,14 @@ public class FetchContentHandler implements DBHandler {
           
         case ExecuteOperationConstants.GET_GDT_MAPPING:
           result = TaxonomyRepository.instance().getGdtMapping(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_UNIT:
+          result = UnitRepository.instance().getUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_LESSON:
+          result = LessonRepository.instance().getLesson(context.getId());
           break;
           
         default:

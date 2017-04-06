@@ -13,7 +13,9 @@ public enum IndexType {
   PUBLISHER("publisher"),
   AGGREGATOR("aggregator"),
   COURSE("course"),
-  CROSSWALK("crosswalk");
+  CROSSWALK("crosswalk"),
+  UNIT("unit"),
+  LESSON("lesson");
 
   final String type;
 

@@ -1,0 +1,22 @@
+{
+    "index": {
+        "analysis": {
+            "analyzer": {
+             	"keyword_lowercase":{
+             	  	"type" : "custom",
+                	"tokenizer": "keyword",
+                	"filter": ["lowercase","trim"]
+                },
+                "gooru_kstem": {
+					"type": "custom",
+					"tokenizer": "standard",
+					"filter": [
+					"standard",
+					"lowercase",
+					"stop",
+					"kstem"]
+				}
+            }
+        }
+    }
+}

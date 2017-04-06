@@ -10,18 +10,21 @@ import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.index.model.CollectionContentEo;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseEio;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseStatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomySetEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
-import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
+import org.javalite.activejdbc.LazyList;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> extends EsIndexSrcBuilder<S, D> {
-  private static final String PUBLISHED = "published";
 
   @SuppressWarnings("unchecked")
   @Override
@@ -40,6 +43,8 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       String id = source.getString(EntityAttributeConstants.ID);
 
       courseEio.setId(id);
+      courseEio.setIndexId(id);
+      courseEio.setIndexType(getName());
       courseEio.setTitle(source.getString(EntityAttributeConstants.TITLE));
       courseEio.setOriginalCourseId(source.getString(EntityAttributeConstants.ORIGINAL_COURSE_ID, null));
       courseEio.setParentCourseId(source.getString(EntityAttributeConstants.PARENT_COURSE_ID, null));
@@ -56,7 +61,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       courseEio.setPublishStatus(publishStatus);
       
       int isFeatured = 0;
-      if(publishStatus.equalsIgnoreCase(PUBLISHED)){
+      if(publishStatus.equalsIgnoreCase(IndexerConstants.PUBLISHED)){
         isFeatured = 1;
       }
       courseEio.setIsFeatured(isFeatured);
@@ -180,14 +185,6 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
           courseEio.setOwner(ownerEo.getUser());
         }
       }
-
-      // Set statistics data 
-      Integer unitCount = CourseRepository.instance().getUnitCount(id);
-      CourseStatisticsEo statistics = new CourseStatisticsEo();
-      statistics.setUnitCount(unitCount);
-      statistics.setViewsCount(source.getLong(IndexFields.VIEWS_COUNT, 0L));
-      statistics.setCourseRemixCount(source.getInteger(IndexFields.COURSE_REMIXCOUNT, 0));
-      courseEio.setStatistics(statistics);
       
       // Set license
       Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
@@ -215,7 +212,73 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       tenant.put(IndexerConstants.TENANT_ID, tenantId);
       tenant.put(IndexerConstants.TENANT_ROOT_ID, tenantRoot);
       courseEio.setTenant(tenant);
-
+      
+      //Set Unit Details
+      LazyList<Unit> mappedUnits = getUnitRepo().getUnitByCourseId(courseEio.getId());
+      if (mappedUnits != null && !mappedUnits.isEmpty()) {
+        JsonArray unitIds = new JsonArray();
+        JsonArray unitTitles = new JsonArray();
+        mappedUnits.forEach(unit -> {
+          unitIds.add(unit.getString(EntityAttributeConstants.UNIT_ID));
+          unitTitles.add(unit.getString(EntityAttributeConstants.TITLE));
+        });
+        courseEio.setUnitIds(unitIds);
+        courseEio.setUnitTitles(unitTitles);
+      }
+      
+      //Set Lesson Details
+      LazyList<Lesson> mappedLessons = getLessonRepo().getLessonByCourseId(courseEio.getId());
+      if (mappedLessons != null && !mappedLessons.isEmpty()) {
+        JsonArray lessonIds = new JsonArray();
+        JsonArray lessonTitles = new JsonArray();
+        mappedLessons.forEach(lesson -> {
+          lessonIds.add(lesson.getString(EntityAttributeConstants.LESSON_ID));
+          lessonTitles.add(lesson.getString(EntityAttributeConstants.TITLE));
+        });
+        courseEio.setLessonIds(lessonIds);
+        courseEio.setLessonTitles(lessonTitles);
+      }
+      
+      //Set Collection Details
+      JsonArray collectionTitles = new JsonArray();
+      JsonArray collectionContainerIds = new JsonArray();
+      JsonArray collectionIds = new JsonArray();
+      JsonArray assessmentIds = new JsonArray();
+      JsonArray externalAssessmentIds = new JsonArray();
+      JsonArray collectionContents = new JsonArray();
+      LazyList<Collection> collectionData = getCollectionRepo().getCollectionsByCourseId(id);
+      if (collectionData != null && !collectionData.isEmpty()) {
+        collectionData.forEach(collection -> {
+          String collectionId = collection.getString(EntityAttributeConstants.ID);
+          String format = collection.getString(EntityAttributeConstants.FORMAT);
+          collectionContainerIds.add(collectionId);
+          collectionTitles.add(collection.getString(EntityAttributeConstants.TITLE));
+          if (format.equalsIgnoreCase(IndexerConstants.COLLECTION)) {
+            collectionIds.add(collectionId);
+          } else if (format.equalsIgnoreCase(IndexerConstants.ASSESSMENT)) {
+            assessmentIds.add(collectionId);
+          } else if (format.equalsIgnoreCase(IndexerConstants.ASSESSMENT_EXTERNAL)) {
+            externalAssessmentIds.add(collectionId);
+          }
+          setCourseContents(collectionContents, collection);
+        });
+      }
+      if (!collectionIds.isEmpty()) courseEio.setCollectionIds(collectionContainerIds);
+      if (!collectionTitles.isEmpty()) courseEio.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
+      if (!collectionContents.isEmpty()) courseEio.setCollections(collectionContents);
+      
+      // Set statistics data 
+      CourseStatisticsEo statistics = new CourseStatisticsEo();
+      statistics.setFeatured(Boolean.valueOf(isFeatured + ""));
+      statistics.setUnitCount((courseEio.getUnitIds() != null && !courseEio.getUnitIds().isEmpty()) ? courseEio.getUnitIds().size() : 0);
+      statistics.setLessonCount((courseEio.getLessonIds() != null && !courseEio.getLessonIds().isEmpty()) ? courseEio.getLessonIds().size() : 0);
+      statistics.setContainingCollectionsCount((!collectionContainerIds.isEmpty()) ? collectionContainerIds.size() : 0);
+      statistics.setCollectionCount((!collectionIds.isEmpty()) ? collectionIds.size() : 0);
+      statistics.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0);
+      statistics.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0);
+      statistics.setViewsCount(source.getLong(IndexFields.VIEWS_COUNT, 0L));
+      statistics.setCourseRemixCount(source.getInteger(IndexFields.COURSE_REMIXCOUNT, 0));
+      courseEio.setStatistics(statistics);
     }
     catch(Exception e){
       LOGGER.error("build index source for course failed", e);
@@ -225,4 +288,15 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
     return courseEio;
   }
 
+  private void setCourseContents(JsonArray collectionContents, Collection collectionData) {
+    CollectionContentEo content = new CollectionContentEo();
+    content.setId(collectionData.getString(EntityAttributeConstants.ID));
+    content.setTitle(collectionData.getString(EntityAttributeConstants.TITLE));
+    content.setUrl(collectionData.getString(EntityAttributeConstants.URL));
+    content.setDescription(collectionData.getString(EntityAttributeConstants.LEARNING_OBJECTIVE));
+    content.setContentFormat(collectionData.getString(EntityAttributeConstants.FORMAT));
+    content.setContentSubFormat(collectionData.getString(EntityAttributeConstants.SUB_FORMAT));
+    content.setThumbnail(collectionData.getString(EntityAttributeConstants.THUMBNAIL));
+    collectionContents.add(content.getCollectionContentJson());
+  }
 }

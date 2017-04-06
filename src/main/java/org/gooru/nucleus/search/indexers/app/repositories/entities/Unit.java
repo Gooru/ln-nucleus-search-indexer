@@ -10,6 +10,15 @@ import org.javalite.activejdbc.annotations.Table;
 @Table(SchemaConstants.UNIT)
 @IdName(SchemaConstants.UNIT_ID)
 public class Unit extends Model {
-  public static final String GET_UNIT_COUNT = "course_id = ?::uuid and is_deleted = ?";
   
+  public static final String GET_UNIT_COUNT = "course_id = ?::uuid and is_deleted = ?";
+
+  public static final String GET_UNIT_QUERY = "unit_id = ?::uuid and is_deleted = ?";
+
+  public static final String FETCH_DELETED_QUERY = "unit_id = ?::uuid and is_deleted = ?";
+
+  public static final String IS_DELETED = "is_deleted";
+  
+  public static final String GET_UNIT_BY_COURSE_ID = "course_id = ?::uuid and is_deleted = ?";
+
 }

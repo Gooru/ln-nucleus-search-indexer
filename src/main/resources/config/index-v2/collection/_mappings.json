@@ -728,6 +728,10 @@
                "publisherQualityIndicator":{
                   "type":"integer",
                   "include_in_all":false
+               },
+               "isFeatured":{
+                  "type":"boolean",
+                  "include_in_all":false
                }
             }
          },

@@ -79,10 +79,14 @@ public final class EntityAttributeConstants {
   public static final String TENANT_ROOT = "tenant_root";
   public static final String TENANT_ID = "tenant_id";
 
+  public static final String LANGUAGE = "language";
+  public static final String UNIT_ID = "unit_id";
+  public static final String LESSON_ID = "lesson_id";
+
   //Index tracker constants
   public static final String GOORU_OID = "gooru_oid";
   public static final String INDEX_TYPE = "index_type";
-  public static final String LANGUAGE = "language";
+  public static final String SUB_FORMAT = "subformat";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

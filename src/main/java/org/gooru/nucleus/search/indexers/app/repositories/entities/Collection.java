@@ -28,5 +28,11 @@ public class Collection extends Model {
   public static final String FETCH_USER_COLLECTIONS = "(creator_id = ?::uuid or original_creator_id = ?::uuid or owner_id = ?::uuid) and is_deleted = ?";
   
   public static final String IS_DELETED = "is_deleted";
+  
+  public static final String GET_COLLECTION_COUNT_BY_COURSE = "course_id = ?::uuid and is_deleted = ?";
+
+  public static final String GET_COLLECTION_COUNT_BY_UNIT = "unit_id = ?::uuid and is_deleted = ?";
+
+  public static final String GET_COLLECTION_COUNT_BY_LESSON = "lesson_id = ?::uuid and is_deleted = ?";
 
 }

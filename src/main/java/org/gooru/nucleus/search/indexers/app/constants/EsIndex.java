@@ -18,7 +18,9 @@ public enum EsIndex {
   CONTENT_PROVIDER("content_provider", new String[]{"publisher", "aggregator"}),
   CONTENT_INFO("contentinfo"),
   COURSE("course"),
-  CROSSWALK("crosswalk");
+  CROSSWALK("crosswalk"),
+  UNIT("unit"),
+  LESSON("lesson");
 
   private final String name;
 
