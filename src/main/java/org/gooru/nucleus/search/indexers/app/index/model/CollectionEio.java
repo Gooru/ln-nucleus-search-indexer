@@ -139,6 +139,14 @@ public class CollectionEio implements Serializable {
   public void setContentFormat(String contentFormat) {
     collection = JsonUtil.set(collection, "contentFormat", contentFormat);
   }
+  
+  public String getContentSubFormat() {
+    return collection.getString("contentSubFormat", null);
+  }
+
+  public void setContentSubFormat(String contentSubFormat) {
+    collection = JsonUtil.set(collection, "contentSubFormat", contentSubFormat);
+  }
 
   public String getThumbnail() {
     return collection.getString("thumbnail", null);

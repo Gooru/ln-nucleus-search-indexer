@@ -255,6 +255,11 @@
             "analyzer":"keyword_lowercase",
             "include_in_all":false
          },
+         "contentSubFormat":{
+            "type":"string",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
          "thumbnail":{
             "type":"string",
             "index":"not_analyzed",

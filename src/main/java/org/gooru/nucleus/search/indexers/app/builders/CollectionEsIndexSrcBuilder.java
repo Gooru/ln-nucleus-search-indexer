@@ -51,6 +51,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       collectionEo.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
       collectionEo.setPublishStatus(source.getString(EntityAttributeConstants.PUBLISH_STATUS, null));
       collectionEo.setContentFormat(source.getString(EntityAttributeConstants.CONTENT_FORMAT, null));
+      collectionEo.setContentSubFormat(source.getString(EntityAttributeConstants.SUB_FORMAT, null));
       String thumbnail = source.getString(EntityAttributeConstants.THUMBNAIL, null);
       collectionEo.setThumbnail(thumbnail);
       String learningObjective = source.getString(EntityAttributeConstants.LEARNING_OBJECTIVE, null);
