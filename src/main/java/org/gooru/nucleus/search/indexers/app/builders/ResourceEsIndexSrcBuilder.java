@@ -60,9 +60,10 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         JsonArray audienceArray = new JsonArray(audienceList);
         if (audienceArray != null && audienceArray.size() > 0) {
           metadata.put(EntityAttributeConstants.AUDIENCE, audienceArray);
-          setMetaData(metadata, originalresourceEo);
         }
       }
+      setMetaData(metadata, originalresourceEo);
+
 
       // Set display guide values
       JsonObject displayGuide = new JsonObject();
