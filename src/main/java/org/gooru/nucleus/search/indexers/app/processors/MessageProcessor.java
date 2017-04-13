@@ -36,25 +36,32 @@ class MessageProcessor implements Processor {
         processKeywordEvents();
       } else if(eventName.equalsIgnoreCase(EventsConstants.EVT_UPDATE_VIEWS_COUNT)){
         processInsightsStatsEvents();
-      } else{
-        String contentFormat = eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
-        LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
-        LOGGER.debug("Event body Json : " + eventBody.toString());
-        
-        if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
-          processResourceEvents();
-        } else if (contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name()) || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.EXTERNAL_ASSESSMENT.name())) {
-          processCollectionEvents();
-        } else if(eventName.equalsIgnoreCase(EventsConstants.EVT_USER_UPDATE) || eventName.equalsIgnoreCase(EventsConstants.EVT_USER_CREATE)){
+      } else {
+        if (eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).containsKey(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT)) {
+          String contentFormat = eventBody.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
+          LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
+          LOGGER.debug("Event body Json : " + eventBody.toString());
+          if (contentFormat != null) {
+            if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
+              processResourceEvents();
+            } else if (contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name())
+                    || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name())
+                    || contentFormat.equalsIgnoreCase(ContentFormat.EXTERNAL_ASSESSMENT.name())) {
+              processCollectionEvents();
+            } else if (contentFormat.equalsIgnoreCase(ContentFormat.COURSE.name())) {
+              processCourseEvents();
+            } else if (contentFormat.equalsIgnoreCase(ContentFormat.UNIT.name())) {
+              processUnitEvents();
+            } else {
+              LOGGER.error("Invalid content type passed in, not able to handle. Event name : " + eventName);
+            }
+          } else {
+            LOGGER.error("Content Format is null, not able to handle. Event name : " + eventName);
+          }
+        } else if (eventName.equalsIgnoreCase(EventsConstants.EVT_USER_UPDATE) || eventName.equalsIgnoreCase(EventsConstants.EVT_USER_CREATE)) {
           processUserEvents();
-        }else if(contentFormat.equalsIgnoreCase(ContentFormat.COURSE.name())){
-          processCourseEvents();
-        }
-        else if(contentFormat.equalsIgnoreCase(ContentFormat.UNIT.name())){
-          processUnitEvents();
-        }
-        else{
-          LOGGER.error("Invalid content type passed in, not able to handle. Event name : " + eventName);
+        } else {
+          LOGGER.error("Unsupported Event. Event name : " + eventName);
         }
       }
       
