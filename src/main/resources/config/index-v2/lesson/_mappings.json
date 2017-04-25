@@ -305,7 +305,7 @@
             }
          },
          "taxonomy":{
-         	"properties":{
+            "properties":{
                "course":{
                   "type":"nested",
                   "include_in_parent":true,
@@ -350,82 +350,82 @@
                      }
                   }
                },
-	         "frameworkCode":{
-	            "type":"string",
-	            "index":"not_analyzed",
-	            "include_in_all":false
-	         },
-           "leafInternalCodes":{
-              "type":"string",
-              "analyzer":"keyword_lowercase",
-              "copy_to":[
-                 "customSpellCheckerSuggest"
-              ],
-              "include_in_all":false
-           },
-           "taxonomySet":{
-              "properties":{
-                 "subject":{
-                    "type":"string",
-                    "index":"not_analyzed",
-                    "include_in_all":false
-                 },
-                 "course":{
-                    "type":"string",
-                    "index":"not_analyzed",
-                    "include_in_all":false
-                 },
-                 "curriculum":{
-                    "properties":{
-                       "curriculumCode":{
-                          "type":"string",
-                          "index":"not_analyzed",
-                          "include_in_all":false
-                       },
-                       "curriculumDesc":{
-                          "type":"string",
-                          "index":"not_analyzed",
-                          "include_in_all":false
-                       },
-                       "curriculumName":{
-                          "type":"string",
-                          "index":"not_analyzed",
-                          "include_in_all":false
-                       },
-                       "curriculumInfo":{
-							"properties":{
-								"id":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"code":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"title":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"parentTitle":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"frameworkCode":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								}
-							}                      
-                       }
-                    }
-                 }
-              }
-           }
-         }
+               "frameworkCode":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "leafInternalCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "taxonomySet":{
+                  "properties":{
+                     "subject":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "course":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "curriculum":{
+                        "properties":{
+                           "curriculumCode":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumDesc":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumName":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumInfo":{
+                              "properties":{
+                                 "id":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "code":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "title":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "parentTitle":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "frameworkCode":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          },
          "isFeatured":{
             "type":"integer",
@@ -455,14 +455,22 @@
                },
                "title":{
                   "type":"string",
-                  "analyzer":"keyword_lowercase",
+                  "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
                         "type":"string",
                         "analyzer":"snowball"
+                     },
+                     "titleKStem":{
+                        "type":"string",
+                        "analyzer":"gooru_kstem"
+                     },
+                     "titleLowercase":{
+                        "type":"string",
+                        "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":false
+                  "include_in_all":true
                }
             }
          },
@@ -475,21 +483,43 @@
                },
                "title":{
                   "type":"string",
-                  "analyzer":"keyword_lowercase",
+                  "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
                         "type":"string",
                         "analyzer":"snowball"
+                     },
+                     "titleKStem":{
+                        "type":"string",
+                        "analyzer":"gooru_kstem"
+                     },
+                     "titleLowercase":{
+                        "type":"string",
+                        "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":false
+                  "include_in_all":true
                }
             }
          },
          "collectionTitles":{
             "type":"string",
-            "analyzer":"snowball",
-            "include_in_all":false
+            "analyzer":"standard",
+            "fields":{
+               "titleSnowball":{
+                  "type":"string",
+                  "analyzer":"snowball"
+               },
+               "titleKStem":{
+                  "type":"string",
+                  "analyzer":"gooru_kstem"
+               },
+               "titleLowercase":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase"
+               }
+            },
+            "include_in_all":true
          },
          "collectionIds":{
             "type":"string",
