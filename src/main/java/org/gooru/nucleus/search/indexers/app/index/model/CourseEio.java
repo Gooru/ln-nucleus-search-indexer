@@ -273,4 +273,12 @@ public class CourseEio extends JsonObject {
   public void setCollections(JsonArray collections) {
     this.put(IndexFields.COLLECTIONS, collections);
   }
+  
+  public String getContentFormat() {
+    return this.getString(IndexFields.CONTENT_FORMAT);
+  }
+
+  public void setContentFormat(String contentFormat) {
+    this.put(IndexFields.CONTENT_FORMAT, contentFormat);
+  }
 }
