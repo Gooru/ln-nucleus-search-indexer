@@ -9,7 +9,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
-import org.jsoup.nodes.Entities;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,5 +116,48 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     closeDBConn(db);
     return isFeatured;
   }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getUsedByStudentCount(String courseId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Course.GET_USED_BY_STUDENT_COUNT, courseId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("Students for course : {} not present in DB", courseId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", courseId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getRemixedInClassCount(String courseId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Course.GET_REMIXED_IN_CLASS_COUNT, courseId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("Class for course : {} not present in DB", courseId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", courseId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
+  }
+
 
 }

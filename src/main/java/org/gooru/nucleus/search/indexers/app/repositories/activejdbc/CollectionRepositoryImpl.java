@@ -201,4 +201,46 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     return collections;
   }
 
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getUsedByStudentCount(String collectionId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Collection.GET_STUDENTS_OF_COLLECTION, collectionId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("Students for collection : {} not present in DB", collectionId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", collectionId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getRemixedInCourseCount(String collectionId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Collection.GET_USED_IN_COURSE_COUNT, collectionId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("Course for collection : {} not present in DB", collectionId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", collectionId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
+  }
+
 }

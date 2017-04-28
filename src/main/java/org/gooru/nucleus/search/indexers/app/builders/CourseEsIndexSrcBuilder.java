@@ -60,11 +60,10 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       String publishStatus = source.getString(EntityAttributeConstants.PUBLISH_STATUS);
       courseEio.setPublishStatus(publishStatus);
       
-      int isFeatured = 0;
+      Boolean isFeatured = false;
       if(publishStatus.equalsIgnoreCase(IndexerConstants.PUBLISHED)){
-        isFeatured = 1;
+        isFeatured = true;
       }
-      courseEio.setIsFeatured(isFeatured);
       
       // Set taxonomy data 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
@@ -153,7 +152,6 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
           courseEio.setSequenceId(editorialTags.getInteger(EntityAttributeConstants.SEQUENCE_ID));
         }
       }
-      
       
       // Set Original Creator
       String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
@@ -269,7 +267,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       
       // Set statistics data 
       CourseStatisticsEo statistics = new CourseStatisticsEo();
-      statistics.setFeatured(Boolean.valueOf(isFeatured + ""));
+      statistics.setFeatured(isFeatured);
       statistics.setUnitCount((courseEio.getUnitIds() != null && !courseEio.getUnitIds().isEmpty()) ? courseEio.getUnitIds().size() : 0);
       statistics.setLessonCount((courseEio.getLessonIds() != null && !courseEio.getLessonIds().isEmpty()) ? courseEio.getLessonIds().size() : 0);
       statistics.setContainingCollectionsCount((!collectionContainerIds.isEmpty()) ? collectionContainerIds.size() : 0);
@@ -278,6 +276,10 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       statistics.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0);
       statistics.setViewsCount(source.getLong(IndexFields.VIEWS_COUNT, 0L));
       statistics.setCourseRemixCount(source.getInteger(IndexFields.COURSE_REMIXCOUNT, 0));
+      Long remixedInClassCount = getCourseRepo().getRemixedInClassCount(id);
+      statistics.setRemixedInClassCount(remixedInClassCount);
+      Long studentCount = getCourseRepo().getUsedByStudentCount(id);
+      statistics.setUsedByStudentCount(studentCount);
       courseEio.setStatistics(statistics);
     }
     catch(Exception e){

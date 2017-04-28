@@ -121,7 +121,8 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         originalresourceEo.setLicense(license);
       }
 
-      originalresourceEo.setStatistics(statisticsEo.getStatistics());
+      setCollectionContents(source, originalresourceEo, statisticsEo);
+
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.USED_IN_COLLECTION_COUNT, statisticsEo.getUsedInCollectionCount());

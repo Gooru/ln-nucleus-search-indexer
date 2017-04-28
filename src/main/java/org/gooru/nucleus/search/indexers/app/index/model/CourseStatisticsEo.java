@@ -112,4 +112,26 @@ public class CourseStatisticsEo extends JsonObject {
     }
     this.put("lessonCount", lessonCount);
   }
+  
+  public Long getRemixedInClassCount() {
+    return this.getLong("remixedInClassCount", 0L);
+  }
+
+  public void setRemixedInClassCount(Long remixedInClassCount) {
+    if (remixedInClassCount == null) {
+      remixedInClassCount = 0L;
+    }
+    this.put("remixedInClassCount", remixedInClassCount);
+  }
+  
+  public Long getUsedByStudentCount() {
+    return this.getLong("usedByStudentCount", 0L);
+  }
+
+  public void setUsedByStudentCount(Long usedByStudentCount) {
+    if (usedByStudentCount == null) {
+      usedByStudentCount = 0L;
+    }
+    this.put("usedByStudentCount", usedByStudentCount);
+  }
 }

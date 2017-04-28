@@ -263,7 +263,7 @@ public class StatisticsEo {
     this.statistics = JsonUtil.set(statistics, "assessmentCount", assessmentCount);
   }
   
-  public Integer getExternalAsssessmentCount() {
+  public Integer getExternalAssessmentCount() {
     return statistics.getInteger("externalAssessmentCount", 0);
   }
 
@@ -297,4 +297,25 @@ public class StatisticsEo {
     this.statistics = JsonUtil.set(statistics, "lessonCount", lessonCount);
   }
   
+  public Long getRemixedInCourseCount() {
+    return statistics.getLong("remixedInCourseCount", 0L);
+  }
+
+  public void setRemixedInCourseCount(Long remixedInCourseCount) {
+    if (remixedInCourseCount == null) {
+      remixedInCourseCount = 0L;
+    }
+    this.statistics = JsonUtil.set(statistics, "remixedInCourseCount", remixedInCourseCount);
+  }
+  
+  public Long getUsedByStudentCount() {
+    return statistics.getLong("usedByStudentCount", 0L);
+  }
+
+  public void setUsedByStudentCount(Long usedByStudentCount) {
+    if (usedByStudentCount == null) {
+      usedByStudentCount = 0L;
+    }
+    statistics.put("usedByStudentCount", usedByStudentCount);
+  }
 }

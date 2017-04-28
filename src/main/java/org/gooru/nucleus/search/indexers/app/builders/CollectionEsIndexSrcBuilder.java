@@ -165,7 +165,12 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setQuestionCount(questionCount);
       statisticsEo.setResourceCount(resourceCount);
       statisticsEo.setContentCount(questionCount + resourceCount);
+      Long remixedInClassCount = getCollectionRepo().getRemixedInCourseCount(id);
+      statisticsEo.setRemixedInCourseCount(remixedInClassCount);
+      Long studentCount = getCollectionRepo().getUsedByStudentCount(id);
+      statisticsEo.setUsedByStudentCount(studentCount);
 
+      
       //Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
       JsonObject editorialTags = null;

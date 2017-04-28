@@ -161,6 +161,8 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       }
       statisticsEo.setInvalidResource(invalidResource);
 
+      setCollectionContents(source, contentEo, statisticsEo);
+
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.USED_IN_COLLECTION_COUNT, statisticsEo.getUsedInCollectionCount());

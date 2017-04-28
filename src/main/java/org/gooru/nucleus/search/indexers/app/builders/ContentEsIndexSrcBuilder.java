@@ -11,6 +11,7 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
+import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 
@@ -85,29 +86,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
       }
       
-      // Set Collection info of content
-      JsonArray collectionIds = new JsonArray();
-      JsonArray collectionTitles = new JsonArray();
-      String collectionId = source.getString(EntityAttributeConstants.COLLECTION_ID, null);
-      String collectionTitle = source.getString(IndexerConstants.COLLECTION_TITLE, null);
-      if (collectionId != null) {
-        collectionIds.add(collectionId);
-      }
-      if(collectionTitle != null){
-        collectionTitles.add(collectionTitle);
-      }
-      List<Map> collectionMetaAsList = getContentRepo().getCollectionMeta(id);
-
-      if (collectionMetaAsList != null && collectionMetaAsList.size() > 0) {
-        for (Map collectionMetaMap : collectionMetaAsList) {
-          String usedCollectionId = collectionMetaMap.get(EntityAttributeConstants.ID).toString();
-          collectionIds.add(usedCollectionId);
-          collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
-        }
-      }
-      if (!collectionIds.isEmpty()) contentEo.setCollectionIds(collectionIds);
-      if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
-
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       JsonObject taxonomyObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
@@ -181,8 +159,70 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     return contentEo.getContentJson();
 
   }
+
+  @SuppressWarnings("rawtypes")
+  protected void setCollectionContents(JsonObject source, D contentEo, StatisticsEo statisticsEo) {
+    // Set Collection info of content
+    JsonArray collectionIds = new JsonArray();
+    JsonArray collectionTitles = new JsonArray();
+    String collectionId = source.getString(EntityAttributeConstants.COLLECTION_ID, null);
+    String collectionTitle = source.getString(IndexerConstants.COLLECTION_TITLE, null);
+    String collectionFormat = source.getString(EntityAttributeConstants.FORMAT, null);
+    if (collectionId != null) {
+      collectionIds.add(collectionId);
+    }
+    if (collectionTitle != null) {
+      collectionTitles.add(collectionTitle);
+    }
+    List<Map> collectionMetaAsList = getContentRepo().getCollectionMeta(contentEo.getId());
+
+    if (collectionMetaAsList != null && collectionMetaAsList.size() > 0) {
+      Integer collectionCount = 0;
+      Integer assessmentCount = 0;
+      Integer externalAssessmentCount = 0;
+      for (Map collectionMetaMap : collectionMetaAsList) {
+        String usedCollectionId = collectionMetaMap.get(EntityAttributeConstants.ID).toString();
+        String format = collectionMetaMap.get(EntityAttributeConstants.FORMAT).toString();
+        collectionIds.add(usedCollectionId);
+        collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
+        switch (format) {
+        case IndexerConstants.COLLECTION:
+          collectionCount++;
+          break;
+        case IndexerConstants.ASSESSMENT:
+          assessmentCount++;
+          break;
+        case IndexerConstants.ASSESSMENT_EXTERNAL:
+          externalAssessmentCount++;
+          break;
+        }      
+      }
+      statisticsEo.setCollectionCount(collectionCount);
+      statisticsEo.setAssessmentCount(externalAssessmentCount);
+      statisticsEo.setExternalAssessmentCount(externalAssessmentCount);
+      classifyCollections(collectionFormat, statisticsEo);
+    }
+    if (!collectionIds.isEmpty()) contentEo.setCollectionIds(collectionIds);
+    if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
+  }
   
-  
+ 
+  private void classifyCollections(String format, StatisticsEo statisticsEo) {
+    if (format != null) {
+      switch (format) {
+      case IndexerConstants.COLLECTION:
+        statisticsEo.setCollectionCount(statisticsEo.getCollectionCount() + 1);
+        break;
+      case IndexerConstants.ASSESSMENT:
+        statisticsEo.setAssessmentCount(statisticsEo.getAssessmentCount() + 1);
+        break;
+      case IndexerConstants.ASSESSMENT_EXTERNAL:
+        statisticsEo.setExternalAssessmentCount(statisticsEo.getExternalAssessmentCount() + 1);
+        break;
+      }
+    }
+  }
+
   protected void setMetaData(JsonObject metaData, ContentEio contentEo) {
     if (metaData != null) {
       JsonObject dataMap = new JsonObject();
@@ -221,5 +261,5 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     }
     return value;
   }
-
+  
 }

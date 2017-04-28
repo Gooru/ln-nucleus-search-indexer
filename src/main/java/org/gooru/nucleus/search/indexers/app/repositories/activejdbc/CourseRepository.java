@@ -17,4 +17,8 @@ public interface CourseRepository {
   
   Boolean isFeatured(String courseId);
   
+  Long getUsedByStudentCount(String courseId);
+  
+  Long getRemixedInClassCount(String courseId);
+  
 }

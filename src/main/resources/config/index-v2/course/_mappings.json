@@ -281,6 +281,14 @@
                "preComputedWeight":{
                   "type":"double",
                   "include_in_all":false
+               },
+               "usedByStudentCount":{
+                  "type":"long",
+                  "include_in_all":false
+               },
+               "remixedInClassCount":{
+                  "type":"long",
+                  "include_in_all":false
                }
             }
          },
@@ -516,11 +524,6 @@
                   }
                }
             }
-         },
-         "isFeatured":{
-            "type":"integer",
-            "index":"not_analyzed",
-            "include_in_all":false
          },
          "tenant":{
             "properties":{
