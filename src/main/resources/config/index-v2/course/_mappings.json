@@ -238,11 +238,11 @@
          "statistics":{
             "properties":{
                "unitCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "lessonCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "containingCollectionsCount":{
@@ -250,15 +250,15 @@
                   "include_in_all":false
                },
                "collectionCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "assessmentCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "externalAssessmentCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "viewsCount":{

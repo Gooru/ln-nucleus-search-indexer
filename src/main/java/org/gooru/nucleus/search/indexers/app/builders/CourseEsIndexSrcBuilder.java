@@ -270,11 +270,11 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       CourseStatisticsEo statistics = new CourseStatisticsEo();
       statistics.setFeatured(isFeatured);
       statistics.setUnitCount((courseEio.getUnitIds() != null && !courseEio.getUnitIds().isEmpty()) ? courseEio.getUnitIds().size() : 0);
-      statistics.setLessonCount((courseEio.getLessonIds() != null && !courseEio.getLessonIds().isEmpty()) ? courseEio.getLessonIds().size() : 0);
-      statistics.setContainingCollectionsCount((!collectionContainerIds.isEmpty()) ? collectionContainerIds.size() : 0);
-      statistics.setCollectionCount((!collectionIds.isEmpty()) ? collectionIds.size() : 0);
-      statistics.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0);
-      statistics.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0);
+      statistics.setLessonCount((courseEio.getLessonIds() != null && !courseEio.getLessonIds().isEmpty()) ? courseEio.getLessonIds().size() : 0L);
+      statistics.setContainingCollectionsCount((!collectionContainerIds.isEmpty()) ? collectionContainerIds.size() : 0L);
+      statistics.setCollectionCount((!collectionIds.isEmpty()) ? collectionIds.size() : 0L);
+      statistics.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0L);
+      statistics.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0L);
       statistics.setViewsCount(source.getLong(IndexFields.VIEWS_COUNT, 0L));
       statistics.setCourseRemixCount(source.getInteger(IndexFields.COURSE_REMIXCOUNT, 0));
       Long remixedInClassCount = getCourseRepo().getRemixedInClassCount(id);

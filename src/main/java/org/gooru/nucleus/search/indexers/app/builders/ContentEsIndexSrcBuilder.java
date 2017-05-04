@@ -177,36 +177,19 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     List<Map> collectionMetaAsList = getContentRepo().getCollectionMeta(contentEo.getId());
 
     if (collectionMetaAsList != null && collectionMetaAsList.size() > 0) {
-      Integer collectionCount = 0;
-      Integer assessmentCount = 0;
-      Integer externalAssessmentCount = 0;
       for (Map collectionMetaMap : collectionMetaAsList) {
         String usedCollectionId = collectionMetaMap.get(EntityAttributeConstants.ID).toString();
         String format = collectionMetaMap.get(EntityAttributeConstants.FORMAT).toString();
         collectionIds.add(usedCollectionId);
         collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
-        switch (format) {
-        case IndexerConstants.COLLECTION:
-          collectionCount++;
-          break;
-        case IndexerConstants.ASSESSMENT:
-          assessmentCount++;
-          break;
-        case IndexerConstants.ASSESSMENT_EXTERNAL:
-          externalAssessmentCount++;
-          break;
-        }      
+        classifyCollections(format, statisticsEo);
       }
-      statisticsEo.setCollectionCount(collectionCount);
-      statisticsEo.setAssessmentCount(externalAssessmentCount);
-      statisticsEo.setExternalAssessmentCount(externalAssessmentCount);
       classifyCollections(collectionFormat, statisticsEo);
     }
     if (!collectionIds.isEmpty()) contentEo.setCollectionIds(collectionIds);
     if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
   }
   
- 
   private void classifyCollections(String format, StatisticsEo statisticsEo) {
     if (format != null) {
       switch (format) {

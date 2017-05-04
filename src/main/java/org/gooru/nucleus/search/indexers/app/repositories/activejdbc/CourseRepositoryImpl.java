@@ -90,7 +90,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
         returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
       }
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch unit count for course : {} error : {}", courseId, e);
+      LOGGER.error("Not able to fetch course : {} error : {}", courseId, e);
     }
     closeDBConn(db);
     return returnValue;
@@ -111,7 +111,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
         }
       }
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch unit count for course : {} error : {}", courseId, e);
+      LOGGER.error("Not able to fetch featured flag for course : {} error : {}", courseId, e);
     }
     closeDBConn(db);
     return isFeatured;
@@ -131,7 +131,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
       }
       count = ((Long) countList.get(0));
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", courseId, e);
+      LOGGER.error("Not able to fetch Students count for course : {} error : {}", courseId, e);
     } finally {
       closeDBConn(db);
     }
@@ -147,12 +147,12 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
       openConnection(db);
       List countList = db.firstColumn(Course.GET_REMIXED_IN_CLASS_COUNT, courseId);
       if (countList == null || countList.size() < 1) {
-        LOGGER.warn("Class for course : {} not present in DB", courseId);
+        LOGGER.warn("RemixedInClass count for course : {} not present in DB", courseId);
         return count;
       }
       count = ((Long) countList.get(0));
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", courseId, e);
+      LOGGER.error("Not able to fetch RemixedInClass count for course : {} error : {}", courseId, e);
     } finally {
       closeDBConn(db);
     }

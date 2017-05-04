@@ -158,10 +158,10 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
       openConnection(db);
       collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_COURSE, courseId, false);
       if (collections.size() < 1) {
-        LOGGER.warn("Collections for lesson: {} not present in DB", courseId);
+        LOGGER.warn("Collections for course: {} not present in DB", courseId);
       }
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch collections for lesson : {} error : {}", courseId, e);
+      LOGGER.error("Not able to fetch collections for course : {} error : {}", courseId, e);
     }
     closeDBConn(db);
     return collections;
@@ -215,7 +215,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
       }
       count = ((Long) countList.get(0));
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", collectionId, e);
+      LOGGER.error("Not able to fetch Students count for collection : {} error : {}", collectionId, e);
     } finally {
       closeDBConn(db);
     }
@@ -231,12 +231,12 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
       openConnection(db);
       List countList = db.firstColumn(Collection.GET_USED_IN_COURSE_COUNT, collectionId);
       if (countList == null || countList.size() < 1) {
-        LOGGER.warn("Course for collection : {} not present in DB", collectionId);
+        LOGGER.warn("RemixedInCourse Count for collection : {} not present in DB", collectionId);
         return count;
       }
       count = ((Long) countList.get(0));
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch Course count for collection : {} error : {}", collectionId, e);
+      LOGGER.error("Not able to fetch RemixedInCourse count for collection : {} error : {}", collectionId, e);
     } finally {
       closeDBConn(db);
     }
