@@ -158,10 +158,10 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
       openConnection(db);
       collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_COURSE, courseId, false);
       if (collections.size() < 1) {
-        LOGGER.warn("Collections for lesson: {} not present in DB", courseId);
+        LOGGER.warn("Collections for course: {} not present in DB", courseId);
       }
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch collections for lesson : {} error : {}", courseId, e);
+      LOGGER.error("Not able to fetch collections for course : {} error : {}", courseId, e);
     }
     closeDBConn(db);
     return collections;
@@ -199,6 +199,48 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     }
     closeDBConn(db);
     return collections;
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getUsedByStudentCount(String collectionId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Collection.GET_STUDENTS_OF_COLLECTION, collectionId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("Students for collection : {} not present in DB", collectionId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch Students count for collection : {} error : {}", collectionId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getRemixedInCourseCount(String collectionId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Collection.GET_USED_IN_COURSE_COUNT, collectionId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("RemixedInCourse Count for collection : {} not present in DB", collectionId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch RemixedInCourse count for collection : {} error : {}", collectionId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
   }
 
 }

@@ -178,14 +178,6 @@ public class CourseEio extends JsonObject {
     this.put(IndexFields.PUBLISH_STATUS, publishStatus);
   }
 
-  public int getIsFeatured() {
-    return this.getInteger(IndexFields.IS_FEATURED);
-  }
-
-  public void setIsFeatured(int isFeatured) {
-    this.put(IndexFields.IS_FEATURED, isFeatured);
-  }
-
   public JsonObject getTaxonomy() {
     return this.getJsonObject(IndexFields.TAXONOMY);
   }
@@ -280,5 +272,13 @@ public class CourseEio extends JsonObject {
 
   public void setCollections(JsonArray collections) {
     this.put(IndexFields.COLLECTIONS, collections);
+  }
+  
+  public String getContentFormat() {
+    return this.getString(IndexFields.CONTENT_FORMAT);
+  }
+
+  public void setContentFormat(String contentFormat) {
+    this.put(IndexFields.CONTENT_FORMAT, contentFormat);
   }
 }

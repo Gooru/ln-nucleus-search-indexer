@@ -20,4 +20,8 @@ public class Course extends Model {
 
   public static final String IS_DELETED = "is_deleted";
 
+  public static final String GET_REMIXED_IN_CLASS_COUNT = "select count(*) from class where course_id = ?::uuid";
+
+  public static final String GET_USED_BY_STUDENT_COUNT = "select count(cm.user_id) from class c inner join class_member cm on cm.class_id = c.id where course_id = ?::uuid";
+  
 }

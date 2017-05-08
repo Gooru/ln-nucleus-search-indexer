@@ -103,11 +103,11 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
       openConnection(db);
       lessons = Unit.where(Unit.GET_UNIT_BY_COURSE_ID, courseId, false);
       if (lessons.size() < 1) {
-        LOGGER.warn("Collections for unit: {} not present in DB", courseId);
+        LOGGER.warn("Units for course: {} not present in DB", courseId);
       }
     }
     catch(Exception e){
-      LOGGER.error("Not able to fetch lessons for course : {} error : {}", courseId, e);
+      LOGGER.error("Not able to fetch units for course : {} error : {}", courseId, e);
     }
     closeDBConn(db);
     return lessons;

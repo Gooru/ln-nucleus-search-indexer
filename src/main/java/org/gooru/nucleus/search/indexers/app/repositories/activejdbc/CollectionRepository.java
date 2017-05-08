@@ -32,4 +32,8 @@ public interface CollectionRepository {
   LazyList<Collection> getCollectionsByUnitId(String unitId);
 
   LazyList<Collection> getCollectionsByCourseId(String courseId);
+
+  Long getUsedByStudentCount(String collectionId);
+
+  Long getRemixedInCourseCount(String collectionId);
 }

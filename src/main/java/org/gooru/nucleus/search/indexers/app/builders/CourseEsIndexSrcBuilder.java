@@ -59,12 +59,12 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       courseEio.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
       String publishStatus = source.getString(EntityAttributeConstants.PUBLISH_STATUS);
       courseEio.setPublishStatus(publishStatus);
-      
-      int isFeatured = 0;
+      courseEio.setContentFormat(IndexerConstants.COURSE);
+
+      Boolean isFeatured = false;
       if(publishStatus.equalsIgnoreCase(IndexerConstants.PUBLISHED)){
-        isFeatured = 1;
+        isFeatured = true;
       }
-      courseEio.setIsFeatured(isFeatured);
       
       // Set taxonomy data 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
@@ -153,7 +153,6 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
           courseEio.setSequenceId(editorialTags.getInteger(EntityAttributeConstants.SEQUENCE_ID));
         }
       }
-      
       
       // Set Original Creator
       String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
@@ -269,15 +268,19 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       
       // Set statistics data 
       CourseStatisticsEo statistics = new CourseStatisticsEo();
-      statistics.setFeatured(Boolean.valueOf(isFeatured + ""));
+      statistics.setFeatured(isFeatured);
       statistics.setUnitCount((courseEio.getUnitIds() != null && !courseEio.getUnitIds().isEmpty()) ? courseEio.getUnitIds().size() : 0);
-      statistics.setLessonCount((courseEio.getLessonIds() != null && !courseEio.getLessonIds().isEmpty()) ? courseEio.getLessonIds().size() : 0);
-      statistics.setContainingCollectionsCount((!collectionContainerIds.isEmpty()) ? collectionContainerIds.size() : 0);
-      statistics.setCollectionCount((!collectionIds.isEmpty()) ? collectionIds.size() : 0);
-      statistics.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0);
-      statistics.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0);
+      statistics.setLessonCount((courseEio.getLessonIds() != null && !courseEio.getLessonIds().isEmpty()) ? courseEio.getLessonIds().size() : 0L);
+      statistics.setContainingCollectionsCount((!collectionContainerIds.isEmpty()) ? collectionContainerIds.size() : 0L);
+      statistics.setCollectionCount((!collectionIds.isEmpty()) ? collectionIds.size() : 0L);
+      statistics.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0L);
+      statistics.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0L);
       statistics.setViewsCount(source.getLong(IndexFields.VIEWS_COUNT, 0L));
       statistics.setCourseRemixCount(source.getInteger(IndexFields.COURSE_REMIXCOUNT, 0));
+      Long remixedInClassCount = getCourseRepo().getRemixedInClassCount(id);
+      statistics.setRemixedInClassCount(remixedInClassCount);
+      Long studentCount = getCourseRepo().getUsedByStudentCount(id);
+      statistics.setUsedByStudentCount(studentCount);
       courseEio.setStatistics(statistics);
     }
     catch(Exception e){

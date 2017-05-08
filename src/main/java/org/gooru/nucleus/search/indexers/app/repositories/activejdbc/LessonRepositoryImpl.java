@@ -89,7 +89,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
       openConnection(db);
       lessons = Lesson.where(Lesson.GET_LESSON_BY_UNIT_ID, unitId, false);
       if (lessons.size() < 1) {
-        LOGGER.warn("Collections for unit: {} not present in DB", unitId);
+        LOGGER.warn("Lessons for unit: {} not present in DB", unitId);
       }
     }
     catch(Exception e){
@@ -107,7 +107,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
       openConnection(db);
       lessons = Lesson.where(Lesson.GET_LESSON_BY_COURSE_ID, courseId, false);
       if (lessons.size() < 1) {
-        LOGGER.warn("Collections for unit: {} not present in DB", courseId);
+        LOGGER.warn("Lessons for course: {} not present in DB", courseId);
       }
     }
     catch(Exception e){

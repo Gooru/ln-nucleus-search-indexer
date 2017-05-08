@@ -238,11 +238,11 @@
          "statistics":{
             "properties":{
                "unitCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "lessonCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "containingCollectionsCount":{
@@ -250,15 +250,15 @@
                   "include_in_all":false
                },
                "collectionCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "assessmentCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "externalAssessmentCount":{
-                  "type":"integer",
+                  "type":"long",
                   "include_in_all":false
                },
                "viewsCount":{
@@ -281,37 +281,45 @@
                "preComputedWeight":{
                   "type":"double",
                   "include_in_all":false
+               },
+               "usedByStudentCount":{
+                  "type":"long",
+                  "include_in_all":false
+               },
+               "remixedInClassCount":{
+                  "type":"long",
+                  "include_in_all":false
                }
             }
          },
          "license":{
-         	"properties":{
-         		"code":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"definition":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"icon":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"url":{
-         			"type" : "string",
-         			"index" : "not_analyzed",
-         			"include_in_all" : false
-         		},
-        		"name":{
-         			"type" : "string",
-         			"analyzer" : "keyword_lowercase",
-         			"include_in_all" : false
-         		}
-         	}
+            "properties":{
+               "code":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "definition":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "icon":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "url":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "name":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
+               }
+            }
          },
          "visibleOnProfile":{
             "type":"boolean",
@@ -395,7 +403,7 @@
             }
          },
          "taxonomy":{
-         	"properties":{
+            "properties":{
                "course":{
                   "type":"nested",
                   "include_in_parent":true,
@@ -440,87 +448,82 @@
                      }
                   }
                },
-	         "frameworkCode":{
-	            "type":"string",
-	            "index":"not_analyzed",
-	            "include_in_all":false
-	         },
-           "leafInternalCodes":{
-              "type":"string",
-              "analyzer":"keyword_lowercase",
-              "copy_to":[
-                 "customSpellCheckerSuggest"
-              ],
-              "include_in_all":false
-           },
-           "taxonomySet":{
-              "properties":{
-                 "subject":{
-                    "type":"string",
-                    "index":"not_analyzed",
-                    "include_in_all":false
-                 },
-                 "course":{
-                    "type":"string",
-                    "index":"not_analyzed",
-                    "include_in_all":false
-                 },
-                 "curriculum":{
-                    "properties":{
-                       "curriculumCode":{
-                          "type":"string",
-                          "index":"not_analyzed",
-                          "include_in_all":false
-                       },
-                       "curriculumDesc":{
-                          "type":"string",
-                          "index":"not_analyzed",
-                          "include_in_all":false
-                       },
-                       "curriculumName":{
-                          "type":"string",
-                          "index":"not_analyzed",
-                          "include_in_all":false
-                       },
-                       "curriculumInfo":{
-							"properties":{
-								"id":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"code":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"title":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"parentTitle":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								},
-								"frameworkCode":{
-									"type":"string",
-									"index":"not_analyzed",
-									"include_in_all":false
-								}
-							}                      
-                       }
-                    }
-                 }
-              }
-           }
-         }
-         },
-         "isFeatured":{
-            "type":"integer",
-            "index":"not_analyzed",
-            "include_in_all":false
+               "frameworkCode":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "leafInternalCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "taxonomySet":{
+                  "properties":{
+                     "subject":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "course":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "curriculum":{
+                        "properties":{
+                           "curriculumCode":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumDesc":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumName":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "curriculumInfo":{
+                              "properties":{
+                                 "id":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "code":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "title":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "parentTitle":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "frameworkCode":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          },
          "tenant":{
             "properties":{
@@ -538,8 +541,22 @@
          },
          "unitTitles":{
             "type":"string",
-            "analyzer":"snowball",
-            "include_in_all":false
+            "analyzer":"standard",
+            "fields":{
+               "titleSnowball":{
+                  "type":"string",
+                  "analyzer":"snowball"
+               },
+               "titleKStem":{
+                  "type":"string",
+                  "analyzer":"gooru_kstem"
+               },
+               "titleLowercase":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase"
+               }
+            },
+            "include_in_all":true
          },
          "unitIds":{
             "type":"string",
@@ -548,8 +565,22 @@
          },
          "lessonTitles":{
             "type":"string",
-            "analyzer":"snowball",
-            "include_in_all":false
+            "analyzer":"standard",
+            "fields":{
+               "titleSnowball":{
+                  "type":"string",
+                  "analyzer":"snowball"
+               },
+               "titleKStem":{
+                  "type":"string",
+                  "analyzer":"gooru_kstem"
+               },
+               "titleLowercase":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase"
+               }
+            },
+            "include_in_all":true
          },
          "lessonIds":{
             "type":"string",
@@ -558,8 +589,22 @@
          },
          "collectionTitles":{
             "type":"string",
-            "analyzer":"snowball",
-            "include_in_all":false
+            "analyzer":"standard",
+            "fields":{
+               "titleSnowball":{
+                  "type":"string",
+                  "analyzer":"snowball"
+               },
+               "titleKStem":{
+                  "type":"string",
+                  "analyzer":"gooru_kstem"
+               },
+               "titleLowercase":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase"
+               }
+            },
+            "include_in_all":true
          },
          "collectionIds":{
             "type":"string",

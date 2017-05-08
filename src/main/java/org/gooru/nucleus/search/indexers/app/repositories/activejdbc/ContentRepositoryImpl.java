@@ -45,6 +45,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
         JsonObject collection = CollectionRepository.instance().getCollection(collectionId);
         if (collection != null) {
           returnValue.put(IndexerConstants.COLLECTION_TITLE, collection.getString(EntityAttributeConstants.TITLE));
+          returnValue.put(EntityAttributeConstants.FORMAT, collection.getString(EntityAttributeConstants.FORMAT));
         }
       }
       // Set course title

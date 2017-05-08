@@ -47,69 +47,91 @@ public class CourseStatisticsEo extends JsonObject {
   }
   
   public Boolean isFeatured() {
-    return this.getBoolean("isFeatured", false);
+    return this.getBoolean(IndexFields.IS_FEATURED, false);
   }
 
   public void setFeatured(Boolean isFeatured) {
     if (isFeatured == null) {
       isFeatured = false;
     }
-    this.put("isFeatured", isFeatured);
+    this.put(IndexFields.IS_FEATURED, isFeatured);
   }
   
-  public Integer getCollectionCount() {
-    return this.getInteger("collectionCount", 0);
+  public Long getCollectionCount() {
+    return this.getLong(IndexFields.COLLECTION_COUNT, 0L);
   }
 
-  public void setCollectionCount(Integer collectionCount) {
+  public void setCollectionCount(Long collectionCount) {
     if (collectionCount == null) {
-      collectionCount = 0;
+      collectionCount = 0L;
     }
-    this.put("collectionCount", collectionCount);
+    this.put(IndexFields.COLLECTION_COUNT, collectionCount);
   }
 
-  public Integer getAssessmentCount() {
-    return this.getInteger("assessmentCount", 0);
+  public Long getAssessmentCount() {
+    return this.getLong(IndexFields.ASSESMENT_COUNT, 0L);
   }
 
-  public void setAssessmentCount(Integer assessmentCount) {
+  public void setAssessmentCount(Long assessmentCount) {
     if (assessmentCount == null) {
-      assessmentCount = 0;
+      assessmentCount = 0L;
     }
-    this.put("assessmentCount", assessmentCount);
+    this.put(IndexFields.ASSESMENT_COUNT, assessmentCount);
   }
   
-  public Integer getExternalAsssessmentCount() {
-    return this.getInteger("externalAssessmentCount", 0);
+  public Long getExternalAsssessmentCount() {
+    return this.getLong(IndexFields.EXTERNAL_ASSESSMENT_COUNT, 0L);
   }
 
-  public void setExternalAssessmentCount(Integer externalAssessmentCount) {
+  public void setExternalAssessmentCount(Long externalAssessmentCount) {
     if (externalAssessmentCount == null) {
-      externalAssessmentCount = 0;
+      externalAssessmentCount = 0L;
     }
-    this.put("externalAssessmentCount", externalAssessmentCount);
+    this.put(IndexFields.EXTERNAL_ASSESSMENT_COUNT, externalAssessmentCount);
   }
   
   
-  public Integer getContainingCollectionsCount() {
-    return this.getInteger("containingCollectionsCount", 0);
+  public Long getContainingCollectionsCount() {
+    return this.getLong(IndexFields.CONTAINING_COLLECTIONS_COUNT, 0L);
   }
 
-  public void setContainingCollectionsCount(Integer containingCollectionsCount) {
+  public void setContainingCollectionsCount(Long containingCollectionsCount) {
     if (containingCollectionsCount == null) {
-      containingCollectionsCount = 0;
+      containingCollectionsCount = 0L;
     }
-    this.put("containingCollectionsCount", containingCollectionsCount);
+    this.put(IndexFields.CONTAINING_COLLECTIONS_COUNT, containingCollectionsCount);
   }
   
-  public Integer getLessonCount() {
-    return this.getInteger("lessonCount", 0);
+  public Long getLessonCount() {
+    return this.getLong(IndexFields.LESSON_COUNT, 0L);
   }
 
-  public void setLessonCount(Integer lessonCount) {
+  public void setLessonCount(Long lessonCount) {
     if (lessonCount == null) {
-      lessonCount = 0;
+      lessonCount = 0L;
     }
-    this.put("lessonCount", lessonCount);
+    this.put(IndexFields.LESSON_COUNT, lessonCount);
+  }
+  
+  public Long getRemixedInClassCount() {
+    return this.getLong(IndexFields.REMIXED_IN_CLASS_COUNT, 0L);
+  }
+
+  public void setRemixedInClassCount(Long remixedInClassCount) {
+    if (remixedInClassCount == null) {
+      remixedInClassCount = 0L;
+    }
+    this.put(IndexFields.REMIXED_IN_CLASS_COUNT, remixedInClassCount);
+  }
+  
+  public Long getUsedByStudentCount() {
+    return this.getLong(IndexFields.USED_BY_STUDENT_COUNT, 0L);
+  }
+
+  public void setUsedByStudentCount(Long usedByStudentCount) {
+    if (usedByStudentCount == null) {
+      usedByStudentCount = 0L;
+    }
+    this.put(IndexFields.USED_BY_STUDENT_COUNT, usedByStudentCount);
   }
 }

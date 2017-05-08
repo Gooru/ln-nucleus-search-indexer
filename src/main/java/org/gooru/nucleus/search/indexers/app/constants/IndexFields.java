@@ -94,7 +94,14 @@ public class IndexFields {
   public static final String IS_FEATURED = "isFeatured";
   public static final String PUBLISH_DATE = "publishDate";
   public static final String PCWEIGHT = "preComputedWeight";
-  
+  public static final String COLLECTION_COUNT = "collectionCount";
+  public static final String ASSESMENT_COUNT = "assessmentCount";
+  public static final String EXTERNAL_ASSESSMENT_COUNT = "externalAssessmentCount";
+  public static final String REMIXED_IN_CLASS_COUNT = "remixedInClassCount";
+  public static final String USED_BY_STUDENT_COUNT = "usedByStudentCount";
+  public static final String CONTAINING_COLLECTIONS_COUNT = "containingCollectionsCount";
+  public static final String LESSON_COUNT = "lessonCount";
+
   
 
 	
