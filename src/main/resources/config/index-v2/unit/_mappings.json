@@ -450,6 +450,34 @@
                }
             }
          },
+         "course":{
+            "properties":{
+               "id":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "title":{
+                  "type":"string",
+                  "analyzer":"standard",
+                  "fields":{
+                     "titleSnowball":{
+                        "type":"string",
+                        "analyzer":"snowball"
+                     },
+                     "titleKStem":{
+                        "type":"string",
+                        "analyzer":"gooru_kstem"
+                     },
+                     "titleLowercase":{
+                        "type":"string",
+                        "analyzer":"keyword_lowercase"
+                     }
+                  },
+                  "include_in_all":true
+               }
+            }
+         },
          "lessonIds":{
             "type":"string",
             "index":"not_analyzed",

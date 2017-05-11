@@ -48,7 +48,21 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
       unitEio.setCreatedAt(source.getString(EntityAttributeConstants.CREATED_AT));
       unitEio.setUpdatedAt(source.getString(EntityAttributeConstants.UPDATED_AT, null));
       unitEio.setContentFormat(IndexerConstants.UNIT);
-
+      unitEio.setModifierId(source.getString(EntityAttributeConstants.MODIFIER_ID, null));
+      unitEio.setOriginalUnitId(source.getString(EntityAttributeConstants.ORIGINAL_UNIT_ID, null));
+      unitEio.setParentUnitId(source.getString(EntityAttributeConstants.PARENT_UNIT_ID, null));
+      
+      // Set Original Creator
+      String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
+      if (originalCreatorId != null) {
+        UserEo orginalCreatorEo = new UserEo();
+        JsonObject orginalCreator = getUserRepo().getUser(originalCreatorId);
+        if (orginalCreator != null && !orginalCreator.isEmpty()) {
+          setUser(orginalCreator, orginalCreatorEo);
+          unitEio.setOriginalCreator(orginalCreatorEo.getUser());
+        }
+      }
+      
       // Set Creator
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {

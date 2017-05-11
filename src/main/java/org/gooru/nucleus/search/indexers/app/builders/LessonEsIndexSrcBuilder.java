@@ -49,7 +49,20 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       lessonEio.setUpdatedAt(source.getString(EntityAttributeConstants.UPDATED_AT, null));
       lessonEio.setContentFormat(IndexerConstants.LESSON);
       lessonEio.setModifierId(source.getString(EntityAttributeConstants.MODIFIER_ID, null));
-
+      lessonEio.setOriginalLessonId(source.getString(EntityAttributeConstants.ORIGINAL_LESSON_ID, null));
+      lessonEio.setParentLessonId(source.getString(EntityAttributeConstants.PARENT_LESSON_ID, null));
+      
+      // Set Original Creator
+      String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
+      if (originalCreatorId != null) {
+        UserEo orginalCreatorEo = new UserEo();
+        JsonObject orginalCreator = getUserRepo().getUser(originalCreatorId);
+        if (orginalCreator != null && !orginalCreator.isEmpty()) {
+          setUser(orginalCreator, orginalCreatorEo);
+          lessonEio.setOriginalCreator(orginalCreatorEo.getUser());
+        }
+      }
+      
       // Set Creator
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {
@@ -144,7 +157,7 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       statisticsEo.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0);
       statisticsEo.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0);
 
-      //TODO Add logic to store statistics
+      //TODO Add logic to store statistics - remixed in units, course, class count
       lessonEio.setStatistics(statisticsEo.getStatistics());
 
 

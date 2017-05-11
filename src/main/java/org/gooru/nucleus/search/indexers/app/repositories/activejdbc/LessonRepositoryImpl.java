@@ -36,7 +36,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     JsonObject returnValue = null;
     List<Lesson> lessons = Lesson.where(Lesson.FETCH_DELETED_QUERY, lessonId, true);
     if (lessons.size() < 1) {
-      LOGGER.warn("Course id: {} not present in DB", lessonId);
+      LOGGER.warn("Lesson id: {} not present in DB", lessonId);
     }
     if(lessons.size() > 0){
       Lesson lesson = lessons.get(0);

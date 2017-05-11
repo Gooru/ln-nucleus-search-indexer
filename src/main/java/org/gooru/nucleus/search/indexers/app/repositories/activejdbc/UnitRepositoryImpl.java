@@ -37,7 +37,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     JsonObject returnValue = null;
     List<Unit> units = Unit.where(Course.FETCH_DELETED_QUERY, unitId, true);
     if (units.size() < 1) {
-      LOGGER.warn("Course id: {} not present in DB", unitId);
+      LOGGER.warn("Unit id: {} not present in DB", unitId);
     }
     if(units.size() > 0){
       Unit unit = units.get(0);
