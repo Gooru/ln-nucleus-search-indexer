@@ -52,6 +52,8 @@ class MessageProcessor implements Processor {
               processCourseEvents();
             } else if (contentFormat.equalsIgnoreCase(ContentFormat.UNIT.name())) {
               processUnitEvents();
+            } else if (contentFormat.equalsIgnoreCase(ContentFormat.RUBRIC.name())) {
+              processRubricEvents();
             } else {
               LOGGER.error("Invalid content type passed in, not able to handle. Event name : " + eventName);
             }
@@ -96,6 +98,10 @@ class MessageProcessor implements Processor {
   
   private void processKeywordEvents() {
     EventHandlerBuilder.buildKeywordsHandler(eventBody).handleEvents();
+  }
+  
+  private void processRubricEvents(){
+    EventHandlerBuilder.buildRubricHandler(eventBody).handleEvents();
   }
 
 }

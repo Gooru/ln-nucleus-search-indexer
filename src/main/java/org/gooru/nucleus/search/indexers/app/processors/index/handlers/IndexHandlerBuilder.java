@@ -21,4 +21,9 @@ public final class IndexHandlerBuilder {
   public static IndexHandler buildCourseIndexHandler(){
     return new CourseIndexHandler();
   }
+  
+  public static IndexHandler buildRubricIndexHandler(){
+    return new RubricIndexHandler();
+  }
+  
 }
