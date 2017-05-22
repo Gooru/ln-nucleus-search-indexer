@@ -78,6 +78,14 @@ public class UnitEio implements Serializable {
     unit = JsonUtil.set(unit, "updatedAt", updatedAt);
   }
 
+  public JsonObject getOriginalCreator() {
+    return unit.getJsonObject("originalCreator", null);
+  }
+
+  public void setOriginalCreator(JsonObject originalCreator) {
+    unit = JsonUtil.set(unit, "originalCreator", originalCreator);
+  }
+  
   public JsonObject getCreator() {
     return unit.getJsonObject("creator", null);
   }
@@ -94,12 +102,36 @@ public class UnitEio implements Serializable {
     unit = JsonUtil.set(unit, "owner", owner);
   }
   
+  public String getModifierId() {
+    return unit.getString("modifierId", null);
+  }
+
+  public void setModifierId(String modifierId) {
+    this.unit = JsonUtil.set(unit, "modifierId", modifierId);
+  }
+  
   public String getContentFormat() {
     return unit.getString("contentFormat", null);
   }
 
   public void setContentFormat(String contentFormat) {
     unit = JsonUtil.set(unit, "contentFormat", contentFormat);
+  }
+ 
+  public String getOriginalUnitId() {
+    return unit.getString("originalUnitId", null);
+  }
+
+  public void setOriginalUnitId(String originalUnitId) {
+    unit = JsonUtil.set(unit, "originalUnitId", originalUnitId);
+  }
+
+  public String getParentUnitId() {
+    return unit.getString("parentUnitId", null);
+  }
+
+  public void setParentUnitId(String parentUnitId) {
+    unit = JsonUtil.set(unit, "parentUnitId", parentUnitId);
   }
   
   public JsonObject getTaxonomy() {

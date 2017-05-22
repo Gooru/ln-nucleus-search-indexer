@@ -42,6 +42,10 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_LESSON = "get_lesson";
 
+  public static final String GET_RUBRIC = "get_rubric";
+
+  public static final String GET_DELETED_RUBRIC = "get_deleted_rubric";
+
   private ExecuteOperationConstants() {
     throw new AssertionError();
   }

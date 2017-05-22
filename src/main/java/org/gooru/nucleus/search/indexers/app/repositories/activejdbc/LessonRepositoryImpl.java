@@ -36,7 +36,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     JsonObject returnValue = null;
     List<Lesson> lessons = Lesson.where(Lesson.FETCH_DELETED_QUERY, lessonId, true);
     if (lessons.size() < 1) {
-      LOGGER.warn("Course id: {} not present in DB", lessonId);
+      LOGGER.warn("Lesson id: {} not present in DB", lessonId);
     }
     if(lessons.size() > 0){
       Lesson lesson = lessons.get(0);
@@ -62,6 +62,23 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     }
     closeDBConn(db);
     return lessonCount;
+  }
+  
+  @Override
+  public JsonObject getLessonById(String lessonId) {
+    JsonObject returnValue = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      Lesson result = Lesson.findById(getPGObject("id", UUID_TYPE, lessonId));
+      if (result != null && !result.getBoolean(Lesson.IS_DELETED)) {
+        returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch lesson : {} error : {}", lessonId, e);
+    }
+    closeDBConn(db);
+    return returnValue;
   }
   
   @Override

@@ -78,6 +78,14 @@ public class LessonEio implements Serializable {
     lesson = JsonUtil.set(lesson, "updatedAt", updatedAt);
   }
   
+  public JsonObject getOriginalCreator() {
+    return lesson.getJsonObject("originalCreator", null);
+  }
+
+  public void setOriginalCreator(JsonObject originalCreator) {
+    lesson = JsonUtil.set(lesson, "originalCreator", originalCreator);
+  }
+  
   public JsonObject getCreator() {
     return lesson.getJsonObject("creator", null);
   }
@@ -100,6 +108,22 @@ public class LessonEio implements Serializable {
 
   public void setContentFormat(String contentFormat) {
     lesson = JsonUtil.set(lesson, "contentFormat", contentFormat);
+  }
+  
+  public String getOriginalLessonId() {
+    return lesson.getString("originalLessonId", null);
+  }
+
+  public void setOriginalLessonId(String originalLessonId) {
+    lesson = JsonUtil.set(lesson, "originalLessonId", originalLessonId);
+  }
+
+  public String getParentLessonId() {
+    return lesson.getString("parentLessonId", null);
+  }
+
+  public void setParentLessonId(String parentLessonId) {
+    lesson = JsonUtil.set(lesson, "parentLessonId", parentLessonId);
   }
   
   public JsonObject getTaxonomy() {

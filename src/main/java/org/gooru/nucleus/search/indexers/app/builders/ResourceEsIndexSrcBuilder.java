@@ -64,7 +64,6 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       }
       setMetaData(metadata, originalresourceEo);
 
-
       // Set display guide values
       JsonObject displayGuide = new JsonObject();
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);

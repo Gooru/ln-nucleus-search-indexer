@@ -17,8 +17,8 @@ public final class ErrorMsgConstants {
   public static final String COLLECTION_NOT_DELETED = "Given collection exists in DB !!, Delete from index failed"; 
   public static final String COURSE_DATA_NULL = "Course data is null, db returned null value !!";
   public static final String COURSE_NOT_DELETED = "Given course exists in DB !!, Delete from index failed"; 
-
-
+  public static final String RUBRIC_DATA_NULL = "Rubric data is null, db returned null value !!";
+  public static final String RUBRIC_NOT_DELETED = "Given rubric exists in DB !!, Delete from index failed"; 
 
   private ErrorMsgConstants() {
     throw new AssertionError();

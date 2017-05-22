@@ -25,6 +25,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexReposi
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
@@ -63,6 +65,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.CROSSWALK.getType(), new CrosswalkEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.UNIT.getType(), new UnitEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.LESSON.getType(), new LessonEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.RUBRIC.getType(), new RubricEsIndexSrcBuilder<>());
   }
 
   public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {
@@ -110,6 +113,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   
   protected LessonRepositoryImpl getLessonRepo() {
     return (LessonRepositoryImpl) LessonRepository.instance();
+  }
+  
+  protected RubricRepositoryImpl getRubricRepo() {
+    return (RubricRepositoryImpl) RubricRepository.instance();
   }
 
   protected void setUser(JsonObject user, UserEo userEo) {

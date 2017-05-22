@@ -15,7 +15,8 @@ public enum IndexType {
   COURSE("course"),
   CROSSWALK("crosswalk"),
   UNIT("unit"),
-  LESSON("lesson");
+  LESSON("lesson"),
+  RUBRIC("rubric");
 
   final String type;
 

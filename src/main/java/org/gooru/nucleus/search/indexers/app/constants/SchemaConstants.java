@@ -14,6 +14,7 @@ public class SchemaConstants {
   public static final String COURSE = "course";
   public static final String LESSON = "lesson";
   public static final String TAXONOMY_CODE_MAPPING = "taxonomy_code_mapping";
+  public static final String RUBRIC = "rubric";
 
   public static final String RESOURCE_INDEX_DELETE_TRACKER = "resource_index_delete_tracker";
   public static final String COLLECTION_INDEX_DELETE_TRACKER = "collection_index_delete_tracker";

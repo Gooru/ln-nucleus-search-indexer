@@ -52,61 +52,72 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   private static final Logger LOGGER = LoggerFactory.getLogger(EsIndexServiceImpl.class);
 
   public static String getIndexByType(String type) {
-    String indexName = null;
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
-      indexName = IndexNameHolder.getIndexName(EsIndex.COLLECTION);
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
-      indexName = IndexNameHolder.getIndexName(EsIndex.RESOURCE);
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
-      indexName = IndexNameHolder.getIndexName(EsIndex.COURSE);
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
-      indexName = IndexNameHolder.getIndexName(EsIndex.CROSSWALK);
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_UNIT)) {
-      indexName = IndexNameHolder.getIndexName(EsIndex.UNIT);
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_LESSON)) {
-      indexName = IndexNameHolder.getIndexName(EsIndex.LESSON);
+    switch (type) {
+    case IndexerConstants.TYPE_ASSESSMENT:
+    case IndexerConstants.TYPE_COLLECTION:
+      return IndexNameHolder.getIndexName(EsIndex.COLLECTION);
+    case IndexerConstants.TYPE_QUESTION:
+    case IndexerConstants.TYPE_RESOURCE:
+      return IndexNameHolder.getIndexName(EsIndex.RESOURCE);
+    case IndexerConstants.TYPE_COURSE:
+      return IndexNameHolder.getIndexName(EsIndex.COURSE);
+    case IndexerConstants.TYPE_CROSSWALK:
+      return IndexNameHolder.getIndexName(EsIndex.CROSSWALK);
+    case IndexerConstants.TYPE_UNIT:
+      return IndexNameHolder.getIndexName(EsIndex.UNIT);
+    case IndexerConstants.TYPE_LESSON:
+      return IndexNameHolder.getIndexName(EsIndex.LESSON);
+    case IndexerConstants.TYPE_RUBRIC:
+      return IndexNameHolder.getIndexName(EsIndex.RUBRIC);
+    default:
+      return null;
     }
-
-    return indexName;
   }
 
-  public static String  getIndexTypeByType(String type) {
-    String indexType = null;
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_ASSESSMENT) || type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
-      indexType = IndexerConstants.TYPE_COLLECTION;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION) || type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
-      indexType = IndexerConstants.TYPE_RESOURCE;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)) {
-      indexType = IndexerConstants.TYPE_COURSE;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)) {
-      indexType = IndexerConstants.TYPE_CROSSWALK;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_UNIT)) {
-      indexType = IndexerConstants.TYPE_UNIT;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_LESSON)) {
-      indexType = IndexerConstants.TYPE_LESSON;
+  public static String getIndexTypeByType(String type) {
+    switch (type) {
+    case IndexerConstants.TYPE_ASSESSMENT:
+    case IndexerConstants.TYPE_COLLECTION:
+      return IndexerConstants.TYPE_COLLECTION;
+    case IndexerConstants.TYPE_QUESTION:
+    case IndexerConstants.TYPE_RESOURCE:
+      return IndexerConstants.TYPE_RESOURCE;
+    case IndexerConstants.TYPE_COURSE:
+      return IndexerConstants.TYPE_COURSE;
+    case IndexerConstants.TYPE_CROSSWALK:
+      return IndexerConstants.TYPE_CROSSWALK;
+    case IndexerConstants.TYPE_UNIT:
+      return IndexerConstants.TYPE_UNIT;
+    case IndexerConstants.TYPE_LESSON:
+      return IndexerConstants.TYPE_LESSON;
+    case IndexerConstants.TYPE_RUBRIC:
+      return IndexerConstants.TYPE_RUBRIC;
+    default:
+      return null;
     }
-    return indexType;
   }
-
 
   private static String getExecuteOperation(String type) {
-    if (type.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
-      return ExecuteOperationConstants.GET_COLLECTION;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+    switch (type) {
+    case IndexerConstants.TYPE_RESOURCE:
       return ExecuteOperationConstants.GET_RESOURCE;
-    } else if (type.equalsIgnoreCase(IndexerConstants.TYPE_QUESTION)) {
+    case IndexerConstants.TYPE_QUESTION:
       return ExecuteOperationConstants.GET_QUESTION;
-    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_COURSE)){
+    case IndexerConstants.TYPE_COLLECTION:
+      return ExecuteOperationConstants.GET_COLLECTION;
+    case IndexerConstants.TYPE_COURSE:
       return ExecuteOperationConstants.GET_COURSE;
-    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_CROSSWALK)){
+    case IndexerConstants.TYPE_CROSSWALK:
       return ExecuteOperationConstants.GET_GDT_MAPPING;
-    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_UNIT)){
+    case IndexerConstants.TYPE_UNIT:
       return ExecuteOperationConstants.GET_UNIT;
-    } else if(type.equalsIgnoreCase(IndexerConstants.TYPE_LESSON)){
+    case IndexerConstants.TYPE_LESSON:
       return ExecuteOperationConstants.GET_LESSON;
+    case IndexerConstants.TYPE_RUBRIC:
+      return ExecuteOperationConstants.GET_RUBRIC;
+    default:
+      return null;
     }
-    return null;
-
   }
 
   @Override
@@ -278,6 +289,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
               break;
             case IndexerConstants.TYPE_LESSON:
               LessonIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
+              break;
+            case IndexerConstants.TYPE_RUBRIC:
               break;
             default:
               throw new BadRequestException("Invalid format type! Please pass valid format to index!");

@@ -178,5 +178,22 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     }
     return new JsonObject().put("questions", contentArray);
   }
+  
+  @Override
+  public JsonObject getQuestionById(String contentId) {
+    JsonObject returnValue = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      Content result = Content.findById(getPGObject("id", UUID_TYPE, contentId));
+      if (result != null && !result.getBoolean(Content.IS_DELETED)) {
+        returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch content : {} error : {}", contentId, e);
+    }
+    closeDBConn(db);
+    return returnValue;
+  }
  
 }
