@@ -43,7 +43,6 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
       unitEio.setIndexId(id);
       unitEio.setIndexType(getName());
       unitEio.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
-      unitEio.setContentFormat(source.getString(EntityAttributeConstants.FORMAT, null));
       unitEio.setIndexUpdatedTime(new Date());
       unitEio.setCreatedAt(source.getString(EntityAttributeConstants.CREATED_AT));
       unitEio.setUpdatedAt(source.getString(EntityAttributeConstants.UPDATED_AT, null));

@@ -43,7 +43,7 @@ public class RubricEsIndexSrcBuilder<S extends JsonObject, D extends RubricEio> 
       rubricEo.setParentRubricId(source.getString(EntityAttributeConstants.PARENT_RUBRIC_ID, null));
       rubricEo.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
       rubricEo.setPublishStatus(source.getString(EntityAttributeConstants.PUBLISH_STATUS, null));
-      rubricEo.setContentFormat(source.getString(EntityAttributeConstants.CONTENT_FORMAT, null));
+      rubricEo.setContentFormat(IndexerConstants.TYPE_RUBRIC);
       String thumbnail = source.getString(EntityAttributeConstants.THUMBNAIL, null);
       rubricEo.setThumbnail(thumbnail);
       rubricEo.setModifierId(source.getString(EntityAttributeConstants.MODIFIER_ID, null));
