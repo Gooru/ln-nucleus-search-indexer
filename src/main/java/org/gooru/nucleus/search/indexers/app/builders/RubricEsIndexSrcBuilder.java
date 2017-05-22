@@ -92,36 +92,46 @@ public class RubricEsIndexSrcBuilder<S extends JsonObject, D extends RubricEio> 
       // Set course
       CourseEo course = new CourseEo();
       course.setId(source.getString(EntityAttributeConstants.COURSE_ID, null));
-      JsonObject courseData = getCourseRepo().getCourseById(course.getId());
-      course.setTitle(courseData.getString(EntityAttributeConstants.TITLE, null));
+      if (course.getId() != null) {
+        JsonObject courseData = getCourseRepo().getCourseById(course.getId());
+        course.setTitle(courseData.getString(EntityAttributeConstants.TITLE, null));
+      }
       rubricEo.setCourse(course.getCourseJson());
 
       // Set unit
       UnitEo unit = new UnitEo();
       unit.setId(source.getString(EntityAttributeConstants.UNIT_ID, null));
-      JsonObject unitData = getUnitRepo().getUnitById(unit.getId());
-      unit.setTitle(unitData.getString(EntityAttributeConstants.TITLE, null));
+      if (unit.getId() != null) {
+        JsonObject unitData = getUnitRepo().getUnitById(unit.getId());
+        unit.setTitle(unitData.getString(EntityAttributeConstants.TITLE, null));
+      }
       rubricEo.setUnit(unit.getUnitJson());
 
       // Set lesson
       LessonEo lesson = new LessonEo();
       lesson.setId(source.getString(EntityAttributeConstants.LESSON_ID, null));
-      JsonObject lessonData = getLessonRepo().getLessonById(lesson.getId());
-      lesson.setTitle(lessonData.getString(EntityAttributeConstants.TITLE, null));
+      if (lesson.getId() != null) {
+        JsonObject lessonData = getLessonRepo().getLessonById(lesson.getId());
+        lesson.setTitle(lessonData.getString(EntityAttributeConstants.TITLE, null));
+      }
       rubricEo.setLesson(lesson.getLessonJson());
 
       // Set collection
       CollectionEo collection = new CollectionEo();
       collection.setId(source.getString(EntityAttributeConstants.COLLECTION_ID, null));
-      JsonObject collectionData = getCollectionRepo().getCollectionById(collection.getId());
-      collection.setTitle(collectionData.getString(EntityAttributeConstants.TITLE, null));
+      if (collection.getId() != null) {
+        JsonObject collectionData = getCollectionRepo().getCollectionById(collection.getId());
+        collection.setTitle(collectionData.getString(EntityAttributeConstants.TITLE, null));
+      }
       rubricEo.setCollection(collection.getCollectionJson());
 
       // Set content
       ContentEo content = new ContentEo();
       content.setId(source.getString(EntityAttributeConstants.CONTENT_ID, null));
-      JsonObject contentData = getContentRepo().getQuestionById(content.getId());
-      content.setTitle(contentData.getString(EntityAttributeConstants.TITLE, null));
+      if (content.getId() != null) {
+        JsonObject contentData = getContentRepo().getQuestionById(content.getId());
+        content.setTitle(contentData.getString(EntityAttributeConstants.TITLE, null));
+      }
       rubricEo.setContent(content.getContentJson());
         
       StatisticsEo statisticsEo = new StatisticsEo();
