@@ -12,7 +12,7 @@ public class CollectionEo {
 		this.collection = new JsonObject();
 	}
 
-	public JsonObject getContentJson() {
+	public JsonObject getCollectionJson() {
 		return !collection.isEmpty() ? collection : null;
 	}
 

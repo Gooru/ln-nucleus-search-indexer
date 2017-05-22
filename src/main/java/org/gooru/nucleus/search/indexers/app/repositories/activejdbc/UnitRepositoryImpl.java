@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -84,12 +83,11 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     try {
       openConnection(db);
       Unit result = Unit.findById(getPGObject("id", UUID_TYPE, unitId));
-      //LOGGER.debug("UnitRepositoryImpl : getUnitById : " + result);
-      if (result != null && !result.getBoolean(Course.IS_DELETED)) {
+      if (result != null && !result.getBoolean(Unit.IS_DELETED)) {
         returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
       }
     } catch (Exception e) {
-      LOGGER.error("Not able to fetch unit count for course : {} error : {}", unitId, e);
+      LOGGER.error("Not able to fetch unit : {} error : {}", unitId, e);
     }
     closeDBConn(db);
     return returnValue;

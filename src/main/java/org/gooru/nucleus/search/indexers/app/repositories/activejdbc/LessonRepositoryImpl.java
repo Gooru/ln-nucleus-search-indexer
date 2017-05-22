@@ -65,6 +65,23 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
   }
   
   @Override
+  public JsonObject getLessonById(String lessonId) {
+    JsonObject returnValue = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      Lesson result = Lesson.findById(getPGObject("id", UUID_TYPE, lessonId));
+      if (result != null && !result.getBoolean(Lesson.IS_DELETED)) {
+        returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch lesson : {} error : {}", lessonId, e);
+    }
+    closeDBConn(db);
+    return returnValue;
+  }
+  
+  @Override
   public Integer getLessonCountByCourseId(String courseId) {
     Integer lessonCount = 0;
     DB db = getDefaultDataSourceDBConnection();

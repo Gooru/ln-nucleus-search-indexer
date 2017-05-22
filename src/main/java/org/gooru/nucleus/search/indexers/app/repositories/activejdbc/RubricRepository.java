@@ -11,4 +11,6 @@ public interface RubricRepository {
   JsonObject getRubric(String rubricId);
 
   JsonObject getDeletedRubric(String rubricId);
+
+  Integer getQuestionCountByRubricId(String rubricId);
 }

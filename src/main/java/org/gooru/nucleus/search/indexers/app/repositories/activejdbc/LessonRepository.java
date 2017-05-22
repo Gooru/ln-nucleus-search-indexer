@@ -21,5 +21,7 @@ public interface LessonRepository {
   LazyList<Lesson> getLessonByCourseId(String courseId);
   
   Integer getLessonCountByCourseId(String courseId);
+  
+  JsonObject getLessonById(String lessonId);
 
 }

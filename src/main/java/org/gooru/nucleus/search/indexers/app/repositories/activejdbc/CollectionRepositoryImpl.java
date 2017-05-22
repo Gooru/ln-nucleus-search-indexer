@@ -7,6 +7,8 @@ import java.util.Map;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
@@ -150,6 +152,23 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     return new JsonObject().put("collections", collectionArray);
   }
 
+  @Override
+  public JsonObject getCollectionById(String collectionId) {
+    JsonObject returnValue = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      Collection result = Collection.findById(getPGObject("id", UUID_TYPE, collectionId));
+      if (result != null && !result.getBoolean(Collection.IS_DELETED)) {
+        returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collection : {} error : {}", collectionId, e);
+    }
+    closeDBConn(db);
+    return returnValue;
+  }
+  
   @Override
   public LazyList<Collection> getCollectionsByCourseId(String courseId) {
     LazyList<Collection> collections = null;

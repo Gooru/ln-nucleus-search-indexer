@@ -36,4 +36,6 @@ public interface CollectionRepository {
   Long getUsedByStudentCount(String collectionId);
 
   Long getRemixedInCourseCount(String collectionId);
+
+  JsonObject getCollectionById(String collectionId);
 }

@@ -4,15 +4,17 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Rubric;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
+import org.javalite.activejdbc.DB;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.vertx.core.json.JsonObject;
 
-public class RubricRepositoryImpl implements RubricRepository {
+public class RubricRepositoryImpl extends BaseIndexRepo implements RubricRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RubricRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
@@ -44,6 +46,23 @@ public class RubricRepositoryImpl implements RubricRepository {
       }
     }
     return returnValue;
+  }
+  
+  @Override
+  public Integer getQuestionCountByRubricId(String rubricId) {
+    Integer questionCount = 0;
+    DB db = getDefaultDataSourceDBConnection();
+    try{
+      openConnection(db);
+      Long questionCountL = Rubric.count(Rubric.FETCH_MAPPED_QUESTIONS, rubricId);
+      LOGGER.debug("Mapped question count : {} for rubric : {}", questionCountL, rubricId);
+      questionCount =  questionCountL != null ? questionCountL.intValue() : 0;
+    }
+    catch(Exception e){
+      LOGGER.error("Not able to fetch Mapped question count for rubric : {} error : {}", rubricId, e);
+    }
+    closeDBConn(db);
+    return questionCount;
   }
   
   private PGobject getPGObject(String field, String type, String value) {

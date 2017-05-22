@@ -89,40 +89,46 @@ public class RubricEsIndexSrcBuilder<S extends JsonObject, D extends RubricEio> 
       }
       rubricEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 
-      // TODO Set Statistics
-      StatisticsEo statisticsEo = new StatisticsEo();
-      // statisticsEo.setQuestionCount(questionCount);
-      rubricEo.setStatistics(statisticsEo.getStatistics());
-
       // Set course
       CourseEo course = new CourseEo();
-      course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
-      course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
+      course.setId(source.getString(EntityAttributeConstants.COURSE_ID, null));
+      JsonObject courseData = getCourseRepo().getCourseById(course.getId());
+      course.setTitle(courseData.getString(EntityAttributeConstants.TITLE, null));
       rubricEo.setCourse(course.getCourseJson());
 
       // Set unit
       UnitEo unit = new UnitEo();
-      unit.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
-      unit.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
-      rubricEo.setCourse(course.getCourseJson());
+      unit.setId(source.getString(EntityAttributeConstants.UNIT_ID, null));
+      JsonObject unitData = getUnitRepo().getUnitById(unit.getId());
+      unit.setTitle(unitData.getString(EntityAttributeConstants.TITLE, null));
+      rubricEo.setUnit(unit.getUnitJson());
 
       // Set lesson
       LessonEo lesson = new LessonEo();
-      lesson.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
-      lesson.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
-      rubricEo.setCourse(course.getCourseJson());
+      lesson.setId(source.getString(EntityAttributeConstants.LESSON_ID, null));
+      JsonObject lessonData = getLessonRepo().getLessonById(lesson.getId());
+      lesson.setTitle(lessonData.getString(EntityAttributeConstants.TITLE, null));
+      rubricEo.setLesson(lesson.getLessonJson());
 
       // Set collection
-      CollectionEo colllection = new CollectionEo();
-      colllection.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
-      colllection.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
-      rubricEo.setCourse(course.getCourseJson());
+      CollectionEo collection = new CollectionEo();
+      collection.setId(source.getString(EntityAttributeConstants.COLLECTION_ID, null));
+      JsonObject collectionData = getCollectionRepo().getCollectionById(collection.getId());
+      collection.setTitle(collectionData.getString(EntityAttributeConstants.TITLE, null));
+      rubricEo.setCollection(collection.getCollectionJson());
 
       // Set content
       ContentEo content = new ContentEo();
-      content.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
-      content.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
-      rubricEo.setCourse(course.getCourseJson());
+      content.setId(source.getString(EntityAttributeConstants.CONTENT_ID, null));
+      JsonObject contentData = getContentRepo().getQuestionById(content.getId());
+      content.setTitle(contentData.getString(EntityAttributeConstants.TITLE, null));
+      rubricEo.setContent(content.getContentJson());
+        
+      StatisticsEo statisticsEo = new StatisticsEo();
+      Integer questionCount = getRubricRepo().getQuestionCountByRubricId(id);
+      if (content.getId() != null) questionCount++;
+      statisticsEo.setQuestionCount(questionCount);
+      rubricEo.setStatistics(statisticsEo.getStatistics());
 
       // Set Rubric Tenant
       String tenantId = source.getString(EntityAttributeConstants.TENANT);
@@ -134,7 +140,7 @@ public class RubricEsIndexSrcBuilder<S extends JsonObject, D extends RubricEio> 
 
     } catch (Exception e) {
       LOGGER.error("RubEISB->build : Rubric re-index failed : exception :", e);
-      LOGGER.debug("REISB->build : Rubric Eo source : " + rubricEo.getRubricJson().toString());
+      LOGGER.debug("RubEISB->build : Rubric Eo source : " + rubricEo.getRubricJson().toString());
       throw new Exception(e);
     }
     return rubricEo.getRubricJson();
