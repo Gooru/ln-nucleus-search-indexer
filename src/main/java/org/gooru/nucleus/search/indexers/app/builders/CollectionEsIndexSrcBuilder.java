@@ -170,8 +170,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       Long studentCount = getCollectionRepo().getUsedByStudentCount(id);
       statisticsEo.setUsedByStudentCount(studentCount);
 
-      
-      //Set Editorial tag
+      // Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
       JsonObject editorialTags = null;
       if (StringUtils.isNotBlank(editorialStr) && !editorialStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) editorialTags = new JsonObject(editorialStr);

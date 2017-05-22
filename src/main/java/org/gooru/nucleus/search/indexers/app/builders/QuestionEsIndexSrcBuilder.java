@@ -139,7 +139,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         contentEo.setDisplayGuide(displayGuide);
       }
       
-      //Set Editorial tag
+      // Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
       JsonObject editorialTags = null;
       if (StringUtils.isNotBlank(editorialStr) && !editorialStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) editorialTags = new JsonObject(editorialStr);
