@@ -38,7 +38,7 @@ public class RubricEventsHandler extends BaseEventHandler implements IndexEventH
         break;
 
       default:
-        LOGGER.error("RuEH->handleEvents : Invalid event !! event name : " + eventName);
+        LOGGER.error("RubEH->handleEvents : Invalid event !! event name : " + eventName);
         throw new InvalidRequestException("Invalid event, not able to handle");
       }
     } catch (Exception ex) {
@@ -49,12 +49,12 @@ public class RubricEventsHandler extends BaseEventHandler implements IndexEventH
 
   private void handleReIndex(String rubricId) throws Exception {
     rubricIndexHandler.indexDocument(rubricId);
-    LOGGER.debug("REH->handleReIndex : Indexed rubric! event name : " + eventName + " rubric id : " + rubricId);
+    LOGGER.debug("RubEH->handleReIndex : Indexed rubric! event name : " + eventName + " rubric id : " + rubricId);
   }
 
   private void handleDelete(String rubricId) throws Exception {
     rubricIndexHandler.deleteIndexedDocument(rubricId);
-    LOGGER.debug("REH->handleDelete : Deleted rubric from index! event name : " + eventName + " rubric id : " + rubricId);
+    LOGGER.debug("RubEH->handleDelete : Deleted rubric from index! event name : " + eventName + " rubric id : " + rubricId);
   }
 
 }
