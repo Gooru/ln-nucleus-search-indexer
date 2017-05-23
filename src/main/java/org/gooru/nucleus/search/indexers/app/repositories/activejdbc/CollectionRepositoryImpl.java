@@ -7,8 +7,6 @@ import java.util.Map;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
