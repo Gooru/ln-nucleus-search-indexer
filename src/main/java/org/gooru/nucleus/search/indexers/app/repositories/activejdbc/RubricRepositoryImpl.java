@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Rubric;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -52,16 +51,19 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
   public Integer getQuestionCountByRubricId(String rubricId) {
     Integer questionCount = 0;
     DB db = getDefaultDataSourceDBConnection();
-    try{
+    try {
       openConnection(db);
-      Long questionCountL = Rubric.count(Rubric.FETCH_MAPPED_QUESTIONS, rubricId);
-      LOGGER.debug("Mapped question count : {} for rubric : {}", questionCountL, rubricId);
-      questionCount =  questionCountL != null ? questionCountL.intValue() : 0;
-    }
-    catch(Exception e){
+      List countList = db.firstColumn(Rubric.FETCH_MAPPED_QUESTIONS, rubricId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("No Mapped Questions for Rubric : {}", rubricId);
+        return questionCount;
+      }
+      questionCount = ((Long) countList.get(0)).intValue();
+    } catch (Exception e) {
       LOGGER.error("Not able to fetch Mapped question count for rubric : {} error : {}", rubricId, e);
+    } finally {
+      closeDBConn(db);
     }
-    closeDBConn(db);
     return questionCount;
   }
   

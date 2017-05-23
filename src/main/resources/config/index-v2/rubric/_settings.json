@@ -19,7 +19,15 @@
                   "stop",
                   "kstem"
                ]
-            }
+            },
+          "whitespace_lowercase": {
+            "type": "custom",
+            "filter": [
+              "lowercase",
+              "trim"
+            ],
+            "tokenizer": "whitespace"
+          }
          }
       }
    },
