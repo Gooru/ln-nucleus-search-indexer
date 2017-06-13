@@ -33,8 +33,6 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       query = Taxonomy.GET_DOMAIN_QUERY;
       break;
     case IndexerConstants.STANDARD :
-      query = Taxonomy.GET_CODE;
-      break;
     case IndexerConstants.LEARNING_TARGET :
       query = Taxonomy.GET_CODE;
       break;
@@ -62,12 +60,12 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
   @SuppressWarnings("rawtypes")
   public Map getGDTCode(String targetCodeId) {
     Map gdtData = null;
-    String query = Taxonomy.GET_GDT_CODE;
+    String query = TaxonomyCodeMapping.GET_GDT_CODE;
     DB db = getDefaultDataSourceDBConnection();
     try {
       openConnection(db);
       List<Map> gdtDataList = db.findAll(query, targetCodeId);
-      if (gdtDataList.size() > 0 && gdtDataList.get(0) != null && gdtDataList.get(0).containsKey(Taxonomy.SOURCE_TAXONOMY_CODE_ID)) {
+      if (gdtDataList.size() > 0 && gdtDataList.get(0) != null && gdtDataList.get(0).containsKey(TaxonomyCodeMapping.SOURCE_TAXONOMY_CODE_ID)) {
         gdtData = gdtDataList.get(0);
         return gdtData;
       } else {
@@ -86,7 +84,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
   @SuppressWarnings("rawtypes")
   public List<Map> getEquivalentCompetencies(String sourceCodeId) {
     List<Map> equivalentCodes = null;
-    String query = Taxonomy.GET_EQUIVALENT_CODE;
+    String query = TaxonomyCodeMapping.GET_EQUIVALENT_CODE;
     DB db = getDefaultDataSourceDBConnection();
     try {
       openConnection(db);

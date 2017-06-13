@@ -90,6 +90,9 @@ public final class EntityAttributeConstants {
   public static final String ORIGINAL_RUBRIC_ID = "original_rubric_id";
   public static final String PARENT_RUBRIC_ID = "parent_rubric_id";
   public static final String CONTENT_ID = "content_id";
+  public static final String STANDARD_FRAMEWORK_ID = "standard_framework_id";
+  public static final String CODE_TYPE = "code_type";
+
 
   //Index tracker constants
   public static final String GOORU_OID = "gooru_oid";

@@ -69,6 +69,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexNameHolder.getIndexName(EsIndex.LESSON);
     case IndexerConstants.TYPE_RUBRIC:
       return IndexNameHolder.getIndexName(EsIndex.RUBRIC);
+    case IndexerConstants.TYPE_TAXONOMY:
+      return IndexNameHolder.getIndexName(EsIndex.TAXONOMY);
     default:
       return null;
     }
@@ -92,6 +94,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexerConstants.TYPE_LESSON;
     case IndexerConstants.TYPE_RUBRIC:
       return IndexerConstants.TYPE_RUBRIC;
+    case IndexerConstants.TYPE_TAXONOMY:
+      return IndexerConstants.TYPE_TAXONOMY;
     default:
       return null;
     }
@@ -115,6 +119,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return ExecuteOperationConstants.GET_LESSON;
     case IndexerConstants.TYPE_RUBRIC:
       return ExecuteOperationConstants.GET_RUBRIC;
+    case IndexerConstants.TYPE_TAXONOMY:
+      return ExecuteOperationConstants.GET_TAXONOMY_CODE;
     default:
       return null;
     }
@@ -291,6 +297,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
               LessonIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
               break;
             case IndexerConstants.TYPE_RUBRIC:
+              break;
+            case IndexerConstants.TYPE_TAXONOMY:
               break;
             default:
               throw new BadRequestException("Invalid format type! Please pass valid format to index!");

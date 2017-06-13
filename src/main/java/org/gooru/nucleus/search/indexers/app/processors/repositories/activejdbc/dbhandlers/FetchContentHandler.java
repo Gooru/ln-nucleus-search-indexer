@@ -16,6 +16,7 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepos
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
 import org.slf4j.Logger;
@@ -119,7 +120,10 @@ public class FetchContentHandler implements DBHandler {
         case ExecuteOperationConstants.GET_DELETED_RUBRIC:
           result = RubricRepository.instance().getDeletedRubric(context.getId());
           break;
-
+          
+        case ExecuteOperationConstants.GET_TAXONOMY_CODE:
+          result = TaxonomyCodeRepository.instance().getTaxonomyCode(context.getId());
+          break;
           
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");

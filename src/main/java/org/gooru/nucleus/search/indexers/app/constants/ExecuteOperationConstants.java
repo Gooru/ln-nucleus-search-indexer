@@ -45,6 +45,8 @@ public final class ExecuteOperationConstants {
   public static final String GET_RUBRIC = "get_rubric";
 
   public static final String GET_DELETED_RUBRIC = "get_deleted_rubric";
+  
+  public static final String GET_TAXONOMY_CODE = "get_taxonomy_code";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();
