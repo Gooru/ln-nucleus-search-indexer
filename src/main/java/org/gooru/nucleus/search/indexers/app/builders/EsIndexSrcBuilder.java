@@ -27,6 +27,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepos
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
@@ -34,6 +36,7 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitReposit
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +69,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.UNIT.getType(), new UnitEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.LESSON.getType(), new LessonEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RUBRIC.getType(), new RubricEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.TAXONOMY.getType(), new TaxonomyEsIndexSrcBuilder<>());
   }
 
   public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {
@@ -117,6 +121,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   
   protected RubricRepositoryImpl getRubricRepo() {
     return (RubricRepositoryImpl) RubricRepository.instance();
+  }
+  
+  protected TaxonomyCodeRepositoryImpl getTaxonomyCodeRepo() {
+    return (TaxonomyCodeRepositoryImpl) TaxonomyCodeRepository.instance();
   }
 
   protected void setUser(JsonObject user, UserEo userEo) {
@@ -316,12 +324,12 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       String leafCode = leafSLInternalCode.toString();
       Map gdtCode = getTaxonomyRepo().getGDTCode(leafCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
-        String leafDisplayCode = gdtCode.get(Taxonomy.TARGET_DISPLAY_CODE).toString();
-        List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.get(Taxonomy.SOURCE_TAXONOMY_CODE_ID).toString());
+        String leafDisplayCode = gdtCode.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString();
+        List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.get(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID).toString());
         if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
           for (Map equivalentCompetency : equivalentCompetencyList) {
             setEquivelantArrays(eqInternalCodesArray, eqDisplayCodesArray, eqFrameworkArray, equivalentCompetency);
-            if(!equivalentCompetency.get(Taxonomy.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(leafCode)) 
+            if(!equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(leafCode)) 
               setMappedAndEquivalentCompetency(leafCode, leafDisplayCode, eqCompetencyArray, equivalentCompetency);
           }
         }
@@ -338,10 +346,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonObject eqCompetency = new JsonObject(); 
     eqCompetency.put(IndexerConstants.LEAF_INTERNAL_CODE_ID, leafCode);
     eqCompetency.put(IndexerConstants.LEAF_DISPLAY_CODE, leafDisplayCode);
-    eqCompetency.put(EntityAttributeConstants.ID, equivalentCompetency.get(Taxonomy.TARGET_TAXONOMY_CODE_ID).toString());
-    eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.get(Taxonomy.TARGET_DISPLAY_CODE).toString());
-    eqCompetency.put(IndexerConstants.FRAMEWORK_CODE, equivalentCompetency.get(Taxonomy.TARGET_FRAMEWORK_ID).toString());
-    eqCompetency.put(EntityAttributeConstants.TITLE, equivalentCompetency.get(Taxonomy.TARGET_TITLE).toString());
+    eqCompetency.put(EntityAttributeConstants.ID, equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString());
+    eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
+    eqCompetency.put(IndexerConstants.FRAMEWORK_CODE, equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
+    eqCompetency.put(EntityAttributeConstants.TITLE, equivalentCompetency.get(TaxonomyCode.TARGET_TITLE).toString());
     //eqCompetency.put(IndexerConstants.PARENT_TITLE, equivalentCompetency.get(Taxonomy.TARGET_PARENT_TITLE).toString());
     eqCompetencyArray.add(eqCompetency);
   }
@@ -349,9 +357,9 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   @SuppressWarnings("rawtypes")
   private void setEquivelantArrays(JsonArray eqInternalCodesArray, JsonArray eqDisplayCodesArray, JsonArray eqFrameworkArray,
           Map equivalentCompetency) {
-    eqInternalCodesArray.add(equivalentCompetency.get(Taxonomy.TARGET_TAXONOMY_CODE_ID));
-    eqDisplayCodesArray.add(equivalentCompetency.get(Taxonomy.TARGET_DISPLAY_CODE));
-    eqFrameworkArray.add(equivalentCompetency.get(Taxonomy.TARGET_FRAMEWORK_ID).toString());
+    eqInternalCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID));
+    eqDisplayCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE));
+    eqFrameworkArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
   }
 
   @SuppressWarnings("rawtypes")

@@ -16,6 +16,8 @@ public final class IndexerConstants {
   
   public static final String TYPE_CONTENT_INFO = "contentinfo";
   
+  public static final String TYPE_TAXONOMY = "taxonomy";
+
   public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
 
   public static final String COLLECTION_IDS = "collection_ids";
