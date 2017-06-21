@@ -5,11 +5,12 @@ import java.util.Date;
 
 import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class CrosswalkEio implements Serializable {
 
-  private static final long serialVersionUID = -7695456210960325029L;
+  private static final long serialVersionUID = -7695456210960325022L;
   private JsonObject crosswalk = null;
 
   public CrosswalkEio() {
@@ -36,28 +37,20 @@ public class CrosswalkEio implements Serializable {
     crosswalk = JsonUtil.set(crosswalk, "indexType", indexType);
   }
   
-  public String getDisplayCode() {
-    return crosswalk.getString("displayCode", null);
+  public String getCodeType() {
+    return crosswalk.getString("codeType", null);
   }
 
-  public void setDisplayCode(String displayCode) {
-    crosswalk = JsonUtil.set(crosswalk, "displayCode", displayCode);
+  public void setCodeType(String codeType) {
+    crosswalk = JsonUtil.set(crosswalk, "codeType", codeType);
   }
   
-  public String getGdtCode() {
-    return crosswalk.getString("gdtCode", null);
+  public String getCode() {
+    return crosswalk.getString("code", null);
   }
 
-  public void setGdtCode(String gdtCode) {
-    crosswalk = JsonUtil.set(crosswalk, "gdtCode", gdtCode);
-  }
-  
-  public String getEquivalentCompetencies(String key) {
-    return crosswalk.getString(key, null);
-  }
-
-  public void setEquivalentCompetencies(JsonObject data) {
-    crosswalk = JsonUtil.set(crosswalk, "equivalentCompetencies", data);
+  public void setCode(String code) {
+    crosswalk = JsonUtil.set(crosswalk, "code", code);
   }
 
   public String getIndexUpdatedTime() {
@@ -67,4 +60,13 @@ public class CrosswalkEio implements Serializable {
   public void setIndexUpdatedTime(Date indexUpdatedTime) {
     this.crosswalk = JsonUtil.set(crosswalk, "indexUpdatedTime", indexUpdatedTime.toInstant());
   }
+  
+  public JsonArray getCrosswalkCodes(String key) {
+    return crosswalk.getJsonArray(key);
+  }
+
+  public void setCrosswalkCodes(JsonArray crosswalkCodes) {
+    crosswalk = JsonUtil.set(crosswalk, "crosswalkCodes", crosswalkCodes);
+  }
+  
 }

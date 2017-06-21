@@ -14,5 +14,7 @@ public interface TaxonomyRepository {
   List<Map> getTaxonomyData(String codeId, String label);
   
   JsonObject getGdtMapping(String targetCodeId);
+  
+  JsonObject getCrosswalkCodes(String sourceCodeId);
 
 }

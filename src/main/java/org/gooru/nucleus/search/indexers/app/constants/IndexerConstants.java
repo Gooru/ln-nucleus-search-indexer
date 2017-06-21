@@ -147,5 +147,7 @@ public final class IndexerConstants {
   public static final String FEATURED = "featured";
 
   public static final String TYPE_RUBRIC = "rubric";
+  
+  public static final String _LEARNING_TARGET = "learning_target";
 
 }
