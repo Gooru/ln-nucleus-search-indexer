@@ -112,7 +112,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     case IndexerConstants.TYPE_COURSE:
       return ExecuteOperationConstants.GET_COURSE;
     case IndexerConstants.TYPE_CROSSWALK:
-      return ExecuteOperationConstants.GET_GDT_MAPPING;
+      return ExecuteOperationConstants.GET_CROSSWALK;
     case IndexerConstants.TYPE_UNIT:
       return ExecuteOperationConstants.GET_UNIT;
     case IndexerConstants.TYPE_LESSON:
@@ -299,6 +299,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             case IndexerConstants.TYPE_RUBRIC:
               break;
             case IndexerConstants.TYPE_TAXONOMY:
+            case IndexerConstants.TYPE_CROSSWALK:
               break;
             default:
               throw new BadRequestException("Invalid format type! Please pass valid format to index!");

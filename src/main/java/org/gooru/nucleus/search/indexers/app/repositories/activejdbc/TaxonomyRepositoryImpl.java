@@ -12,6 +12,7 @@ import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRepository {
@@ -98,6 +99,26 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       closeDBConn(db);
     }
     return equivalentCodes;
+  }
+
+  @Override
+  public JsonObject getCrosswalkCodes(String sourceCodeId) {
+    LOGGER.debug("TaxonomyRepositoryImpl : getCrosswalkCodes : " + sourceCodeId);
+    JsonObject returnObject = new JsonObject();
+    JsonArray crosswalkArray = null;
+    try {
+      LazyList<TaxonomyCodeMapping> crosswalkCodes = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_SOURCE_CODE_TO_TARGET_CODE, sourceCodeId);
+      if (crosswalkCodes == null || crosswalkCodes.size() < 1) {
+        LOGGER.debug("Crosswalk codes for GUT Code : {} not present in DB", sourceCodeId);
+        return null;
+      }
+      crosswalkArray = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(crosswalkCodes));
+      returnObject.put("id", sourceCodeId);
+      returnObject.put("crosswalk", crosswalkArray);
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch crosswalk codes for GUT : {} error : {}", sourceCodeId, e);
+    }
+    return returnObject;
   }
   
   @Override

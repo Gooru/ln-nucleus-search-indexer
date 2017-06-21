@@ -105,6 +105,10 @@ public class FetchContentHandler implements DBHandler {
           result = TaxonomyRepository.instance().getGdtMapping(context.getId());
           break;
           
+        case ExecuteOperationConstants.GET_CROSSWALK:
+          result = TaxonomyRepository.instance().getCrosswalkCodes(context.getId());
+          break;
+          
         case ExecuteOperationConstants.GET_UNIT:
           result = UnitRepository.instance().getUnit(context.getId());
           break;

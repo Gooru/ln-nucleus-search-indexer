@@ -14,15 +14,44 @@
             "index":"not_analyzed",
             "include_in_all":false
          },
-         "displayCode":{
+         "codeType":{
             "type":"string",
             "analyzer":"keyword_lowercase",
             "include_in_all":false
          },
-         "gdtCode":{
+         "code":{
             "type":"string",
-            "analyzer":"keyword_lowercase",
+            "index":"not_analyzed",
             "include_in_all":false
+         },
+         "crosswalkCodes":{
+            "properties":{
+               "id":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "code":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "title":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "parentTitle":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "frameworkCode":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               }
+            }
          }
       }
    }
