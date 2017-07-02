@@ -124,7 +124,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       statisticsEo.setHasNoThumbnail(contentEo.getThumbnail() != null ? 0 : 1);
       statisticsEo.setHasNoDescription(contentEo.getDescription() != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount((contentEo.getCollectionIds() != null) ? contentEo.getCollectionIds().size() : 0);
-      boolean has21CenturySkill = (contentEo.getMetadata() != null && contentEo.getMetadata().containsKey(IndexerConstants.TWENTY_ONE_CENTURY_SKILL) && !contentEo.getMetadata().getJsonArray(IndexerConstants.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
+      boolean has21CenturySkill = (contentEo.getMetadata() != null && contentEo.getMetadata().containsKey(IndexFields.TWENTY_ONE_CENTURY_SKILL) && !contentEo.getMetadata().getJsonArray(IndexFields.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
       statisticsEo.setHas21stCenturySkills(has21CenturySkill);
 
       // Set display guide values

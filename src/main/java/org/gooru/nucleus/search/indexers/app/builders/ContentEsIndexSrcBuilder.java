@@ -33,7 +33,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     return IndexType.RESOURCE.getType();
   }
 
-  @SuppressWarnings("rawtypes")
   @Override
   protected JsonObject build(JsonObject source, D contentEo) throws Exception {
     try {
