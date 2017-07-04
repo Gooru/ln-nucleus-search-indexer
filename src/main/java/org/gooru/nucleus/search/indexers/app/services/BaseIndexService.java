@@ -60,7 +60,7 @@ public class BaseIndexService {
         if(key.startsWith(IndexerConstants.STATISTICS_DOT)) {
           isStatistics = true;
           statistics.put(key.replace(IndexerConstants.STATISTICS_DOT, ""), data.get(key));
-        } else if (key.startsWith(IndexerConstants.INFO_WATSON_TAGS_DOT) && !((List)data.get(key)).isEmpty()) {
+        } else if (key.startsWith(IndexerConstants.INFO_WATSON_TAGS_DOT) && !((List<?>) data.get(key)).isEmpty()) {
           isKeyword = true;
           tags.put(key.replace(IndexerConstants.INFO_WATSON_TAGS_DOT, ""), data.get(key));
         }

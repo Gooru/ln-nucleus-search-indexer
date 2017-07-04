@@ -199,6 +199,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     };
   }
 
+  @SuppressWarnings("unchecked")
   private void setResourceStasInfoData(JsonObject data, String id, String typeName) throws Exception {
     try {
       Map<String, Object> contentInfoAsMap =
@@ -225,8 +226,13 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
 
   @Override
   public Map<String, Object> getDocument(String id, String indexName, String type) {
-    GetResponse response = getClient().prepareGet(indexName, getIndexTypeByType(type), id).execute().actionGet();
-    return response != null ? response.getSource() : null;
+    GetResponse response = null;
+    try {
+      response = getClient().prepareGet(indexName, getIndexTypeByType(type), id).execute().actionGet();
+    } catch (Exception e) {
+      LOGGER.info("Document not found in index for id : {}", id);
+    }
+    return (response != null && response.isExists()) ? response.getSource() : null;
   }
 
   @Override

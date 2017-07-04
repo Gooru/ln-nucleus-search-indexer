@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.CodeEo;
@@ -35,7 +36,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitReposit
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepositoryImpl;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.javalite.common.Convert;
 import org.slf4j.Logger;
@@ -258,10 +258,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     taxonomyDataSet.setCourse(courseLabelArray);
     taxonomyDataSet.setDomain(domainLabelArray);
     
-    curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
-            .put(IndexerConstants.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
-            .put(IndexerConstants.CURRICULUM_NAME, frameworkCodeArray != null ? frameworkCodeArray.stream().distinct().collect(Collectors.toList()) : new JsonArray())
-            .put(IndexerConstants.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
+    curriculumTaxonomy.put(IndexFields.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
+            .put(IndexFields.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
+            .put(IndexFields.CURRICULUM_NAME, frameworkCodeArray != null ? frameworkCodeArray.stream().distinct().collect(Collectors.toList()) : new JsonArray())
+            .put(IndexFields.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
     taxonomyDataSet.setCurriculum(curriculumTaxonomy);
     taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.getTaxonomyJson().toString());
     taxonomyEo.setTaxonomySet(taxonomyDataSet.getTaxonomyJson());
@@ -271,8 +271,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     displayObject.put(EntityAttributeConstants.ID, code);
     displayObject.put(EntityAttributeConstants.CODE, displayCodeJson.getString(EntityAttributeConstants.CODE));
     displayObject.put(EntityAttributeConstants.TITLE, displayCodeJson.getString(EntityAttributeConstants.TITLE));
-    displayObject.put(IndexerConstants.FRAMEWORK_CODE, displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
-    displayObject.put(IndexerConstants.PARENT_TITLE, displayCodeJson.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
+    displayObject.put(IndexFields.FRAMEWORK_CODE, displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+    displayObject.put(IndexFields.PARENT_TITLE, displayCodeJson.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
   }
 
   
@@ -327,10 +327,13 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         String leafDisplayCode = gdtCode.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString();
         List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.get(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID).toString());
         if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
+          JsonObject leafCodeObject = new JsonObject();
+          leafCodeObject.put(EntityAttributeConstants.ID, leafCode);
+          leafCodeObject.put(EntityAttributeConstants.CODE, leafDisplayCode);
           for (Map equivalentCompetency : equivalentCompetencyList) {
             setEquivelantArrays(eqInternalCodesArray, eqDisplayCodesArray, eqFrameworkArray, equivalentCompetency);
             if(!equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(leafCode)) 
-              setMappedAndEquivalentCompetency(leafCode, leafDisplayCode, eqCompetencyArray, equivalentCompetency);
+              setMappedAndEquivalentCompetency(leafCodeObject, eqCompetencyArray, equivalentCompetency);
           }
         }
       }
@@ -342,16 +345,15 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
 
   @SuppressWarnings("rawtypes")
-  private void setMappedAndEquivalentCompetency(String leafCode, String leafDisplayCode, JsonArray eqCompetencyArray, Map equivalentCompetency) {
+  private void setMappedAndEquivalentCompetency(JsonObject leafCodeObject, JsonArray eqCompetencyArray, Map equivalentCompetency) {
     JsonObject eqCompetency = new JsonObject(); 
-    eqCompetency.put(IndexerConstants.LEAF_INTERNAL_CODE_ID, leafCode);
-    eqCompetency.put(IndexerConstants.LEAF_DISPLAY_CODE, leafDisplayCode);
     eqCompetency.put(EntityAttributeConstants.ID, equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString());
     eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
-    eqCompetency.put(IndexerConstants.FRAMEWORK_CODE, equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
+    eqCompetency.put(IndexFields.FRAMEWORK_CODE, equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
     eqCompetency.put(EntityAttributeConstants.TITLE, equivalentCompetency.get(TaxonomyCode.TARGET_TITLE).toString());
+    leafCodeObject.put(IndexFields.CROSSWALK_CODES, eqCompetency); 
     //eqCompetency.put(IndexerConstants.PARENT_TITLE, equivalentCompetency.get(Taxonomy.TARGET_PARENT_TITLE).toString());
-    eqCompetencyArray.add(eqCompetency);
+    eqCompetencyArray.add(leafCodeObject);
   }
 
   @SuppressWarnings("rawtypes")
