@@ -122,15 +122,19 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
   @Override
   public JsonObject getDeletedCollection(String collectionId) {
     JsonObject returnValue = null;
-    List<Collection> collections = Collection.where(Collection.FETCH_DELETED_QUERY, collectionId, true);
-    if (collections.size() < 1) {
-      LOGGER.warn("Content id: {} not present in DB", collectionId);
-    }
-    if(collections.size() > 0){
-      Collection content = collections.get(0);
-      if (content != null) {
-        returnValue = new JsonObject(content.toJson(false));
+    try {
+      List<Collection> collections = Collection.where(Collection.FETCH_DELETED_QUERY, collectionId, true);
+      if (collections.size() < 1) {
+        LOGGER.warn("Content id: {} not present in DB", collectionId);
       }
+      if (collections.size() > 0) {
+        Collection content = collections.get(0);
+        if (content != null) {
+          returnValue = new JsonObject(content.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted collection from DB : {} error : {}", collectionId, e);
     }
     return returnValue;
   }

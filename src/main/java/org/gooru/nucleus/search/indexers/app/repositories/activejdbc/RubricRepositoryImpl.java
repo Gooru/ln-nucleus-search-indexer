@@ -25,8 +25,8 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
     Rubric result = Rubric.findById(getPGObject("id", UUID_TYPE, contentID));
 
     JsonObject returnValue = null;
-    if (result != null && !result.getBoolean(Rubric.IS_DELETED)) {
-     returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+    if (result != null && !result.getBoolean(Rubric.IS_DELETED) && result.getBoolean(Rubric.IS_RUBRIC)) {
+      returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
     }
     return returnValue;
   }

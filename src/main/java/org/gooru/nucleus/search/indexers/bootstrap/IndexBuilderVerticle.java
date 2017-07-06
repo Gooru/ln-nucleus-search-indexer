@@ -112,7 +112,7 @@ public class IndexBuilderVerticle extends AbstractVerticle {
   }
   private void deleteDocument(final Router router) {
     router.delete(RouteConstants.EP_BUILD_CONTENT_DELETE).handler(context -> vertx.executeBlocking(future -> {
-      String indexableId = context.request().getParam(RouteConstants.INDEXABLE_ID);
+      String indexableId = context.request().getParam(RouteConstants.INDEXABLE_IDS);
       String type = context.request().getParam(RouteConstants.TYPE);
       if (indexableId != null) {
         try {

@@ -322,10 +322,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonArray eqFrameworkArray = new JsonArray();
     for (Object leafSLInternalCode : leafSLInternalCodes) {
       String leafCode = leafSLInternalCode.toString();
-      Map gdtCode = getTaxonomyRepo().getGDTCode(leafCode);
+      JsonObject gdtCode = getTaxonomyRepo().getGDTCode(leafCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
-        String leafDisplayCode = gdtCode.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString();
-        List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.get(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID).toString());
+        String leafDisplayCode = gdtCode.getString(TaxonomyCode.TARGET_DISPLAY_CODE);
+        List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
         if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
           JsonObject leafCodeObject = new JsonObject();
           leafCodeObject.put(EntityAttributeConstants.ID, leafCode);

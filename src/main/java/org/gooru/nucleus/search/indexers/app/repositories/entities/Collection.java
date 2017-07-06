@@ -35,8 +35,8 @@ public class Collection extends Model {
 
   public static final String GET_COLLECTION_COUNT_BY_LESSON = "lesson_id = ?::uuid and is_deleted = ?";
   
-  public static final String GET_USED_IN_COURSE_COUNT = "select count(distinct course_id) from collection where parent_collection_id = ?::uuid";
+  public static final String GET_USED_IN_COURSE_COUNT = "select count(distinct course_id) from collection where parent_collection_id = ?::uuid and is_deleted = false";
 
-  public static final String GET_STUDENTS_OF_COLLECTION = "select count(cm.user_id) from class c inner join class_member cm on cm.class_id = c.id where course_id in (select distinct course_id from collection where parent_collection_id = ?::uuid) ";
+  public static final String GET_STUDENTS_OF_COLLECTION = "select count(cm.user_id) from class c inner join class_member cm on cm.class_id = c.id where course_id in (select distinct course_id from collection where parent_collection_id = ?::uuid and is_deleted = false) and c.is_deleted = false";
   
 }

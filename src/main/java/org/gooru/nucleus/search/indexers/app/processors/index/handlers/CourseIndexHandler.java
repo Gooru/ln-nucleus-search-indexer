@@ -65,6 +65,7 @@ public class CourseIndexHandler extends BaseIndexHandler implements IndexHandler
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void increaseCount(String courseId, String field) throws Exception {
     try{

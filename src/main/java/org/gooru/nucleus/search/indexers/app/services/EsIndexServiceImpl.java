@@ -156,24 +156,29 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   }
   
   @Override
-  public void deleteDocuments(String key, String type) throws Exception {
-    switch (type) {
-    case IndexerConstants.TYPE_RESOURCE:
-      ResourceIndexService.instance().deleteIndexedResource(key, type);
-      break;
-    case IndexerConstants.TYPE_QUESTION:
-      ResourceIndexService.instance().deleteIndexedQuestion(key, type);
-      break;
-    case IndexerConstants.TYPE_COLLECTION:
-      CollectionIndexService.instance().deleteIndexedCollection(key, type);
-      break;
-    case IndexerConstants.TYPE_COURSE:
-      CourseIndexService.instance().deleteIndexedCourse(key, type);
-      break;
-    default:
-      LOGGER.error("Invalid type passed in, not able to delete");
-      throw new InvalidRequestException("Invalid type : " + type);
-    }
+  public void deleteDocuments(String deletableIds, String type) throws Exception {
+    new IdIterator(deletableIds) {
+      @Override
+      public void execute(String deletableId) throws Exception {
+        switch (type) {
+        case IndexerConstants.TYPE_RESOURCE:
+          ResourceIndexService.instance().deleteIndexedResource(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_QUESTION:
+          ResourceIndexService.instance().deleteIndexedQuestion(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_COLLECTION:
+          CollectionIndexService.instance().deleteIndexedCollection(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_COURSE:
+          CourseIndexService.instance().deleteIndexedCourse(deletableId, type);
+          break;
+        default:
+          LOGGER.error("Invalid type passed in, not able to delete");
+          throw new InvalidRequestException("Invalid type : " + type);
+        }
+      }
+    };
   }
 
   @Override
@@ -391,6 +396,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
   }
   
+  @SuppressWarnings("unchecked")
   private void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap, String typeName) {
 
     long viewsCount = 0L;
