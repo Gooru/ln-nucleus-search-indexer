@@ -14,9 +14,9 @@ public class Finalizers implements Iterable<Finalizer> {
 
   public Finalizers() {
     List<Finalizer> finalizers = new ArrayList<>();
-    finalizers.add(KafkaRegistry.getInstance());
-    finalizers.add(ElasticSearchRegistry.getInstance());
     finalizers.add(DataSourceRegistry.getInstance());
+    finalizers.add(ElasticSearchRegistry.getInstance());
+    finalizers.add(KafkaRegistry.getInstance());
     internalIterator = finalizers.iterator();
   }
 
