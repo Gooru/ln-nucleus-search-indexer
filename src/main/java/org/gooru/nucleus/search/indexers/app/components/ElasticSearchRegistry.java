@@ -92,7 +92,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
     Settings settings =
       Settings.settingsBuilder().put("cluster.name", clusterName).put("client.transport.sniff", Boolean.valueOf(clientTransportSniff)).build();
-    LOGGER.debug("ELS Cluster Name : " + clusterName);
+    LOGGER.debug("ELS Cluster Name : {}" , clusterName);
     TransportClient transportClient = TransportClient.builder().settings(settings).build();
 
     String[] hosts = hostName.split(",");
@@ -100,14 +100,14 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
       String[] hostParams = host.split(":");
       if (hostParams.length == 2) {
         try {
-          LOGGER.debug("host : " + hostParams[0] + " port : " + hostParams[1]);
+          LOGGER.debug("host : {} port : {}" , hostParams[0],  hostParams[1]);
           transportClient.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostParams[0]), Integer.parseInt(hostParams[1])));
-          LOGGER.debug("Host added : " + host + " to elasticsearch!");
+          LOGGER.debug("Host added : {} to elasticsearch!", host);
         } catch (Exception e) {
           LOGGER.error("Add transport address failed : ", e);
         }
       } else {
-        LOGGER.debug("Oops! Could't add host : " + host + " to elasticsearch!");
+        LOGGER.debug("Oops! Could't add host : {} to elasticsearch!", host);
       }
     }
     if (!transportClient.connectedNodes().isEmpty()) {
@@ -164,12 +164,6 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
   public String getIndexNamePrefix() {
     return indexNamePrefix;
   }
-
-  //TODO Add logic to fetch config from property file, if not available in cassandra
-  /*private String getSetting(ElasticsearchConstant constant) {
-    String value = configSettingRepository != null ? configSettingRepository.getSetting(constant.getKey()) : constant.getDefaultValue();
-		return value != null && value.length() > 0 ? value : constant.getDefaultValue();
-	}*/
 
   private void setIndexNamePrefix(String indexPrefixName) {
     this.indexNamePrefix = indexPrefixName;
