@@ -151,15 +151,19 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   @Override
   public JsonObject getDeletedContent(String contentId) {
     JsonObject returnValue = null;
-    List<Content> contents = Content.where(Content.FETCH_DELETED_QUERY, contentId, true);
-    if (contents.size() < 1) {
-      LOGGER.warn("Content id: {} not present in DB", contentId);
-    }
-    if(contents.size() > 0){
-      Content content = contents.get(0);
-      if (content != null) {
-        returnValue = new JsonObject(content.toJson(false));
+    try {
+      List<Content> contents = Content.where(Content.FETCH_DELETED_QUERY, contentId, true);
+      if (contents.size() < 1) {
+        LOGGER.warn("Content id: {} not present in DB", contentId);
       }
+      if (contents.size() > 0) {
+        Content content = contents.get(0);
+        if (content != null) {
+          returnValue = new JsonObject(content.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted content from DB : {} error : {}", contentId, e);
     }
     return returnValue;
   }

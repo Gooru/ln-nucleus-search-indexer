@@ -4,7 +4,7 @@
          "indexType":{
             "type":"string"
          },
-         "indexUpdatedDate":{
+         "indexUpdatedTime":{
             "type":"date",
             "format":"dateOptionalTime",
             "include_in_all":false

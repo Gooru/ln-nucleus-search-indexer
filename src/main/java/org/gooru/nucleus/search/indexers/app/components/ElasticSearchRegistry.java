@@ -8,6 +8,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
+import org.elasticsearch.indices.InvalidIndexNameException;
 import org.gooru.nucleus.search.indexers.app.constants.ElasticSearchConnectionConstant;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.utils.EsMappingUtil;
@@ -91,7 +92,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
     Settings settings =
       Settings.settingsBuilder().put("cluster.name", clusterName).put("client.transport.sniff", Boolean.valueOf(clientTransportSniff)).build();
-    LOGGER.debug("ELS Cluster Name : " + clusterName);
+    LOGGER.debug("ELS Cluster Name : {}" , clusterName);
     TransportClient transportClient = TransportClient.builder().settings(settings).build();
 
     String[] hosts = hostName.split(",");
@@ -99,14 +100,14 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
       String[] hostParams = host.split(":");
       if (hostParams.length == 2) {
         try {
-          LOGGER.debug("host : " + hostParams[0] + " port : " + hostParams[1]);
+          LOGGER.debug("host : {} port : {}" , hostParams[0],  hostParams[1]);
           transportClient.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostParams[0]), Integer.parseInt(hostParams[1])));
-          LOGGER.debug("Host added : " + host + " to elasticsearch!");
+          LOGGER.debug("Host added : {} to elasticsearch!", host);
         } catch (Exception e) {
           LOGGER.error("Add transport address failed : ", e);
         }
       } else {
-        LOGGER.debug("Oops! Could't add host : " + host + " to elasticsearch!");
+        LOGGER.debug("Oops! Could't add host : {} to elasticsearch!", host);
       }
     }
     if (!transportClient.connectedNodes().isEmpty()) {
@@ -119,9 +120,9 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
     for (EsIndex esIndex : EsIndex.values()) {
       String indexName = getIndexNamePrefix() + esIndex.getName() + getIndexNameSuffix();
       IndexNameHolder.registerIndex(esIndex, indexName);
-      LOGGER.debug("Registering : " + indexName + " Index");
+      LOGGER.debug("Registering : {} Index", indexName);
       for (String indexType : esIndex.getTypes()) {
-        LOGGER.debug("Es Index Type  : " + indexType);
+        LOGGER.debug("Es Index Type  : {}" , indexType);
 
         String setting = EsMappingUtil.getSettingConfig(indexType);
         String mapping = EsMappingUtil.getMappingConfig(indexType);
@@ -130,15 +131,15 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
           prepareCreate.setSettings(setting);
           prepareCreate.addMapping(indexType, mapping);
           prepareCreate.execute().actionGet();
-          LOGGER.debug("Es Index : " + indexName + " Created!");
+          LOGGER.debug("Es Index : {} Created!", indexName);
         } catch (Exception exception) {
-          if (exception instanceof IndexAlreadyExistsException) {
-            LOGGER.debug("Oops! Es Index : " + indexName + " already exist!");
+          if (exception instanceof IndexAlreadyExistsException || (exception instanceof InvalidIndexNameException && exception.getMessage().contains("already exists as alias"))) {
+            LOGGER.debug("Oops! Es Index : {} already exist!", indexName);
             ElasticSearchRegistry.getInstance().getClient().admin().indices().preparePutMapping(indexName).setType(indexType).setSource(mapping)
                                  .execute().actionGet();
-            LOGGER.debug("Updated mapping with index '" + indexName + "' and type '" + indexType + '\'');
+            LOGGER.debug("Updated mapping with index '{}' and type '{}'", indexName, indexType);
           } else {
-            LOGGER.error("Register index failed : ", exception);
+            LOGGER.error("Register index failed : {}", exception);
           }
         }
       }
@@ -163,12 +164,6 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
   public String getIndexNamePrefix() {
     return indexNamePrefix;
   }
-
-  //TODO Add logic to fetch config from property file, if not available in cassandra
-  /*private String getSetting(ElasticsearchConstant constant) {
-    String value = configSettingRepository != null ? configSettingRepository.getSetting(constant.getKey()) : constant.getDefaultValue();
-		return value != null && value.length() > 0 ? value : constant.getDefaultValue();
-	}*/
 
   private void setIndexNamePrefix(String indexPrefixName) {
     this.indexNamePrefix = indexPrefixName;

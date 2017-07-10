@@ -156,24 +156,29 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   }
   
   @Override
-  public void deleteDocuments(String key, String type) throws Exception {
-    switch (type) {
-    case IndexerConstants.TYPE_RESOURCE:
-      ResourceIndexService.instance().deleteIndexedResource(key, type);
-      break;
-    case IndexerConstants.TYPE_QUESTION:
-      ResourceIndexService.instance().deleteIndexedQuestion(key, type);
-      break;
-    case IndexerConstants.TYPE_COLLECTION:
-      CollectionIndexService.instance().deleteIndexedCollection(key, type);
-      break;
-    case IndexerConstants.TYPE_COURSE:
-      CourseIndexService.instance().deleteIndexedCourse(key, type);
-      break;
-    default:
-      LOGGER.error("Invalid type passed in, not able to delete");
-      throw new InvalidRequestException("Invalid type : " + type);
-    }
+  public void deleteDocuments(String deletableIds, String type) throws Exception {
+    new IdIterator(deletableIds) {
+      @Override
+      public void execute(String deletableId) throws Exception {
+        switch (type) {
+        case IndexerConstants.TYPE_RESOURCE:
+          ResourceIndexService.instance().deleteIndexedResource(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_QUESTION:
+          ResourceIndexService.instance().deleteIndexedQuestion(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_COLLECTION:
+          CollectionIndexService.instance().deleteIndexedCollection(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_COURSE:
+          CourseIndexService.instance().deleteIndexedCourse(deletableId, type);
+          break;
+        default:
+          LOGGER.error("Invalid type passed in, not able to delete");
+          throw new InvalidRequestException("Invalid type : " + type);
+        }
+      }
+    };
   }
 
   @Override
@@ -199,6 +204,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     };
   }
 
+  @SuppressWarnings("unchecked")
   private void setResourceStasInfoData(JsonObject data, String id, String typeName) throws Exception {
     try {
       Map<String, Object> contentInfoAsMap =
@@ -225,8 +231,13 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
 
   @Override
   public Map<String, Object> getDocument(String id, String indexName, String type) {
-    GetResponse response = getClient().prepareGet(indexName, getIndexTypeByType(type), id).execute().actionGet();
-    return response != null ? response.getSource() : null;
+    GetResponse response = null;
+    try {
+      response = getClient().prepareGet(indexName, getIndexTypeByType(type), id).execute().actionGet();
+    } catch (Exception e) {
+      LOGGER.info("Document not found in index for id : {}", id);
+    }
+    return (response != null && response.isExists()) ? response.getSource() : null;
   }
 
   @Override
@@ -385,6 +396,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
   }
   
+  @SuppressWarnings("unchecked")
   private void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap, String typeName) {
 
     long viewsCount = 0L;

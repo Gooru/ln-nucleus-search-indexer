@@ -58,28 +58,30 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     return taxMetaList;
   }
   
-  @SuppressWarnings("rawtypes")
-  public Map getGDTCode(String targetCodeId) {
-    Map gdtData = null;
-    String query = TaxonomyCodeMapping.GET_GDT_CODE;
+  @Override
+  public JsonObject getGDTCode(String targetCodeId) {
+    JsonObject returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
       openConnection(db);
-      List<Map> gdtDataList = db.findAll(query, targetCodeId);
-      if (gdtDataList.size() > 0 && gdtDataList.get(0) != null && gdtDataList.get(0).containsKey(TaxonomyCodeMapping.SOURCE_TAXONOMY_CODE_ID)) {
-        gdtData = gdtDataList.get(0);
-        return gdtData;
+      TaxonomyCodeMapping result = null;
+      LazyList<TaxonomyCodeMapping> list = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
+      if (list != null && list.size() > 0) {
+        result = list.get(0);
       } else {
         LOGGER.warn("GDT code for {} standard : {} not present in DB", targetCodeId);
       }
-    }
-    catch(Exception ex){
+
+      if (result != null) {
+        returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+      return returnValue;
+    } catch (Exception ex) {
       LOGGER.error("Failed to fetch taxonomy details ", ex);
-    }
-    finally {
+    } finally {
       closeDBConn(db);
     }
-    return gdtData;
+    return returnValue;
   }
   
   @SuppressWarnings("rawtypes")

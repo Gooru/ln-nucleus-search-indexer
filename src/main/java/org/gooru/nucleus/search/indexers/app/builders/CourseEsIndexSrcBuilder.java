@@ -91,19 +91,19 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
             if(taxData != null && !taxData.isEmpty()){
               JsonObject subject = new JsonObject();
               if(codes.length == 1){
-                subject.put(IndexerConstants.CODE_ID, code);
+                subject.put(IndexFields.CODE_ID, code);
               }
               else if(codes.length > 1){
-                subject.put(IndexerConstants.CODE_ID, code.substring(0, StringUtils.ordinalIndexOf(code, "-", 1)));
+                subject.put(IndexFields.CODE_ID, code.substring(0, StringUtils.ordinalIndexOf(code, "-", 1)));
               }
-              subject.put(IndexerConstants.LABEL, taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
+              subject.put(IndexFields.LABEL, taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
               subjectLabelArray.add(taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
               subjectArray.add(subject);
               
               if(codes.length == 2){
                 JsonObject course = new JsonObject();
-                course.put(IndexerConstants.CODE_ID, taxData.getString(EntityAttributeConstants.CODE));
-                course.put(IndexerConstants.LABEL, taxData.getString(EntityAttributeConstants.TITLE));
+                course.put(IndexFields.CODE_ID, taxData.getString(EntityAttributeConstants.CODE));
+                course.put(IndexFields.LABEL, taxData.getString(EntityAttributeConstants.TITLE));
                 courseLabelArray.add(taxData.getString(EntityAttributeConstants.TITLE));
                 courseArray.add(course);
               }
@@ -119,8 +119,8 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
               displayObject.put(EntityAttributeConstants.ID, code);
               displayObject.put(EntityAttributeConstants.CODE, taxData.getString(EntityAttributeConstants.CODE));
               displayObject.put(EntityAttributeConstants.TITLE, taxData.getString(EntityAttributeConstants.TITLE));
-              displayObject.put(IndexerConstants.FRAMEWORK_CODE, taxData.getString(EntityAttributeConstants.FRAMEWORK_CODE));
-              displayObject.put(IndexerConstants.PARENT_TITLE, taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
+              displayObject.put(IndexFields.FRAMEWORK_CODE, taxData.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+              displayObject.put(IndexFields.PARENT_TITLE, taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
               displayObjectArray.add(displayObject);
             }
           }
@@ -129,14 +129,14 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
             JsonObject taxonomyObj = new JsonObject();
             taxonomyObj.put(IndexerConstants.SUBJECT, subjectArray);
             taxonomyObj.put(IndexerConstants.COURSE, courseArray);
-            taxonomyObj.put(IndexerConstants.FRAMEWORK_CODE, frameworkCode.stream().distinct().collect(Collectors.toList()));
+            taxonomyObj.put(IndexFields.FRAMEWORK_CODE, frameworkCode.stream().distinct().collect(Collectors.toList()));
             taxonomyObj.put(IndexFields.LEAF_INTERNAL_CODE, leafSLInternalCodes);
             taxonomyDataSet.setSubject(subjectLabelArray);
             taxonomyDataSet.setCourse(courseLabelArray);
-            curriculumTaxonomy.put(IndexerConstants.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
-                    .put(IndexerConstants.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
-                    .put(IndexerConstants.CURRICULUM_NAME, frameworkCode != null ? frameworkCode.stream().distinct().collect(Collectors.toList()) : new JsonArray())
-                    .put(IndexerConstants.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
+            curriculumTaxonomy.put(IndexFields.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
+                    .put(IndexFields.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
+                    .put(IndexFields.CURRICULUM_NAME, frameworkCode != null ? frameworkCode.stream().distinct().collect(Collectors.toList()) : new JsonArray())
+                    .put(IndexFields.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
             taxonomyDataSet.setCurriculum(curriculumTaxonomy);
             taxonomyObj.put(IndexFields.TAXONOMY_SET, taxonomyDataSet.getTaxonomyJson());
             courseEio.setTaxonomy(taxonomyObj);

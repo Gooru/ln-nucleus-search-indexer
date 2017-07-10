@@ -32,15 +32,19 @@ public class OriginalResourceRepositoryImpl implements OriginalResourceRepositor
   @Override
   public JsonObject getDeletedContent(String contentId) {
     JsonObject returnValue = null;
-    List<OriginalResource> contents = OriginalResource.where(OriginalResource.FETCH_DELETED_QUERY, contentId, true);
-    if (contents.size() < 1) {
-      LOGGER.warn("Original resource id: {} not present in DB", contentId);
-    }
-    if(contents.size() > 0){
-      OriginalResource content = contents.get(0);
-      if (content != null) {
-        returnValue = new JsonObject(content.toJson(false));
+    try {
+      List<OriginalResource> contents = OriginalResource.where(OriginalResource.FETCH_DELETED_QUERY, contentId, true);
+      if (contents.size() < 1) {
+        LOGGER.warn("Original resource id: {} not present in DB", contentId);
       }
+      if (contents.size() > 0) {
+        OriginalResource content = contents.get(0);
+        if (content != null) {
+          returnValue = new JsonObject(content.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted original resource from DB : {} error : {}", contentId, e);
     }
     return returnValue;
   }

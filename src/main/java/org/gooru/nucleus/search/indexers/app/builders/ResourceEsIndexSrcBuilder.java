@@ -88,7 +88,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       statisticsEo.setHasNoThumbnail(originalresourceEo.getThumbnail() != null ? 0 : 1);
       statisticsEo.setHasNoDescription(originalresourceEo.getDescription() != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount((originalresourceEo.getCollectionIds() != null) ? originalresourceEo.getCollectionIds().size() : 0);
-      boolean has21CenturySkill = (originalresourceEo.getMetadata() != null && originalresourceEo.getMetadata().containsKey(IndexerConstants.TWENTY_ONE_CENTURY_SKILL) && !originalresourceEo.getMetadata().getJsonArray(IndexerConstants.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
+      boolean has21CenturySkill = (originalresourceEo.getMetadata() != null && originalresourceEo.getMetadata().containsKey(IndexFields.TWENTY_ONE_CENTURY_SKILL) && !originalresourceEo.getMetadata().getJsonArray(IndexFields.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
       statisticsEo.setHas21stCenturySkills(has21CenturySkill);
 
       // Set Editorial tag

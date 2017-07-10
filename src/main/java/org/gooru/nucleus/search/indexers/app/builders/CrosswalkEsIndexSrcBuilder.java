@@ -3,6 +3,7 @@ package org.gooru.nucleus.search.indexers.app.builders;
 import java.util.Date;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.CrosswalkEio;
@@ -52,7 +53,7 @@ public class CrosswalkEsIndexSrcBuilder<S extends JsonObject, D extends Crosswal
     JsonObject eqCompetency = new JsonObject(); 
     eqCompetency.put(EntityAttributeConstants.ID, equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_TAXONOMY_CODE_ID));
     eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_DISPLAY_CODE));
-    eqCompetency.put(IndexerConstants.FRAMEWORK_CODE, equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_FRAMEWORK_ID));
+    eqCompetency.put(IndexFields.FRAMEWORK_CODE, equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_FRAMEWORK_ID));
     eqCompetency.put(EntityAttributeConstants.TITLE, equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_TITLE));
     return eqCompetency;
   }

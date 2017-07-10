@@ -16,5 +16,7 @@ public interface TaxonomyRepository {
   JsonObject getGdtMapping(String targetCodeId);
   
   JsonObject getCrosswalkCodes(String sourceCodeId);
+  
+  JsonObject getGDTCode(String targetCodeId);
 
 }
