@@ -91,12 +91,12 @@ public class TaxonomyEio {
     taxonomy = JsonUtil.set(taxonomy, "competency", competency);
   }
   
-  public String getEquivalentCompetencies(String key) {
-    return taxonomy.getString(key, null);
+  public JsonArray getCrosswalkCodes(String key) {
+    return taxonomy.getJsonArray(key);
   }
 
-  public void setEquivalentCompetencies(JsonObject data) {
-    taxonomy = JsonUtil.set(taxonomy, "equivalentCompetencies", data);
+  public void setCrosswalkCodes(JsonArray crosswalkCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "crosswalkCodes", crosswalkCodes);
   }
 
   public String getIndexUpdatedTime() {
@@ -115,19 +115,19 @@ public class TaxonomyEio {
     taxonomy = JsonUtil.set(taxonomy, "subject",subject);
   }
 
-  public JsonArray getCourse() {
-    return taxonomy.getJsonArray("course", null);
+  public JsonObject getCourse() {
+    return taxonomy.getJsonObject("course", null);
   }
 
-  public void setCourse(JsonArray course) {
+  public void setCourse(JsonObject course) {
     taxonomy = JsonUtil.set(taxonomy, "course", course);
   }
 
-  public JsonArray getDomain() {
-    return taxonomy.getJsonArray("domain", null);
+  public JsonObject getDomain() {
+    return taxonomy.getJsonObject("domain", null);
   }
 
-  public void setDomain(JsonArray domain) {
+  public void setDomain(JsonObject domain) {
     taxonomy = JsonUtil.set(taxonomy, "domain", domain);
   }
 

@@ -16,6 +16,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEio;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyEio> extends EsIndexSrcBuilder<S, D> {
@@ -37,7 +38,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     String codeId = source.getString(TaxonomyCode.ID);
     taxonomyEo.setId(codeId);
     taxonomyEo.setIndexType(IndexerConstants.TYPE_TAXONOMY);
-    taxonomyEo.setDisplayCode(TaxonomyCode.CODE);
+    taxonomyEo.setDisplayCode(source.getString(EntityAttributeConstants.CODE, null));
     taxonomyEo.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
     taxonomyEo.setDescription(source.getString(EntityAttributeConstants.DESCRIPTION, null));
     taxonomyEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE, null));
@@ -59,65 +60,70 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     JsonObject gutCodeObject = getTaxonomyRepo().getGDTCode(codeId);
     if (gutCodeObject != null && !gutCodeObject.isEmpty()) {
       String gutCode = gutCodeObject.getString(TaxonomyCodeMapping.SOURCE_TAXONOMY_CODE_ID);
-      JsonObject equivalentCompetencies = new JsonObject();
       List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gutCode);
       if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
+        JsonArray crosswalkCodes = new JsonArray();
         equivalentCompetencyList.forEach(eqCompetency -> {
-          JsonObject equivalentCompetency = getMappedAndEquivalentCompetency(eqCompetency);
-          equivalentCompetencies.put(eqCompetency.get(TaxonomyCodeMapping.TARGET_FRAMEWORK_ID).toString(), equivalentCompetency);
+          if (!eqCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(codeId)) {
+            JsonObject crosswalkCode = setCrosswalkObject(eqCompetency);
+            crosswalkCodes.add(crosswalkCode);
+          }
         });
+        if (!crosswalkCodes.isEmpty()) taxonomyEo.setCrosswalkCodes(crosswalkCodes);
       }
       taxonomyEo.setGutCode(gutCode);
-      taxonomyEo.setEquivalentCompetencies(equivalentCompetencies);
-
-      String subjectCode = null;
-      String courseCode = null;
-      String domainCode = null;
-      String[] codes = gutCode.split(IndexerConstants.HYPHEN_SEPARATOR);
-      if (codes.length > 0) {
-        if (codes.length == 1) {
-          subjectCode = gutCode;
-        } else if (codes.length > 1) {
-          subjectCode = gutCode.substring(0, StringUtils.ordinalIndexOf(gutCode, "-", 1));
-        }
-        if (codes.length == 2) {
-          courseCode = gutCode;
-        } else if (codes.length > 2) {
-          courseCode = gutCode.substring(0, StringUtils.ordinalIndexOf(gutCode, "-", 2));
-        }
-        if (codes.length == 3) {
-          domainCode = gutCode;
-        } else if (codes.length > 3) {
-          domainCode = gutCode.substring(0, StringUtils.ordinalIndexOf(gutCode, "-", 3));
-        }
+    }
+    
+    String subjectCode = null;
+    String courseCode = null;
+    String domainCode = null;
+    String[] codes = codeId.split(IndexerConstants.HYPHEN_SEPARATOR);
+    if (codes.length > 0) {
+      if (codes.length == 1) {
+        subjectCode = codeId;
+      } else if (codes.length > 1) {
+        subjectCode = codeId.substring(0, StringUtils.ordinalIndexOf(codeId, "-", 1));
       }
-      if (subjectCode != null) {
-        SubjectEo subject = new SubjectEo();
-        List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
-        if (subjectData != null && subjectData.size() > 0) {
-          String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
-          subject.setTitle(subjectTitle);
-        }
-        subject.setId(subjectCode);
+      if (codes.length == 2) {
+        courseCode = codeId;
+      } else if (codes.length > 2) {
+        courseCode = codeId.substring(0, StringUtils.ordinalIndexOf(codeId, "-", 2));
       }
-      if (courseCode != null) {
-        CourseEo course = new CourseEo();
-        List<Map> courseData = getTaxonomyRepo().getTaxonomyData(courseCode, IndexerConstants.COURSE);
-        if (courseData != null && courseData.size() > 0) {
-          String courseTitle = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
-          course.setTitle(courseTitle);
-        }
-        course.setId(courseCode);
+      if (codes.length == 3) {
+        domainCode = codeId;
+      } else if (codes.length > 3) {
+        domainCode = codeId.substring(0, StringUtils.ordinalIndexOf(codeId, "-", 3));
       }
-      if (domainCode != null) {
-        DomainEo domain = new DomainEo();
-        List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
-        if (domainData != null && domainData.size() > 0) {
-          String domainTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
-          domain.setTitle(domainTitle);
-        }
-        domain.setId(domainCode);
+    }
+    if (subjectCode != null) {
+      SubjectEo subject = new SubjectEo();
+      List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
+      if (subjectData != null && subjectData.size() > 0) {
+        String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
+        subject.setTitle(subjectTitle);
       }
+      subject.setId(subjectCode);
+      taxonomyEo.setSubject(subject.getSubjectJson());
+    }
+    if (courseCode != null) {
+      CourseEo course = new CourseEo();
+      List<Map> courseData = getTaxonomyRepo().getTaxonomyData(courseCode, IndexerConstants.COURSE);
+      if (courseData != null && courseData.size() > 0) {
+        String courseTitle = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
+        course.setTitle(courseTitle);
+      }
+      course.setId(courseCode);
+      taxonomyEo.setCourse(course.getCourseJson());
+    }
+    if (domainCode != null) {
+      DomainEo domain = new DomainEo();
+      List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
+      if (domainData != null && domainData.size() > 0) {
+        String domainTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
+        domain.setTitle(domainTitle);
+      }
+      domain.setId(domainCode);
+      taxonomyEo.setDomain(domain.getDomainJson());
     }
     
     //TODO
@@ -127,8 +133,8 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
   }
   
   @SuppressWarnings("rawtypes")
-  private JsonObject getMappedAndEquivalentCompetency(Map equivalentCompetency) {
-    JsonObject eqCompetency = new JsonObject();
+  private JsonObject setCrosswalkObject(Map equivalentCompetency) {
+    JsonObject eqCompetency = new JsonObject(); 
     eqCompetency.put(EntityAttributeConstants.ID, equivalentCompetency.get(TaxonomyCodeMapping.TARGET_TAXONOMY_CODE_ID).toString());
     eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.get(TaxonomyCodeMapping.TARGET_DISPLAY_CODE).toString());
     eqCompetency.put(IndexFields.FRAMEWORK_CODE, equivalentCompetency.get(TaxonomyCodeMapping.TARGET_FRAMEWORK_ID).toString());
