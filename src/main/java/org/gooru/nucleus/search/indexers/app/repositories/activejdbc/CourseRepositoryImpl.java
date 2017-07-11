@@ -64,15 +64,19 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
   @Override
   public JsonObject getDeletedCourse(String courseId) {
     JsonObject returnValue = null;
-    List<Course> courses = Course.where(Course.FETCH_DELETED_QUERY, courseId, true);
-    if (courses.size() < 1) {
-      LOGGER.warn("Course id: {} not present in DB", courseId);
-    }
-    if(courses.size() > 0){
-      Course course = courses.get(0);
-      if (course != null) {
-        returnValue = new JsonObject(course.toJson(false));
+    try {
+      List<Course> courses = Course.where(Course.FETCH_DELETED_QUERY, courseId, true);
+      if (courses.size() < 1) {
+        LOGGER.warn("Course id: {} not present in DB", courseId);
       }
+      if (courses.size() > 0) {
+        Course course = courses.get(0);
+        if (course != null) {
+          returnValue = new JsonObject(course.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted course from DB : {} error : {}", courseId, e);
     }
     return returnValue;
   }

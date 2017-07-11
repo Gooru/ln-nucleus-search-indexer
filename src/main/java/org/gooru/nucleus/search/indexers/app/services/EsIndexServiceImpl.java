@@ -173,6 +173,12 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         case IndexerConstants.TYPE_COURSE:
           CourseIndexService.instance().deleteIndexedCourse(deletableId, type);
           break;
+        case IndexerConstants.TYPE_UNIT:
+          UnitIndexService.instance().deleteIndexedUnit(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_LESSON:
+          LessonIndexService.instance().deleteIndexedLesson(deletableId, type);
+          break;
         default:
           LOGGER.error("Invalid type passed in, not able to delete");
           throw new InvalidRequestException("Invalid type : " + type);

@@ -34,15 +34,19 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
   @Override
   public JsonObject getDeletedLesson(String lessonId) {
     JsonObject returnValue = null;
-    List<Lesson> lessons = Lesson.where(Lesson.FETCH_DELETED_QUERY, lessonId, true);
-    if (lessons.size() < 1) {
-      LOGGER.warn("Lesson id: {} not present in DB", lessonId);
-    }
-    if(lessons.size() > 0){
-      Lesson lesson = lessons.get(0);
-      if (lesson != null) {
-        returnValue = new JsonObject(lesson.toJson(false));
+    try {
+      List<Lesson> lessons = Lesson.where(Lesson.FETCH_DELETED_QUERY, lessonId, true);
+      if (lessons.size() < 1) {
+        LOGGER.warn("Lesson id: {} not present in DB", lessonId);
       }
+      if (lessons.size() > 0) {
+        Lesson lesson = lessons.get(0);
+        if (lesson != null) {
+          returnValue = new JsonObject(lesson.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted lesson from DB : {} error : {}", lessonId, e);
     }
     return returnValue;
   }

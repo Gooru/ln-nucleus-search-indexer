@@ -11,5 +11,7 @@ public interface UnitIndexService {
   }
 
   void setExistingStatisticsData(JsonObject result, Map<String, Object> contentInfoAsMap);
+
+  void deleteIndexedUnit(String key, String type) throws Exception;
   
 }

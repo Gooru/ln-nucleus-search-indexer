@@ -99,8 +99,8 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       SubjectEo subject = new SubjectEo();
       List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
       if (subjectData != null && subjectData.size() > 0) {
-        String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
-        subject.setTitle(subjectTitle);
+        subject.setTitle(subjectData.get(0).get(EntityAttributeConstants.TITLE).toString());
+        subject.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
       }
       subject.setId(subjectCode);
       taxonomyEo.setSubject(subject.getSubjectJson());

@@ -148,6 +148,11 @@
                      }
                   },
                   "include_in_all":true
+               },
+               "subjectClassification":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "include_in_all":false
                }
             }
          },
