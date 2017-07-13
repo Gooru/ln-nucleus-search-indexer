@@ -49,6 +49,11 @@ public final class ExecuteOperationConstants {
   public static final String GET_TAXONOMY_CODE = "get_taxonomy_code";
   
   public static final String GET_CROSSWALK = "get_crosswalk";
+  
+  public static final String GET_DELETED_LESSON = "get_deleted_lesson";
+
+  public static final String GET_DELETED_UNIT = "get_deleted_unit";
+
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

@@ -11,5 +11,7 @@ public interface LessonIndexService {
   }
 
   void setExistingStatisticsData(JsonObject result, Map<String, Object> contentInfoAsMap);
+
+  void deleteIndexedLesson(String key, String type) throws Exception;
   
 }

@@ -32,6 +32,12 @@ public class SubjectEo {
     subject = JsonUtil.set(subject, "title", title);
   }
   
+  public String getSubjectClassification() {
+    return subject.getString("subjectClassification", null);
+  }
 
+  public void setSubjectClassification(String subjectClassification) {
+    subject = JsonUtil.set(subject, "subjectClassification", subjectClassification);
+  }
 
 }

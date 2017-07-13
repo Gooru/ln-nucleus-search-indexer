@@ -113,8 +113,16 @@ public class FetchContentHandler implements DBHandler {
           result = UnitRepository.instance().getUnit(context.getId());
           break;
           
+        case ExecuteOperationConstants.GET_DELETED_UNIT:
+          result = UnitRepository.instance().getDeletedUnit(context.getId());
+          break;
+          
         case ExecuteOperationConstants.GET_LESSON:
           result = LessonRepository.instance().getLesson(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_LESSON:
+          result = LessonRepository.instance().getDeletedLesson(context.getId());
           break;
           
         case ExecuteOperationConstants.GET_RUBRIC:

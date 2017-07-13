@@ -22,7 +22,6 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
   @Override
   public JsonObject getUnit(String unitId) {
     Unit result = Unit.findById(getPGObject("id", UUID_TYPE, unitId));
-    //LOGGER.debug("UnitRepositoryImpl : getUnit : " + result);
 
     JsonObject returnValue = null;
     if (result != null && !result.getBoolean(Course.IS_DELETED)) {
@@ -34,15 +33,19 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
   @Override
   public JsonObject getDeletedUnit(String unitId) {
     JsonObject returnValue = null;
-    List<Unit> units = Unit.where(Course.FETCH_DELETED_QUERY, unitId, true);
-    if (units.size() < 1) {
-      LOGGER.warn("Unit id: {} not present in DB", unitId);
-    }
-    if(units.size() > 0){
-      Unit unit = units.get(0);
-      if (unit != null) {
-        returnValue = new JsonObject(unit.toJson(false));
+    try {
+      List<Unit> units = Unit.where(Unit.FETCH_DELETED_QUERY, unitId, true);
+      if (units.size() < 1) {
+        LOGGER.warn("Unit id: {} not present in DB", unitId);
       }
+      if (units.size() > 0) {
+        Unit unit = units.get(0);
+        if (unit != null) {
+          returnValue = new JsonObject(unit.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted unit from DB : {} error : {}", unitId, e);
     }
     return returnValue;
   }
