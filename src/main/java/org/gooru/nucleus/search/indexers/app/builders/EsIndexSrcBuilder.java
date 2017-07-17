@@ -142,7 +142,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         userEo.setProfileVisibility(metadata.getBoolean("is_profile_visible", false));
       }
     }
-    userEo.setProfileImage(user.getString("thumbnail_path"));
+    userEo.setProfileImage(user.getString("thumbnail"));
     //Set User Tenant
     String tenantId = user.getString(EntityAttributeConstants.TENANT_ID);
     String tenantRoot = user.getString(EntityAttributeConstants.TENANT_ROOT);
