@@ -128,8 +128,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
 
   protected void setUser(JsonObject user, UserEo userEo) {
-    userEo.setUsername(user.getString("username"));
-    userEo.setUsernameDisplay(user.getString("username"));
+    userEo.setUsername(user.getString("display_name"));
+    userEo.setUsernameDisplay(user.getString("display_name"));
     userEo.setUserId(user.getString("id"));
     userEo.setLastName(user.getString("last_name"));
     userEo.setFirstName(user.getString("first_name"));
