@@ -325,6 +325,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       JsonObject gdtCode = getTaxonomyRepo().getGDTCode(leafCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
         String leafDisplayCode = gdtCode.getString(TaxonomyCode.TARGET_DISPLAY_CODE);
+        eqInternalCodesArray.add(leafCode);
+        eqDisplayCodesArray.add(leafDisplayCode);
         List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
         if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
           JsonObject leafCodeObject = new JsonObject();
@@ -360,8 +362,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   @SuppressWarnings("rawtypes")
   private void setEquivelantArrays(JsonArray eqInternalCodesArray, JsonArray eqDisplayCodesArray, JsonArray eqFrameworkArray,
           Map equivalentCompetency) {
-    eqInternalCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID));
-    eqDisplayCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE));
+    eqInternalCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString());
+    eqDisplayCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
     eqFrameworkArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
   }
 
