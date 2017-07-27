@@ -162,6 +162,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonArray leafSLDisplayCodes = new JsonArray();
     List<String> standardDesc = new ArrayList<>();
     List<String> ltDescArray = new ArrayList<>();
+    Map<String, String> leafSLCodeMap = new HashMap<>();
 
     JsonArray standardDisplayArray = new JsonArray();
     JsonArray ltDisplayArray = new JsonArray();
@@ -206,6 +207,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
             standardArray.add(code);
             leafSLInternalCodes.add(code);
             leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+            leafSLCodeMap.put(code, displayCodeJson.getString(EntityAttributeConstants.CODE));
             standardDesc.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
             standardDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
             frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
@@ -217,6 +219,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
             learningTargetArray.add(code);
             leafSLInternalCodes.add(code);
             leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+            leafSLCodeMap.put(code, displayCodeJson.getString(EntityAttributeConstants.CODE));
             ltDescArray.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
             ltDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
             frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
@@ -251,7 +254,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     if(leafSLInternalCodes.size() > 0){
       taxonomyEo.setLeafInternalCodes(leafSLInternalCodes);
       taxonomyEo.setLeafDisplayCodes(leafSLDisplayCodes);
-      setEquivalentCodes(leafSLInternalCodes, taxonomyEo);
+      setEquivalentCodes(leafSLCodeMap, taxonomyEo);
     }
     
     taxonomyDataSet.setSubject(subjectLabelArray);
@@ -315,23 +318,21 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
   
   @SuppressWarnings("rawtypes")
-  private void setEquivalentCodes(JsonArray leafSLInternalCodes, TaxonomyEo taxonomyEo) {
+  private void setEquivalentCodes(Map<String, String> leafSLCodeMap, TaxonomyEo taxonomyEo) {
     JsonArray eqCompetencyArray = new JsonArray();
     JsonArray eqInternalCodesArray = new JsonArray();
     JsonArray eqDisplayCodesArray = new JsonArray();
     JsonArray eqFrameworkArray = new JsonArray();
-    for (Object leafSLInternalCode : leafSLInternalCodes) {
-      String leafCode = leafSLInternalCode.toString();
+    leafSLCodeMap.keySet().stream().forEach(leafCode -> {
+      eqInternalCodesArray.add(leafCode);
+      eqDisplayCodesArray.add(leafSLCodeMap.get(leafCode));
       JsonObject gdtCode = getTaxonomyRepo().getGDTCode(leafCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
-        String leafDisplayCode = gdtCode.getString(TaxonomyCode.TARGET_DISPLAY_CODE);
-        eqInternalCodesArray.add(leafCode);
-        eqDisplayCodesArray.add(leafDisplayCode);
         List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
         if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
           JsonObject leafCodeObject = new JsonObject();
           leafCodeObject.put(EntityAttributeConstants.ID, leafCode);
-          leafCodeObject.put(EntityAttributeConstants.CODE, leafDisplayCode);
+          leafCodeObject.put(EntityAttributeConstants.CODE, gdtCode.getString(TaxonomyCode.TARGET_DISPLAY_CODE));
           JsonArray cwArray = new JsonArray();
           for (Map equivalentCompetency : equivalentCompetencyList) {
             setEquivelantArrays(eqInternalCodesArray, eqDisplayCodesArray, eqFrameworkArray, equivalentCompetency);
@@ -342,7 +343,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
           eqCompetencyArray.add(leafCodeObject);
         }
       }
-    }
+    });
     if (!eqInternalCodesArray.isEmpty()) taxonomyEo.setAllEquivalentInternalCodes(eqInternalCodesArray);
     if (!eqDisplayCodesArray.isEmpty()) taxonomyEo.setAllEquivalentDisplayCodes(eqDisplayCodesArray);
     if (!eqFrameworkArray.isEmpty()) taxonomyEo.setAllEquivalentFrameworkCodes(eqFrameworkArray);

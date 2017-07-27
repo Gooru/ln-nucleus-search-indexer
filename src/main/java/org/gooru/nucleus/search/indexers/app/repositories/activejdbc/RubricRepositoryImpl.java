@@ -3,7 +3,6 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Rubric;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -34,7 +33,7 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
   @Override
   public JsonObject getDeletedRubric(String rubricId) {
     JsonObject returnValue = null;
-    List<Rubric> rubrics = Rubric.where(Content.FETCH_DELETED_QUERY, rubricId, true);
+    List<Rubric> rubrics = Rubric.where(Rubric.FETCH_DELETED_QUERY, rubricId, true);
     if (rubrics.size() < 1) {
       LOGGER.warn("Rubric id: {} not present in DB", rubricId);
     }
