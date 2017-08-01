@@ -1,11 +1,20 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -15,6 +24,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.SubjectEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEio;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -39,7 +49,8 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     taxonomyEo.setId(codeId);
     taxonomyEo.setIndexType(IndexerConstants.TYPE_TAXONOMY);
     taxonomyEo.setDisplayCode(source.getString(EntityAttributeConstants.CODE, null));
-    taxonomyEo.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
+    String title = source.getString(EntityAttributeConstants.TITLE, null);
+    taxonomyEo.setTitle(title);
     taxonomyEo.setDescription(source.getString(EntityAttributeConstants.DESCRIPTION, null));
     taxonomyEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE, null));
     taxonomyEo.setIndexUpdatedTime(new Date());
@@ -126,10 +137,53 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       taxonomyEo.setDomain(domain.getDomainJson());
     }
     
-    //TODO
-    // taxonomyEo.setGrade();
+    setAndIndexKeywords(taxonomyEo, title);
+    
+    //TODO taxonomyEo.setGrade();
     
     return taxonomyEo.getTaxonomyJson();
+  }
+
+  private void setAndIndexKeywords(D taxonomyEo, String title) {
+    if (StringUtils.isNotBlank(title)) {
+      BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+      JsonArray keywords = new JsonArray();
+      String[] words = title.toLowerCase().split(IndexerConstants.REGEXP);
+      for (String word : words) {
+        if (Arrays.asList(IndexerConstants.STOP_WORDS.split(",")).contains(word.trim())) {
+          continue;
+        }
+        if (word.trim().length() > 3) {
+          keywords.add(word);
+          Map<String, Object> data = new HashMap<>();
+          String id = UUID.randomUUID().toString();
+          data.put(EntityAttributeConstants.ID, UUID.randomUUID().toString());
+          data.put(IndexerConstants.KEYWORD, word);
+          SearchResponse result = getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.QUERY)).setTypes(IndexType.KEYWORD.getType())
+                  .setPostFilter(QueryBuilders.termQuery("keyword", word)).execute().actionGet();
+          if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
+            LOGGER.debug("Keyword is available in index !! - Collection id :" + word);
+            continue;
+          }
+          bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).setSource(data));
+        }
+      }
+      if (bulkRequest.numberOfActions() > 0) {
+        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+        if (bulkResponse.hasFailures()) {
+          BulkItemResponse[] responses = bulkResponse.getItems();
+          for (BulkItemResponse response : responses) {
+            if (response.isFailed()) {
+              INDEX_FAILURES_LOGGER.error("Failed Bulk index for keywords : " + response.getId() + " Exception " + response.getFailureMessage());
+            }
+          }
+        } else {
+          LOGGER.debug("Successfully indexed bulk keywords!");
+        }
+      }
+      taxonomyEo.setKeywords(keywords);
+      taxonomyEo.setKeywordsSuggestion(taxonomyEo.getKeywords());
+    }
   }
   
   @SuppressWarnings("rawtypes")
