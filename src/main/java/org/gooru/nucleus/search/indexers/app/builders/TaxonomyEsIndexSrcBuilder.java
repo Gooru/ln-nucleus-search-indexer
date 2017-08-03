@@ -2,16 +2,15 @@ package org.gooru.nucleus.search.indexers.app.builders;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
@@ -24,6 +23,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.SubjectEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEio;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 
 import io.vertx.core.json.JsonArray;
@@ -138,54 +138,47 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     }
     
     //Extract and Index keywords
-    extractAndIndexKeywords(taxonomyEo, title);
+    if (StringUtils.isNotBlank(title)) {
+      List<String> titleTerms = Arrays.asList(title.toLowerCase().split(IndexerConstants.REGEXP));
+      JsonArray keywords = extractAndIndexKeywords(titleTerms);
+      taxonomyEo.setKeywords(keywords);
+      taxonomyEo.setKeywordsSuggestion(taxonomyEo.getKeywords());
+    }
     
     //TODO taxonomyEo.setGrade();
     
     return taxonomyEo.getTaxonomyJson();
   }
 
-  private void extractAndIndexKeywords(D taxonomyEo, String title) {
-    if (StringUtils.isNotBlank(title)) {
-      BulkRequestBuilder bulkRequest = getClient().prepareBulk();
-      JsonArray keywords = new JsonArray();
-      String[] words = title.toLowerCase().split(IndexerConstants.REGEXP);
-      for (String word : words) {
-        if (Arrays.asList(IndexerConstants.STOP_WORDS.split(IndexerConstants.COMMA)).contains(word.trim())) {
+  private JsonArray extractAndIndexKeywords(List<String> words) {
+    BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+    JsonArray keywords = new JsonArray();
+    for (String word : words) {
+      if (Arrays.asList(IndexerConstants.STOP_WORDS.split(IndexerConstants.COMMA)).contains(word.trim())) {
+        continue;
+      }
+      if (word.trim().length() > 3) {
+        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word));
+        SearchResponse result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), filter);
+        if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
+          LOGGER.debug("Keyword is already available in index !!" + word);
           continue;
         }
-        if (word.trim().length() > 3) {
-          keywords.add(word);
-          Map<String, Object> data = new HashMap<>();
-          String id = UUID.randomUUID().toString();
-          data.put(EntityAttributeConstants.ID, id);
-          data.put(IndexerConstants.KEYWORD, word);
-          SearchResponse result = getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.QUERY)).setTypes(IndexType.KEYWORD.getType())
-                  .setPostFilter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word)).execute().actionGet();
-          if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
-            LOGGER.debug("Keyword is available in index !! - Collection id :" + word);
-            continue;
-          }
-          bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).setSource(data));
-        }
+        keywords.add(word);
+        String id = UUID.randomUUID().toString();
+        JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.KEYWORD, word);
+        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).setSource(data.toString()));
       }
-      if (bulkRequest.numberOfActions() > 0) {
-        bulkRequest.setRefresh(true);
-        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-        if (bulkResponse.hasFailures()) {
-          BulkItemResponse[] responses = bulkResponse.getItems();
-          for (BulkItemResponse response : responses) {
-            if (response.isFailed()) {
-              INDEX_FAILURES_LOGGER.error("Failed Bulk index for keywords : " + response.getId() + " Exception " + response.getFailureMessage());
-            }
-          }
-        } else {
-          LOGGER.debug("Successfully indexed bulk keywords!");
-        }
-      }
-      taxonomyEo.setKeywords(keywords);
-      taxonomyEo.setKeywordsSuggestion(taxonomyEo.getKeywords());
     }
+    if (bulkRequest.numberOfActions() > 0) {
+      bulkRequest.setRefresh(true);
+      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+      if (!bulkResponse.hasFailures()) {
+        LOGGER.debug("Successfully indexed bulk keywords!");
+      }
+    }
+
+    return keywords;
   }
   
   @SuppressWarnings("rawtypes")
