@@ -122,4 +122,10 @@ public final class IndexerConstants {
   
   public static final String KEYWORD = "keyword";
   
+  public static final String PUBLISHER = "publisher";
+  
+  public static final String REGEXP_NON_WORDS = "[^a-zA-Z0-9]";
+
+  public static final String EMPTY_STRING = "";
+
 }

@@ -137,30 +137,31 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       taxonomyEo.setDomain(domain.getDomainJson());
     }
     
-    setAndIndexKeywords(taxonomyEo, title);
+    //Extract and Index keywords
+    extractAndIndexKeywords(taxonomyEo, title);
     
     //TODO taxonomyEo.setGrade();
     
     return taxonomyEo.getTaxonomyJson();
   }
 
-  private void setAndIndexKeywords(D taxonomyEo, String title) {
+  private void extractAndIndexKeywords(D taxonomyEo, String title) {
     if (StringUtils.isNotBlank(title)) {
       BulkRequestBuilder bulkRequest = getClient().prepareBulk();
       JsonArray keywords = new JsonArray();
       String[] words = title.toLowerCase().split(IndexerConstants.REGEXP);
       for (String word : words) {
-        if (Arrays.asList(IndexerConstants.STOP_WORDS.split(",")).contains(word.trim())) {
+        if (Arrays.asList(IndexerConstants.STOP_WORDS.split(IndexerConstants.COMMA)).contains(word.trim())) {
           continue;
         }
         if (word.trim().length() > 3) {
           keywords.add(word);
           Map<String, Object> data = new HashMap<>();
           String id = UUID.randomUUID().toString();
-          data.put(EntityAttributeConstants.ID, UUID.randomUUID().toString());
+          data.put(EntityAttributeConstants.ID, id);
           data.put(IndexerConstants.KEYWORD, word);
           SearchResponse result = getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.QUERY)).setTypes(IndexType.KEYWORD.getType())
-                  .setPostFilter(QueryBuilders.termQuery("keyword", word)).execute().actionGet();
+                  .setPostFilter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word)).execute().actionGet();
           if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
             LOGGER.debug("Keyword is available in index !! - Collection id :" + word);
             continue;
@@ -169,6 +170,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
         }
       }
       if (bulkRequest.numberOfActions() > 0) {
+        bulkRequest.setRefresh(true);
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
           BulkItemResponse[] responses = bulkResponse.getItems();

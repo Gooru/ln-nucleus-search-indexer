@@ -1,12 +1,30 @@
 {
-"publisher":{
-    "properties":{
-      "publishername": {
-        "type": "string",
-        "index": "analyzed",
-        "analyzer": "standard",
-        "include_in_all": false
-                     }
-                 }
-             }  
- }            
+   "publisher":{
+      "properties":{
+         "id":{
+            "type":"string",
+            "index":"not_analyzed",
+            "include_in_all":false
+         },
+         "publisher":{
+            "type":"string",
+            "analyzer":"standard",
+            "fields":{
+               "publisherLowercase":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase"
+               },
+               "publisherAutocomplete":{
+                  "type":"string",
+                  "analyzer":"autocomplete"
+               }
+            },
+            "include_in_all":false
+         },
+         "publisherSuggest":{
+            "type":"string",
+            "analyzer":"autocomplete"
+         }
+      }
+   }
+}
