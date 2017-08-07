@@ -13,10 +13,6 @@
                "publisherLowercase":{
                   "type":"string",
                   "analyzer":"keyword_lowercase"
-               },
-               "publisherAutocomplete":{
-                  "type":"string",
-                  "analyzer":"autocomplete"
                }
             },
             "include_in_all":false

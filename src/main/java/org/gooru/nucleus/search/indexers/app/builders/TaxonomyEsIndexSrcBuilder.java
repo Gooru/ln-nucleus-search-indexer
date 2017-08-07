@@ -177,7 +177,6 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
         LOGGER.debug("Successfully indexed bulk keywords!");
       }
     }
-
     return keywords;
   }
   
