@@ -357,7 +357,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
     eqCompetency.put(IndexFields.FRAMEWORK_CODE, equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
     eqCompetency.put(EntityAttributeConstants.TITLE, equivalentCompetency.get(TaxonomyCode.TARGET_TITLE).toString());
-    cwArray.add(leafCodeObject);
+    cwArray.add(eqCompetency);
   }
 
   @SuppressWarnings("rawtypes")
