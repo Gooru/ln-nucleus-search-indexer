@@ -10,6 +10,7 @@ public final class RouteConstants {
   private static final String INDEX_INFO = "index/info";
   private static final String MARK_BROKEN = "mark-broken";
   private static final String MARK_UNBROKEN = "mark-unbroken";
+  private static final String POPULATE_SUGGEST = "populate-suggest";
 
   private static final String DELETE = "delete";
   public static final String TYPE_IN_PATH = "/:type";
@@ -21,11 +22,14 @@ public final class RouteConstants {
   
   public static final String EP_BUILD_CONTENT_DELETE = API_BASE_ROUTE + DELETE + TYPE_IN_PATH;
 
+  public static final String EP_POPULATE_SUGGESTION_RESOURCE = API_BASE_ROUTE + POPULATE_SUGGEST + TYPE_IN_PATH;
+
   public static final String HTTP_PORT = "http.port";
   public static final String INDEXABLE_IDS = "ids";
   public static final String INDEXABLE_ID = "id";
   public static final String CONTENT_FORMAT = "contentFormat";
   public static final String TYPE = "type";
+  public static final String BATCH_SIZE = "batchSize";
 
   private RouteConstants() {
     throw new AssertionError();

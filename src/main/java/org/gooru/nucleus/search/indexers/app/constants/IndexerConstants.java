@@ -127,5 +127,19 @@ public final class IndexerConstants {
   public static final String REGEXP_NON_WORDS = "[^a-zA-Z0-9]";
 
   public static final String EMPTY_STRING = "";
+  
+  public static final String CAPS_CROSSWALK_CODES = "CROSSWALK_CODES";
+
+  public static final Pattern STANDARD_MATCH = Pattern.compile("standard_level_1|standard_level_2");
+  
+  public static final String LEARNING_TARGET_TYPE_0 = "learning_target_level_0";
+  
+  public static final String ABOVE_AVERAGE = "H";
+  
+  public static final String AVERAGE = "M";
+  
+  public static final String BELOW_AVERAGE = "L";
+  
+  public static final String GUT_FRAMEWORK = "GDT";
 
 }
