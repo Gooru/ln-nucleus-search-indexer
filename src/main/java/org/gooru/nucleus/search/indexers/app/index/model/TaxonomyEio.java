@@ -1,6 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
@@ -129,6 +130,22 @@ public class TaxonomyEio {
 
   public void setDomain(JsonObject domain) {
     taxonomy = JsonUtil.set(taxonomy, "domain", domain);
+  }
+  
+  public JsonArray getKeywords() {
+    return taxonomy.getJsonArray("keywords", null);
+  }
+
+  public void setKeywords(JsonArray keywords) {
+    taxonomy = JsonUtil.set(taxonomy, "keywords", new JsonArray(keywords.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getKeywordsSuggestion() {
+    return taxonomy.getJsonArray("keywordsSuggestion", null);
+  }
+
+  public void setKeywordsSuggestion(JsonArray keywords) {
+    taxonomy = JsonUtil.set(taxonomy, "keywordsSuggestion", keywords);
   }
 
 }

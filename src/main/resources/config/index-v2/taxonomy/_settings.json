@@ -29,6 +29,11 @@
                   "kstem"
                ],
                "tokenizer":"standard"
+            },
+            "full_text" : {
+               "filter" : ["lowercase"],
+               "type" : "custom",
+               "tokenizer" : "keyword"
             }
          },
          "filter":{

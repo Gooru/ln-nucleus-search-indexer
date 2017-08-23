@@ -120,4 +120,17 @@ public class BaseIndexService {
     return statistics;
   }
 
+  public String convertArrayToString(String inputString) {
+    StringBuilder stringbuilder = new StringBuilder();
+    if (inputString != null) {
+      String[] stringArray = inputString.split(IndexerConstants.COMMA);
+      for (String text : stringArray) {
+        if (stringbuilder.length() > 0) {
+          stringbuilder.append(IndexerConstants.COMMA);
+        }
+        stringbuilder = stringbuilder.append("\"" + text + "\"");
+      }
+    }
+    return stringbuilder.toString();
+  }
 }

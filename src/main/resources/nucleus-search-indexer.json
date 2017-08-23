@@ -33,10 +33,24 @@
   	"username" : "search",
   	"password" : "search",
   	"autoCommit" : false,
-  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/reports_db",
+  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/search",
   	"maximumPoolSize" : 5,
   	"database" : "reports_db"
   },
+  "populateResourceSuggestJobSettings" : {
+  	"batchSize" : 100,
+  	"offset" : 0,
+  	"dayOfMonth" : 1,
+  	"hourOfDay" : 4,
+  	"minutes" : 300
+  },
+  "populateCollectionSuggestJobSettings" : {
+  	"batchSize" : 100,
+  	"offset" : 0,
+  	"dayOfMonth" : 1,
+  	"hourOfDay" : 4,
+  	"minutes" : 300
+  }
   "http.port":8081
 
 }

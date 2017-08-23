@@ -240,6 +240,25 @@
                   "include_in_all":false
                }
             }
+         },
+         "keywordsSuggestion":{
+            "type":"string",
+            "analyzer":"full_text"
+         },
+         "keywords":{
+            "type":"string",
+            "analyzer":"standard",
+            "fields":{
+               "keywordsSnowball":{
+                  "type":"string",
+                  "analyzer":"snowball"
+               },
+               "keywordsKStem":{
+                  "type":"string",
+                  "analyzer":"gooru_kstem"
+               }
+            },
+            "include_in_all":true
          }
       }
    }

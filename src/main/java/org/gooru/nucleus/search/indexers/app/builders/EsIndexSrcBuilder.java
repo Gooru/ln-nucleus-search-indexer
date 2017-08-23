@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.client.Client;
+import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
@@ -50,6 +52,7 @@ import io.vertx.core.json.JsonObject;
 public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, D> {
 
   protected static final Logger LOGGER = LoggerFactory.getLogger(EsIndexSrcBuilder.class);
+  protected static final Logger INDEX_FAILURES_LOGGER = LoggerFactory.getLogger("org.gooru.nucleus.index.failures");
   protected static final String dateInputPatterns[] =
           { "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss.SSS", "yyyy/MM/dd", "yyyy-MM" };
   protected static final String dateOutputPattern = "yyyy/MM/dd HH:mm:ss";
@@ -127,6 +130,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (TaxonomyCodeRepositoryImpl) TaxonomyCodeRepository.instance();
   }
 
+  protected Client getClient() {
+    return ElasticSearchRegistry.getFactory().getClient();
+  }
+  
   protected void setUser(JsonObject user, UserEo userEo) {
     userEo.setUsername(user.getString("display_name"));
     userEo.setUsernameDisplay(user.getString("display_name"));

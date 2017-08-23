@@ -1,13 +1,17 @@
 package org.gooru.nucleus.search.indexers.bootstrap;
 
+import org.gooru.nucleus.search.indexers.app.constants.HttpConstants;
 import org.gooru.nucleus.search.indexers.app.constants.RouteConstants;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.services.PopulateSuggestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 
 public class IndexBuilderVerticle extends AbstractVerticle {
 
@@ -27,7 +31,8 @@ public class IndexBuilderVerticle extends AbstractVerticle {
     markBrokenStatus(router);
     markUnBrokenStatus(router);
     deleteDocument(router);
-
+    populateSuggestTable(router);
+    
     // If the port is not present in configuration then we end up
     // throwing as we are casting it to int. This is what we want.
     final int port = config().getInteger(RouteConstants.HTTP_PORT);
@@ -149,6 +154,28 @@ public class IndexBuilderVerticle extends AbstractVerticle {
       } else {
         LOGGER.error("Re-index failed !!!");
         context.response().setStatusCode(500).end();
+      }
+    }));
+  }
+  
+  private void populateSuggestTable(final Router router) {
+    router.route().handler(BodyHandler.create());
+    router.post(RouteConstants.EP_POPULATE_SUGGESTION_RESOURCE).handler(context -> vertx.executeBlocking(future -> {
+      String type = context.pathParam(RouteConstants.TYPE);
+      JsonObject requestBody = context.getBodyAsJson();
+      if (type != null) {
+        try {
+          PopulateSuggestService.instance().populateSuggestTable(context, type, requestBody);
+          future.complete("Suggest Table population completed!");
+        } catch (Exception e) {
+          future.fail(e);
+        }
+      }
+    }, result -> {
+      if (result.failed()) {
+        LOGGER.error("Suggest table population failed !!!");
+        context.response().setStatusCode(HttpConstants.HttpStatus.ERROR.getCode())
+                .setStatusMessage(HttpConstants.HttpStatus.ERROR.getMessage()).end();
       }
     }));
   }

@@ -1,11 +1,19 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -15,6 +23,8 @@ import org.gooru.nucleus.search.indexers.app.index.model.SubjectEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEio;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -39,7 +49,8 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     taxonomyEo.setId(codeId);
     taxonomyEo.setIndexType(IndexerConstants.TYPE_TAXONOMY);
     taxonomyEo.setDisplayCode(source.getString(EntityAttributeConstants.CODE, null));
-    taxonomyEo.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
+    String title = source.getString(EntityAttributeConstants.TITLE, null);
+    taxonomyEo.setTitle(title);
     taxonomyEo.setDescription(source.getString(EntityAttributeConstants.DESCRIPTION, null));
     taxonomyEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE, null));
     taxonomyEo.setIndexUpdatedTime(new Date());
@@ -126,10 +137,47 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       taxonomyEo.setDomain(domain.getDomainJson());
     }
     
-    //TODO
-    // taxonomyEo.setGrade();
+    //Extract and Index keywords
+    if (StringUtils.isNotBlank(title)) {
+      List<String> titleTerms = Arrays.asList(title.toLowerCase().split(IndexerConstants.REGEXP));
+      JsonArray keywords = extractAndIndexKeywords(titleTerms);
+      taxonomyEo.setKeywords(keywords);
+      taxonomyEo.setKeywordsSuggestion(taxonomyEo.getKeywords());
+    }
+    
+    //TODO taxonomyEo.setGrade();
     
     return taxonomyEo.getTaxonomyJson();
+  }
+
+  private JsonArray extractAndIndexKeywords(List<String> words) {
+    BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+    JsonArray keywords = new JsonArray();
+    for (String word : words) {
+      if (Arrays.asList(IndexerConstants.STOP_WORDS.split(IndexerConstants.COMMA)).contains(word.trim())) {
+        continue;
+      }
+      if (word.trim().length() > 3) {
+        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word));
+        SearchResponse result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), filter);
+        if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
+          LOGGER.debug("Keyword is already available in index !!" + word);
+          continue;
+        }
+        keywords.add(word);
+        String id = UUID.randomUUID().toString();
+        JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.KEYWORD, word);
+        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).setSource(data.toString()));
+      }
+    }
+    if (bulkRequest.numberOfActions() > 0) {
+      bulkRequest.setRefresh(true);
+      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+      if (!bulkResponse.hasFailures()) {
+        LOGGER.debug("Successfully indexed bulk keywords!");
+      }
+    }
+    return keywords;
   }
   
   @SuppressWarnings("rawtypes")

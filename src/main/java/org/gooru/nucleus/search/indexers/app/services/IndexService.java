@@ -5,6 +5,9 @@ package org.gooru.nucleus.search.indexers.app.services;
 
 import java.util.Map;
 
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -51,5 +54,7 @@ public interface IndexService {
   void deleteDocuments(String key, String type) throws Exception;
 
   void indexDocumentByField(String id, String indexName, String typeName, Map<String, Object> fieldValues, Map<String, Object> contentInfoSource) throws Exception;
+
+  SearchResponse getDocument(String indexName, String type, BoolQueryBuilder boolQuery);
   
 }

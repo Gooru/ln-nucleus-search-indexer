@@ -12,9 +12,12 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.index.engine.DocumentMissingException;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptService.ScriptType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
@@ -253,6 +256,13 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       LOGGER.info("Document not found in index for id : {}", id);
     }
     return (response != null && response.isExists()) ? response.getSource() : null;
+  }
+  
+  @Override
+  public SearchResponse getDocument(String indexName, String type, BoolQueryBuilder boolQuery) {
+    SearchRequestBuilder requestBuilder = getClient().prepareSearch(indexName).setTypes(type).setQuery(boolQuery);
+    SearchResponse result = requestBuilder.execute().actionGet();
+    return result;
   }
 
   @Override
