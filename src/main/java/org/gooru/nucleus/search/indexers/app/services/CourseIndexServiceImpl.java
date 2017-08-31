@@ -2,6 +2,7 @@ package org.gooru.nucleus.search.indexers.app.services;
 
 import java.util.Map;
 
+import org.elasticsearch.common.xcontent.XContentType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
@@ -31,7 +32,7 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
         
         setExistingStatisticsData(data, contentInfoAsMap);
         
-        getClient().prepareIndex(getIndexName(), IndexerConstants.TYPE_COURSE, id).setSource(EsIndexSrcBuilder.get(IndexerConstants.TYPE_COURSE).buildSource(data)).execute()
+        getClient().prepareIndex(getIndexName(), IndexerConstants.TYPE_COURSE, id).setSource(EsIndexSrcBuilder.get(IndexerConstants.TYPE_COURSE).buildSource(data), XContentType.JSON).execute()
                 .actionGet();
       } catch (Exception e) {
           LOGGER.info("Exception while indexing");

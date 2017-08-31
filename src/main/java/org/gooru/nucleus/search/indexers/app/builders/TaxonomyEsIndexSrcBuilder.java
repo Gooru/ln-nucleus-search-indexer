@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
@@ -167,11 +169,11 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
         keywords.add(word);
         String id = UUID.randomUUID().toString();
         JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.KEYWORD, word);
-        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).setSource(data.toString()));
+        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).setSource(data.toString(), XContentType.JSON));
       }
     }
     if (bulkRequest.numberOfActions() > 0) {
-      bulkRequest.setRefresh(true);
+      bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
       if (!bulkResponse.hasFailures()) {
         LOGGER.debug("Successfully indexed bulk keywords!");

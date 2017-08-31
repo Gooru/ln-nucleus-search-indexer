@@ -8,13 +8,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
+import org.elasticsearch.script.Script;
 import org.elasticsearch.search.SearchHit;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
@@ -137,10 +143,18 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
             });
           }
           if (!crosswalkCodes.isEmpty()) {
-            SearchRequestBuilder requestBuilder = getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.COLLECTION))
-                    .setTypes(IndexerConstants.TYPE_COLLECTION).setQuery(QUERY)
-                    .setPostFilter(FILTER.replace(IndexerConstants.CAPS_CROSSWALK_CODES, convertArrayToString(StringUtils.join(crosswalkCodes, ",")))).setSize(20).setFrom(0)
-                    .setFetchSource("id", null);
+            BoolQueryBuilder filter = QueryBuilders.boolQuery()
+                    .filter(QueryBuilders.termQuery("contentFormat", "collection"))
+                    .filter(QueryBuilders.termQuery("publishStatus", "published"))
+                    .filter(QueryBuilders.termsQuery("taxonomy.allEquivalentInternalCodes", crosswalkCodes.toArray()))
+                    .mustNot(QueryBuilders.termQuery("contentSubFormat", "benchmark"));
+            FunctionScoreQueryBuilder query = QueryBuilders.functionScoreQuery(
+                    QueryBuilders.queryStringQuery("*").field("_all").field("learningObjective").field("title.titleKStem", 10.0F).boost(3.0F)
+                            .useDisMax(true).defaultOperator(Operator.AND).allowLeadingWildcard(false).analyzer("gooru_kstem"),
+                    ScoreFunctionBuilders.scriptFunction(new Script("_score * doc['statistics.preComputedWeight'].value")));
+            SearchRequestBuilder requestBuilder =
+                    getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.COLLECTION)).setTypes(IndexerConstants.TYPE_COLLECTION)
+                            .setQuery(query).setPostFilter(filter).setSize(20).setFrom(0).setFetchSource(IndexFields.ID, null);
             SearchResponse searchResponse = requestBuilder.execute().actionGet();
             if (searchResponse.getHits().getTotalHits() > 0) {
               Map<String, StringBuffer> suggestByPerfAsMap = new HashMap<>();

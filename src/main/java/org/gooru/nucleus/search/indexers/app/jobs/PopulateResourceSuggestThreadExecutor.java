@@ -9,18 +9,19 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.script.Script;
-import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
@@ -133,14 +134,20 @@ public class PopulateResourceSuggestThreadExecutor extends BaseIndexService impl
           }
           if (!crosswalkCodes.isEmpty()) {
             LOGGER.info("crosswalkCodes :: {} ", crosswalkCodes);
+            BoolQueryBuilder filter = QueryBuilders.boolQuery()
+                    .must(QueryBuilders.termQuery("contentFormat", "resource"))
+                    .must(QueryBuilders.termQuery("publishStatus", "published"))
+                    .must(QueryBuilders.termQuery("statistics.statusIsBroken", 0))
+                    .must(QueryBuilders.termsQuery("taxonomy.allEquivalentInternalCodes", crosswalkCodes.toArray()));
             SearchRequestBuilder requestBuilder = getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.RESOURCE))
-                    .setTypes(IndexerConstants.TYPE_RESOURCE).setQuery(QUERY)
-                    .setPostFilter(FILTER.replace("CODE", convertArrayToString(StringUtils.join(crosswalkCodes, ",")))).setSize(20).setFrom(0)
+                    .setTypes(IndexerConstants.TYPE_RESOURCE)
+                    .setQuery(QueryBuilders.queryStringQuery("*").field("_all").field("description", 1.5F).field("text").field("tags",3.0F).field("title", 5.0F)
+                            .boost(1.0F).useDisMax(true).defaultOperator(Operator.AND).allowLeadingWildcard(false).analyzer("standard"))
+                    .setPostFilter(filter).setSize(20).setFrom(0)
                     .setRescorer(RescoreBuilder.queryRescorer(QueryBuilders.functionScoreQuery(
-                            ScoreFunctionBuilders.scriptFunction(new Script(RESCORE_SCRIPT, ScriptService.ScriptType.INLINE, "groovy", null)))), 300)
-                    .setFetchSource("id", null);
-            LOGGER.debug("QUERY ::{}",requestBuilder.internalBuilder());
-            SearchResponse searchResponse = requestBuilder.execute().actionGet();
+                            ScoreFunctionBuilders.scriptFunction(new Script("((_score/60*100) - _score) * doc['statistics.preComputedWeight'].value")))), 300)
+                    .setFetchSource(IndexFields.ID, null);
+           SearchResponse searchResponse = requestBuilder.execute().actionGet();
             if (searchResponse.getHits().getTotalHits() > 0) {
               LOGGER.debug("search count : {}", searchResponse.getHits().getTotalHits());
 

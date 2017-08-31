@@ -16,7 +16,7 @@ public class ScoreFields {
 
   private int questionCount = 0;
 
-  private int hasFrameBreaker = 0;
+  private boolean hasFrameBreaker = false;
 
   private int hasNoThumbnail = 0;
 
@@ -67,7 +67,7 @@ public class ScoreFields {
     }
 
     if (scoreFieldsMap.get(ScoreConstants.HAS_FRAME_BREAKER) != null) {
-      this.hasFrameBreaker = (int) scoreFieldsMap.get(ScoreConstants.HAS_FRAME_BREAKER);
+      this.hasFrameBreaker = (boolean) scoreFieldsMap.get(ScoreConstants.HAS_FRAME_BREAKER);
     }
 
     if (scoreFieldsMap.get(ScoreConstants.HAS_NO_THUMBNAIL) != null) {
@@ -145,7 +145,7 @@ public class ScoreFields {
     return 0;
   }
 
-  public int getHasFrameBreaker() {
+  public boolean getHasFrameBreaker() {
     return hasFrameBreaker;
   }
 

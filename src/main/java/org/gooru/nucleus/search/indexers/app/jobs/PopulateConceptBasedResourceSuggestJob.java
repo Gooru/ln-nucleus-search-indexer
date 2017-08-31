@@ -9,14 +9,16 @@ import java.util.regex.Pattern;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.script.Script;
-import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.rescore.RescoreBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
+import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ConceptBasedResourceSuggestRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
@@ -125,13 +127,20 @@ public class PopulateConceptBasedResourceSuggestJob extends BaseIndexService imp
       try {
         if (!ConceptBasedResourceSuggestRepository.instance().hasSuggestion(code)) {
           LOGGER.info("Proceed to populate, as suggestions are not present in table for code : {} ", code);
-          SearchRequestBuilder requestBuilder =
-                  getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.RESOURCE)).setTypes(IndexerConstants.TYPE_RESOURCE).setQuery(QUERY)
-                          .setPostFilter(FILTER.replace("CODE", code.toLowerCase())).setSize(20).setFrom(0)
-                          .setRescorer(RescoreBuilder.queryRescorer(QueryBuilders.functionScoreQuery(
-                                  ScoreFunctionBuilders.scriptFunction(new Script(RESCORE_SCRIPT, ScriptService.ScriptType.INLINE, "groovy", null)))),
-                                  300)
-                          .setFetchSource("id", null);
+          BoolQueryBuilder filter = QueryBuilders.boolQuery()
+                  .must(QueryBuilders.termQuery("contentFormat", "resource"))
+                  .must(QueryBuilders.termQuery("publishStatus", "published"))
+                  .must(QueryBuilders.termQuery("statistics.statusIsBroken", 0))
+                  .must(QueryBuilders.termQuery("taxonomy.allEquivalentInternalCodes", code.toLowerCase()));
+          SearchRequestBuilder requestBuilder = getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.RESOURCE))
+                  .setTypes(IndexerConstants.TYPE_RESOURCE)
+                  .setQuery(QueryBuilders.queryStringQuery("*").field("_all").field("description", 1.5F).field("text").field("tags",3.0F).field("title", 5.0F)
+                          .boost(1.0F).useDisMax(true).defaultOperator(Operator.AND).allowLeadingWildcard(false).analyzer("standard"))
+                  .setPostFilter(filter).setSize(20).setFrom(0)
+                  .setRescorer(RescoreBuilder.queryRescorer(QueryBuilders.functionScoreQuery(
+                          ScoreFunctionBuilders.scriptFunction(new Script("((_score/60*100) - _score) * doc['statistics.preComputedWeight'].value")))), 300)
+                  .setFetchSource(IndexFields.ID, null);
+         
           SearchResponse searchResponse = requestBuilder.execute().actionGet();
           if (searchResponse.getHits().getTotalHits() > 0) {
             Map<String, Object> suggestByPerfAsMap = new HashMap<>();
