@@ -2,23 +2,23 @@
    "publisher":{
       "properties":{
          "id":{
-            "type":"string",
+            "type":"keyword",
             "index":"not_analyzed",
             "include_in_all":false
          },
          "publisher":{
-            "type":"string",
+            "type":"text",
             "analyzer":"standard",
             "fields":{
                "publisherLowercase":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase"
                }
             },
             "include_in_all":false
          },
          "publisherSuggest":{
-            "type":"string",
+            "type":"text",
             "analyzer":"autocomplete"
          }
       }

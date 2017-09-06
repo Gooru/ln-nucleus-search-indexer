@@ -3,7 +3,7 @@ package org.gooru.nucleus.search.indexers.app.builders;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
@@ -131,7 +131,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
       JsonObject displayGuide = null;
       if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
-      statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
+      statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getBoolean(EntityAttributeConstants.IS_FRAME_BREAKER) : false);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
 
       // Set display guide

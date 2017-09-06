@@ -13,6 +13,8 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
@@ -280,11 +282,11 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         String id = UUID.randomUUID().toString();
         JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.PUBLISHER, copyrightOwnerString).put(
                 IndexFields.PUBLISHER_SUGGEST, copyrightOwnerString.replaceAll(IndexerConstants.REGEXP_NON_WORDS, IndexerConstants.EMPTY_STRING));
-        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_PROVIDER), IndexType.PUBLISHER.getType(), id).setSource(data.toString()));
+        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_PROVIDER), IndexType.PUBLISHER.getType(), id).setSource(data.toString(), XContentType.JSON));
       }
     }
     if (bulkRequest.numberOfActions() > 0) {
-      bulkRequest.setRefresh(true);
+      bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
       BulkResponse bulkResponse = bulkRequest.execute().actionGet();
       if (bulkResponse.hasFailures()) {
         BulkItemResponse[] responses = bulkResponse.getItems();

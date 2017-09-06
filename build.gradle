@@ -35,17 +35,17 @@ if (!JavaVersion.current().java8Compatible) {
 // Note that this applies only to dependencies and not to the plugins and build
 ext {
     vertxVersion = '3.3.3'
-    slf4jVersion ='1.7.12'
-    junitVersion = '4.12'
-    logbackVersion = '1.0.13'
-    kafkaVersion = '0.10.1.1'
-    guavaVersion = '18.0'
-    elasticsearchVersion = '2.2.1'
-    flexjsonVersion = '2.1'
+    nettyAllVersion = '4.1.8.Final'
     hikariVersion = '2.4.3'
     postgresVersion = '9.4-1206-jdbc42'
     activejdbcVersion = '1.4.11'
+    elasticsearchVersion = '5.5.0'
+    kafkaVersion = '0.10.1.1'
+    logbackVersion = '1.2.3'
+    log4jVersion='2.8'
+    guavaVersion = '18.0'
     mvelVersion='2.0'
+    junitVersion = '4.12'
 }
 
 version = "0.1-snapshot"
@@ -65,21 +65,22 @@ dependencies {
     compile "io.vertx:vertx-web:${vertxVersion}"
     compile "io.vertx:vertx-hazelcast:${vertxVersion}"
 
-    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.1.1'
-    // Other dependencies
-    compile "ch.qos.logback:logback-classic:${logbackVersion}"
-    compile "com.google.guava:guava:${guavaVersion}"
+    compile "org.apache.kafka:kafka-clients:${kafkaVersion}"
     compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
-	compile "net.sf.flexjson:flexjson:${flexjsonVersion}"
-	compile "com.zaxxer:HikariCP:${hikariVersion}"
+    compile "org.elasticsearch.client:transport:${elasticsearchVersion}"
+    compile "com.zaxxer:HikariCP:${hikariVersion}"
     compile "org.postgresql:postgresql:${postgresVersion}"
     compile "org.javalite:activejdbc:${activejdbcVersion}"
     compile "org.javalite:activejdbc-instrumentation:${activejdbcVersion}"
-	compile "commons-lang:commons-lang:2.6"
+    compile "org.jsoup:jsoup:1.8.3"
+    compile "com.itextpdf:itextpdf:5.5.8"
+	
+    // Other dependencies
+    compile "io.netty:netty-all:${nettyAllVersion}"
+    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+    compile "com.google.guava:guava:${guavaVersion}"
 	compile "org.apache.commons:commons-lang3:3.0"
 	compile "org.elasticsearch:elasticsearch-lang-mvel:1.5.0"
-	compile "org.jsoup:jsoup:1.8.3"
-	compile "com.itextpdf:itextpdf:5.5.8"
 	
     // Test dependencies
     testCompile "junit:junit:${junitVersion}"

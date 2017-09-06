@@ -1,14 +1,16 @@
 package org.gooru.nucleus.search.indexers.app.components;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
+import java.net.InetAddress;
+
+import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.indices.IndexAlreadyExistsException;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.indices.InvalidIndexNameException;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.gooru.nucleus.search.indexers.app.constants.ElasticSearchConnectionConstant;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.utils.EsMappingUtil;
@@ -18,7 +20,8 @@ import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 
 /**
  * This class initializes ElasticSearch client and registers indices using setting/ mapping files
@@ -74,34 +77,35 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
   private void initializeElasticSearchClient(JsonObject elasticSearchConfig) {
 
-    String clusterName = elasticSearchConfig
-      .getString(ElasticSearchConnectionConstant.CLUSTER_NAME.getKey(), ElasticSearchConnectionConstant.CLUSTER_NAME.getDefaultValue());
+    String clusterName = elasticSearchConfig.getString(ElasticSearchConnectionConstant.CLUSTER_NAME.getKey(),
+            ElasticSearchConnectionConstant.CLUSTER_NAME.getDefaultValue());
     String hostName =
-      elasticSearchConfig.getString(ElasticSearchConnectionConstant.HOST.getKey(), ElasticSearchConnectionConstant.HOST.getDefaultValue());
-    String indexPrefixPart = elasticSearchConfig
-      .getString(ElasticSearchConnectionConstant.INDEX_PREFIX_PART.getKey(), ElasticSearchConnectionConstant.INDEX_PREFIX_PART.getDefaultValue());
-    String indexMiddlePart = elasticSearchConfig
-      .getString(ElasticSearchConnectionConstant.INDEX_MIDDLE_PART.getKey(), ElasticSearchConnectionConstant.INDEX_MIDDLE_PART.getDefaultValue());
-    String indexSuffixPart = elasticSearchConfig
-      .getString(ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getKey(), ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getDefaultValue());
+            elasticSearchConfig.getString(ElasticSearchConnectionConstant.HOST.getKey(), ElasticSearchConnectionConstant.HOST.getDefaultValue());
+    String indexPrefixPart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_PREFIX_PART.getKey(),
+            ElasticSearchConnectionConstant.INDEX_PREFIX_PART.getDefaultValue());
+    String indexMiddlePart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_MIDDLE_PART.getKey(),
+            ElasticSearchConnectionConstant.INDEX_MIDDLE_PART.getDefaultValue());
+    String indexSuffixPart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getKey(),
+            ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getDefaultValue());
     String clientTransportSniff = elasticSearchConfig.getString(ElasticSearchConnectionConstant.CLIENT_TRANSPORT_SNIFF.getKey(),
-      ElasticSearchConnectionConstant.CLIENT_TRANSPORT_SNIFF.getDefaultValue());
+            ElasticSearchConnectionConstant.CLIENT_TRANSPORT_SNIFF.getDefaultValue());
 
     setIndexNamePrefix(indexPrefixPart + indexMiddlePart);
     setIndexNameSuffix(indexSuffixPart);
 
     Settings settings =
-      Settings.settingsBuilder().put("cluster.name", clusterName).put("client.transport.sniff", Boolean.valueOf(clientTransportSniff)).build();
-    LOGGER.debug("ELS Cluster Name : {}" , clusterName);
-    TransportClient transportClient = TransportClient.builder().settings(settings).build();
+            Settings.builder().put("cluster.name", clusterName).put("client.transport.sniff", Boolean.valueOf(clientTransportSniff)).build();
+    LOGGER.debug("ELS Cluster Name : {}", clusterName);
+    TransportClient transportClient = new PreBuiltTransportClient(settings);
 
     String[] hosts = hostName.split(",");
     for (String host : hosts) {
       String[] hostParams = host.split(":");
       if (hostParams.length == 2) {
         try {
-          LOGGER.debug("host : {} port : {}" , hostParams[0],  hostParams[1]);
+          LOGGER.debug("host : {} port : {}", hostParams[0], hostParams[1]);
           transportClient.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostParams[0]), Integer.parseInt(hostParams[1])));
+
           LOGGER.debug("Host added : {} to elasticsearch!", host);
         } catch (Exception e) {
           LOGGER.error("Add transport address failed : ", e);
@@ -128,14 +132,14 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
         String mapping = EsMappingUtil.getMappingConfig(indexType);
         try {
           CreateIndexRequestBuilder prepareCreate = ElasticSearchRegistry.getInstance().getClient().admin().indices().prepareCreate(indexName);
-          prepareCreate.setSettings(setting);
-          prepareCreate.addMapping(indexType, mapping);
+          prepareCreate.setSettings(setting, XContentType.JSON);
+          prepareCreate.addMapping(indexType, mapping, XContentType.JSON);
           prepareCreate.execute().actionGet();
           LOGGER.debug("Es Index : {} Created!", indexName);
         } catch (Exception exception) {
-          if (exception instanceof IndexAlreadyExistsException || (exception instanceof InvalidIndexNameException && exception.getMessage().contains("already exists as alias"))) {
+          if (exception instanceof ResourceAlreadyExistsException || (exception instanceof InvalidIndexNameException && exception.getMessage().contains("already exists as alias"))) {
             LOGGER.debug("Oops! Es Index : {} already exist!", indexName);
-            ElasticSearchRegistry.getInstance().getClient().admin().indices().preparePutMapping(indexName).setType(indexType).setSource(mapping)
+            ElasticSearchRegistry.getInstance().getClient().admin().indices().preparePutMapping(indexName).setType(indexType).setSource(mapping, XContentType.JSON)
                                  .execute().actionGet();
             LOGGER.debug("Updated mapping with index '{}' and type '{}'", indexName, indexType);
           } else {

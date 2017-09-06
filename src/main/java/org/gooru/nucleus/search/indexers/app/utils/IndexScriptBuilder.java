@@ -20,8 +20,8 @@ public final class IndexScriptBuilder {
   protected static final String INDEX_UPDATED_DATE = "indexUpdatedTime";
 
   protected static final String INDEX_UPDATED =
-    "if (ctx._source.containsKey(\"indexUpdatedTime\")) {ctx._source.indexUpdatedTime=indexUpdatedTime} else ({ctx._source" +
-      ".indexUpdatedTime=indexUpdatedTime})";
+    "if (ctx._source.containsKey(\"indexUpdatedTime\")) {ctx._source.indexUpdatedTime=params.indexUpdatedTime} else {ctx._source" +
+      ".indexUpdatedTime=params.indexUpdatedTime}";
 
   protected static final String IF_EXISTS_FIELD = "if (ctx._source.";
 
@@ -39,6 +39,8 @@ public final class IndexScriptBuilder {
 
   protected static final String DOUBLE_QUOTES_CLOSE_BRACKETS = "\")) ";
 
+  protected static final String PARAMS_DOT = "params.";
+  
   protected static final Logger LOG = LoggerFactory.getLogger(IndexScriptBuilder.class);
 
   private IndexScriptBuilder() {
@@ -67,9 +69,8 @@ public final class IndexScriptBuilder {
 
   private static void createScript(String key, StringBuffer scriptQuery) {
 
-    String paramKey = key.replaceAll("\\.", "");
+    String paramKey = PARAMS_DOT + key.replaceAll("\\.", "");
 
-    scriptQuery.append(SEMICOLON);
     scriptQuery.append(IF_EXISTS_FIELD);
     String childField = key;
     String parentField = "";
