@@ -1,105 +1,94 @@
- {
-            "library": {
-                "properties": {
-                    "collections": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "id": {
-                        "type": "integer",
-                        "include_in_all": false
-                    },
-                    "indexUpdatedDate": {
-                        "type": "date",
-                        "format": "dateOptionalTime",
-                        "include_in_all": false
-                    },
-                    "organization": {
-                        "properties": {
-                            "code": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "include_in_all": false
-                            },
-                            "name": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "include_in_all": false
-                            },
-                            "partyUid": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "include_in_all": false
-                            }
-                        }
-                    },
-                    "partyPermissions": {
-                        "type": "nested",
-                        "properties": {
-                            "name": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            },
-                            "type": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            },
-                            "uId": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            }
-                        }
-                    },
-                    "quizzes": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "resourcesIdList": {
-                        "type": "string",
-                        "include_in_all": false
-                    },
-                    "simple_collections": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "simple_quizzes": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "type": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    }
-                }
-            },
-            "dictionary": {
-                "analyzer": "standard",
-                "properties": {
-                    "definitions": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    },
-                    "indexUpdatedDate": {
-                        "type": "date",
-                        "format": "dateOptionalTime",
-                        "include_in_all": false
-                    },
-                    "type": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    },
-                    "word": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    }
-                }
+{
+   "library":{
+      "properties":{
+         "collections":{
+            "type":"keyword",
+            "include_in_all":false
+         },
+         "id":{
+            "type":"integer",
+            "include_in_all":false
+         },
+         "indexUpdatedDate":{
+            "type":"date",
+            "format":"dateOptionalTime",
+            "include_in_all":false
+         },
+         "organization":{
+            "properties":{
+               "code":{
+                  "type":"keyword",
+                  "include_in_all":false
+               },
+               "name":{
+                  "type":"keyword",
+                  "include_in_all":false
+               },
+               "partyUid":{
+                  "type":"keyword",
+                  "include_in_all":false
+               }
             }
+         },
+         "partyPermissions":{
+            "type":"nested",
+            "properties":{
+               "name":{
+                  "type":"keyword"
+               },
+               "type":{
+                  "type":"keyword"
+               },
+               "uId":{
+                  "type":"keyword"
+               }
+            }
+         },
+         "quizzes":{
+            "type":"keyword",
+            "include_in_all":false
+         },
+         "resourcesIdList":{
+            "type":"text",
+            "include_in_all":false
+         },
+         "simple_collections":{
+            "type":"keyword",
+            "include_in_all":false
+         },
+         "simple_quizzes":{
+            "type":"keyword",
+            "include_in_all":false
+         },
+         "type":{
+            "type":"keyword",
+            "include_in_all":false
+         }
+      }
+   },
+   "dictionary":{
+      "analyzer":"standard",
+      "properties":{
+         "definitions":{
+            "type":"text",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
+         "indexUpdatedDate":{
+            "type":"date",
+            "format":"dateOptionalTime",
+            "include_in_all":false
+         },
+         "type":{
+            "type":"text",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
+         "word":{
+            "type":"text",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         }
+      }
+   }
 }
