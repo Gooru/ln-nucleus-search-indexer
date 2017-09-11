@@ -1,32 +1,32 @@
- {
-            "dictionary": {
-                "properties": {
-                    "definitions": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    },
-                    "indexId": {
-                        "type": "string"
-                    },
-                    "indexType": {
-                        "type": "string"
-                    },
-                    "indexUpdatedDate": {
-                        "type": "date",
-                        "format": "dateOptionalTime",
-                        "include_in_all": false
-                    },
-                    "type": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    },
-                    "word": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    }
-                }
-            }
+{
+   "dictionary":{
+      "properties":{
+         "definitions":{
+            "type":"text",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
+         "indexId":{
+            "type":"text"
+         },
+         "indexType":{
+            "type":"text"
+         },
+         "indexUpdatedDate":{
+            "type":"date",
+            "format":"dateOptionalTime",
+            "include_in_all":false
+         },
+         "type":{
+            "type":"text",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
+         "word":{
+            "type":"text",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         }
+      }
+   }
 }
