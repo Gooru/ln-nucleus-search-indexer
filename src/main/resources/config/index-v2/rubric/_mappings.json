@@ -2,38 +2,34 @@
    "rubric":{
       "properties":{
          "id":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "title":{
-            "type":"string",
+            "type":"text",
             "analyzer":"standard",
             "fields":{
                "titleSnowball":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball"
                },
                "titleKStem":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"gooru_kstem"
                }
             },
             "include_in_all":true
          },
          "url":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "originalRubricId":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "parentRubricId":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "createdAt":{
@@ -54,32 +50,30 @@
          "creator":{
             "properties":{
                "emailId":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "firstName":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "fullName":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "userId":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "profileImage":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "lastName":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
@@ -88,11 +82,11 @@
                   "include_in_all":false
                },
                "usernameDisplay":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "fields":{
                      "usernameDisplaySnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      }
                   },
@@ -101,13 +95,11 @@
                "tenant":{
                   "properties":{
                      "tenantRootId":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "tenantId":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      }
                   }
@@ -117,27 +109,26 @@
          "originalCreator":{
             "properties":{
                "emailId":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "firstName":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "fullName":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "userId":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "lastName":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
@@ -146,31 +137,28 @@
                   "include_in_all":false
                },
                "usernameDisplay":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "fields":{
                      "usernameDisplaySnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      }
                   },
                   "include_in_all":false
                },
                "profileImage":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "tenant":{
                   "properties":{
                      "tenantRootId":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "tenantId":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      }
                   }
@@ -183,27 +171,26 @@
             "include_in_all":false
          },
          "publishStatus":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "description":{
-            "type":"string",
+            "type":"text",
             "analyzer":"standard",
             "fields":{
                "descriptionKStem":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"gooru_kstem"
                },
                "descriptionSnowball":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball"
                }
             },
             "include_in_all":true
          },
          "contentFormat":{
-            "type":"string",
+            "type":"text",
             "analyzer":"keyword_lowercase",
             "include_in_all":false
          },
@@ -212,15 +199,14 @@
                "answer":{
                   "properties":{
                      "answerText":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball",
                         "include_in_all":false
                      }
                   }
                },
                "explanation":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "hint":{
@@ -230,14 +216,14 @@
                         "include_in_all":false
                      },
                      "hintText":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball",
                         "include_in_all":false
                      }
                   }
                },
                "questionText":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball",
                   "include_in_all":false
                }
@@ -246,7 +232,7 @@
          "resourceInfo":{
             "properties":{
                "text":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -256,26 +242,23 @@
                "watsonTags":{
                   "properties":{
                      "taxonomies":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "concepts":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "entities":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "keywords":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"standard",
                         "fields":{
                            "keywordsSnowball":{
-                              "type":"string",
+                              "type":"text",
                               "analyzer":"snowball"
                            }
                         },
@@ -288,52 +271,51 @@
          "metadata":{
             "properties":{
                "educationalUse":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "readingLevel":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "depthOfKnowledge":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "momentsOfLearning":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "audience":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "advertisementLevel":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "hazardLevel":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "mediaFeature":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "grade":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "twentyOneCenturySkill":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                }
@@ -342,24 +324,21 @@
          "tenant":{
             "properties":{
                "tenantRootId":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "tenantId":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                }
             }
          },
          "grade":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "customSpellCheckerSuggest":{
-            "type":"string",
+            "type":"text",
             "analyzer":"whitespace_lowercase",
             "include_in_all":false
          },
@@ -370,7 +349,7 @@
                   "include_in_parent":true,
                   "properties":{
                      "codeId":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
@@ -379,11 +358,11 @@
                         "include_in_all":false
                      },
                      "label":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "fields":{
                            "labelSnowball":{
-                              "type":"string",
+                              "type":"text",
                               "analyzer":"snowball"
                            }
                         },
@@ -392,7 +371,7 @@
                   }
                },
                "learningTargets":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -401,11 +380,10 @@
                },
                "hasStandard":{
                   "type":"integer",
-                  "index":"not_analyzed",
                   "include_in_all":false
                },
                "standards":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -413,7 +391,7 @@
                   "include_in_all":false
                },
                "standardsDisplay":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -421,7 +399,7 @@
                   "include_in_all":false
                },
                "ltDisplay":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -429,7 +407,7 @@
                   "include_in_all":false
                },
                "leafInternalCodes":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -437,7 +415,7 @@
                   "include_in_all":false
                },
                "leafDisplayCodes":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -449,21 +427,21 @@
                   "include_in_parent":true,
                   "properties":{
                      "codeId":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
                      "codeTypeId":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
                      "label":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "fields":{
                            "labelSnowball":{
-                              "type":"string",
+                              "type":"text",
                               "analyzer":"snowball"
                            }
                         },
@@ -476,21 +454,21 @@
                   "include_in_parent":true,
                   "properties":{
                      "codeId":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
                      "codeTypeId":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      },
                      "label":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "fields":{
                            "labelSnowball":{
-                              "type":"string",
+                              "type":"text",
                               "analyzer":"snowball"
                            }
                         },
@@ -499,7 +477,7 @@
                   }
                },
                "allEquivalentInternalCodes":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -507,7 +485,7 @@
                   "include_in_all":false
                },
                "allEquivalentDisplayCodes":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -515,7 +493,7 @@
                   "include_in_all":false
                },
                "allEquivalentFrameworkCodes":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
@@ -525,121 +503,101 @@
                "equivalentCompetencies":{
                   "properties":{
                      "id":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "code":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "title":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "parentTitle":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "frameworkCode":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "leafInternalCodeId":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "leafDisplayCode":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      }
                   }
                },
                "taxonomyDataSet":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball",
                   "include_in_all":false
                },
                "taxonomySkills":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball",
                   "include_in_all":false
                },
                "taxonomySet":{
                   "properties":{
                      "subject":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "course":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "domain":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "curriculum":{
                         "properties":{
                            "curriculumCode":{
-                              "type":"string",
-                              "index":"not_analyzed",
+                              "type":"keyword",
                               "include_in_all":false
                            },
                            "curriculumDesc":{
-                              "type":"string",
-                              "index":"not_analyzed",
+                              "type":"keyword",
                               "include_in_all":false
                            },
                            "curriculumName":{
-                              "type":"string",
-                              "index":"not_analyzed",
+                              "type":"keyword",
                               "include_in_all":false
                            },
                            "learningTarget":{
-                              "type":"string",
-                              "index":"not_analyzed",
+                              "type":"keyword",
                               "include_in_all":false
                            },
                            "learningTargetDesc":{
-                              "type":"string",
-                              "index":"not_analyzed",
+                              "type":"keyword",
                               "include_in_all":false
                            },
                            "curriculumInfo":{
                               "properties":{
                                  "id":{
-                                    "type":"string",
-                                    "index":"not_analyzed",
+                                    "type":"keyword",
                                     "include_in_all":false
                                  },
                                  "code":{
-                                    "type":"string",
-                                    "index":"not_analyzed",
+                                    "type":"keyword",
                                     "include_in_all":false
                                  },
                                  "title":{
-                                    "type":"string",
-                                    "index":"not_analyzed",
+                                    "type":"keyword",
                                     "include_in_all":false
                                  },
                                  "parentTitle":{
-                                    "type":"string",
-                                    "index":"not_analyzed",
+                                    "type":"keyword",
                                     "include_in_all":false
                                  },
                                  "frameworkCode":{
-                                    "type":"string",
-                                    "index":"not_analyzed",
+                                    "type":"keyword",
                                     "include_in_all":false
                                  }
                               }
@@ -653,24 +611,23 @@
          "course":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
@@ -681,24 +638,23 @@
          "unit":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
@@ -709,24 +665,23 @@
          "lesson":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
@@ -737,24 +692,23 @@
          "collection":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
@@ -765,24 +719,23 @@
          "content":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
@@ -791,23 +744,20 @@
             }
          },
          "thumbnail":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "collectionId":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "collectionTitles":{
-            "type":"string",
+            "type":"text",
             "analyzer":"snowball",
             "include_in_all":false
          },
          "collectionIds":{
-            "type":"string",
-            "index":"not_analyzed",
+            "type":"keyword",
             "include_in_all":false
          },
          "statistics":{
@@ -847,234 +797,196 @@
                "domain":{
                   "properties":{
                      "name":{
-                        "type":"string",
-                        "index":"not_analyzed",
+                        "type":"keyword",
                         "include_in_all":false
                      },
                      "url":{
-                        "type":"string",
+                        "type":"text",
                         "include_in_all":false
                      },
                      "attribution":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase",
                         "include_in_all":false
                      }
                   }
                },
                "publisher":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "fields":{
                      "publisherSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      }
                   }
                },
                "aggregator":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "host":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "mobileFriendliness":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "keywords":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"keyword_lowercase",
                   "include_in_all":false
                },
                "schoolLevel":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "author":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "interactivityType":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "dataType":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "seriesTitle":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "age":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "language":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "countryCode":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "scriptCode":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "accessMode":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "controlFlexibility":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "oer":{
                   "type":"integer",
-                  "index":"not_analyzed",
                   "include_in_all":false
                },
                "importMode":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "fileCode":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "crawlOrigin":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "crawlMethod":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "size":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "duration":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "crawledSubject":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "crawledSubject_analyzed":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "include_in_all":false
                },
                "content":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "learningMode":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "endUser":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "childAbbreviation":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "childAttribution":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "parentAbbreviation":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "parentAttribution":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "subdivisionCode":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "securityGroupName":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "resourceSourceName":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "priority":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "hasAdaptation":{
                   "type":"integer",
-                  "index":"not_analyzed",
                   "include_in_all":false
                },
                "isAdaptationOf":{
                   "type":"integer",
-                  "index":"not_analyzed",
                   "include_in_all":false
                },
                "accessApi":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "contributor":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                },
                "contributor_analyzed":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "include_in_all":false
                },
                "domainAuthority":{
-                  "type":"string",
-                  "index":"not_analyzed",
+                  "type":"keyword",
                   "include_in_all":false
                }
             }

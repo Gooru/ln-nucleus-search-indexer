@@ -3,7 +3,6 @@
       "properties":{
          "id":{
             "type":"keyword",
-            "index":"not_analyzed",
             "include_in_all":false
          },
          "publisher":{
