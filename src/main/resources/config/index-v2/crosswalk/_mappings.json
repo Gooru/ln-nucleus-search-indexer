@@ -6,43 +6,34 @@
          },
          "indexUpdatedTime":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "id":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "codeType":{
             "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "analyzer":"keyword_lowercase"
          },
          "code":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "crosswalkCodes":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "code":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "parentTitle":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "frameworkCode":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                }
             }
          }

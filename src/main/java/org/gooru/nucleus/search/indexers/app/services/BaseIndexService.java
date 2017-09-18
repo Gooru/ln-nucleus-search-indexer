@@ -1,11 +1,16 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.elasticsearch.client.Client;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -16,12 +21,16 @@ import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazelcast.util.StringUtil;
+
 import io.vertx.core.json.JsonObject;
 
 public class BaseIndexService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BaseIndexService.class);
   public static final String WATSON_TAGS_FIELD = "resourceInfo.watsonTags.";
+  protected static final ObjectMapper SERIAILIZER = new ObjectMapper();
 
   protected static int getInteger(Object value) {
     return value == null ? 0 : (int) value;
@@ -40,8 +49,12 @@ public class BaseIndexService {
     return views;
   }
 
-  protected Client getClient() {
-    return ElasticSearchRegistry.getFactory().getClient();
+  protected RestHighLevelClient getHighLevelClient() {
+    return ElasticSearchRegistry.getRestHighLevelClient();
+  }
+  
+  protected RestClient getLowLevelClient() {
+    return ElasticSearchRegistry.getLowLevelRestClient();
   }
 
   protected String buildContentInfoIndexSrc(String id, String contentFormat, Map<String, Object> data){
@@ -133,4 +146,14 @@ public class BaseIndexService {
     }
     return stringbuilder.toString();
   }
+  
+  protected Response performRequest(String method, String indexUrl, String requestPayload) throws Exception {
+    StringEntity entity = null;
+    if (!StringUtil.isNullOrEmpty(requestPayload)) {
+      entity = new StringEntity(requestPayload, ContentType.APPLICATION_JSON);
+    }
+    Response response = getLowLevelClient().performRequest(method, indexUrl, Collections.emptyMap(), entity);
+    return response;
+  }
+  
 }

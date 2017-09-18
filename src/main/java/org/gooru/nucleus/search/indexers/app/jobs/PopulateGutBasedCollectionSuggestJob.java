@@ -8,19 +8,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.search.SearchHit;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
-import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
@@ -34,18 +27,15 @@ import org.gooru.nucleus.search.indexers.bootstrap.startup.JobInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService implements JobInitializer {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulateGutBasedCollectionSuggestJob.class);
-  
-  private static final String QUERY =
-          "{ \"function_score\" : { \"script_score\" : { \"lang\" : \"groovy\", \"script\" : \"1.0\" }, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }";
-  private static final String FILTER =
-          "{ \"bool\" : { \"must\" : [ { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"term\" : { \"publishStatus\" : \"published\" } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [ CROSSWALK_CODES ] } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } } ] } }";
-
+  private static final String QUERY = "{ \"filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [CROSSWALK_CODES] } } ] } }, \"size\" : 8, \"query\" : { \"function_score\" : { \"script_score\" : { \"lang\" : \"groovy\", \"script\" : \"_score * doc['statistics.preComputedWeight'].value\" }, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
@@ -121,6 +111,7 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
     //scheduler.cancelCurrent();
   }
 
+  @SuppressWarnings("unchecked")
   private void processTaxonomyCodes(JsonArray taxonomyCodeArray) {
     for (Object taxonomyCode : taxonomyCodeArray) {
       JsonObject taxonomyCodeObject = (JsonObject) taxonomyCode;
@@ -143,28 +134,25 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
             });
           }
           if (!crosswalkCodes.isEmpty()) {
-            BoolQueryBuilder filter = QueryBuilders.boolQuery()
-                    .filter(QueryBuilders.termQuery("contentFormat", "collection"))
-                    .filter(QueryBuilders.termQuery("publishStatus", "published"))
-                    .filter(QueryBuilders.termsQuery("taxonomy.allEquivalentInternalCodes", crosswalkCodes.toArray()))
-                    .mustNot(QueryBuilders.termQuery("contentSubFormat", "benchmark"));
-            FunctionScoreQueryBuilder query = QueryBuilders.functionScoreQuery(
-                    QueryBuilders.queryStringQuery("*").field("_all").field("learningObjective").field("title.titleKStem", 10.0F).boost(3.0F)
-                            .useDisMax(true).defaultOperator(Operator.AND).allowLeadingWildcard(false).analyzer("gooru_kstem"),
-                    ScoreFunctionBuilders.scriptFunction(new Script("_score * doc['statistics.preComputedWeight'].value")));
-            SearchRequestBuilder requestBuilder =
-                    getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.COLLECTION)).setTypes(IndexerConstants.TYPE_COLLECTION)
-                            .setQuery(query).setPostFilter(filter).setSize(20).setFrom(0).setFetchSource(IndexFields.ID, null);
-            SearchResponse searchResponse = requestBuilder.execute().actionGet();
-            if (searchResponse.getHits().getTotalHits() > 0) {
-              Map<String, StringBuffer> suggestByPerfAsMap = new HashMap<>();
-              deserializeResponseAndPopulate(taxonomyCodeObject, code, searchResponse, suggestByPerfAsMap);
-              LOGGER.info("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
-              if (!suggestByPerfAsMap.isEmpty()) {
-                extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
+            String query = QUERY.replaceAll("CROSSWALK_CODES", convertArrayToString(StringUtils.join(crosswalkCodes, IndexerConstants.COMMA)));
+            Response searchResponse = performRequest("POST",
+                    "/" + IndexNameHolder.getIndexName(EsIndex.RESOURCE) + "/" + IndexerConstants.TYPE_RESOURCE + "/_search", query);
+            if (searchResponse.getEntity() != null) {
+              Map<String, Object> responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(searchResponse.getEntity()),
+                      new TypeReference<Map<String, Object>>() {});
+              Map<String, Object> hitsMap = (Map<String, Object>) responseAsMap.get("hits");
+              Long totalHits = ((Integer) hitsMap.get("total")).longValue();
+              LOGGER.debug("search count : {}", totalHits);
+              if (totalHits > 0) {
+                Map<String, StringBuffer> suggestByPerfAsMap = new HashMap<>();
+                deserializeResponseAndPopulate(taxonomyCodeObject, code, hitsMap, suggestByPerfAsMap);
+                LOGGER.info("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
+                if (!suggestByPerfAsMap.isEmpty()) {
+                  extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
+                }
+              } else {
+                LOGGER.info("No matching suggestions for cw codes : {} ", crosswalkCodes);
               }
-            } else {
-              LOGGER.info("No matching suggestions for cw codes : {} ", crosswalkCodes);
             }
           } else {
             LOGGER.info("No mapping for gut : {} ", code);
@@ -179,14 +167,17 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
     }
   }
 
-  private void deserializeResponseAndPopulate(JsonObject taxonomyCodeObject, String code, SearchResponse searchResponse, Map<String, StringBuffer> suggestByPerfAsMap) {
+  @SuppressWarnings("unchecked")
+  private void deserializeResponseAndPopulate(JsonObject taxonomyCodeObject, String code, Map<String, Object> hitsMap, Map<String, StringBuffer> suggestByPerfAsMap) {
     StringBuffer suggestIds = new StringBuffer();
     StringBuffer highSuggestIds = new StringBuffer();
     StringBuffer mediumSuggestIds = new StringBuffer();
     List<String> suggestIdList = new ArrayList<>();
-    long hitCount = searchResponse.getHits().getTotalHits();
-    for (SearchHit searchHit : searchResponse.getHits().getHits()) {
-      String id = searchHit.getId();
+    long hitCount = ((Integer) hitsMap.get("total")).longValue();
+    List<Map<String, Object>> hits = (List<Map<String, Object>>) (hitsMap).get("hits");
+    for (Map<String, Object> hit : hits) {
+      Map<String, Object> fields = (Map<String, Object>) hit.get("_source");
+      String id = (String) fields.get(EntityAttributeConstants.ID);
       if (suggestIds.length() > 0) {
         suggestIds.append(IndexerConstants.COMMA);
       }

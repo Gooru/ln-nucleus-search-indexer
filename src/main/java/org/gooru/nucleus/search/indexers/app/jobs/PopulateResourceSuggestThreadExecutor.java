@@ -9,19 +9,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.rescore.RescoreBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
-import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
@@ -33,6 +26,8 @@ import org.gooru.nucleus.search.indexers.app.services.BaseIndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -51,10 +46,7 @@ public class PopulateResourceSuggestThreadExecutor extends BaseIndexService impl
 
   private static final String GUT_FRAMEWORK = "GDT";
 
-  private static final String QUERY =
-          "{ \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"description^1.5F\", \"text\", \"tags^3.0F\", \"title^5.0F\", \"narration\", \"collectionTitles\", \"originalCreator.usernameDisplay\", \"creator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"taxonomy.course.label^1.4F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceSource.attribution\", \"copyrightOwnerList.copyrightOwnerListSnowball\", \"info.publisher\", \"info.publisher.publisherSnowball\", \"copyrightOwnerList.copyrightOwnerListStandard\" ], \"boost\" : 1.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"standard\" } }";
-  private static final String FILTER = "{ \"bool\" : { \"must\" : [ { \"term\" : { \"contentFormat\" : \"resource\" } }, { \"term\" : { \"publishStatus\" : \"published\" } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [ CODE ] } }, { \"term\" : { \"statistics.statusIsBroken\" : 0 } } ] } }";
-  private static final String RESCORE_SCRIPT = "esScore = esScore=_score.score(); pcw = doc['statistics.preComputedWeight'].value; cenPrecent = esScore/60*100; fourtyPrecent = cenPrecent - esScore; return fourtyPrecent * pcw;";
+  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"contentFormat\" : \"resource\" } }, { \"term\" : { \"publishStatus\" : \"published\" } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [CROSSWALK_CODES] } }, { \"term\" : { \"statistics.statusIsBroken\" : 0 } } ] } }, \"size\" : 20, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"description^1.5F\", \"text\", \"tags^3.0F\", \"title^5.0F\", \"narration\", \"collectionTitles\", \"originalCreator.usernameDisplay\", \"creator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"taxonomy.course.label^1.4F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceSource.attribution\", \"copyrightOwnerList.copyrightOwnerListSnowball\", \"info.publisher\", \"info.publisher.publisherSnowball\", \"copyrightOwnerList.copyrightOwnerListStandard\" ], \"boost\" : 1.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"standard\" } }, \"from\" : 0, \"_source\" : [ \"id\", \"contentFormat\", \"url\", \"title\", \"description\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"shortTitle\", \"narration\", \"publishStatus\", \"collectionId\", \"visibleOnProfile\", \"originalCreator\", \"creator\", \"contentSubFormat\", \"collectionIds\", \"collectionTitles\", \"question\", \"metadata\", \"taxonomy\", \"statistics\", \"license\", \"info\", \"course\", \"copyrightOwnerList\", \"isCopyrightOwner\" ], \"rescore\" : { \"window_size\" : 300, \"query\" : { \"score_mode\" : \"multiply\", \"rescore_query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"((_score/60*100) - _score) * doc['statistics.preComputedWeight'].value\" }} } } } } }";
   private static final Pattern STANDARD_MATCH = Pattern.compile("standard_level_1|standard_level_2");
 
   @Override
@@ -111,6 +103,7 @@ public class PopulateResourceSuggestThreadExecutor extends BaseIndexService impl
     }
   }
 
+  @SuppressWarnings("unchecked")
   private void processTaxonomyCodes(JsonArray taxonomyCodeArray) {
     for (Object taxonomyCode : taxonomyCodeArray) {
       JsonObject taxonomyCodeObject = (JsonObject) taxonomyCode;
@@ -134,58 +127,55 @@ public class PopulateResourceSuggestThreadExecutor extends BaseIndexService impl
           }
           if (!crosswalkCodes.isEmpty()) {
             LOGGER.info("crosswalkCodes :: {} ", crosswalkCodes);
-            BoolQueryBuilder filter = QueryBuilders.boolQuery()
-                    .must(QueryBuilders.termQuery("contentFormat", "resource"))
-                    .must(QueryBuilders.termQuery("publishStatus", "published"))
-                    .must(QueryBuilders.termQuery("statistics.statusIsBroken", 0))
-                    .must(QueryBuilders.termsQuery("taxonomy.allEquivalentInternalCodes", crosswalkCodes.toArray()));
-            SearchRequestBuilder requestBuilder = getClient().prepareSearch(IndexNameHolder.getIndexName(EsIndex.RESOURCE))
-                    .setTypes(IndexerConstants.TYPE_RESOURCE)
-                    .setQuery(QueryBuilders.queryStringQuery("*").field("_all").field("description", 1.5F).field("text").field("tags",3.0F).field("title", 5.0F)
-                            .boost(1.0F).useDisMax(true).defaultOperator(Operator.AND).allowLeadingWildcard(false).analyzer("standard"))
-                    .setPostFilter(filter).setSize(20).setFrom(0)
-                    .setRescorer(RescoreBuilder.queryRescorer(QueryBuilders.functionScoreQuery(
-                            ScoreFunctionBuilders.scriptFunction(new Script("((_score/60*100) - _score) * doc['statistics.preComputedWeight'].value")))), 300)
-                    .setFetchSource(IndexFields.ID, null);
-           SearchResponse searchResponse = requestBuilder.execute().actionGet();
-            if (searchResponse.getHits().getTotalHits() > 0) {
-              LOGGER.debug("search count : {}", searchResponse.getHits().getTotalHits());
-
-              Map<String, StringBuffer> suggestByPerfAsMap = new HashMap<>();
-              StringBuffer suggestIds = new StringBuffer();
-              StringBuffer highSuggestIds = new StringBuffer();
-              StringBuffer mediumSuggestIds = new StringBuffer();
-              List<String> suggestIdList = new ArrayList<>();
-              long hitCount = searchResponse.getHits().getTotalHits();
-              for (SearchHit searchHit : searchResponse.getHits().getHits()) {
-                String id = searchHit.getId();
-                if (suggestIds.length() > 0) {
-                  suggestIds.append(IndexerConstants.COMMA);
+            String query = QUERY.replaceAll("CROSSWALK_CODES", convertArrayToString(StringUtils.join(crosswalkCodes, IndexerConstants.COMMA)));
+            Response searchResponse = performRequest("POST","/" + IndexNameHolder.getIndexName(EsIndex.RESOURCE) + "/" + IndexerConstants.TYPE_RESOURCE + "/_search", query);
+            if (searchResponse.getEntity() != null) {
+              Map<String, Object> responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(searchResponse.getEntity()),
+                      new TypeReference<Map<String, Object>>() {});
+              Map<String, Object> hitsMap = (Map<String, Object>) responseAsMap.get("hits");
+              Long totalHits = ((Integer) hitsMap.get("total")).longValue();
+              LOGGER.debug("search count : {}", totalHits);
+              if (totalHits > 0) {
+                Map<String, StringBuffer> suggestByPerfAsMap = new HashMap<>();
+                StringBuffer suggestIds = new StringBuffer();
+                StringBuffer highSuggestIds = new StringBuffer();
+                StringBuffer mediumSuggestIds = new StringBuffer();
+                List<String> suggestIdList = new ArrayList<>();
+                long hitCount = ((Integer) hitsMap.get("total")).longValue();
+                List<Map<String, Object>> hits = (List<Map<String, Object>>) (hitsMap).get("hits");
+                for (Map<String, Object> hit : hits) {
+                  Map<String, Object> fields = (Map<String, Object>) hit.get("_source");
+                  String id = (String) fields.get(EntityAttributeConstants.ID);
+                  if (suggestIds.length() > 0) {
+                    suggestIds.append(IndexerConstants.COMMA);
+                  }
+                  suggestIds.append(id);
+                  suggestIdList.add(id);
+                  if ((hitCount <= 3 && !(suggestIdList.size() < hitCount)) || suggestIdList.size() == 3) {
+                    highSuggestIds = suggestIds;
+                    LOGGER.info("hitCount : {} suggestIdList.size() : {} highSuggestIds : {} ", hitCount, suggestIdList.size(),
+                            highSuggestIds.toString());
+                    suggestIds = new StringBuffer();
+                  } else if ((!(suggestIdList.size() > 6) && !(suggestIdList.size() < hitCount)) || (hitCount >= 6 && suggestIdList.size() == 6)) {
+                    mediumSuggestIds = suggestIds;
+                    LOGGER.info("hitCount : {} suggestIdList.size() : {} mediumSuggestIds : {} ", hitCount, suggestIdList.size(),
+                            mediumSuggestIds.toString());
+                    suggestIds = new StringBuffer();
+                  }
+                  if (hitCount >= 9 && suggestIdList.size() == 9) {
+                    break;
+                  }
                 }
-                suggestIds.append(id);
-                suggestIdList.add(id);
-                if ((hitCount <= 3 && !(suggestIdList.size() < hitCount)) || suggestIdList.size() == 3) {
-                  highSuggestIds = suggestIds;
-                  LOGGER.info("hitCount : {} suggestIdList.size() : {} highSuggestIds : {} ", hitCount, suggestIdList.size(), highSuggestIds.toString());
-                  suggestIds = new StringBuffer();
-                } else if ((!(suggestIdList.size() > 6) && !(suggestIdList.size() < hitCount)) || (hitCount >= 6 && suggestIdList.size() == 6)) {
-                  mediumSuggestIds = suggestIds;
-                  LOGGER.info("hitCount : {} suggestIdList.size() : {} mediumSuggestIds : {} ", hitCount, suggestIdList.size(), mediumSuggestIds.toString());
-                  suggestIds = new StringBuffer();
+                if (highSuggestIds.length() > 0)
+                  suggestByPerfAsMap.put("H", highSuggestIds);
+                if (mediumSuggestIds.length() > 0)
+                  suggestByPerfAsMap.put("M", mediumSuggestIds);
+                if (suggestIds.length() > 0)
+                  suggestByPerfAsMap.put("L", suggestIds);
+                LOGGER.info("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
+                if (!suggestByPerfAsMap.isEmpty()) {
+                  extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
                 }
-                if (hitCount >= 9 && suggestIdList.size() == 9) {
-                  break;
-                }
-              }
-              if (highSuggestIds.length() > 0)
-                suggestByPerfAsMap.put("H", highSuggestIds);
-              if (mediumSuggestIds.length() > 0)
-                suggestByPerfAsMap.put("M", mediumSuggestIds);
-              if (suggestIds.length() > 0)
-                suggestByPerfAsMap.put("L", suggestIds);
-              LOGGER.info("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
-              if (!suggestByPerfAsMap.isEmpty()) {
-                extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
               }
             }
           }
@@ -226,49 +216,4 @@ public class PopulateResourceSuggestThreadExecutor extends BaseIndexService impl
     }
   }
   
-  public static void main(String a[]) {
-    StringBuffer suggestIds = new StringBuffer();
-    List<String> suggestIdList = new ArrayList<>();
-    List<String> hits = new ArrayList<>();
-    hits.add("a");
-    hits.add("b");
-    hits.add("c");
-    hits.add("d");
-    hits.add("e");
-    hits.add("f");
-    hits.add("g");
-    hits.add("h");
-    
-    long hitCount = hits.size();
-    Map<String, StringBuffer> suggestByPerfAsMap = new HashMap<>();
-    StringBuffer highSuggestIds = new StringBuffer();
-    StringBuffer mediumSuggestIds = new StringBuffer();
-    for (String hit : hits) {
-      suggestIdList.add(hit);
-      if (suggestIds.length() > 0) {
-        suggestIds.append(IndexerConstants.COMMA);
-      }
-      suggestIds.append(hit);
-      if ((hitCount <= 3 && !(suggestIdList.size() < hitCount)) || suggestIdList.size() == 3) {
-        System.out.println("hitCount : "+hitCount+" suggestIdList.size() : "+suggestIdList.size());
-        //highProcessed = true;
-        highSuggestIds = suggestIds;
-        suggestIds = new StringBuffer();
-      } else if (((!(suggestIdList.size() > 6) && !(suggestIdList.size() < hitCount)) || (hitCount >= 6 && suggestIdList.size() == 6))) {
-        mediumSuggestIds = suggestIds;
-        System.out.println("hitCount : "+hitCount+" msuggestIdList.size() : "+suggestIdList.size());
-        suggestIds = new StringBuffer();
-      }
-      if (hitCount >= 9 && suggestIdList.size() == 9) {
-        break;
-      }
-    }
-    if (highSuggestIds.length() > 0)
-      suggestByPerfAsMap.put("H", highSuggestIds);
-    if (mediumSuggestIds.length() > 0)
-      suggestByPerfAsMap.put("M", mediumSuggestIds);
-    if (suggestIds.length() > 0)
-      suggestByPerfAsMap.put("L", suggestIds);
-    System.out.println("Populated suggestions for code : " +suggestByPerfAsMap.toString());
-  }
 }

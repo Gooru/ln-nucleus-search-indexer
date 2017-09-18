@@ -221,7 +221,10 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 
       rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
 
-      statisticsEo.setPreComputedWeight(PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields)));
+      double pcWeight = PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields));
+
+      statisticsEo.setPreComputedWeight(pcWeight);
+      LOGGER.debug("CollEISB->build : PC weight : " + pcWeight);
 
       collectionEo.setStatistics(statisticsEo.getStatistics());
       

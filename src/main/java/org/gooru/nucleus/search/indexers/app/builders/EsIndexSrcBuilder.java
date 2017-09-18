@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
@@ -130,8 +131,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (TaxonomyCodeRepositoryImpl) TaxonomyCodeRepository.instance();
   }
 
-  protected Client getClient() {
-    return ElasticSearchRegistry.getFactory().getClient();
+  protected RestHighLevelClient getClient() {
+    return ElasticSearchRegistry.getRestHighLevelClient();
   }
   
   protected void setUser(JsonObject user, UserEo userEo) {

@@ -1,26 +1,25 @@
 {
    "taxonomy":{
       "properties":{
+         "all":{
+            "type":"text"
+         },
          "indexType":{
             "type":"text"
          },
          "indexUpdatedDate":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "id":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "code":{
             "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "analyzer":"keyword_lowercase"
          },
          "codeType":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "title":{
             "type":"text",
@@ -35,7 +34,7 @@
                   "analyzer":"gooru_kstem"
                }
             },
-            "include_in_all":true
+            "copy_to":[ "all" ]
          },
          "description":{
             "type":"text",
@@ -50,31 +49,26 @@
                   "analyzer":"snowball"
                }
             },
-            "include_in_all":true
+            "copy_to":[ "all" ]
          },
          "gutCode":{
             "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "analyzer":"keyword_lowercase"
          },
          "grade":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "competency":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "code":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "codeType":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
                   "type":"text",
@@ -89,7 +83,7 @@
                         "analyzer":"gooru_kstem"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "description":{
                   "type":"text",
@@ -104,24 +98,21 @@
                         "analyzer":"snowball"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "gutCode":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "grade":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                }
             }
          },
          "subject":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
                   "type":"text",
@@ -140,20 +131,18 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "subjectClassification":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                }
             }
          },
          "course":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
                   "type":"text",
@@ -172,15 +161,14 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                }
             }
          },
          "domain":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
                   "type":"text",
@@ -199,31 +187,26 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                }
             }
          },
          "crosswalkCodes":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "code":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "parentTitle":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "frameworkCode":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                }
             }
          },
@@ -244,7 +227,7 @@
                   "analyzer":"gooru_kstem"
                }
             },
-            "include_in_all":true
+            "copy_to":[ "all" ]
          }
       }
    }

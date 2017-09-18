@@ -1,9 +1,11 @@
 {
    "lesson":{
       "properties":{
+         "all":{
+            "type":"text"
+         },
          "id":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "title":{
             "type":"text",
@@ -18,52 +20,43 @@
                   "analyzer":"gooru_kstem"
                }
             },
-            "include_in_all":true
+            "copy_to":[ "all" ]
          },
          "createdAt":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "updatedAt":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "indexUpdatedTime":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "owner":{
             "properties":{
                "emailId":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "firstName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "fullName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "userId":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "lastName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "profileVisibility":{
-                  "type":"boolean",
-                  "include_in_all":false
+                  "type":"boolean"
                },
                "usernameDisplay":{
                   "type":"text",
@@ -73,22 +66,18 @@
                         "type":"text",
                         "analyzer":"snowball"
                      }
-                  },
-                  "include_in_all":false
+                  }
                },
                "profileImage":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "tenant":{
                   "properties":{
                      "tenantRootId":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "tenantId":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      }
                   }
                }
@@ -98,31 +87,25 @@
             "properties":{
                "emailId":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "firstName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "fullName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "userId":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "lastName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "profileVisibility":{
-                  "type":"boolean",
-                  "include_in_all":false
+                  "type":"boolean"
                },
                "usernameDisplay":{
                   "type":"text",
@@ -132,22 +115,18 @@
                         "type":"text",
                         "analyzer":"snowball"
                      }
-                  },
-                  "include_in_all":false
+                  }
                },
                "profileImage":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "tenant":{
                   "properties":{
                      "tenantRootId":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "tenantId":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      }
                   }
                }
@@ -157,31 +136,25 @@
             "properties":{
                "emailId":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "firstName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "fullName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "userId":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "lastName":{
                   "type":"text",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "analyzer":"keyword_lowercase"
                },
                "profileVisibility":{
-                  "type":"boolean",
-                  "include_in_all":false
+                  "type":"boolean"
                },
                "usernameDisplay":{
                   "type":"text",
@@ -191,22 +164,18 @@
                         "type":"text",
                         "analyzer":"snowball"
                      }
-                  },
-                  "include_in_all":false
+                  }
                },
                "profileImage":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "tenant":{
                   "properties":{
                      "tenantRootId":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "tenantId":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      }
                   }
                }
@@ -215,38 +184,30 @@
          "statistics":{
             "properties":{
                "containingCollectionsCount":{
-                  "type":"long",
-                  "include_in_all":false
+                  "type":"long"
                },
                "collectionCount":{
-                  "type":"integer",
-                  "include_in_all":false
+                  "type":"integer"
                },
                "assessmentCount":{
-                  "type":"integer",
-                  "include_in_all":false
+                  "type":"integer"
                },
                "externalAssessmentCount":{
-                  "type":"integer",
-                  "include_in_all":false
+                  "type":"integer"
                },
                "viewsCount":{
-                  "type":"long",
-                  "include_in_all":false
+                  "type":"long"
                },
                "isFeatured":{
-                  "type":"boolean",
-                  "include_in_all":false
+                  "type":"boolean"
                },
                "preComputedWeight":{
-                  "type":"double",
-                  "include_in_all":false
+                  "type":"double"
                }
             }
          },
          "sequenceId":{
-            "type":"integer",
-            "include_in_all":false
+            "type":"integer"
          },
          "resourceInfo":{
             "properties":{
@@ -255,22 +216,18 @@
                   "analyzer":"snowball",
                   "copy_to":[
                      "customSpellCheckerSuggest"
-                  ],
-                  "include_in_all":false
+                  ]
                },
                "watsonTags":{
                   "properties":{
                      "taxonomies":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "concepts":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "entities":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "keywords":{
                         "type":"text",
@@ -280,8 +237,7 @@
                               "type":"text",
                               "analyzer":"snowball"
                            }
-                        },
-                        "include_in_all":false
+                        }
                      }
                   }
                }
@@ -295,8 +251,7 @@
                   "properties":{
                      "codeId":{
                         "type":"text",
-                        "analyzer":"keyword_lowercase",
-                        "include_in_all":false
+                        "analyzer":"keyword_lowercase"
                      },
                      "label":{
                         "type":"text",
@@ -306,8 +261,7 @@
                               "type":"text",
                               "analyzer":"snowball"
                            }
-                        },
-                        "include_in_all":false
+                        }
                      }
                   }
                },
@@ -317,8 +271,7 @@
                   "properties":{
                      "codeId":{
                         "type":"text",
-                        "analyzer":"keyword_lowercase",
-                        "include_in_all":false
+                        "analyzer":"keyword_lowercase"
                      },
                      "label":{
                         "type":"text",
@@ -328,68 +281,55 @@
                               "type":"text",
                               "analyzer":"snowball"
                            }
-                        },
-                        "include_in_all":false
+                        }
                      }
                   }
                },
                "frameworkCode":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "leafInternalCodes":{
                   "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[
                      "customSpellCheckerSuggest"
-                  ],
-                  "include_in_all":false
+                  ]
                },
                "taxonomySet":{
                   "properties":{
                      "subject":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "course":{
-                        "type":"keyword",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "curriculum":{
                         "properties":{
                            "curriculumCode":{
-                              "type":"keyword",
-                              "include_in_all":false
+                              "type":"keyword"
                            },
                            "curriculumDesc":{
-                              "type":"keyword",
-                              "include_in_all":false
+                              "type":"keyword"
                            },
                            "curriculumName":{
-                              "type":"keyword",
-                              "include_in_all":false
+                              "type":"keyword"
                            },
                            "curriculumInfo":{
                               "properties":{
                                  "id":{
-                                    "type":"keyword",
-                                    "include_in_all":false
+                                    "type":"keyword"
                                  },
                                  "code":{
-                                    "type":"keyword",
-                                    "include_in_all":false
+                                    "type":"keyword"
                                  },
                                  "title":{
-                                    "type":"keyword",
-                                    "include_in_all":false
+                                    "type":"keyword"
                                  },
                                  "parentTitle":{
-                                    "type":"keyword",
-                                    "include_in_all":false
+                                    "type":"keyword"
                                  },
                                  "frameworkCode":{
-                                    "type":"keyword",
-                                    "include_in_all":false
+                                    "type":"keyword"
                                  }
                               }
                            }
@@ -400,26 +340,22 @@
             }
          },
          "isFeatured":{
-            "type":"integer",
-            "include_in_all":false
+            "type":"integer"
          },
          "tenant":{
             "properties":{
                "tenantRootId":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "tenantId":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                }
             }
          },
          "course":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
                   "type":"text",
@@ -438,15 +374,14 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                }
             }
          },
          "unit":{
             "properties":{
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
                   "type":"text",
@@ -465,7 +400,7 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                }
             }
          },
@@ -486,58 +421,53 @@
                   "analyzer":"keyword_lowercase"
                }
             },
-            "include_in_all":true
+            "copy_to":[ "all" ]
          },
          "collectionIds":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "collectionContents":{
             "properties":{
                "description":{
                   "type":"text",
                   "analyzer":"gooru_kstem",
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "id":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "sequenceId":{
-                  "type":"integer",
-                  "include_in_all":false
+                  "type":"integer"
                },
                "contentFormat":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "narration":{
                   "type":"text",
                   "analyzer":"snowball",
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "contentSubFormat":{
                   "type":"text",
                   "analyzer":"keyword_lowercase",
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "text":{
                   "type":"text",
                   "analyzer":"snowball",
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "thumbnail":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
                   "type":"text",
                   "analyzer":"gooru_kstem",
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "url":{
                   "type":"keyword",
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                }
             }
          }

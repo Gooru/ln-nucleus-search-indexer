@@ -1,27 +1,32 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.DocWriteResponse.Result;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.engine.DocumentMissingException;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.script.ScriptType;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
@@ -44,6 +49,8 @@ import org.gooru.nucleus.search.indexers.app.utils.IndexScriptBuilder;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -132,13 +139,15 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   }
 
   @Override
-  public void deleteDocuments(String indexableIds, String indexName, String type) {
+  public void deleteDocuments(String indexableIds, String indexName, String type) throws IOException {
     for (String key : indexableIds.split(",")) {
-      getClient().prepareDelete(indexName, getIndexTypeByType(type), key).execute().actionGet();
-      
+      DeleteRequest delete = new DeleteRequest(indexName, getIndexTypeByType(type), key); 
+      getHighLevelClient().delete(delete);
+
       // Delete from CI index
-      getClient().prepareDelete(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, key).execute().actionGet();
-      
+      DeleteRequest deleteFromCI = new DeleteRequest(indexName, getIndexTypeByType(type), key); 
+      getHighLevelClient().delete(deleteFromCI);
+
       trackDeletes(key, getIndexTypeByType(type));
     }
   }
@@ -212,8 +221,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             try {
               // Get statistics and extracted text data from backup index
               setResourceStasInfoData(body, indexableId, typeName);
-              getClient().prepareIndex(indexName, getIndexTypeByType(typeName), indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(body), XContentType.JSON).execute()
-                      .actionGet();
+              IndexRequest request = new IndexRequest(indexName, getIndexTypeByType(typeName), indexableId).source(EsIndexSrcBuilder.get(typeName).buildSource(body), XContentType.JSON); 
+              getHighLevelClient().index(request);
             } catch (Exception e) {
               LOGGER.info("Exception while indexing");
               throw new Exception(e);
@@ -243,27 +252,23 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       throw new Exception(e);
     }
   }
-  
-  @Override
-  public void refreshIndex(String indexName) {
-    getClient().admin().indices().refresh(new RefreshRequest(indexName));
-  }
 
   @Override
   public Map<String, Object> getDocument(String id, String indexName, String type) {
     GetResponse response = null;
     try {
-      response = getClient().prepareGet(indexName, getIndexTypeByType(type), id).execute().actionGet();
+      GetRequest getRequest = new GetRequest(indexName, getIndexTypeByType(type), id);
+      getHighLevelClient().get(getRequest);
     } catch (Exception e) {
-      LOGGER.info("Document not found in index for id : {}", id);
+      LOGGER.info("Document not found in index for id : {} : EXCEPTION : {}", id, e.getMessage());
     }
     return (response != null && response.isExists()) ? response.getSource() : null;
   }
   
   @Override
-  public SearchResponse getDocument(String indexName, String type, BoolQueryBuilder boolQuery) {
-    SearchRequestBuilder requestBuilder = getClient().prepareSearch(indexName).setTypes(type).setQuery(boolQuery);
-    SearchResponse result = requestBuilder.execute().actionGet();
+  public SearchResponse getDocument(String indexName, String type, SearchSourceBuilder sourceBuilder) throws IOException {
+    SearchRequest searchRequest = new SearchRequest(indexName).types(type).source(sourceBuilder);
+    SearchResponse result = getHighLevelClient().search(searchRequest);
     return result;
   }
 
@@ -278,20 +283,34 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       LOGGER.debug("Index name : " + indexName + " type : " + typeName + " id :" + id);
       LOGGER.debug("Index update script : " + scriptQuery.toString());
       LOGGER.debug("Index params fields : " + paramsField.values().toString());
-      getClient().prepareUpdate(indexName, getIndexTypeByType(typeName), id).setScript(new Script(ScriptType.INLINE, "painless", scriptQuery.toString(), paramsField))
-                 .execute().actionGet();
-
-      //Update Statistics Index
-      try{
-        getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-        .setScript(new Script(ScriptType.INLINE, "painless", scriptQuery.toString(), paramsField)).execute().actionGet();
+      String scriptString = buildScriptJson(paramsField, scriptQuery);
+      Response response = performRequest("POST", "/" + indexName + "/" + getIndexTypeByType(typeName) + "/" + id + "/_update", scriptString);
+      if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+        LOGGER.debug("indexDocumentByFields:Successfully updated field");
+      } else {
+        INDEX_FAILURES_LOGGER.error(" indexDocumentByFields() update failed for id : {}", id);
       }
-      catch(Exception ex){
-        if(ex instanceof DocumentMissingException){
-          getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-          .setSource(buildContentInfoIndexSrc(id, typeName, fieldValues), XContentType.JSON).execute().actionGet();
-        }else {
-          throw new Exception(ex);
+
+      // Update Statistics Index
+      try {
+        Response updateCIResponse = performRequest("POST",
+                "/" + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + "/" + IndexerConstants.TYPE_CONTENT_INFO + "/" + id + "/_update",
+                scriptString);
+        if (updateCIResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+          LOGGER.debug("indexDocumentByFields:Successfully updated field");
+        } else {
+          INDEX_FAILURES_LOGGER.error(" indexDocumentByFields() update failed for id : {}", id);
+        }
+      } catch (Exception exception) {
+        if (exception instanceof ResponseException || exception instanceof DocumentMissingException) {
+          if (((ResponseException) exception).getResponse().getStatusLine().getStatusCode() == 404 || // ES 5.x
+                  exception.getMessage().contains("resource_already_exists_exception")) {
+            IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id);
+            request.source(buildContentInfoIndexSrc(id, typeName, fieldValues), XContentType.JSON);
+            getHighLevelClient().index(request);
+          } else {
+            throw new Exception(exception);
+          }
         }
       }
     } catch (Exception e) {
@@ -351,8 +370,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           }
 
           // LOGGER.debug("index source data : " + result.toString());
-          getClient().prepareIndex(indexName, getIndexTypeByType(typeName), indexableId).setSource(EsIndexSrcBuilder.get(typeName).buildSource(result), XContentType.JSON).execute()
-                  .actionGet();
+          IndexRequest request = new IndexRequest(indexName, getIndexTypeByType(typeName), indexableId).source(EsIndexSrcBuilder.get(typeName).buildSource(result), XContentType.JSON); 
+          getHighLevelClient().index(request);
           LOGGER.debug("EISI->indexDocument : Indexed " + typeName + " id  : " + indexableId);
         } catch (Exception ex) {
           LOGGER.error("EISI->Re-index failed for " + typeName + " id : " + indexableId + " Exception ", ex);
@@ -381,18 +400,17 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           throws Exception {
     try {
       LOGGER.debug("Indexing: " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " Index");
-      UpdateRequest updateRequest = new UpdateRequest();
-      updateRequest.index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO)).type(IndexerConstants.TYPE_CONTENT_INFO).id(id).doc(contentInfoSource);
-      UpdateResponse response = getClient().update(updateRequest).get();
-      response.getResult();
+      UpdateRequest updateRequest = new UpdateRequest().index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO)).type(IndexerConstants.TYPE_CONTENT_INFO).id(id).doc(contentInfoSource);
+      UpdateResponse response = getHighLevelClient().update(updateRequest);
       if (response.getResult().equals(Result.UPDATED))
         LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document updated!");
 
     } catch (Exception ex) {
       if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
         LOGGER.debug("Caught Document Missing Exception!!");
-        IndexResponse createResponse = getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-                .setSource(buildContentInfoIndexSrc(id, typeName, contentSource), XContentType.JSON).execute().actionGet();
+        IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
+        request.source(buildContentInfoIndexSrc(id, typeName, contentSource), XContentType.JSON); 
+        IndexResponse createResponse = getHighLevelClient().index(request);
         if (createResponse.getResult().equals(Result.CREATED))
           LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document created!");
 
@@ -408,14 +426,16 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       LOGGER.debug("Indexing: " + indexName + " Index");
       UpdateRequest updateRequest = new UpdateRequest();
       updateRequest.index(indexName).type(typeName).id(id).doc(contentInfoSource);
-      UpdateResponse response = getClient().update(updateRequest).get();
+      UpdateResponse response = getHighLevelClient().update(updateRequest);
       if (response.getResult().equals(Result.UPDATED))
         LOGGER.info("Index " + indexName + " : document updated!");
 
     } catch (Exception ex) {
       if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
         LOGGER.debug("Caught Document Missing Exception!");
-        IndexResponse createResponse = getClient().prepareIndex(indexName, typeName, id).setSource(buildContentInfoIndexSrc(id, typeName, contentSource), XContentType.JSON).execute().actionGet();
+        IndexRequest request = new IndexRequest(indexName, typeName, id); 
+        request.source(buildContentInfoIndexSrc(id, typeName, contentSource), XContentType.JSON); 
+        IndexResponse createResponse = getHighLevelClient().index(request);
         if (createResponse.getResult().equals(Result.CREATED))
           LOGGER.info("Index " + indexName + " : document created!");
       } else {
@@ -468,7 +488,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   @Override
   public void bulkIndexStatisticsField(JsonArray jsonArr) {
     try {
-      BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+      StringBuilder bulkRequestBody = new StringBuilder();
       Iterator<Object> iter = jsonArr.iterator();
       LOGGER.debug("Batch size : " + jsonArr.size());
       Map<String, Map<String, Object>> viewsData = new HashMap<>();
@@ -483,45 +503,54 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
 
           fieldValues.put(ScoreConstants.VIEWS_COUNT_FIELD, data.getLong(EventsConstants.EVT_DATA_VIEW_COUNT));
           IndexScriptBuilder.buildScript(data.getString(EventsConstants.EVT_DATA_ID), paramsField, scriptQuery, fieldValues);
-          LOGGER.debug("script : " + scriptQuery.toString());
-          LOGGER.debug("param fields : " + paramsField.toString());
-          bulkRequest.add(getClient()
-                  .prepareUpdate(getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)),
-                          getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID))
-                  .setScript(new Script(ScriptType.INLINE, "painless", scriptQuery.toString(), paramsField)));
-          // update to content info index
-          bulkRequest.add(getClient()
-                  .prepareUpdate(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO,
-                          data.getString(EventsConstants.EVT_DATA_ID))
-                  .setScript(new Script(ScriptType.INLINE, "painless", scriptQuery.toString(), paramsField)));
+          String scriptString = buildScriptJson(paramsField, scriptQuery);
+          LOGGER.debug("script : {}", scriptString);
+          LOGGER.debug("param fields : {}", paramsField.toString());
+          
+          String actionMetaData =
+                  String.format("{ \"update\" : { \"_index\" : \"%s\", \"_type\" : \"%s\", \"_id\" : \"%s\", \"_retry_on_conflict\" : 3 } }%n",
+                          getIndexByType(data.getString(EventsConstants.EVT_DATA_TYPE)),
+                          getIndexTypeByType(data.getString(EventsConstants.EVT_DATA_TYPE)), data.getString(EventsConstants.EVT_DATA_ID));
+          bulkRequestBody.append(actionMetaData).append(scriptString).append("\n");
+          String actionMetaDataCI =
+                  String.format("{ \"update\" : { \"_index\" : \"%s\", \"_type\" : \"%s\", \"_id\" : \"%s\", \"_retry_on_conflict\" : 3 } }%n",
+                          IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO,
+                          data.getString(EventsConstants.EVT_DATA_ID));
+          LOGGER.debug("param fields : {}", paramsField.toString());
+          bulkRequestBody.append(actionMetaDataCI).append(scriptString).append("\n");
+          
           viewsData.put(data.getString(EventsConstants.EVT_DATA_ID), fieldValues);
           contentType.put(data.getString(EventsConstants.EVT_DATA_ID), data.getString(EventsConstants.EVT_DATA_TYPE));
         }
       }
-      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-      if (bulkResponse.hasFailures()) {
-        BulkItemResponse[] responses = bulkResponse.getItems();
-        for (BulkItemResponse response : responses) {
-          if (response.isFailed()) {
 
-            // If document missing in contentinfo index. Creating it.
-            if (response.getFailure().getCause() instanceof DocumentMissingException && viewsData.containsKey(response.getId())) {
-              getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, response.getId())
-                      .setSource(buildContentInfoIndexSrc(response.getId(), contentType.get(response.getId()), viewsData.get(response.getId())), XContentType.JSON)
-                      .execute().actionGet();
-            } else {
-              INDEX_FAILURES_LOGGER
-                      .error(" bulkIndexStatisticsField() : Failed  id : " + response.getId() + " Exception " + response.getFailureMessage());
+      Response response = performRequest("POST",
+              "/" + IndexNameHolder.getIndexName(EsIndex.RESOURCE) + "/" + IndexerConstants.TYPE_RESOURCE + "/_bulk", bulkRequestBody.toString());
+      if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+        String responseBody = EntityUtils.toString(response.getEntity());
+        JsonObject responseJson = new JsonObject(responseBody);
+        if (!responseJson.getBoolean("errors")) {
+          LOGGER.debug("Successfully updated view count bulk");
+        } else {
+          JsonArray items = (JsonArray) responseJson.getJsonArray("items");
+          for (Object responseItem : items) {
+            JsonObject updateError = ((JsonObject) responseItem).getJsonObject("update");
+            JsonObject error = ((JsonObject) responseItem).getJsonObject("error");
+            if (error.getString("type").equalsIgnoreCase("document_missing_exception")) {
+              LOGGER.debug("Caught Document Missing Exception!");
+              IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO,updateError.getString("_id"));
+              request.source(buildContentInfoIndexSrc(updateError.getString("_id"), contentType.get(updateError.getString("_id")), viewsData.get(updateError.getString("_id"))), XContentType.JSON);
+              IndexResponse createResponse = getHighLevelClient().index(request);
+              if (createResponse.getResult().equals(Result.CREATED))
+                LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document created!");
             }
-
+            INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : {} Exception {} ", updateError.getString("_id"),
+                    updateError.getString("error"));
           }
+          throw new Exception(" bulkIndexStatisticsField() : Failed");
         }
-        throw new Exception(bulkResponse.buildFailureMessage());
-      } else {
-        LOGGER.debug("Successfully updated view count bulk");
       }
-    }
-    catch(Exception e){
+    } catch (Exception e) {
       LOGGER.error("Failed to update statistics fields ", e.getMessage());
     }
   }
@@ -540,18 +569,19 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       
       LOGGER.debug("bulkIndexDocuments()-> content type : "+contentType +" total batch size : " + batchSize);
       while(contIndex){
-        BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+        BulkRequest bulkRequest = new BulkRequest();
         for(int bulkReqIndex=batchIndex; bulkReqIndex < 50; bulkReqIndex++){
           JsonObject data = jsonArr.getJsonObject(bulkReqIndex);
           if(data != null){
             // Get statistics and extracted text data from backup index
             setResourceStasInfoData(data, data.getString(EntityAttributeConstants.ID), contentType);
-            
-            bulkRequest.add(getClient().prepareIndex(index, getIndexTypeByType(contentType), data.getString(EntityAttributeConstants.ID)).setSource(EsIndexSrcBuilder.get(contentType).buildSource(data), XContentType.JSON));
+            IndexRequest request = new IndexRequest(index, getIndexTypeByType(contentType), data.getString(EntityAttributeConstants.ID)); 
+            request.source(EsIndexSrcBuilder.get(contentType).buildSource(data), XContentType.JSON); 
+            bulkRequest.add(request);
           }
           batchIndex++;
         }
-        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+        BulkResponse bulkResponse = getHighLevelClient().bulk(bulkRequest);
         if(bulkResponse.hasFailures()){
           BulkItemResponse[] responses =  bulkResponse.getItems();
           for(BulkItemResponse response : responses){
@@ -593,8 +623,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         //Index text when available
         if (contentInfoJson != null) {
           try {
-            getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-                    .setSource(contentInfoJson.toString(), XContentType.JSON).execute();
+            IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
+            request.source(contentInfoJson.toString(), XContentType.JSON); 
+            getHighLevelClient().index(request);
             
             // Get statistics and extracted text data from backup index
             setResourceStasInfoData(inputJson, id, IndexerConstants.TYPE_RESOURCE);
@@ -646,8 +677,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         JsonObject contentInfoJson = buildContentInfoEsIndexSrc(id, contentFormat, text);
         if (text.trim() != null) {
           try {
-            getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id)
-                    .setSource(contentInfoJson.toString(), XContentType.JSON).execute();
+            IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
+            request.source(contentInfoJson.toString(), XContentType.JSON); 
+            getHighLevelClient().index(request);
           } catch (Exception e) {
             LOGGER.error("Text Extraction : Re-index failed for " + contentFormat + " id : " + id + " Exception ", e.getMessage());
           }
@@ -663,52 +695,72 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   }
 
   @Override
-  public void updateBrokenStatus(String ids, boolean markBroken) {
-    try{
+  public void updateBrokenStatus(String ids, boolean markBroken) throws Exception {
+    try {
       int brokenStatus = 0;
-      if(markBroken){
+      if (markBroken) {
         brokenStatus = 1;
       }
-      BulkRequestBuilder bulkRequest = getClient().prepareBulk();
       String[] idArr = ids.split(",");
-      for(String resourceId : idArr){
-        if(!resourceId.isEmpty()){
+      StringBuilder bulkRequestBody = new StringBuilder();
+      for (String resourceId : idArr) {
+        if (!resourceId.isEmpty()) {
           Map<String, Object> paramsField = new HashMap<>();
           StringBuffer scriptQuery = new StringBuffer();
           Map<String, Object> fieldValues = new HashMap<>();
-          
+
           fieldValues.put(ScoreConstants.BROKEN_STATUS, brokenStatus);
-          if(markBroken){
+          if (markBroken) {
             fieldValues.put(IndexFields.PUBLISH_STATUS, IndexerConstants.UNPUBLISH_STATUS);
           }
+          String actionMetaData = String.format("{ \"update\" : { \"_index\" : \"%s\", \"_type\" : \"%s\", \"_id\" : \"%s\", \"_retry_on_conflict\" : 3 } }%n",
+                          IndexNameHolder.getIndexName(EsIndex.RESOURCE), IndexerConstants.TYPE_RESOURCE, resourceId);
           IndexScriptBuilder.buildScript(resourceId, paramsField, scriptQuery, fieldValues);
-          LOGGER.debug("script : " + scriptQuery.toString());
-          LOGGER.debug("param fields : " + paramsField.toString());
-          bulkRequest.add(getClient().prepareUpdate(IndexNameHolder.getIndexName(EsIndex.RESOURCE), IndexerConstants.TYPE_RESOURCE, resourceId).setScript(new Script(ScriptType.INLINE, "painless", scriptQuery.toString(), paramsField)));
-        }
-      }
-      
-      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-      BulkItemResponse[] responses =  bulkResponse.getItems();
-      for(BulkItemResponse response : responses){
-        if(response.isFailed()){
-          INDEX_FAILURES_LOGGER.error(" bulkIndexBrokenStatus : Failed  id : " + response.getId() + " Exception "+response.getFailureMessage());
-        }
-        else if(markBroken){
-          trackDeletes(response.getId(), IndexerConstants.TYPE_RESOURCE);
+          String scriptString = buildScriptJson(paramsField, scriptQuery);
+          LOGGER.debug("script : {}", scriptString);
+          LOGGER.debug("param fields : {}", paramsField.toString());
+          bulkRequestBody.append(actionMetaData);
+          bulkRequestBody.append(scriptString);
+          bulkRequestBody.append("\n");
         }
       }
 
-      if(bulkResponse.hasFailures()){
-        throw new Exception(bulkResponse.buildFailureMessage());
+      Response response = performRequest("POST", "/" + IndexNameHolder.getIndexName(EsIndex.RESOURCE) + "/" + IndexerConstants.TYPE_RESOURCE + "/_bulk", bulkRequestBody.toString());
+      if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+        String responseBody = EntityUtils.toString(response.getEntity());
+        JsonObject responseJson = new JsonObject(responseBody);
+        LOGGER.debug("Successfully updated broken status bulk : {}", responseBody);
+        JsonArray items = responseJson.getJsonArray("items");
+        items.stream().forEach(responseItem -> {
+          JsonObject updateError = ((JsonObject) responseItem).getJsonObject("update");
+          if (!responseJson.getBoolean("errors")) {
+            JsonObject error = updateError.getJsonObject("error");
+            if (error.getString("type").equalsIgnoreCase("document_missing_exception")) {
+              INDEX_FAILURES_LOGGER.error("updateBrokenStatus : failed for id : {} : Exception : {}", updateError.getString("_id"), error.getString("reason"));
+            }
+          } else if (markBroken) {
+            trackDeletes(updateError.getString("_id"), IndexerConstants.TYPE_RESOURCE);
+            LOGGER.debug("Successfully updated broken status bulk");
+          }
+        });
+        if(responseJson.getBoolean("errors")) {
+          throw new Exception("updateBrokenStatus() bulk update failed");
+        }
       }
-      else {
-        LOGGER.debug("Successfully updated broken status bulk");
-      }
+    } catch (Exception exception) {
+      LOGGER.error("Failed to update broken status fields {}", exception.getMessage());
     }
-    catch(Exception e){
-      LOGGER.error("Failed to update broken status fields ", e.getMessage());
-    }
+  }
+
+  private String buildScriptJson(Map<String, Object> paramsField, StringBuffer scriptQuery) throws JsonProcessingException {
+    Map<String, Object> updateScript = new HashMap<>(1);
+    Map<String, Object> script = new HashMap<>(3);
+    script.put("source", scriptQuery.toString());
+    script.put("lang", "painless");
+    script.put("params", paramsField);
+    updateScript.put("script", script);
+    String scriptString = SERIAILIZER.writeValueAsString(updateScript);
+    return scriptString;
   }
 
 }

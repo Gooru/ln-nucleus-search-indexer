@@ -2,8 +2,7 @@
    "keyword":{
       "properties":{
          "id":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "keyword":{
             "type":"text",

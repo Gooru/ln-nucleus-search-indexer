@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -10,13 +11,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.bulk.BulkItemResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
@@ -266,14 +269,21 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
   }
   
   private void extractAndIndexPublishers(List<String> copyrightOwners) {
-    BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+    BulkRequest bulkRequest = new BulkRequest();
     Set<String> publishers = new HashSet<>();
     for (String copyrightOwner : copyrightOwners) {
       String copyrightOwnerString = copyrightOwner.trim();
       if (copyrightOwnerString.length() > 0 && !publishers.contains(copyrightOwnerString.toLowerCase())) {
-        BoolQueryBuilder filter = QueryBuilders.boolQuery()
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        QueryBuilder filter = QueryBuilders.boolQuery()
                 .filter(QueryBuilders.termQuery(IndexFields.PUBLISHER_DOT_PUBLISHER_LOWERCASE, copyrightOwnerString.toLowerCase()));
-        SearchResponse result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.CONTENT_PROVIDER), IndexType.PUBLISHER.getType(), filter);
+        sourceBuilder.query(filter);
+        SearchResponse result = null;
+        try {
+          result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.CONTENT_PROVIDER), IndexType.PUBLISHER.getType(), sourceBuilder);
+        } catch (IOException e) {
+          LOGGER.debug("Error while searching publisher" , copyrightOwnerString);
+        }
         if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
           LOGGER.debug("Publisher is already available in index : {}" , copyrightOwnerString);
           continue;
@@ -282,21 +292,27 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         String id = UUID.randomUUID().toString();
         JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.PUBLISHER, copyrightOwnerString).put(
                 IndexFields.PUBLISHER_SUGGEST, copyrightOwnerString.replaceAll(IndexerConstants.REGEXP_NON_WORDS, IndexerConstants.EMPTY_STRING));
-        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_PROVIDER), IndexType.PUBLISHER.getType(), id).setSource(data.toString(), XContentType.JSON));
+        IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_PROVIDER), IndexType.PUBLISHER.getType(), id).source(data.toString(), XContentType.JSON); 
+        bulkRequest.add(request);
       }
     }
     if (bulkRequest.numberOfActions() > 0) {
       bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
-      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-      if (bulkResponse.hasFailures()) {
-        BulkItemResponse[] responses = bulkResponse.getItems();
-        for (BulkItemResponse response : responses) {
-          if (response.isFailed()) {
-            INDEX_FAILURES_LOGGER.error("Failed Bulk index for publisher : " + response.getId() + " Exception " + response.getFailureMessage());
+      BulkResponse bulkResponse;
+      try {
+        bulkResponse = getClient().bulk(bulkRequest);
+        if (bulkResponse.hasFailures()) {
+          BulkItemResponse[] responses = bulkResponse.getItems();
+          for (BulkItemResponse response : responses) {
+            if (response.isFailed()) {
+              INDEX_FAILURES_LOGGER.error("Failed Bulk index for publisher : " + response.getId() + " Exception " + response.getFailureMessage());
+            }
           }
+        } else {
+          LOGGER.debug("Successfully indexed bulk publishers!");
         }
-      } else {
-        LOGGER.debug("Successfully indexed bulk publishers!");
+      } catch (IOException e) {
+        INDEX_FAILURES_LOGGER.error("Failed Bulk index for publisher! Exception " + e.getMessage());
       }
     }
   }
