@@ -169,7 +169,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
         SearchResponse result = null;
         try {
           result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), sourceBuilder);
-        } catch (IOException e) {
+        } catch (Exception e) {
           LOGGER.debug("Error while searching keyword" , word);
         }
         if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {

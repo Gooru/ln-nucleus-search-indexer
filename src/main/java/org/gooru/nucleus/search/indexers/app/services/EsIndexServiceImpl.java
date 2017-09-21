@@ -404,7 +404,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       UpdateResponse response = getHighLevelClient().update(updateRequest);
       if (response.getResult().equals(Result.UPDATED))
         LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document updated!");
-
     } catch (Exception ex) {
       if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
         LOGGER.debug("Caught Document Missing Exception!!");
@@ -413,7 +412,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         IndexResponse createResponse = getHighLevelClient().index(request);
         if (createResponse.getResult().equals(Result.CREATED))
           LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document created!");
-
       } else {
         throw new Exception(ex);
       }
@@ -731,7 +729,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         JsonObject responseJson = new JsonObject(responseBody);
         LOGGER.debug("Successfully updated broken status bulk : {}", responseBody);
         JsonArray items = responseJson.getJsonArray("items");
-        items.stream().forEach(responseItem -> {
+        items.forEach(responseItem -> {
           JsonObject updateError = ((JsonObject) responseItem).getJsonObject("update");
           if (!responseJson.getBoolean("errors")) {
             JsonObject error = updateError.getJsonObject("error");

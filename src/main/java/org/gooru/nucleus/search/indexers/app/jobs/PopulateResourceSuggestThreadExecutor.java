@@ -120,7 +120,7 @@ public class PopulateResourceSuggestThreadExecutor extends BaseIndexService impl
           Set<String> crosswalkCodes = new HashSet<>();
           JsonArray cwSource = result.getJsonArray(IndexerConstants.TYPE_CROSSWALK);
           if (cwSource != null) {
-            cwSource.stream().forEach(eqCompetency -> {
+            cwSource.forEach(eqCompetency -> {
               JsonObject equivalentCompetency = (JsonObject) eqCompetency;
               crosswalkCodes.add(equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_TAXONOMY_CODE_ID).toLowerCase());
             });

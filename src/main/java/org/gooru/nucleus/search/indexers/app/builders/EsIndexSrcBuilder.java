@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
@@ -331,7 +330,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonArray eqInternalCodesArray = new JsonArray();
     JsonArray eqDisplayCodesArray = new JsonArray();
     JsonArray eqFrameworkArray = new JsonArray();
-    leafSLCodeMap.keySet().stream().forEach(leafCode -> {
+    leafSLCodeMap.keySet().forEach(leafCode -> {
       eqInternalCodesArray.add(leafCode);
       eqDisplayCodesArray.add(leafSLCodeMap.get(leafCode));
       JsonObject gdtCode = getTaxonomyRepo().getGDTCode(leafCode);

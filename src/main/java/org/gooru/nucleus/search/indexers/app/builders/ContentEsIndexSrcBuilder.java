@@ -281,7 +281,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         SearchResponse result = null;
         try {
           result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.CONTENT_PROVIDER), IndexType.PUBLISHER.getType(), sourceBuilder);
-        } catch (IOException e) {
+        } catch (Exception e) {
           LOGGER.debug("Error while searching publisher" , copyrightOwnerString);
         }
         if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {

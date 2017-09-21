@@ -100,9 +100,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
     HttpHost[] httpHosts = buildHosts(hostName);
     SniffOnFailureListener sniffOnFailureListener = new SniffOnFailureListener();
-    RestClient restClient = RestClient.builder(httpHosts)
-            .setFailureListener(sniffOnFailureListener)
-            .build();
+    RestClient restClient = RestClient.builder(httpHosts).setFailureListener(sniffOnFailureListener).build();
     Sniffer sniffer = Sniffer.builder(restClient).setSniffAfterFailureDelayMillis(30000).build();
     sniffOnFailureListener.setSniffer(sniffer);
     
