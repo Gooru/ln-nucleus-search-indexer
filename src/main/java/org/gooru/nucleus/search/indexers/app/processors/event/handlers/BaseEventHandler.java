@@ -100,4 +100,8 @@ public class BaseEventHandler {
   protected IndexHandler getCourseIndexHandler(){
     return IndexHandlerBuilder.buildCourseIndexHandler();
   }
+  
+  protected IndexHandler getRubricIndexHandler() {
+    return IndexHandlerBuilder.buildRubricIndexHandler();
+  }
 }

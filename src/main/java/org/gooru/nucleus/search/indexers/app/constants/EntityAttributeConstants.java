@@ -75,11 +75,30 @@ public final class EntityAttributeConstants {
   public static final String TAX_PARENT_TITLE = "parent_title";
   public static final String CONTENT_QUALITY_INDICATOR = "content_quality_indicator";
   public static final String PUBLISHER_QUALITY_INDICATOR = "publisher_quality_indicator";
+  public static final String TENANT = "tenant";
+  public static final String TENANT_ROOT = "tenant_root";
+  public static final String TENANT_ID = "tenant_id";
+
+  public static final String LANGUAGE = "language";
+  public static final String UNIT_ID = "unit_id";
+  public static final String LESSON_ID = "lesson_id";
+  
+  public static final String ORIGINAL_UNIT_ID = "original_unit_id";
+  public static final String PARENT_UNIT_ID = "parent_unit_id";
+  public static final String ORIGINAL_LESSON_ID = "original_lesson_id";
+  public static final String PARENT_LESSON_ID = "parent_lesson_id";
+  public static final String ORIGINAL_RUBRIC_ID = "original_rubric_id";
+  public static final String PARENT_RUBRIC_ID = "parent_rubric_id";
+  public static final String CONTENT_ID = "content_id";
+  public static final String STANDARD_FRAMEWORK_ID = "standard_framework_id";
+  public static final String CODE_TYPE = "code_type";
+  public static final String SUBJECT_CLASSIFICATION = "subject_classification";
+
 
   //Index tracker constants
   public static final String GOORU_OID = "gooru_oid";
   public static final String INDEX_TYPE = "index_type";
-  public static final String LANGUAGE = "language";
+  public static final String SUB_FORMAT = "subformat";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

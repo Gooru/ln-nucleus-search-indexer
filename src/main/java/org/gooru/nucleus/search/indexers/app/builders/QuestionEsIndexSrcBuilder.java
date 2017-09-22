@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +27,6 @@ import io.vertx.core.json.JsonObject;
  */
 public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio> extends ContentEsIndexSrcBuilder<S, D> {
 
-  @SuppressWarnings("rawtypes")
   @Override
   public JsonObject build(JsonObject source, D contentEo) throws Exception {
     try {
@@ -44,16 +42,17 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
       if (originalCreatorId != null) {
         UserEo orginalCreatorEo = new UserEo();
-        List<Map> orginalCreator = getUserRepo().getUserDetails(originalCreatorId);
-        if (orginalCreator != null && orginalCreator.size() > 0) {
-          setUser(orginalCreator.get(0), orginalCreatorEo);
+        JsonObject creator = getUserRepo().getUser(originalCreatorId);
+        if (creator != null && !creator.isEmpty()) {
+          setUser(creator, orginalCreatorEo);
           contentEo.setOriginalCreator(orginalCreatorEo.getUser());
         }
       }
       
       // Set Metadata
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
-      JsonObject metadata = new JsonObject(metadataString);
+      JsonObject metadata = null;
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
       setMetaData(metadata, contentEo);
       
       // Set Question
@@ -64,7 +63,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       }
       
       String answerJson = source.getString(EntityAttributeConstants.ANSWER, null);
-      if (answerJson != null) {
+      if (answerJson != null && !answerJson.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
         JsonArray answerArray = new JsonArray(answerJson);
         if (answerArray != null && answerArray.size() > 0) {
           AnswerEo answerEo = new AnswerEo();
@@ -84,7 +83,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         }
       }
       String hintDetail = source.getString(EntityAttributeConstants.HINT_EXPLANATION_DETAIL, null);
-      if (hintDetail != null) {
+      if (hintDetail != null && !hintDetail.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
         JsonObject hintExplanationDetail = new JsonObject(hintDetail);
         if (hintExplanationDetail != null) {
           JsonArray hintArray = hintExplanationDetail.getJsonArray(EntityAttributeConstants.HINT, null);
@@ -125,13 +124,13 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       statisticsEo.setHasNoThumbnail(contentEo.getThumbnail() != null ? 0 : 1);
       statisticsEo.setHasNoDescription(contentEo.getDescription() != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount((contentEo.getCollectionIds() != null) ? contentEo.getCollectionIds().size() : 0);
-      boolean has21CenturySkill = (contentEo.getMetadata() != null && contentEo.getMetadata().containsKey(IndexerConstants.TWENTY_ONE_CENTURY_SKILL) && !contentEo.getMetadata().getJsonArray(IndexerConstants.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
+      boolean has21CenturySkill = (contentEo.getMetadata() != null && contentEo.getMetadata().containsKey(IndexFields.TWENTY_ONE_CENTURY_SKILL) && !contentEo.getMetadata().getJsonArray(IndexFields.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
       statisticsEo.setHas21stCenturySkills(has21CenturySkill);
 
       // Set display guide values
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
       JsonObject displayGuide = null;
-      if (displayGuideString != null) displayGuide = new JsonObject(displayGuideString);
+      if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
       statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER) : null);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
 
@@ -161,6 +160,8 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         invalidResource = 1;
       }
       statisticsEo.setInvalidResource(invalidResource);
+
+      setCollectionContents(source, contentEo, statisticsEo);
 
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();

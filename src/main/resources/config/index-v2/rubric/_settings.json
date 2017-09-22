@@ -1,0 +1,36 @@
+{
+   "index":{
+      "analysis":{
+         "analyzer":{
+            "keyword_lowercase":{
+               "type":"custom",
+               "tokenizer":"keyword",
+               "filter":[
+                  "lowercase",
+                  "trim"
+               ]
+            },
+            "gooru_kstem":{
+               "type":"custom",
+               "tokenizer":"standard",
+               "filter":[
+                  "standard",
+                  "lowercase",
+                  "stop",
+                  "kstem"
+               ]
+            },
+          "whitespace_lowercase": {
+            "type": "custom",
+            "filter": [
+              "lowercase",
+              "trim"
+            ],
+            "tokenizer": "whitespace"
+          }
+         }
+      }
+   },
+   "number_of_shards":"11",
+   "refresh_interval":"1s"
+}

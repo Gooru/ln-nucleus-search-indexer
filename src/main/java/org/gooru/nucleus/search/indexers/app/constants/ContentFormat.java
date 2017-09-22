@@ -8,7 +8,8 @@ public enum ContentFormat {
   EXTERNAL_ASSESSMENT("assessment-external"),
   QUESTION("question"),
   COURSE("course"),
-  UNIT("unit");
+  UNIT("unit"),
+  RUBRIC("rubric");
 
   final String contentFormat;
 

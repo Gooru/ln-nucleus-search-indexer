@@ -17,9 +17,16 @@ public final class ErrorMsgConstants {
   public static final String COLLECTION_NOT_DELETED = "Given collection exists in DB !!, Delete from index failed"; 
   public static final String COURSE_DATA_NULL = "Course data is null, db returned null value !!";
   public static final String COURSE_NOT_DELETED = "Given course exists in DB !!, Delete from index failed"; 
-
-
-
+  public static final String RUBRIC_DATA_NULL = "Rubric data is null, db returned null value !!";
+  public static final String RUBRIC_NOT_DELETED = "Given rubric exists in DB !!, Delete from index failed"; 
+  public static final String UNIT_DATA_NULL = "Unit data is null, db returned null value !!";
+  public static final String UNIT_NOT_DELETED = "Given unit exists in DB !!, Delete from index failed"; 
+  public static final String LESSON_DATA_NULL = "Lesson data is null, db returned null value !!";
+  public static final String LESSON_NOT_DELETED = "Given lesson exists in DB !!, Delete from index failed"; 
+  public static final String CROSSWALK_UNAVAILABLE = "Given crosswalk exist in DB !!, Delete from index failed"; 
+  public static final String TAXONOMY_UNAVAILABLE = "Given taxonomy code exist in DB !!, Delete from index failed"; 
+  public static final String RUBRIC_UNAVAILABLE = "Given rubric exist in DB !!, Delete from index failed"; 
+  
   private ErrorMsgConstants() {
     throw new AssertionError();
   }

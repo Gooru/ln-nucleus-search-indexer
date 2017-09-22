@@ -3,6 +3,8 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.util.List;
 import java.util.Map;
 
+import io.vertx.core.json.JsonObject;
+
 @SuppressWarnings("rawtypes")
 public interface TaxonomyRepository {
 
@@ -10,5 +12,11 @@ public interface TaxonomyRepository {
     return new TaxonomyRepositoryImpl();
   }
   List<Map> getTaxonomyData(String codeId, String label);
+  
+  JsonObject getGdtMapping(String targetCodeId);
+  
+  JsonObject getCrosswalkCodes(String sourceCodeId);
+  
+  JsonObject getGDTCode(String targetCodeId);
 
 }

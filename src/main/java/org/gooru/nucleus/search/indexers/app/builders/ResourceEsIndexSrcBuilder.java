@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,9 +60,9 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         JsonArray audienceArray = new JsonArray(audienceList);
         if (audienceArray != null && audienceArray.size() > 0) {
           metadata.put(EntityAttributeConstants.AUDIENCE, audienceArray);
-          setMetaData(metadata, originalresourceEo);
         }
       }
+      setMetaData(metadata, originalresourceEo);
 
       // Set display guide values
       JsonObject displayGuide = new JsonObject();
@@ -71,7 +70,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
 
       // Set frame breaker value
       Integer frameBreaker = (source.getBoolean(EntityAttributeConstants.IS_I_FRAME_BREAKER, false)) ? 1 : 0;
-      if (displayGuideString != null) displayGuide = new JsonObject(displayGuideString);
+      if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
       displayGuide.put(EntityAttributeConstants.IS_FRAME_BREAKER, frameBreaker);
 
       // Set is Broken value
@@ -89,7 +88,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       statisticsEo.setHasNoThumbnail(originalresourceEo.getThumbnail() != null ? 0 : 1);
       statisticsEo.setHasNoDescription(originalresourceEo.getDescription() != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount((originalresourceEo.getCollectionIds() != null) ? originalresourceEo.getCollectionIds().size() : 0);
-      boolean has21CenturySkill = (originalresourceEo.getMetadata() != null && originalresourceEo.getMetadata().containsKey(IndexerConstants.TWENTY_ONE_CENTURY_SKILL) && !originalresourceEo.getMetadata().getJsonArray(IndexerConstants.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
+      boolean has21CenturySkill = (originalresourceEo.getMetadata() != null && originalresourceEo.getMetadata().containsKey(IndexFields.TWENTY_ONE_CENTURY_SKILL) && !originalresourceEo.getMetadata().getJsonArray(IndexFields.TWENTY_ONE_CENTURY_SKILL).isEmpty()) ? true : false;
       statisticsEo.setHas21stCenturySkills(has21CenturySkill);
 
       // Set Editorial tag
@@ -104,7 +103,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
                 && editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) != null)
           statisticsEo.setPublisherQualityIndicator(editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR));
       }
-
+      
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       statisticsEo.setViewsCount(viewsCount);
 
@@ -121,7 +120,8 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         originalresourceEo.setLicense(license);
       }
 
-      originalresourceEo.setStatistics(statisticsEo.getStatistics());
+      setCollectionContents(source, originalresourceEo, statisticsEo);
+
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.USED_IN_COLLECTION_COUNT, statisticsEo.getUsedInCollectionCount());

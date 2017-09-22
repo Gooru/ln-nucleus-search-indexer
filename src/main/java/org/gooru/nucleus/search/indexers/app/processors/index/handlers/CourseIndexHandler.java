@@ -1,6 +1,9 @@
 package org.gooru.nucleus.search.indexers.app.processors.index.handlers;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
@@ -20,7 +23,12 @@ import io.vertx.core.json.JsonObject;
 
 public class CourseIndexHandler extends BaseIndexHandler implements IndexHandler {
 
-
+  private final String indexName;
+  
+  public CourseIndexHandler() {
+    this.indexName = getIndexName();
+  }
+  
   @Override
   public void indexDocument(String courseId) throws Exception {
     try {
@@ -57,6 +65,7 @@ public class CourseIndexHandler extends BaseIndexHandler implements IndexHandler
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void increaseCount(String courseId, String field) throws Exception {
     try{
@@ -98,5 +107,34 @@ public class CourseIndexHandler extends BaseIndexHandler implements IndexHandler
     // TODO Auto-generated method stub
     
   }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public void indexEnhancedKeywords(String id, Map<String, Object> sourceAsMap) throws Exception {
+    Map<String, Object> contentSource = new HashMap<>();
+    Map<String, Object> contentInfoSource = new HashMap<>();
+    Map<String, Object> resourceInfo = new HashMap<>();
+    for (String key : sourceAsMap.keySet()) {
+      if (!((List) sourceAsMap.get(key)).isEmpty()) {
+        contentSource.put(IndexerConstants.INFO_WATSON_TAGS_DOT + key, sourceAsMap.get(key));
+        contentSource.put(IndexerConstants.INDEX_UPDATED_TIME, new SimpleDateFormat(IndexerConstants.DATE_FORMAT).format(new Date()));
+        resourceInfo.put(key, sourceAsMap.get(key));
+      }
+    }
+    if (!resourceInfo.isEmpty()) {
+      Map<String, Object> watsonTags = new HashMap<>();
+      watsonTags.put(IndexerConstants.WATSON_TAGS, resourceInfo);
+      contentInfoSource.put(IndexerConstants.RESOURCE_INFO, watsonTags);
+      contentInfoSource.put(IndexerConstants.INDEX_UPDATED_TIME, new SimpleDateFormat(IndexerConstants.DATE_FORMAT).format(new Date()));
+      IndexService.instance().indexDocumentByField(id, indexName, getIndexType(), contentSource, contentInfoSource);
+    }
+  }
 
+  private String getIndexName() {
+    return IndexNameHolder.getIndexName(EsIndex.COURSE);
+  }
+
+  private String getIndexType() {
+    return IndexerConstants.TYPE_COURSE;
+  }
 }

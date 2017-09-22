@@ -94,9 +94,14 @@ public class IndexFields {
   public static final String IS_FEATURED = "isFeatured";
   public static final String PUBLISH_DATE = "publishDate";
   public static final String PCWEIGHT = "preComputedWeight";
-  
-  
-
+  public static final String COLLECTION_COUNT = "collectionCount";
+  public static final String ASSESMENT_COUNT = "assessmentCount";
+  public static final String EXTERNAL_ASSESSMENT_COUNT = "externalAssessmentCount";
+  public static final String REMIXED_IN_CLASS_COUNT = "remixedInClassCount";
+  public static final String USED_BY_STUDENT_COUNT = "usedByStudentCount";
+  public static final String CONTAINING_COLLECTIONS_COUNT = "containingCollectionsCount";
+  public static final String LESSON_COUNT = "lessonCount";
+  public static final String CROSSWALK_CODES = "crosswalkCodes";
 	
 	// license fields
 	
@@ -105,6 +110,24 @@ public class IndexFields {
 	public static final String LICENSE_ICON = "icon";
 	public static final String LICENSE_URL = "url";
 	public static final String LICENSE_NAME = "name";
-	
+  public static final String RESOURCE_INFO = "resourceInfo";
+  public static final String TENANT = "tenant";
+  public static final String COLLECTIONS = "collections";
+  public static final String UNIT_TITLES = "unitTitles";
+  public static final String UNIT_IDS = "unitIds";
+  public static final String LESSON_IDS = "lessonIds";
+  public static final String LESSON_TITLES = "lessonTitles";
+  public static final String INDEX_ID = "indexId";
+  public static final String INDEX_TYPE = "indexType";
+  
+  public static final String CODE_ID = "codeId";
+  public static final String CURRICULUM_CODE = "curriculumCode";
+  public static final String CURRICULUM_DESC = "curriculumDesc";
+  public static final String CURRICULUM_NAME = "curriculumName";
+  public static final String CURRICULUM = "curriculum";
+  public static final String FRAMEWORK_CODE = "frameworkCode";
+  public static final String CURRICULUM_INFO = "curriculumInfo";
+  public static final String PARENT_TITLE = "parentTitle";
+  public static final String TWENTY_ONE_CENTURY_SKILL = "twentyOneCenturySkill";
 
 }

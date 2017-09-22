@@ -1,11 +1,16 @@
 package org.gooru.nucleus.search.indexers.app.components;
 
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.gooru.nucleus.search.indexers.app.constants.KafkaProperties;
 import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
-import org.gooru.nucleus.search.indexers.kafka.consumer.KafkaConsumer;
+import org.gooru.nucleus.search.indexers.kafka.consumer.KafkaMessageConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +21,13 @@ public final class KafkaRegistry implements Initializer, Finalizer {
 
   private static final String DEFAULT_KAFKA_SETTINGS = "defaultKafkaSettings";
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaRegistry.class);
-  private KafkaConsumer kafkaConsumer;
+  private KafkaConsumer<String, String> consumer = null;
 
-  private String KAFKA_TOPIC = "prodIndex";
+  private String[] KAFKA_TOPICS = null;
+  private static ExecutorService service = Executors.newFixedThreadPool(10);
+
 
   private volatile boolean initialized = false;
-
-  private KafkaRegistry() {
-    // TODO Auto-generated constructor stub
-  }
 
   public static KafkaRegistry getInstance() {
     return Holder.INSTANCE;
@@ -44,7 +47,8 @@ public final class KafkaRegistry implements Initializer, Finalizer {
           LOGGER.debug("Initializing KafkaRegistry now");
           try {
             JsonObject kafkaConfig = config.getJsonObject(DEFAULT_KAFKA_SETTINGS);
-            initializeKafkaConsumer(kafkaConfig);
+            Properties properties = getProperties(kafkaConfig);
+            createConsumer(properties);
             initialized = true;
             LOGGER.debug("Initializing KafkaRegistry DONE");
           } catch (Exception e) {
@@ -55,41 +59,36 @@ public final class KafkaRegistry implements Initializer, Finalizer {
     }
   }
 
-  private void initializeKafkaConsumer(JsonObject kafkaConfig) {
-    LOGGER.debug("InitializeKafkaConsumer now...");
-
+  private Properties getProperties(JsonObject kafkaConfig) {
+    LOGGER.debug("Setting Kafka Properties..");
     final Properties properties = new Properties();
+    properties.put(KafkaProperties.KAFKA_SERVERS, kafkaConfig.getString(KafkaProperties.KAFKA_SERVERS));
+    properties.put(KafkaProperties.SESSION_TIME_OUT_MS, kafkaConfig.getString(KafkaProperties.SESSION_TIME_OUT_MS));
+    properties.put(KafkaProperties.GROUP_ID, kafkaConfig.getString(KafkaProperties.GROUP_ID));
+    
+    properties.put(KafkaProperties.KAFKA_KEY_DESERIALIZER, StringDeserializer.class.getName());
+    properties.put(KafkaProperties.KAFKA_VALUE_DESERIALIZER, StringDeserializer.class.getName());
 
-    properties.put(KafkaProperties.ZK_CONSUMER_CONNECT, kafkaConfig.getString(KafkaProperties.ZK_CONSUMER_CONNECT));
-    properties.put(KafkaProperties.ZK_CONSUMER_GROUP, kafkaConfig.getString(KafkaProperties.ZK_CONSUMER_GROUP));
-    properties.put(KafkaProperties.ZK_SESSION_TIME_OUT_MS, kafkaConfig.getString(KafkaProperties.ZK_SESSION_TIME_OUT_MS));
-    properties.put(KafkaProperties.ZK_SYNCTIME_MS, kafkaConfig.getString(KafkaProperties.ZK_SYNCTIME_MS));
-    properties.put(KafkaProperties.AUTOCOMMIT_INTERVAL_MS, kafkaConfig.getString(KafkaProperties.AUTOCOMMIT_INTERVAL_MS));
-    properties.put(KafkaProperties.FETCH_SIZE, kafkaConfig.getString(KafkaProperties.FETCH_SIZE));
-    properties.put(KafkaProperties.AUTO_OFFSET_RESET, kafkaConfig.getString(KafkaProperties.AUTO_OFFSET_RESET));
-
-    this.KAFKA_TOPIC = kafkaConfig.getString(KafkaProperties.INDEX_TOPIC);
-    kafkaConsumer = KafkaConsumer.create(properties);
-    kafkaConsumer.start(KAFKA_TOPIC);
+    this.KAFKA_TOPICS = kafkaConfig.getString(KafkaProperties.KAFKA_TOPICS).split(",");
+    return properties;
   }
 
-  public KafkaConsumer getKafkaConsumer() {
-    if (initialized) {
-      return this.kafkaConsumer;
-    }
-    return null;
+  public void createConsumer(final Properties properties) {
+    consumer = new KafkaConsumer<>(properties);
+    consumer.subscribe(Arrays.asList(KAFKA_TOPICS));
+    service.submit(new KafkaMessageConsumer(consumer));
   }
 
   @Override
   public void finalizeComponent() {
-    if (this.kafkaConsumer != null) {
-      this.kafkaConsumer.stop();
-      this.kafkaConsumer = null;
+    if (this.consumer != null) {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        LOGGER.debug("Kafka Log Consumer unable to wait for 1000ms before it's shutdown");
+      }
+      consumer.close();
     }
-  }
-
-  public String getKafkaTopic() {
-    return this.KAFKA_TOPIC;
   }
 
   private static final class Holder {

@@ -51,6 +51,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       collectionEo.setPublishDate(source.getString(EntityAttributeConstants.PUBLISH_DATE, null));
       collectionEo.setPublishStatus(source.getString(EntityAttributeConstants.PUBLISH_STATUS, null));
       collectionEo.setContentFormat(source.getString(EntityAttributeConstants.CONTENT_FORMAT, null));
+      collectionEo.setContentSubFormat(source.getString(EntityAttributeConstants.SUB_FORMAT, null));
       String thumbnail = source.getString(EntityAttributeConstants.THUMBNAIL, null);
       collectionEo.setThumbnail(thumbnail);
       String learningObjective = source.getString(EntityAttributeConstants.LEARNING_OBJECTIVE, null);
@@ -63,9 +64,9 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       String originalCreatorId = source.getString(EntityAttributeConstants.ORIGINAL_CREATOR_ID, null);
       if (originalCreatorId != null) {
         UserEo orginalCreatorEo = new UserEo();
-        List<Map> orginalCreator = getUserRepo().getUserDetails(originalCreatorId);
-        if (orginalCreator != null && orginalCreator.size() > 0) {
-          setUser(orginalCreator.get(0), orginalCreatorEo);
+        JsonObject orginalCreator = getUserRepo().getUser(originalCreatorId);
+        if (orginalCreator != null && !orginalCreator.isEmpty()) {
+          setUser(orginalCreator, orginalCreatorEo);
           collectionEo.setOriginalCreator(orginalCreatorEo.getUser());
         }
       }
@@ -73,9 +74,9 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {
         UserEo creatorEo = new UserEo();
-        List<Map> creator = getUserRepo().getUserDetails(creatorId);
-        if (creator != null && creator.size() > 0) {
-          setUser(creator.get(0), creatorEo);
+        JsonObject creator = getUserRepo().getUser(creatorId);
+        if (creator != null && !creator.isEmpty()) {
+          setUser(creator, creatorEo);
           collectionEo.setCreator(creatorEo.getUser());
         }
       }
@@ -83,9 +84,9 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       String ownerId = source.getString(EntityAttributeConstants.OWNER_ID, null);
       if (ownerId != null) {
         UserEo ownerEo = new UserEo();
-        List<Map> owner = getUserRepo().getUserDetails(ownerId);
-        if (owner != null && owner.size() > 0) {
-          setUser(owner.get(0), ownerEo);
+        JsonObject owner = getUserRepo().getUser(ownerId);
+        if (owner != null && !owner.isEmpty()) {
+          setUser(owner, ownerEo);
           collectionEo.setOwner(ownerEo.getUser());
         }
       }
@@ -164,6 +165,10 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setQuestionCount(questionCount);
       statisticsEo.setResourceCount(resourceCount);
       statisticsEo.setContentCount(questionCount + resourceCount);
+      Long remixedInClassCount = getCollectionRepo().getRemixedInCourseCount(id);
+      statisticsEo.setRemixedInCourseCount(remixedInClassCount);
+      Long studentCount = getCollectionRepo().getUsedByStudentCount(id);
+      statisticsEo.setUsedByStudentCount(studentCount);
 
       // Set Editorial tag
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
@@ -232,6 +237,14 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
       course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
       collectionEo.setCourse(course.getCourseJson());
+      
+      //Set Collection Tenant 
+      String tenantId = source.getString(EntityAttributeConstants.TENANT);
+      String tenantRoot = source.getString(EntityAttributeConstants.TENANT_ROOT);
+      JsonObject tenant = new JsonObject();
+      tenant.put(IndexerConstants.TENANT_ID, tenantId);
+      tenant.put(IndexerConstants.TENANT_ROOT_ID, tenantRoot);
+      collectionEo.setTenant(tenant);
       
       //TODO Add logic to store taxonomy transformation and some statistics
 

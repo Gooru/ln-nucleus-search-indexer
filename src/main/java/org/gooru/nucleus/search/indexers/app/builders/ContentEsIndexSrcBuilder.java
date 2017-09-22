@@ -11,6 +11,7 @@ import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentEio;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
+import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 
@@ -32,7 +33,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     return IndexType.RESOURCE.getType();
   }
 
-  @SuppressWarnings("rawtypes")
   @Override
   protected JsonObject build(JsonObject source, D contentEo) throws Exception {
     try {
@@ -58,9 +58,9 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       String creatorId = source.getString(EntityAttributeConstants.CREATOR_ID, null);
       if (creatorId != null) {
         UserEo creatorEo = new UserEo();
-        List<Map> creator = getUserRepo().getUserDetails(creatorId);
-        if (creator != null && creator.size() > 0) {
-          setUser(creator.get(0), creatorEo);
+        JsonObject creator = getUserRepo().getUser(creatorId);
+        if (creator != null && !creator.isEmpty()) {
+          setUser(creator, creatorEo);
           contentEo.setCreator(creatorEo.getUser());
         }
       }
@@ -85,29 +85,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
       }
       
-      // Set Collection info of content
-      JsonArray collectionIds = new JsonArray();
-      JsonArray collectionTitles = new JsonArray();
-      String collectionId = source.getString(EntityAttributeConstants.COLLECTION_ID, null);
-      String collectionTitle = source.getString(IndexerConstants.COLLECTION_TITLE, null);
-      if (collectionId != null) {
-        collectionIds.add(collectionId);
-      }
-      if(collectionTitle != null){
-        collectionTitles.add(collectionTitle);
-      }
-      List<Map> collectionMetaAsList = getContentRepo().getCollectionMeta(id);
-
-      if (collectionMetaAsList != null && collectionMetaAsList.size() > 0) {
-        for (Map collectionMetaMap : collectionMetaAsList) {
-          String usedCollectionId = collectionMetaMap.get(EntityAttributeConstants.ID).toString();
-          collectionIds.add(usedCollectionId);
-          collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
-        }
-      }
-      if (!collectionIds.isEmpty()) contentEo.setCollectionIds(collectionIds);
-      if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
-
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       JsonObject taxonomyObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
@@ -149,13 +126,25 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       }
 
       //Set Extracted Text
+      ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
       String extractedText = source.getString(IndexerConstants.TEXT);
-      if (extractedText != null) {
-        ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
+      if (StringUtils.isNotBlank(extractedText)) {
         resourceInfoJson.setText(extractedText);
-        contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
       }
+      JsonObject watsonTags = source.getJsonObject(IndexerConstants.WATSON_TAGS);
+      if (watsonTags != null && !watsonTags.isEmpty()) {
+        resourceInfoJson.setWatsonTags(watsonTags);
+      }
+      if(!resourceInfoJson.getResourceInfo().isEmpty()) contentEo.setResourceInfo(resourceInfoJson.getResourceInfo());
 
+      //Set Content Tenant
+      String tenantId = source.getString(EntityAttributeConstants.TENANT);
+      String tenantRoot = source.getString(EntityAttributeConstants.TENANT_ROOT);
+      JsonObject tenant = new JsonObject();
+      tenant.put(IndexerConstants.TENANT_ID, tenantId);
+      tenant.put(IndexerConstants.TENANT_ROOT_ID, tenantRoot);
+      contentEo.setTenant(tenant);
+      
       /*
        * //TODO Add logic to store below details
        * statisticsEo.setHasAdvertisement(hasAdvertisement);
@@ -169,8 +158,53 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     return contentEo.getContentJson();
 
   }
+
+  @SuppressWarnings("rawtypes")
+  protected void setCollectionContents(JsonObject source, D contentEo, StatisticsEo statisticsEo) {
+    // Set Collection info of content
+    JsonArray collectionIds = new JsonArray();
+    JsonArray collectionTitles = new JsonArray();
+    String collectionId = source.getString(EntityAttributeConstants.COLLECTION_ID, null);
+    String collectionTitle = source.getString(IndexerConstants.COLLECTION_TITLE, null);
+    String collectionFormat = source.getString(EntityAttributeConstants.FORMAT, null);
+    if (collectionId != null) {
+      collectionIds.add(collectionId);
+    }
+    if (collectionTitle != null) {
+      collectionTitles.add(collectionTitle);
+    }
+    List<Map> collectionMetaAsList = getContentRepo().getCollectionMeta(contentEo.getId());
+
+    if (collectionMetaAsList != null && collectionMetaAsList.size() > 0) {
+      for (Map collectionMetaMap : collectionMetaAsList) {
+        String usedCollectionId = collectionMetaMap.get(EntityAttributeConstants.ID).toString();
+        String format = collectionMetaMap.get(EntityAttributeConstants.FORMAT).toString();
+        collectionIds.add(usedCollectionId);
+        collectionTitles.add(collectionMetaMap.get(EntityAttributeConstants.TITLE));
+        classifyCollections(format, statisticsEo);
+      }
+      classifyCollections(collectionFormat, statisticsEo);
+    }
+    if (!collectionIds.isEmpty()) contentEo.setCollectionIds(collectionIds);
+    if (!collectionTitles.isEmpty()) contentEo.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
+  }
   
-  
+  private void classifyCollections(String format, StatisticsEo statisticsEo) {
+    if (format != null) {
+      switch (format) {
+      case IndexerConstants.COLLECTION:
+        statisticsEo.setCollectionCount(statisticsEo.getCollectionCount() + 1);
+        break;
+      case IndexerConstants.ASSESSMENT:
+        statisticsEo.setAssessmentCount(statisticsEo.getAssessmentCount() + 1);
+        break;
+      case IndexerConstants.ASSESSMENT_EXTERNAL:
+        statisticsEo.setExternalAssessmentCount(statisticsEo.getExternalAssessmentCount() + 1);
+        break;
+      }
+    }
+  }
+
   protected void setMetaData(JsonObject metaData, ContentEio contentEo) {
     if (metaData != null) {
       JsonObject dataMap = new JsonObject();
@@ -209,5 +243,5 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
     }
     return value;
   }
-
+  
 }

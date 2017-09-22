@@ -44,10 +44,12 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
     return IndexNameHolder.getIndexName(EsIndex.COURSE);
   }
   
+  @SuppressWarnings("unchecked")
   @Override
   public void setExistingStatisticsData(JsonObject source, Map<String, Object> contentInfoAsMap) {
     long viewsCount = 0L;
     int remixCount = 0;
+    int collaboratorCount = 0;
 
     if (contentInfoAsMap != null) {
       Map<String, Object> statisticsMap = (Map<String, Object>) contentInfoAsMap.get(IndexerConstants.STATISTICS);
@@ -55,11 +57,13 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
         LOGGER.debug("statistics index data : " + statisticsMap);
         viewsCount = getLong(statisticsMap.get(IndexFields.VIEWS_COUNT));
         remixCount = getInteger(statisticsMap.get(IndexFields.COURSE_REMIXCOUNT));
+        collaboratorCount = getInteger(statisticsMap.get(IndexFields.COLLABORATOR_COUNT));
       }
     }
 
     source.put(IndexFields.VIEWS_COUNT, viewsCount);
     source.put(IndexFields.COURSE_REMIXCOUNT, remixCount);
+    source.put(IndexFields.COLLABORATOR_COUNT, collaboratorCount);
   }
 
   @Override

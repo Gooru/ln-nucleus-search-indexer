@@ -2,6 +2,7 @@ package org.gooru.nucleus.search.indexers.app.services;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.client.Client;
@@ -20,6 +21,7 @@ import io.vertx.core.json.JsonObject;
 public class BaseIndexService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BaseIndexService.class);
+  public static final String WATSON_TAGS_FIELD = "resourceInfo.watsonTags.";
 
   protected static int getInteger(Object value) {
     return value == null ? 0 : (int) value;
@@ -49,17 +51,34 @@ public class BaseIndexService {
     contentInfoEo.setIndexUpdatedTime(new Date(System.currentTimeMillis()));
     Map<String, Object> indexData = new HashMap<>();
     Map<String, Object> statistics = new HashMap<>();
+    Map<String, Object> tags = new HashMap<>();
+    Map<String, Object> watsonTags = new HashMap<>();
+    boolean isStatistics = false;
+    boolean isKeyword = false;
     if(data != null){
       for(String key : data.keySet()){
-        statistics.put(key.replace(IndexerConstants.STATISTICS_DOT, ""), data.get(key));
+        if(key.startsWith(IndexerConstants.STATISTICS_DOT)) {
+          isStatistics = true;
+          statistics.put(key.replace(IndexerConstants.STATISTICS_DOT, ""), data.get(key));
+        } else if (key.startsWith(IndexerConstants.INFO_WATSON_TAGS_DOT) && !((List<?>) data.get(key)).isEmpty()) {
+          isKeyword = true;
+          tags.put(key.replace(IndexerConstants.INFO_WATSON_TAGS_DOT, ""), data.get(key));
+        }
       }
     }
-    indexData.put(IndexerConstants.STATISTICS, statistics);
-    contentInfoEo.setStatistics(buildStatisticsData(contentFormat, indexData));
+    if (isStatistics) {
+      indexData.put(IndexerConstants.STATISTICS, statistics);
+      contentInfoEo.setStatistics(buildStatisticsData(contentFormat, indexData));
+    } 
+    if (isKeyword) {
+      watsonTags.put(IndexerConstants.WATSON_TAGS, tags);
+      contentInfoEo.setResourceInfo(new JsonObject(watsonTags));
+    }
     LOGGER.debug("content info index source : " + contentInfoEo.getContentInfoJson().toString());
     return contentInfoEo.getContentInfoJson().toString();
   }
-  
+
+  @SuppressWarnings("unchecked")
   protected JsonObject buildStatisticsData(String contentFormat, Map<String, Object> contentInfoAsMap) {
     Map<String, Object> statisticsAsMap = null;
     JsonObject statistics = null;

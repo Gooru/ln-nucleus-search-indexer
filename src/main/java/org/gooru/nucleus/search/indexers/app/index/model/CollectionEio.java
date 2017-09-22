@@ -139,6 +139,14 @@ public class CollectionEio implements Serializable {
   public void setContentFormat(String contentFormat) {
     collection = JsonUtil.set(collection, "contentFormat", contentFormat);
   }
+  
+  public String getContentSubFormat() {
+    return collection.getString("contentSubFormat", null);
+  }
+
+  public void setContentSubFormat(String contentSubFormat) {
+    collection = JsonUtil.set(collection, "contentSubFormat", contentSubFormat);
+  }
 
   public String getThumbnail() {
     return collection.getString("thumbnail", null);
@@ -276,5 +284,12 @@ public class CollectionEio implements Serializable {
     collection = JsonUtil.set(collection, "course", course);
   }
 
+  public JsonObject getTenant() {
+    return collection.getJsonObject("tenant", null);
+  }
+
+  public void setTenant(JsonObject tenant) {
+    collection = JsonUtil.set(collection, "tenant", tenant);
+  }
 
 }

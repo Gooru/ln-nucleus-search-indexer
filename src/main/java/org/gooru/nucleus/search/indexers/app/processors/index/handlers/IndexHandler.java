@@ -1,6 +1,9 @@
 package org.gooru.nucleus.search.indexers.app.processors.index.handlers;
 
 import io.vertx.core.json.JsonObject;
+
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,4 +26,6 @@ public interface IndexHandler {
   void updateViewCount(String entityId, Long viewCount);
   
   void updateUserDocuments(String userId) throws Exception;
+
+  void indexEnhancedKeywords(String id, Map<String, Object> sourceAsMap) throws Exception;
 }

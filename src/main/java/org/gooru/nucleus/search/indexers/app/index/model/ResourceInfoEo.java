@@ -23,4 +23,12 @@ public class ResourceInfoEo {
   public void setText(String text) {
     this.resourceInfo = JsonUtil.set(resourceInfo, "text", text);
   }
+  
+  public JsonObject getWatsonTags() {
+    return resourceInfo.getJsonObject("watsonTags", null);
+  }
+
+  public void setWatsonTags(JsonObject watsonTags) {
+    this.resourceInfo = JsonUtil.set(resourceInfo, "watsonTags", watsonTags);
+  }
 }
