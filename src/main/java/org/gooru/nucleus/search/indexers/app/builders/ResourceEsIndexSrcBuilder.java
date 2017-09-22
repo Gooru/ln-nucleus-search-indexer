@@ -71,7 +71,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       // Set frame breaker value
       Boolean frameBreaker = source.getBoolean(EntityAttributeConstants.IS_I_FRAME_BREAKER, false);
       if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
-      displayGuide.put(EntityAttributeConstants.IS_FRAME_BREAKER, frameBreaker);
+      displayGuide.put(EntityAttributeConstants.IS_FRAME_BREAKER, frameBreaker ? 1 : 0);
 
       // Set is Broken value
       Integer isBroken = (source.getBoolean(EntityAttributeConstants.IS_BROKEN, false)) ? 1 : 0;

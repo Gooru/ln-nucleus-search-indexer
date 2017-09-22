@@ -7,7 +7,7 @@
     "elasticsearch.indexMiddle" : "local_",
     "elasticsearch.indexSuffix" : "_v2", 
     "elasticsearch.clustername" : "els-local",
-    "elasticsearch.host" : "localhost:9300"
+    "elasticsearch.host" : "localhost:9200"
   },
   "defaultKafkaSettings" : {
   	"bootstrap.servers":"localhost:9092",

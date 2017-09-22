@@ -1,16 +1,18 @@
 package org.gooru.nucleus.search.indexers.app.components;
 
-import java.net.InetAddress;
+import java.io.IOException;
+import java.util.Collections;
 
-import org.elasticsearch.ResourceAlreadyExistsException;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.indices.InvalidIndexNameException;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseException;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.sniff.SniffOnFailureListener;
+import org.elasticsearch.client.sniff.Sniffer;
 import org.gooru.nucleus.search.indexers.app.constants.ElasticSearchConnectionConstant;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.utils.EsMappingUtil;
@@ -19,6 +21,9 @@ import org.gooru.nucleus.search.indexers.bootstrap.shutdown.Finalizer;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.Initializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazelcast.util.StringUtil;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -30,10 +35,14 @@ import io.vertx.core.json.JsonObject;
  */
 public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
+  protected static final ObjectMapper SERIAILIZER = new ObjectMapper();
   private static final String DEFAULT_ELASTIC_SETTINGS = "defaultElasticSettings";
   private static final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchRegistry.class);
   private volatile boolean initialized = false;
-  private Client client = null;
+  private RestClient restClient = null;
+  private RestHighLevelClient restHighLevelClient = null;
+
+  private Sniffer sniffer = null;
 
   private String indexNamePrefix;
 
@@ -63,12 +72,12 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
           JsonObject elasticSearchConfig = config.getJsonObject(DEFAULT_ELASTIC_SETTINGS);
           initializeElasticSearchClient(elasticSearchConfig);
-          if (getFactory().client != null) {
+          if (getFactory().restClient != null) {
             registerIndices();
             initialized = true;
-            LOGGER.info("Initializing ELS Registry DONE");
+            LOGGER.info("Initialize ELS Registry DONE");
           } else {
-            LOGGER.info("Initializing ELS Registry FAILED");
+            LOGGER.info("Initialize ELS Registry FAILED");
           }
         }
       }
@@ -77,8 +86,6 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
   private void initializeElasticSearchClient(JsonObject elasticSearchConfig) {
 
-    String clusterName = elasticSearchConfig.getString(ElasticSearchConnectionConstant.CLUSTER_NAME.getKey(),
-            ElasticSearchConnectionConstant.CLUSTER_NAME.getDefaultValue());
     String hostName =
             elasticSearchConfig.getString(ElasticSearchConnectionConstant.HOST.getKey(), ElasticSearchConnectionConstant.HOST.getDefaultValue());
     String indexPrefixPart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_PREFIX_PART.getKey(),
@@ -87,36 +94,19 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
             ElasticSearchConnectionConstant.INDEX_MIDDLE_PART.getDefaultValue());
     String indexSuffixPart = elasticSearchConfig.getString(ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getKey(),
             ElasticSearchConnectionConstant.INDEX_SUFFIX_PART.getDefaultValue());
-    String clientTransportSniff = elasticSearchConfig.getString(ElasticSearchConnectionConstant.CLIENT_TRANSPORT_SNIFF.getKey(),
-            ElasticSearchConnectionConstant.CLIENT_TRANSPORT_SNIFF.getDefaultValue());
-
+    
     setIndexNamePrefix(indexPrefixPart + indexMiddlePart);
     setIndexNameSuffix(indexSuffixPart);
 
-    Settings settings =
-            Settings.builder().put("cluster.name", clusterName).put("client.transport.sniff", Boolean.valueOf(clientTransportSniff)).build();
-    LOGGER.debug("ELS Cluster Name : {}", clusterName);
-    TransportClient transportClient = new PreBuiltTransportClient(settings);
-
-    String[] hosts = hostName.split(",");
-    for (String host : hosts) {
-      String[] hostParams = host.split(":");
-      if (hostParams.length == 2) {
-        try {
-          LOGGER.debug("host : {} port : {}", hostParams[0], hostParams[1]);
-          transportClient.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostParams[0]), Integer.parseInt(hostParams[1])));
-
-          LOGGER.debug("Host added : {} to elasticsearch!", host);
-        } catch (Exception e) {
-          LOGGER.error("Add transport address failed : ", e);
-        }
-      } else {
-        LOGGER.debug("Oops! Could't add host : {} to elasticsearch!", host);
-      }
-    }
-    if (!transportClient.connectedNodes().isEmpty()) {
-      setClient(transportClient);
-    }
+    HttpHost[] httpHosts = buildHosts(hostName);
+    SniffOnFailureListener sniffOnFailureListener = new SniffOnFailureListener();
+    RestClient restClient = RestClient.builder(httpHosts).setFailureListener(sniffOnFailureListener).build();
+    Sniffer sniffer = Sniffer.builder(restClient).setSniffAfterFailureDelayMillis(30000).build();
+    sniffOnFailureListener.setSniffer(sniffer);
+    
+    setLowLevelRestClient(restClient);
+    setRestHighLevelClient(restClient);
+    setSniffer(sniffer);
   }
 
   private void registerIndices() {
@@ -126,43 +116,108 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
       IndexNameHolder.registerIndex(esIndex, indexName);
       LOGGER.debug("Registering : {} Index", indexName);
       for (String indexType : esIndex.getTypes()) {
-        LOGGER.debug("Es Index Type  : {}" , indexType);
+        LOGGER.debug("Es Index Type  : {}", indexType);
 
-        String setting = EsMappingUtil.getSettingConfig(indexType);
-        String mapping = EsMappingUtil.getMappingConfig(indexType);
+        String indexSettings = EsMappingUtil.getIndexSettingsConfig(esIndex.getName());
         try {
-          CreateIndexRequestBuilder prepareCreate = ElasticSearchRegistry.getInstance().getClient().admin().indices().prepareCreate(indexName);
-          prepareCreate.setSettings(setting, XContentType.JSON);
-          prepareCreate.addMapping(indexType, mapping, XContentType.JSON);
-          prepareCreate.execute().actionGet();
+          performRequest("PUT", "/" + indexName, indexSettings);
           LOGGER.debug("Es Index : {} Created!", indexName);
         } catch (Exception exception) {
-          if (exception instanceof ResourceAlreadyExistsException || (exception instanceof InvalidIndexNameException && exception.getMessage().contains("already exists as alias"))) {
-            LOGGER.debug("Oops! Es Index : {} already exist!", indexName);
-            ElasticSearchRegistry.getInstance().getClient().admin().indices().preparePutMapping(indexName).setType(indexType).setSource(mapping, XContentType.JSON)
-                                 .execute().actionGet();
-            LOGGER.debug("Updated mapping with index '{}' and type '{}'", indexName, indexType);
+          if (exception instanceof ResponseException) {
+            if (((ResponseException) exception).getResponse().getStatusLine().getStatusCode() == 400
+                    && (exception.getMessage().contains("index_already_exists_exception") || // ES 5.x
+                            exception.getMessage().contains("resource_already_exists_exception") || // ES 6.x
+                            exception.getMessage().contains("IndexAlreadyExistsException")|| // ES 6.x
+                            exception.getMessage().contains("invalid_index_name_exception"))) {
+              LOGGER.debug("Oops! Es Index : {} already exist!", indexName);
+              Response updateResponse;
+              try {
+                String mapping = EsMappingUtil.getMappingConfig(indexType);
+                updateResponse = performRequest("PUT", "/" + indexName + "/_mapping/" + indexType, mapping);
+                if (updateResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                  LOGGER.debug("Updated mapping with index '{}' and type '{}'", indexName, indexType);
+                }
+              } catch (Exception e) {
+                LOGGER.error("Update mapping failed : {}", e);
+              }
+            } else {
+              LOGGER.debug("Register index failed! Reason : {}", exception);
+            }
           } else {
-            LOGGER.error("Register index failed : {}", exception);
+            LOGGER.debug("Index creation failed! Reason : {}", exception);
           }
         }
       }
     }
   }
 
+  private Response performRequest(String method, String indexUrl, String indexSettings) throws Exception {
+    StringEntity entity = null;
+    if (!StringUtil.isNullOrEmpty(indexSettings)) {
+      entity = new StringEntity(indexSettings, ContentType.APPLICATION_JSON);
+    }
+    Response response = getLowLevelRestClient().performRequest(method, indexUrl, Collections.emptyMap(), entity);
+    return response;
+  }
+  
+  private HttpHost[] buildHosts(String endpoints) {
+    String[] hosts = endpoints.split(",");
+    HttpHost[] httpHosts = new HttpHost[0];
+    for (String host : hosts) {
+      String[] hostParams = host.split(":");
+      if (hostParams.length == 2) {
+        httpHosts = appendToArray(httpHosts , new HttpHost(hostParams[0], Integer.valueOf(hostParams[1]), "http"));
+        LOGGER.debug("Host added : {} to elasticsearch!", host);
+      } else {
+        LOGGER.debug("Oops! Could't initialize rest client with host : {}", host);
+      }
+    }
+    return httpHosts;
+  }
+  
+  private HttpHost[] appendToArray(HttpHost[] array, HttpHost x){
+    HttpHost[] result = new HttpHost[array.length + 1];
+      for(int i = 0; i < array.length; i++)
+          result[i] = array[i];
+      result[result.length - 1] = x;
+      return result;
+  }
+
   @Override
   public void finalizeComponent() {
-    if (client != null) {
-      client.close();
+    if (getLowLevelRestClient() != null) {
+      try {
+        getLowLevelRestClient().close();
+        getSniffer().close();
+        LOGGER.info("Rest client shutdown");
+      } catch (IOException e) {
+        LOGGER.info("Rest Client is not shutdown : {}", e);
+      }
     }
   }
 
-  public Client getClient() {
-    return getFactory().client;
+  public static RestClient getLowLevelRestClient() {
+    return getFactory().restClient;
   }
 
-  private void setClient(Client client) {
-    getFactory().client = client;
+  public static void setLowLevelRestClient(RestClient client) {
+    getFactory().restClient = client;
+  }
+  
+  public static RestHighLevelClient getRestHighLevelClient() {
+    return getFactory().restHighLevelClient;
+  }
+
+  public static void setRestHighLevelClient(RestClient client) {
+    getFactory().restHighLevelClient = new RestHighLevelClient(client);
+  }
+  
+  public static Sniffer getSniffer() {
+    return getFactory().sniffer;
+  }
+
+  public static void setSniffer(Sniffer sniffer) {
+    getFactory().sniffer = sniffer;
   }
 
   public String getIndexNamePrefix() {

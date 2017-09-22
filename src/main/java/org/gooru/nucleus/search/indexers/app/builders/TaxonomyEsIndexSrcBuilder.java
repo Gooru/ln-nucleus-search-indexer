@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -7,13 +8,15 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
@@ -153,15 +156,22 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
   }
 
   private JsonArray extractAndIndexKeywords(List<String> words) {
-    BulkRequestBuilder bulkRequest = getClient().prepareBulk();
+    BulkRequest bulkRequest = new BulkRequest();
     JsonArray keywords = new JsonArray();
     for (String word : words) {
       if (Arrays.asList(IndexerConstants.STOP_WORDS.split(IndexerConstants.COMMA)).contains(word.trim())) {
         continue;
       }
       if (word.trim().length() > 3) {
-        BoolQueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word));
-        SearchResponse result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), filter);
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        QueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word));
+        sourceBuilder.query(filter);
+        SearchResponse result = null;
+        try {
+          result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), sourceBuilder);
+        } catch (Exception e) {
+          LOGGER.debug("Error while searching keyword" , word);
+        }
         if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
           LOGGER.debug("Keyword is already available in index !!" + word);
           continue;
@@ -169,14 +179,19 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
         keywords.add(word);
         String id = UUID.randomUUID().toString();
         JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.KEYWORD, word);
-        bulkRequest.add(getClient().prepareIndex(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).setSource(data.toString(), XContentType.JSON));
+        IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).source(data.toString(), XContentType.JSON); 
+        bulkRequest.add(request);
       }
     }
     if (bulkRequest.numberOfActions() > 0) {
       bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
-      BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-      if (!bulkResponse.hasFailures()) {
-        LOGGER.debug("Successfully indexed bulk keywords!");
+      try {
+        BulkResponse bulkResponse = getClient().bulk(bulkRequest);
+        if (!bulkResponse.hasFailures()) {
+          LOGGER.debug("Successfully indexed bulk keywords!");
+        }
+      } catch (IOException e) {
+        INDEX_FAILURES_LOGGER.error("Failed Bulk index for keywords! Exception " + e.getMessage());
       }
     }
     return keywords;

@@ -3,8 +3,7 @@
       "properties":{
          "definitions":{
             "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "analyzer":"keyword_lowercase"
          },
          "indexId":{
             "type":"text"
@@ -14,18 +13,15 @@
          },
          "indexUpdatedDate":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "type":{
             "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "analyzer":"keyword_lowercase"
          },
          "word":{
             "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "analyzer":"keyword_lowercase"
          }
       }
    }

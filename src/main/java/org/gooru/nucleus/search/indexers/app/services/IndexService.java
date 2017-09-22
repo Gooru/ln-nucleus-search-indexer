@@ -3,10 +3,11 @@
  */
 package org.gooru.nucleus.search.indexers.app.services;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -22,8 +23,9 @@ public interface IndexService {
 
   /**
    * Delete content in index using the entry id
+   * @throws Exception 
    */
-  void deleteDocuments(String idString, String indexName, String typeName);
+  void deleteDocuments(String idString, String indexName, String typeName) throws Exception;
 
   /**
    * Index a single content based on inputs.
@@ -31,11 +33,6 @@ public interface IndexService {
    * @throws Exception
    */
   void indexDocuments(String idString, String indexName, String typeName, JsonObject body) throws Exception;
-
-  /**
-   * Refresh the index
-   */
-  void refreshIndex(String indexName);
 
   Map<String, Object> getDocument(String id, String indexName, String type);
 
@@ -49,12 +46,12 @@ public interface IndexService {
   
   void buildInfoIndex(String idString, String contentFormat) throws Exception;
     
-  void updateBrokenStatus(String ids, boolean isUpdateBroken);
+  void updateBrokenStatus(String ids, boolean isUpdateBroken) throws Exception;
 
   void deleteDocuments(String key, String type) throws Exception;
 
   void indexDocumentByField(String id, String indexName, String typeName, Map<String, Object> fieldValues, Map<String, Object> contentInfoSource) throws Exception;
 
-  SearchResponse getDocument(String indexName, String type, BoolQueryBuilder boolQuery);
+  SearchResponse getDocument(String indexName, String type, SearchSourceBuilder boolQuery) throws Exception;
   
 }

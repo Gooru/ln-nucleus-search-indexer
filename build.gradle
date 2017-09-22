@@ -39,7 +39,7 @@ ext {
     hikariVersion = '2.4.3'
     postgresVersion = '9.4-1206-jdbc42'
     activejdbcVersion = '1.4.11'
-    elasticsearchVersion = '5.5.0'
+    elasticsearchVersion = '5.6.0'
     kafkaVersion = '0.10.1.1'
     logbackVersion = '1.2.3'
     log4jVersion='2.8'
@@ -66,14 +66,14 @@ dependencies {
     compile "io.vertx:vertx-hazelcast:${vertxVersion}"
 
     compile "org.apache.kafka:kafka-clients:${kafkaVersion}"
-    compile "org.elasticsearch:elasticsearch:${elasticsearchVersion}"
-    compile "org.elasticsearch.client:transport:${elasticsearchVersion}"
     compile "com.zaxxer:HikariCP:${hikariVersion}"
     compile "org.postgresql:postgresql:${postgresVersion}"
     compile "org.javalite:activejdbc:${activejdbcVersion}"
     compile "org.javalite:activejdbc-instrumentation:${activejdbcVersion}"
     compile "org.jsoup:jsoup:1.8.3"
     compile "com.itextpdf:itextpdf:5.5.8"
+    compile "org.elasticsearch.client:elasticsearch-rest-client-sniffer:${elasticsearchVersion}"
+    compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}"
 	
     // Other dependencies
     compile "io.netty:netty-all:${nettyAllVersion}"

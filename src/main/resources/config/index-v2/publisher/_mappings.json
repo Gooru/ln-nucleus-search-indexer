@@ -2,8 +2,7 @@
    "publisher":{
       "properties":{
          "id":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "publisher":{
             "type":"text",
@@ -13,8 +12,7 @@
                   "type":"text",
                   "analyzer":"keyword_lowercase"
                }
-            },
-            "include_in_all":false
+            }
          },
          "publisherSuggest":{
             "type":"text",

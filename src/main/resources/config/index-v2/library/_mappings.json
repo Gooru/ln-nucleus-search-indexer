@@ -2,31 +2,25 @@
    "library":{
       "properties":{
          "collections":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "id":{
-            "type":"integer",
-            "include_in_all":false
+            "type":"integer"
          },
          "indexUpdatedDate":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "organization":{
             "properties":{
                "code":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "name":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "partyUid":{
-                  "type":"keyword",
-                  "include_in_all":false
+                  "type":"keyword"
                }
             }
          },
@@ -45,49 +39,19 @@
             }
          },
          "quizzes":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "resourcesIdList":{
-            "type":"text",
-            "include_in_all":false
+            "type":"text"
          },
          "simple_collections":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "simple_quizzes":{
-            "type":"keyword",
-            "include_in_all":false
+            "type":"keyword"
          },
          "type":{
-            "type":"keyword",
-            "include_in_all":false
-         }
-      }
-   },
-   "dictionary":{
-      "analyzer":"standard",
-      "properties":{
-         "definitions":{
-            "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
-         },
-         "indexUpdatedDate":{
-            "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
-         },
-         "type":{
-            "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
-         },
-         "word":{
-            "type":"text",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "type":"keyword"
          }
       }
    }
