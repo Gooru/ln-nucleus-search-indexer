@@ -1,38 +1,56 @@
 {
-    "index": {
-        "analysis": {
-            "analyzer": {
-             	"keyword_lowercase":{
-             	  	"type" : "custom",
-                	"tokenizer": "keyword",
-                	"filter": ["lowercase","trim"]
-                },
-                "partial_split_word":{
-                	"type":"custom",
-                	"tokenizer": "standard",
-                	"filter": ["lowercase","trim","name_ngrams","split_words_by_special_character"]
-                }
+   "index":{
+      "analysis":{
+         "analyzer":{
+            "keyword_lowercase":{
+               "type":"custom",
+               "tokenizer":"keyword",
+               "filter":[
+                  "lowercase",
+                  "trim"
+               ]
             },
-              "filter": {
-                 "name_ngrams" : {
-					    "side" : "front",
-					    "max_gram" : 30,
-					    "min_gram" : 1,
-					    "type" : "edgeNGram"
-				 },
-				  "split_words_by_special_character": {
-                      "type": "word_delimiter",
-					  "generate_word_parts": "true",
-					  "generate_number_parts": "true",
-					  "catenate_words": "false",
-					  "catenate_numbers": "false",
-					  "catenate_all": "false",
-					  "split_on_case_change": "false",
-					  "split_on_numerics": "false",
-					  "stem_english_possessive": "false",
-					  "preserve_original": "true"
-                }
+            "partial_split_word":{
+               "type":"custom",
+               "tokenizer":"standard",
+               "filter":[
+                  "lowercase",
+                  "trim",
+                  "name_ngrams",
+                  "split_words_by_special_character"
+               ]
+            },
+            "gooru_kstem":{
+               "type":"custom",
+               "filter":[
+                  "standard",
+                  "lowercase",
+                  "stop",
+                  "kstem"
+               ],
+               "tokenizer":"standard"
             }
-        }
-    }
+         },
+         "filter":{
+            "name_ngrams":{
+               "side":"front",
+               "max_gram":30,
+               "min_gram":1,
+               "type":"edgeNGram"
+            },
+            "split_words_by_special_character":{
+               "type":"word_delimiter",
+               "generate_word_parts":"true",
+               "generate_number_parts":"true",
+               "catenate_words":"false",
+               "catenate_numbers":"false",
+               "catenate_all":"false",
+               "split_on_case_change":"false",
+               "split_on_numerics":"false",
+               "stem_english_possessive":"false",
+               "preserve_original":"true"
+            }
+         }
+      }
+   }
 }

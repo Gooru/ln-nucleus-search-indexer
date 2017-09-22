@@ -45,6 +45,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
         JsonObject collection = CollectionRepository.instance().getCollection(collectionId);
         if (collection != null) {
           returnValue.put(IndexerConstants.COLLECTION_TITLE, collection.getString(EntityAttributeConstants.TITLE));
+          returnValue.put(EntityAttributeConstants.FORMAT, collection.getString(EntityAttributeConstants.FORMAT));
         }
       }
       // Set course title
@@ -150,15 +151,19 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   @Override
   public JsonObject getDeletedContent(String contentId) {
     JsonObject returnValue = null;
-    List<Content> contents = Content.where(Content.FETCH_DELETED_QUERY, contentId, true);
-    if (contents.size() < 1) {
-      LOGGER.warn("Content id: {} not present in DB", contentId);
-    }
-    if(contents.size() > 0){
-      Content content = contents.get(0);
-      if (content != null) {
-        returnValue = new JsonObject(content.toJson(false));
+    try {
+      List<Content> contents = Content.where(Content.FETCH_DELETED_QUERY, contentId, true);
+      if (contents.size() < 1) {
+        LOGGER.warn("Content id: {} not present in DB", contentId);
       }
+      if (contents.size() > 0) {
+        Content content = contents.get(0);
+        if (content != null) {
+          returnValue = new JsonObject(content.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted content from DB : {} error : {}", contentId, e);
     }
     return returnValue;
   }
@@ -176,6 +181,23 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
       }
     }
     return new JsonObject().put("questions", contentArray);
+  }
+  
+  @Override
+  public JsonObject getQuestionById(String contentId) {
+    JsonObject returnValue = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      Content result = Content.findById(getPGObject("id", UUID_TYPE, contentId));
+      if (result != null && !result.getBoolean(Content.IS_DELETED)) {
+        returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch content : {} error : {}", contentId, e);
+    }
+    closeDBConn(db);
+    return returnValue;
   }
  
 }

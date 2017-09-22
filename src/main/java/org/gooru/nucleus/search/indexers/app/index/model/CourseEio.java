@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class CourseEio extends JsonObject {
@@ -15,6 +16,22 @@ public class CourseEio extends JsonObject {
 
   public void setId(String id) {
     this.put(IndexFields.ID, id);
+  }
+  
+  public String getIndexId() {
+    return this.getString(IndexFields.INDEX_ID, null);
+  }
+
+  public void setIndexId(String indexId) {
+    this.put(IndexFields.INDEX_ID, indexId);
+  }
+
+  public String getIndexType() {
+    return this.getString(IndexFields.INDEX_TYPE, null);
+  }
+
+  public void setIndexType(String indexType) {
+    this.put(IndexFields.INDEX_TYPE, indexType);
   }
 
   public String getTitle() {
@@ -161,14 +178,6 @@ public class CourseEio extends JsonObject {
     this.put(IndexFields.PUBLISH_STATUS, publishStatus);
   }
 
-  public int getIsFeatured() {
-    return this.getInteger(IndexFields.IS_FEATURED);
-  }
-
-  public void setIsFeatured(int isFeatured) {
-    this.put(IndexFields.IS_FEATURED, isFeatured);
-  }
-
   public JsonObject getTaxonomy() {
     return this.getJsonObject(IndexFields.TAXONOMY);
   }
@@ -192,5 +201,84 @@ public class CourseEio extends JsonObject {
   public void setPublishDate(String publishDate) {
     this.put(IndexFields.PUBLISH_DATE, publishDate);
   }
+  
+  public JsonObject getResourceInfo() {
+    return this.getJsonObject(IndexFields.RESOURCE_INFO, null);
+  }
 
+  public void setResourceInfo(JsonObject resourceInfo) {
+    this.put(IndexFields.RESOURCE_INFO, resourceInfo);
+  }
+  
+  public JsonObject getTenant() {
+    return this.getJsonObject(IndexFields.TENANT, null);
+  }
+
+  public void setTenant(JsonObject tenant) {
+    this.put(IndexFields.TENANT, tenant);
+  }
+  
+  public JsonArray getUnitIds() {
+    return this.getJsonArray(IndexFields.UNIT_IDS, null);
+  }
+
+  public void setUnitIds(JsonArray unitIds) {
+    this.put(IndexFields.UNIT_IDS, unitIds);
+  }
+  
+  public JsonArray getUnitTitles() {
+    return this.getJsonArray(IndexFields.UNIT_TITLES, null);
+  }
+
+  public void setUnitTitles(JsonArray unitTitles) {
+    this.put(IndexFields.UNIT_TITLES, unitTitles);
+  }
+  
+  public JsonArray getLessonIds() {
+    return this.getJsonArray(IndexFields.LESSON_IDS, null);
+  }
+
+  public void setLessonIds(JsonArray lessonIds) {
+    this.put(IndexFields.LESSON_IDS, lessonIds);
+  }
+  
+  public JsonArray getLessonTitles() {
+    return this.getJsonArray(IndexFields.LESSON_TITLES, null);
+  }
+
+  public void setLessonTitles(JsonArray lessonTitles) {
+    this.put(IndexFields.LESSON_TITLES, lessonTitles);
+  }
+  
+  public JsonArray getCollectionIds() {
+    return this.getJsonArray(IndexFields.COLLECTION_IDS, null);
+  }
+
+  public void setCollectionIds(JsonArray collectionIds) {
+    this.put(IndexFields.COLLECTION_IDS, collectionIds);
+  }
+
+  public JsonArray getCollectionTitles() {
+    return this.getJsonArray(IndexFields.COLLECTION_TITLES, null);
+  }
+
+  public void setCollectionTitles(JsonArray collectionTitles) {
+    this.put(IndexFields.COLLECTION_TITLES, collectionTitles);
+  }
+  
+  public JsonArray getCollections() {
+    return this.getJsonArray(IndexFields.COLLECTIONS, null);
+  }
+
+  public void setCollections(JsonArray collections) {
+    this.put(IndexFields.COLLECTIONS, collections);
+  }
+  
+  public String getContentFormat() {
+    return this.getString(IndexFields.CONTENT_FORMAT);
+  }
+
+  public void setContentFormat(String contentFormat) {
+    this.put(IndexFields.CONTENT_FORMAT, contentFormat);
+  }
 }

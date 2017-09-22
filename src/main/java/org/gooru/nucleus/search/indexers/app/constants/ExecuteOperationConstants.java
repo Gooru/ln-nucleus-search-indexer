@@ -36,6 +36,25 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_DELETED_QUESTION = "get_deleted_question";
 
+  public static final String GET_GDT_MAPPING = "get_gdt_mapping";
+
+  public static final String GET_UNIT = "get_unit";
+
+  public static final String GET_LESSON = "get_lesson";
+
+  public static final String GET_RUBRIC = "get_rubric";
+
+  public static final String GET_DELETED_RUBRIC = "get_deleted_rubric";
+  
+  public static final String GET_TAXONOMY_CODE = "get_taxonomy_code";
+  
+  public static final String GET_CROSSWALK = "get_crosswalk";
+  
+  public static final String GET_DELETED_LESSON = "get_deleted_lesson";
+
+  public static final String GET_DELETED_UNIT = "get_deleted_unit";
+
+
   private ExecuteOperationConstants() {
     throw new AssertionError();
   }

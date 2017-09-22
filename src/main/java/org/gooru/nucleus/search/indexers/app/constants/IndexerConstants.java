@@ -3,7 +3,7 @@ package org.gooru.nucleus.search.indexers.app.constants;
 import java.util.regex.Pattern;
 
 public final class IndexerConstants {
-  
+
   public static final String TYPE_RESOURCE = "resource";
 
   public static final String TYPE_QUESTION = "question";
@@ -16,6 +16,8 @@ public final class IndexerConstants {
   
   public static final String TYPE_CONTENT_INFO = "contentinfo";
   
+  public static final String TYPE_TAXONOMY = "taxonomy";
+
   public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
 
   public static final String COLLECTION_IDS = "collection_ids";
@@ -28,10 +30,6 @@ public final class IndexerConstants {
 
   public static final String ORIGINAL_CONTENT_IDS = "original_content_ids";
 
-  public static final String CODE_ID = "codeId";
-
-  public static final String LABEL = "label";
-
   public static final String SUBJECT = "subject";
 
   public static final String COURSE = "course";
@@ -39,14 +37,6 @@ public final class IndexerConstants {
   public static final String DOMAIN = "domain";
   
   public static final String STANDARD = "standard";
-    
-  public static final String CURRICULUM_CODE = "curriculumCode";
-
-  public static final String CURRICULUM_DESC = "curriculumDesc";
-
-  public static final String CURRICULUM_NAME = "curriculumName";
-
-  public static final String CURRICULUM = "curriculum";
 
   public static final String HYPHEN_SEPARATOR = "-";
   
@@ -75,20 +65,8 @@ public final class IndexerConstants {
   public static final String COLLECTION_COURSE_ID = "collection_course_id";
   
   public static final String TYPE_COURSE = "course";
-
-  public static final String FRAMEWORK_CODE = "frameworkCode";
-  
-  public static final String CURRICULUM_INFO = "curriculumInfo";
-  
-  public static final String PARENT_TITLE = "parentTitle";
-    
-  public static final String STANDARD_DESC = "standardDesc";
-  
-  public static final String INTERNAL_CODE = "internalCode";
-  
+      
   public static final String LEARNING_TARGET = "learningTarget";
-  
-  public static final String LEARNING_TARGET_DESC = "learningTargetDesc";
   
   public static final String UNPUBLISH_STATUS = "unpublished";
   
@@ -96,10 +74,46 @@ public final class IndexerConstants {
 
   public static final String QUESTIONS = "questions";
 
-  public static final String TWENTY_ONE_CENTURY_SKILL = "twentyOneCenturySkill";
-
   public static final String COMMA = ",";
+  
+  public static final String WATSON_TAGS = "watsonTags";
+
+  public static final String INFO_WATSON_TAGS_DOT = "resourceInfo.watsonTags.";
+  
+  public static final String INDEX_UPDATED_TIME = "indexUpdatedTime";
+  
+  public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
   public static final String STR_NULL = "null";
+  
+  public static final String TENANT_ID = "tenantId";
+
+  public static final String TENANT_ROOT_ID = "tenantRootId";
+    
+  public static final String TYPE_CROSSWALK = "crosswalk";
+
+  public static final String UNIT = "unit";
+
+  public static final String LESSON = "lesson";
+
+  public static final String COLLECTION = "collection";
+
+  public static final String ASSESSMENT = "assessment";
+
+  public static final String ASSESSMENT_EXTERNAL = "assessment-external";
+
+  public static final String TYPE_UNIT = "unit";
+  
+  public static final String TYPE_LESSON = "lesson";
+  
+  public static final Pattern MATCH_CUL_CW = Pattern.compile("course|unit|lesson|crosswalk");
+
+  public static final String PUBLISHED = "published";
+
+  public static final String FEATURED = "featured";
+
+  public static final String TYPE_RUBRIC = "rubric";
+  
+  public static final String _LEARNING_TARGET = "learning_target";
 
 }

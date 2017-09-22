@@ -12,7 +12,11 @@ public enum IndexType {
   DICTIONARY("dictionary"),
   PUBLISHER("publisher"),
   AGGREGATOR("aggregator"),
-  COURSE("course");
+  COURSE("course"),
+  CROSSWALK("crosswalk"),
+  UNIT("unit"),
+  LESSON("lesson"),
+  RUBRIC("rubric");
 
   final String type;
 

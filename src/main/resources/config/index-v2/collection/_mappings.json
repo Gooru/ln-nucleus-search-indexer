@@ -92,6 +92,20 @@
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
+               },
+               "tenant":{
+                  "properties":{
+                     "tenantRootId":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "tenantId":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     }
+                  }
                }
             }
          },
@@ -141,6 +155,20 @@
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
+               },
+               "tenant":{
+                  "properties":{
+                     "tenantRootId":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "tenantId":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     }
+                  }
                }
             }
          },
@@ -190,6 +218,20 @@
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":false
+               },
+               "tenant":{
+                  "properties":{
+                     "tenantRootId":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "tenantId":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     }
+                  }
                }
             }
          },
@@ -209,6 +251,11 @@
             "include_in_all":false
          },
          "contentFormat":{
+            "type":"string",
+            "analyzer":"keyword_lowercase",
+            "include_in_all":false
+         },
+         "contentSubFormat":{
             "type":"string",
             "analyzer":"keyword_lowercase",
             "include_in_all":false
@@ -237,6 +284,20 @@
             "type":"string",
             "analyzer":"snowball",
             "include_in_all":true
+         },
+         "tenant":{
+            "properties":{
+               "tenantRootId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               },
+               "tenantId":{
+                  "type":"string",
+                  "index":"not_analyzed",
+                  "include_in_all":false
+               }
+            }
          },
          "metadata":{
             "properties":{
@@ -360,6 +421,14 @@
                   ],
                   "include_in_all":false
                },
+               "leafDisplayCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
                "subject":{
                   "type":"nested",
                   "include_in_parent":true,
@@ -411,6 +480,73 @@
                            }
                         },
                         "include_in_all":false
+                     }
+                  }
+               },
+               "allEquivalentInternalCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "allEquivalentDisplayCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "allEquivalentFrameworkCodes":{
+                  "type":"string",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "equivalentCompetencies":{
+                  "properties":{
+                     "id":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "code":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "crosswalkCodes":{
+                        "properties":{
+                           "id":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "code":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "title":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "parentTitle":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           },
+                           "frameworkCode":{
+                              "type":"string",
+                              "index":"not_analyzed",
+                              "include_in_all":false
+                           }
+                        }
                      }
                   }
                },
@@ -469,33 +605,33 @@
                               "include_in_all":false
                            },
                            "curriculumInfo":{
-								"properties":{
-									"id":{
-										"type":"string",
-										"index":"not_analyzed",
-										"include_in_all":false
-									},
-									"code":{
-										"type":"string",
-										"index":"not_analyzed",
-										"include_in_all":false
-									},
-									"title":{
-										"type":"string",
-										"index":"not_analyzed",
-										"include_in_all":false
-									},
-									"parentTitle":{
-										"type":"string",
-										"index":"not_analyzed",
-										"include_in_all":false
-									},
-									"frameworkCode":{
-										"type":"string",
-										"index":"not_analyzed",
-										"include_in_all":false
-									}
-								}                      
+                              "properties":{
+                                 "id":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "code":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "title":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "parentTitle":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 },
+                                 "frameworkCode":{
+                                    "type":"string",
+                                    "index":"not_analyzed",
+                                    "include_in_all":false
+                                 }
+                              }
                            }
                         }
                      }
@@ -601,6 +737,18 @@
                "publisherQualityIndicator":{
                   "type":"integer",
                   "include_in_all":false
+               },
+               "isFeatured":{
+                  "type":"boolean",
+                  "include_in_all":false
+               },
+               "usedByStudentCount":{
+                  "type":"long",
+                  "include_in_all":false
+               },
+               "remixedInCourseCount":{
+                  "type":"long",
+                  "include_in_all":false
                }
             }
          },
@@ -654,6 +802,48 @@
                   "type":"string",
                   "index":"not_analyzed",
                   "include_in_all":true
+               }
+            }
+         },
+         "resourceInfo":{
+            "properties":{
+               "text":{
+                  "type":"string",
+                  "analyzer":"snowball",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ],
+                  "include_in_all":false
+               },
+               "watsonTags":{
+                  "properties":{
+                     "taxonomies":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "concepts":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "entities":{
+                        "type":"string",
+                        "index":"not_analyzed",
+                        "include_in_all":false
+                     },
+                     "keywords":{
+                        "type":"string",
+                        "analyzer":"standard",
+                        "fields":{
+                           "keywordsSnowball":{
+                              "type":"string",
+                              "analyzer":"snowball"
+                           }
+                        },
+                        "include_in_all":false
+                     }
+                  }
                }
             }
          },

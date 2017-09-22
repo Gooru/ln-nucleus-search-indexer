@@ -5,10 +5,15 @@ import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
-import org.javalite.activejdbc.Base;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
+import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRepository {
 
@@ -29,8 +34,6 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       query = Taxonomy.GET_DOMAIN_QUERY;
       break;
     case IndexerConstants.STANDARD :
-      query = Taxonomy.GET_CODE;
-      break;
     case IndexerConstants.LEARNING_TARGET :
       query = Taxonomy.GET_CODE;
       break;
@@ -53,5 +56,88 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       }
     }
     return taxMetaList;
+  }
+  
+  @Override
+  public JsonObject getGDTCode(String targetCodeId) {
+    JsonObject returnValue = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      TaxonomyCodeMapping result = null;
+      LazyList<TaxonomyCodeMapping> list = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
+      if (list != null && list.size() > 0) {
+        result = list.get(0);
+      } else {
+        LOGGER.warn("GDT code for {} standard : {} not present in DB", targetCodeId);
+      }
+
+      if (result != null) {
+        returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+      return returnValue;
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch taxonomy details ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return returnValue;
+  }
+  
+  @SuppressWarnings("rawtypes")
+  public List<Map> getEquivalentCompetencies(String sourceCodeId) {
+    List<Map> equivalentCodes = null;
+    String query = TaxonomyCodeMapping.GET_EQUIVALENT_CODE;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      equivalentCodes = db.findAll(query, sourceCodeId);
+      if (equivalentCodes.size() < 1) {
+        LOGGER.warn("Equivalent codes for {} standard : {} not present in DB", sourceCodeId);
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch Equivalent codes ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return equivalentCodes;
+  }
+
+  @Override
+  public JsonObject getCrosswalkCodes(String sourceCodeId) {
+    LOGGER.debug("TaxonomyRepositoryImpl : getCrosswalkCodes : " + sourceCodeId);
+    JsonObject returnObject = new JsonObject();
+    JsonArray crosswalkArray = null;
+    try {
+      LazyList<TaxonomyCodeMapping> crosswalkCodes = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_SOURCE_CODE_TO_TARGET_CODE, sourceCodeId);
+      if (crosswalkCodes == null || crosswalkCodes.size() < 1) {
+        LOGGER.debug("Crosswalk codes for GUT Code : {} not present in DB", sourceCodeId);
+        return null;
+      }
+      crosswalkArray = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(crosswalkCodes));
+      returnObject.put("id", sourceCodeId);
+      returnObject.put("crosswalk", crosswalkArray);
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch crosswalk codes for GUT : {} error : {}", sourceCodeId, e);
+    }
+    return returnObject;
+  }
+  
+  @Override
+  public JsonObject getGdtMapping(String targetCodeId) {
+
+    LOGGER.debug("TaxonomyRepositoryImpl : getGdtMapping : " + targetCodeId);
+    TaxonomyCodeMapping result = null;
+    LazyList<TaxonomyCodeMapping> list = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
+
+    if (list != null && list.size() > 0) {
+      result = list.get(0);
+    }
+
+    JsonObject returnValue = null;
+    if (result != null) {
+      returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+    }
+    return returnValue;
   }
 }

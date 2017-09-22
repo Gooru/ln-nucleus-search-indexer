@@ -45,4 +45,93 @@ public class CourseStatisticsEo extends JsonObject {
   public void setPreComputedWeight(double preComputedWeight) {
     this.put(IndexFields.PCWEIGHT, preComputedWeight);
   }
+  
+  public Boolean isFeatured() {
+    return this.getBoolean(IndexFields.IS_FEATURED, false);
+  }
+
+  public void setFeatured(Boolean isFeatured) {
+    if (isFeatured == null) {
+      isFeatured = false;
+    }
+    this.put(IndexFields.IS_FEATURED, isFeatured);
+  }
+  
+  public Long getCollectionCount() {
+    return this.getLong(IndexFields.COLLECTION_COUNT, 0L);
+  }
+
+  public void setCollectionCount(Long collectionCount) {
+    if (collectionCount == null) {
+      collectionCount = 0L;
+    }
+    this.put(IndexFields.COLLECTION_COUNT, collectionCount);
+  }
+
+  public Long getAssessmentCount() {
+    return this.getLong(IndexFields.ASSESMENT_COUNT, 0L);
+  }
+
+  public void setAssessmentCount(Long assessmentCount) {
+    if (assessmentCount == null) {
+      assessmentCount = 0L;
+    }
+    this.put(IndexFields.ASSESMENT_COUNT, assessmentCount);
+  }
+  
+  public Long getExternalAsssessmentCount() {
+    return this.getLong(IndexFields.EXTERNAL_ASSESSMENT_COUNT, 0L);
+  }
+
+  public void setExternalAssessmentCount(Long externalAssessmentCount) {
+    if (externalAssessmentCount == null) {
+      externalAssessmentCount = 0L;
+    }
+    this.put(IndexFields.EXTERNAL_ASSESSMENT_COUNT, externalAssessmentCount);
+  }
+  
+  
+  public Long getContainingCollectionsCount() {
+    return this.getLong(IndexFields.CONTAINING_COLLECTIONS_COUNT, 0L);
+  }
+
+  public void setContainingCollectionsCount(Long containingCollectionsCount) {
+    if (containingCollectionsCount == null) {
+      containingCollectionsCount = 0L;
+    }
+    this.put(IndexFields.CONTAINING_COLLECTIONS_COUNT, containingCollectionsCount);
+  }
+  
+  public Long getLessonCount() {
+    return this.getLong(IndexFields.LESSON_COUNT, 0L);
+  }
+
+  public void setLessonCount(Long lessonCount) {
+    if (lessonCount == null) {
+      lessonCount = 0L;
+    }
+    this.put(IndexFields.LESSON_COUNT, lessonCount);
+  }
+  
+  public Long getRemixedInClassCount() {
+    return this.getLong(IndexFields.REMIXED_IN_CLASS_COUNT, 0L);
+  }
+
+  public void setRemixedInClassCount(Long remixedInClassCount) {
+    if (remixedInClassCount == null) {
+      remixedInClassCount = 0L;
+    }
+    this.put(IndexFields.REMIXED_IN_CLASS_COUNT, remixedInClassCount);
+  }
+  
+  public Long getUsedByStudentCount() {
+    return this.getLong(IndexFields.USED_BY_STUDENT_COUNT, 0L);
+  }
+
+  public void setUsedByStudentCount(Long usedByStudentCount) {
+    if (usedByStudentCount == null) {
+      usedByStudentCount = 0L;
+    }
+    this.put(IndexFields.USED_BY_STUDENT_COUNT, usedByStudentCount);
+  }
 }

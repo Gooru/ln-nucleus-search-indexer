@@ -21,13 +21,12 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CollectionRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
-  private static final String EXTERNAL_ASSESSMENT = "assessment-external";
 
   @Override
   public JsonObject getCollection(String contentID) {
     LOGGER.debug("CollectionRepositoryImpl : getCollection : " + contentID);
     Collection result = null;
-    LazyList<Collection>  list = Collection.where(Collection.GET_COLLECTION, EXTERNAL_ASSESSMENT, contentID, false);
+    LazyList<Collection>  list = Collection.where(Collection.GET_COLLECTION, contentID, false);
     
     if(list != null && list.size() > 0){
       result = list.get(0);
@@ -123,15 +122,19 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
   @Override
   public JsonObject getDeletedCollection(String collectionId) {
     JsonObject returnValue = null;
-    List<Collection> collections = Collection.where(Collection.FETCH_DELETED_QUERY, collectionId, true);
-    if (collections.size() < 1) {
-      LOGGER.warn("Content id: {} not present in DB", collectionId);
-    }
-    if(collections.size() > 0){
-      Collection content = collections.get(0);
-      if (content != null) {
-        returnValue = new JsonObject(content.toJson(false));
+    try {
+      List<Collection> collections = Collection.where(Collection.FETCH_DELETED_QUERY, collectionId, true);
+      if (collections.size() < 1) {
+        LOGGER.warn("Content id: {} not present in DB", collectionId);
       }
+      if (collections.size() > 0) {
+        Collection content = collections.get(0);
+        if (content != null) {
+          returnValue = new JsonObject(content.toJson(false));
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.error("Unable to fetch deleted collection from DB : {} error : {}", collectionId, e);
     }
     return returnValue;
   }
@@ -149,6 +152,116 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
       }
     }
     return new JsonObject().put("collections", collectionArray);
+  }
+
+  @Override
+  public JsonObject getCollectionById(String collectionId) {
+    JsonObject returnValue = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      Collection result = Collection.findById(getPGObject("id", UUID_TYPE, collectionId));
+      if (result != null && !result.getBoolean(Collection.IS_DELETED)) {
+        returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collection : {} error : {}", collectionId, e);
+    }
+    closeDBConn(db);
+    return returnValue;
+  }
+  
+  @Override
+  public LazyList<Collection> getCollectionsByCourseId(String courseId) {
+    LazyList<Collection> collections = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_COURSE, courseId, false);
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for course: {} not present in DB", courseId);
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collections for course : {} error : {}", courseId, e);
+    }
+    closeDBConn(db);
+    return collections;
+  }
+  
+  @Override
+  public LazyList<Collection> getCollectionsByLessonId(String lessonId) {
+    LazyList<Collection> collections = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_LESSON, lessonId, false);
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for lesson: {} not present in DB", lessonId);
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collections for lesson : {} error : {}", lessonId, e);
+    }
+    closeDBConn(db);
+    return collections;
+  }
+  
+  @Override
+  public LazyList<Collection> getCollectionsByUnitId(String unitId) {
+    LazyList<Collection> collections = null;
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+    try {
+      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_UNIT, unitId, false);
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for unit: {} not present in DB", unitId);
+      }
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch collections for unit : {} error : {}", unitId, e);
+    }
+    closeDBConn(db);
+    return collections;
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getUsedByStudentCount(String collectionId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Collection.GET_STUDENTS_OF_COLLECTION, collectionId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("Students for collection : {} not present in DB", collectionId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch Students count for collection : {} error : {}", collectionId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
+  }
+
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getRemixedInCourseCount(String collectionId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      List countList = db.firstColumn(Collection.GET_USED_IN_COURSE_COUNT, collectionId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("RemixedInCourse Count for collection : {} not present in DB", collectionId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch RemixedInCourse count for collection : {} error : {}", collectionId, e);
+    } finally {
+      closeDBConn(db);
+    }
+    return count;
   }
 
 }

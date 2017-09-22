@@ -25,4 +25,6 @@ public interface ContentRepository {
   
   JsonObject getUserQuestions(String userId);
 
+  JsonObject getQuestionById(String contentId);
+
 }

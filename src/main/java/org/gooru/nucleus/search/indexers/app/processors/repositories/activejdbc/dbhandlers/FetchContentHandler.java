@@ -13,7 +13,12 @@ import org.gooru.nucleus.search.indexers.app.processors.responses.ExecutionResul
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +100,43 @@ public class FetchContentHandler implements DBHandler {
         case ExecuteOperationConstants.GET_DELETED_COURSE:
           result = CourseRepository.instance().getDeletedCourse(context.getId());
           break;
-
+          
+        case ExecuteOperationConstants.GET_GDT_MAPPING:
+          result = TaxonomyRepository.instance().getGdtMapping(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_CROSSWALK:
+          result = TaxonomyRepository.instance().getCrosswalkCodes(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_UNIT:
+          result = UnitRepository.instance().getUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_UNIT:
+          result = UnitRepository.instance().getDeletedUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_LESSON:
+          result = LessonRepository.instance().getLesson(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_LESSON:
+          result = LessonRepository.instance().getDeletedLesson(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_RUBRIC:
+          result = RubricRepository.instance().getRubric(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_RUBRIC:
+          result = RubricRepository.instance().getDeletedRubric(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_TAXONOMY_CODE:
+          result = TaxonomyCodeRepository.instance().getTaxonomyCode(context.getId());
+          break;
+          
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
           throw new InvalidRequestException();

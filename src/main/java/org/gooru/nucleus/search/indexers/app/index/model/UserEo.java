@@ -1,7 +1,8 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
-import io.vertx.core.json.JsonObject;
 import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
+
+import io.vertx.core.json.JsonObject;
 
 public class UserEo {
 
@@ -87,5 +88,12 @@ public class UserEo {
     user = JsonUtil.set(user, "profileImage", profileImg);
   }
   
+  public JsonObject getTenant() {
+    return user.getJsonObject("tenant", null);
+  }
+
+  public void setTenant(JsonObject tenant) {
+    user = JsonUtil.set(user, "tenant", tenant);
+  }
 
 }

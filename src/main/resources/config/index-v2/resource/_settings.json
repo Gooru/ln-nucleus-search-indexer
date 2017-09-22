@@ -50,9 +50,6 @@
         }
       },
       "number_of_shards": "11",
-      "refresh_interval": "1s",
-      "version": {
-        "created": "1020299"
-      }
+      "refresh_interval": "1s"
     }
   }
