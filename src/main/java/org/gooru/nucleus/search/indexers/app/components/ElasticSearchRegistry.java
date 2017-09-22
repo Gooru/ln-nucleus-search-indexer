@@ -127,7 +127,8 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
             if (((ResponseException) exception).getResponse().getStatusLine().getStatusCode() == 400
                     && (exception.getMessage().contains("index_already_exists_exception") || // ES 5.x
                             exception.getMessage().contains("resource_already_exists_exception") || // ES 6.x
-                            exception.getMessage().contains("IndexAlreadyExistsException"))) {
+                            exception.getMessage().contains("IndexAlreadyExistsException")|| // ES 6.x
+                            exception.getMessage().contains("invalid_index_name_exception"))) {
               LOGGER.debug("Oops! Es Index : {} already exist!", indexName);
               Response updateResponse;
               try {
@@ -142,6 +143,8 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
             } else {
               LOGGER.debug("Register index failed! Reason : {}", exception);
             }
+          } else {
+            LOGGER.debug("Index creation failed! Reason : {}", exception);
           }
         }
       }
