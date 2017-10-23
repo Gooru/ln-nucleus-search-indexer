@@ -170,24 +170,27 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     BulkRequest bulkRequest = new BulkRequest();
     JsonArray keywords = new JsonArray();
     for (String word : words) {
-        keywords.add(word);
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        QueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word));
-        sourceBuilder.query(filter);
-        SearchResponse result = null;
-        try {
-          result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), sourceBuilder);
-        } catch (Exception e) {
-          LOGGER.debug("Error while searching keyword" , word);
-        }
-        if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
-          LOGGER.debug("Keyword is already available in index !!" + word);
-          continue;
-        }
-        String id = UUID.randomUUID().toString();
-        JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.KEYWORD, word);
-        IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).source(data.toString(), XContentType.JSON); 
-        bulkRequest.add(request);
+      if (word.trim().length() < 3)
+        continue;
+      keywords.add(word);
+      SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+      QueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word));
+      sourceBuilder.query(filter);
+      SearchResponse result = null;
+      try {
+        result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), sourceBuilder);
+      } catch (Exception e) {
+        LOGGER.debug("Error while searching keyword", word);
+      }
+      if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
+        LOGGER.debug("Keyword is already available in index !!" + word);
+        continue;
+      }
+      String id = UUID.randomUUID().toString();
+      JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.KEYWORD, word);
+      IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).source(data.toString(),
+              XContentType.JSON);
+      bulkRequest.add(request);
     }
     if (bulkRequest.numberOfActions() > 0) {
       bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);

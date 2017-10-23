@@ -2,6 +2,7 @@ package org.gooru.nucleus.search.indexers.app.utils;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.StopFilter;
@@ -18,6 +20,7 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.standard.ClassicFilter;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 
 /**
  * Keywords extractor functionality handler
@@ -43,10 +46,15 @@ public final class KeywordsExtractor {
             // replace most common English contractions
             fullText = fullText.replaceAll("(?:'(?:[tdsm]|[vr]e|ll))+\\b", "");
 
+            // replace digits
+            fullText = fullText.replaceAll("[0-9]","");
+
             WhitespaceTokenizer stdToken = new WhitespaceTokenizer();
             stdToken.setReader(new StringReader(fullText));
 
-            tokenStream = new StopFilter(new ASCIIFoldingFilter(new ClassicFilter(new LowerCaseFilter(stdToken))), EnglishAnalyzer.getDefaultStopSet());
+            final CharArraySet stopSet = new CharArraySet(Arrays.asList(IndexerConstants.STOP_WORDS.split(IndexerConstants.COMMA)), false);
+            
+            tokenStream = new StopFilter(new ASCIIFoldingFilter(new ClassicFilter(new LowerCaseFilter(stdToken))), CharArraySet.unmodifiableSet(stopSet));
             tokenStream.reset();
 
             List<KeywordCard> keywordCards = new LinkedList<>();
