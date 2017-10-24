@@ -471,31 +471,6 @@
                         "customSpellCheckerSuggest"
                      ]
                   },
-                  "equivalentCompetencies":{
-                     "properties":{
-                        "id":{
-                           "type":"keyword"
-                        },
-                        "code":{
-                           "type":"keyword"
-                        },
-                        "title":{
-                           "type":"keyword"
-                        },
-                        "parentTitle":{
-                           "type":"keyword"
-                        },
-                        "frameworkCode":{
-                           "type":"keyword"
-                        },
-                        "leafInternalCodeId":{
-                           "type":"keyword"
-                        },
-                        "leafDisplayCode":{
-                           "type":"keyword"
-                        }
-                     }
-                  },
                   "taxonomyDataSet":{
                      "type":"text",
                      "analyzer":"snowball"

@@ -326,7 +326,6 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   
   @SuppressWarnings("rawtypes")
   private void setEquivalentCodes(Map<String, String> leafSLCodeMap, TaxonomyEo taxonomyEo) {
-    JsonArray eqCompetencyArray = new JsonArray();
     JsonArray eqInternalCodesArray = new JsonArray();
     JsonArray eqDisplayCodesArray = new JsonArray();
     JsonArray eqFrameworkArray = new JsonArray();
@@ -337,34 +336,15 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       if (gdtCode != null && !gdtCode.isEmpty()) {
         List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
         if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
-          JsonObject leafCodeObject = new JsonObject();
-          leafCodeObject.put(EntityAttributeConstants.ID, leafCode);
-          leafCodeObject.put(EntityAttributeConstants.CODE, gdtCode.getString(TaxonomyCode.TARGET_DISPLAY_CODE));
-          JsonArray cwArray = new JsonArray();
-          for (Map equivalentCompetency : equivalentCompetencyList) {
+          equivalentCompetencyList.forEach(equivalentCompetency -> {
             setEquivelantArrays(eqInternalCodesArray, eqDisplayCodesArray, eqFrameworkArray, equivalentCompetency);
-            if(!equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(leafCode)) 
-              setMappedAndEquivalentCompetency(leafCodeObject, cwArray, equivalentCompetency);
-          }
-          leafCodeObject.put(IndexFields.CROSSWALK_CODES, cwArray); 
-          eqCompetencyArray.add(leafCodeObject);
+          });
         }
       }
     });
     if (!eqInternalCodesArray.isEmpty()) taxonomyEo.setAllEquivalentInternalCodes(eqInternalCodesArray);
     if (!eqDisplayCodesArray.isEmpty()) taxonomyEo.setAllEquivalentDisplayCodes(eqDisplayCodesArray);
     if (!eqFrameworkArray.isEmpty()) taxonomyEo.setAllEquivalentFrameworkCodes(eqFrameworkArray);
-    if (!eqCompetencyArray.isEmpty()) taxonomyEo.setEquivalentCompetencies(eqCompetencyArray);
-  }
-
-  @SuppressWarnings("rawtypes")
-  private void setMappedAndEquivalentCompetency(JsonObject leafCodeObject, JsonArray cwArray, Map equivalentCompetency) {
-    JsonObject eqCompetency = new JsonObject(); 
-    eqCompetency.put(EntityAttributeConstants.ID, equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString());
-    eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
-    eqCompetency.put(IndexFields.FRAMEWORK_CODE, equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
-    eqCompetency.put(EntityAttributeConstants.TITLE, equivalentCompetency.get(TaxonomyCode.TARGET_TITLE).toString());
-    cwArray.add(eqCompetency);
   }
 
   @SuppressWarnings("rawtypes")
