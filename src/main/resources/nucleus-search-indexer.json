@@ -50,7 +50,7 @@
   	"dayOfMonth" : 1,
   	"hourOfDay" : 4,
   	"minutes" : 10080
-  }
+  },
   "http.port":8081
 
 }

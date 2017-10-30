@@ -18,6 +18,8 @@ public final class IndexerConstants {
   
   public static final String TYPE_TAXONOMY = "taxonomy";
 
+  public static final String TYPE_TENANT = "tenant";
+  
   public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
 
   public static final String COLLECTION_IDS = "collection_ids";
@@ -141,5 +143,7 @@ public final class IndexerConstants {
   public static final String BELOW_AVERAGE = "L";
   
   public static final String GUT_FRAMEWORK = "GDT";
+
+  public static final String ACTIVE = "active";
 
 }
