@@ -34,6 +34,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCod
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TenantRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TenantRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
@@ -73,6 +75,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.LESSON.getType(), new LessonEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RUBRIC.getType(), new RubricEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.TAXONOMY.getType(), new TaxonomyEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.TENANT.getType(), new TenantEsIndexSrcBuilder<>());
   }
 
   public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {
@@ -128,6 +131,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   
   protected TaxonomyCodeRepositoryImpl getTaxonomyCodeRepo() {
     return (TaxonomyCodeRepositoryImpl) TaxonomyCodeRepository.instance();
+  }
+  
+  protected TenantRepositoryImpl getTenantRepo() {
+    return (TenantRepositoryImpl) TenantRepository.instance();
   }
 
   protected RestHighLevelClient getClient() {

@@ -94,6 +94,13 @@ public final class EntityAttributeConstants {
   public static final String CODE_TYPE = "code_type";
   public static final String SUBJECT_CLASSIFICATION = "subject_classification";
 
+  public static final String NAME = "name";
+  public static final String TENANT_TYPE = "tenant_type";
+  public static final String CONTENT_VISIBILITY = "content_visibility";
+  public static final String CLASS_VISIBILITY = "class_visibility";
+  public static final String USER_VISIBILITY = "user_visibility";
+  public static final String PARENT_TENANT = "parent_tenant";
+
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
   public static final String COMPETENCY_DISPLAY_CODE = "competency_display_code";

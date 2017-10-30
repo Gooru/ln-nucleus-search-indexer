@@ -17,7 +17,8 @@ public enum IndexType {
   UNIT("unit"),
   LESSON("lesson"),
   RUBRIC("rubric"),
-  KEYWORD("keyword");
+  KEYWORD("keyword"),
+  TENANT("tenant");
 
   final String type;
 
