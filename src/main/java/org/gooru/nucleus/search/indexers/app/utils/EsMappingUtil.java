@@ -26,6 +26,10 @@ public final class EsMappingUtil {
   public static String getSettingConfig(String indexType) {
     return getConfig(indexType, "settings");
   }
+  
+  public static String getIndexSettingsConfig(String indexName) {
+    return getConfig(indexName, "indexsettings");
+  }
 
   public static String getConfig(String indexType, String configFile) {
     String content = null;

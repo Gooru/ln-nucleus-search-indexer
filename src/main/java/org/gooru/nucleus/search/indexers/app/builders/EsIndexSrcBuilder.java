@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
@@ -32,6 +34,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCod
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TenantRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TenantRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UnitRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.UserRepository;
@@ -50,6 +54,7 @@ import io.vertx.core.json.JsonObject;
 public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, D> {
 
   protected static final Logger LOGGER = LoggerFactory.getLogger(EsIndexSrcBuilder.class);
+  protected static final Logger INDEX_FAILURES_LOGGER = LoggerFactory.getLogger("org.gooru.nucleus.index.failures");
   protected static final String dateInputPatterns[] =
           { "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss.SSS", "yyyy/MM/dd", "yyyy-MM" };
   protected static final String dateOutputPattern = "yyyy/MM/dd HH:mm:ss";
@@ -70,6 +75,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.LESSON.getType(), new LessonEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RUBRIC.getType(), new RubricEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.TAXONOMY.getType(), new TaxonomyEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.TENANT.getType(), new TenantEsIndexSrcBuilder<>());
   }
 
   public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {
@@ -126,7 +132,15 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   protected TaxonomyCodeRepositoryImpl getTaxonomyCodeRepo() {
     return (TaxonomyCodeRepositoryImpl) TaxonomyCodeRepository.instance();
   }
+  
+  protected TenantRepositoryImpl getTenantRepo() {
+    return (TenantRepositoryImpl) TenantRepository.instance();
+  }
 
+  protected RestHighLevelClient getClient() {
+    return ElasticSearchRegistry.getRestHighLevelClient();
+  }
+  
   protected void setUser(JsonObject user, UserEo userEo) {
     userEo.setUsername(user.getString("display_name"));
     userEo.setUsernameDisplay(user.getString("display_name"));
@@ -319,45 +333,25 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   
   @SuppressWarnings("rawtypes")
   private void setEquivalentCodes(Map<String, String> leafSLCodeMap, TaxonomyEo taxonomyEo) {
-    JsonArray eqCompetencyArray = new JsonArray();
     JsonArray eqInternalCodesArray = new JsonArray();
     JsonArray eqDisplayCodesArray = new JsonArray();
     JsonArray eqFrameworkArray = new JsonArray();
-    leafSLCodeMap.keySet().stream().forEach(leafCode -> {
+    leafSLCodeMap.keySet().forEach(leafCode -> {
       eqInternalCodesArray.add(leafCode);
       eqDisplayCodesArray.add(leafSLCodeMap.get(leafCode));
       JsonObject gdtCode = getTaxonomyRepo().getGDTCode(leafCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
         List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
         if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
-          JsonObject leafCodeObject = new JsonObject();
-          leafCodeObject.put(EntityAttributeConstants.ID, leafCode);
-          leafCodeObject.put(EntityAttributeConstants.CODE, gdtCode.getString(TaxonomyCode.TARGET_DISPLAY_CODE));
-          JsonArray cwArray = new JsonArray();
-          for (Map equivalentCompetency : equivalentCompetencyList) {
+          equivalentCompetencyList.forEach(equivalentCompetency -> {
             setEquivelantArrays(eqInternalCodesArray, eqDisplayCodesArray, eqFrameworkArray, equivalentCompetency);
-            if(!equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(leafCode)) 
-              setMappedAndEquivalentCompetency(leafCodeObject, cwArray, equivalentCompetency);
-          }
-          leafCodeObject.put(IndexFields.CROSSWALK_CODES, cwArray); 
-          eqCompetencyArray.add(leafCodeObject);
+          });
         }
       }
     });
     if (!eqInternalCodesArray.isEmpty()) taxonomyEo.setAllEquivalentInternalCodes(eqInternalCodesArray);
     if (!eqDisplayCodesArray.isEmpty()) taxonomyEo.setAllEquivalentDisplayCodes(eqDisplayCodesArray);
     if (!eqFrameworkArray.isEmpty()) taxonomyEo.setAllEquivalentFrameworkCodes(eqFrameworkArray);
-    if (!eqCompetencyArray.isEmpty()) taxonomyEo.setEquivalentCompetencies(eqCompetencyArray);
-  }
-
-  @SuppressWarnings("rawtypes")
-  private void setMappedAndEquivalentCompetency(JsonObject leafCodeObject, JsonArray cwArray, Map equivalentCompetency) {
-    JsonObject eqCompetency = new JsonObject(); 
-    eqCompetency.put(EntityAttributeConstants.ID, equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString());
-    eqCompetency.put(EntityAttributeConstants.CODE, equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
-    eqCompetency.put(IndexFields.FRAMEWORK_CODE, equivalentCompetency.get(TaxonomyCode.TARGET_FRAMEWORK_ID).toString());
-    eqCompetency.put(EntityAttributeConstants.TITLE, equivalentCompetency.get(TaxonomyCode.TARGET_TITLE).toString());
-    cwArray.add(eqCompetency);
   }
 
   @SuppressWarnings("rawtypes")

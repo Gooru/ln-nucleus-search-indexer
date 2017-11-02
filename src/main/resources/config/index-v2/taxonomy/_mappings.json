@@ -1,245 +1,233 @@
 {
    "taxonomy":{
       "properties":{
+         "all":{
+            "type":"text"
+         },
          "indexType":{
-            "type":"string"
+            "type":"text"
          },
          "indexUpdatedDate":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "id":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
+            "type":"keyword"
          },
          "code":{
-            "type":"string",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "type":"text",
+            "analyzer":"keyword_lowercase"
          },
          "codeType":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
+            "type":"keyword"
          },
          "title":{
-            "type":"string",
+            "type":"text",
             "analyzer":"standard",
             "fields":{
                "titleSnowball":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball"
                },
                "titleKStem":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"gooru_kstem"
                }
             },
-            "include_in_all":true
+            "copy_to":[ "all" ]
          },
          "description":{
-            "type":"string",
+            "type":"text",
             "analyzer":"standard",
             "fields":{
                "descriptionKStem":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"gooru_kstem"
                },
                "descriptionSnowball":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"snowball"
                }
             },
-            "include_in_all":true
+            "copy_to":[ "all" ]
          },
          "gutCode":{
-            "type":"string",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "type":"text",
+            "analyzer":"keyword_lowercase"
          },
          "grade":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
+            "type":"keyword"
          },
          "competency":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "code":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
                },
                "codeType":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "description":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "descriptionKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "descriptionSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "gutCode":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
                },
                "grade":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                }
             }
          },
          "subject":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                },
                "subjectClassification":{
-                  "type":"string",
-                  "analyzer":"keyword_lowercase",
-                  "include_in_all":false
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
                }
             }
          },
          "course":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                }
             }
          },
          "domain":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
-                  "type":"string",
+                  "type":"text",
                   "analyzer":"standard",
                   "fields":{
                      "titleSnowball":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"snowball"
                      },
                      "titleKStem":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"gooru_kstem"
                      },
                      "titleLowercase":{
-                        "type":"string",
+                        "type":"text",
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "include_in_all":true
+                  "copy_to":[ "all" ]
                }
             }
          },
          "crosswalkCodes":{
             "properties":{
                "id":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "code":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "title":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "parentTitle":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "frameworkCode":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                }
             }
+         },
+         "keywordsSuggestion":{
+            "type":"text",
+            "analyzer":"full_text"
+         },
+         "keywords":{
+            "type":"text",
+            "analyzer":"standard",
+            "fields":{
+               "keywordsSnowball":{
+                  "type":"text",
+                  "analyzer":"snowball"
+               },
+               "keywordsKStem":{
+                  "type":"text",
+                  "analyzer":"gooru_kstem"
+               }
+            },
+            "copy_to":[ "all" ]
          }
       }
    }

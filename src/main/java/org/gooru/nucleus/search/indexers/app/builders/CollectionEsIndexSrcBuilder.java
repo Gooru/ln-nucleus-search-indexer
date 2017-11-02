@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -221,7 +221,10 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 
       rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
 
-      statisticsEo.setPreComputedWeight(PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields)));
+      double pcWeight = PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields));
+
+      statisticsEo.setPreComputedWeight(pcWeight);
+      LOGGER.debug("CollEISB->build : PC weight : " + pcWeight);
 
       collectionEo.setStatistics(statisticsEo.getStatistics());
       

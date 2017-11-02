@@ -18,6 +18,8 @@ public final class IndexerConstants {
   
   public static final String TYPE_TAXONOMY = "taxonomy";
 
+  public static final String TYPE_TENANT = "tenant";
+  
   public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
 
   public static final String COLLECTION_IDS = "collection_ids";
@@ -115,5 +117,33 @@ public final class IndexerConstants {
   public static final String TYPE_RUBRIC = "rubric";
   
   public static final String _LEARNING_TARGET = "learning_target";
+  
+  public static final String STOP_WORDS = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your";
+
+  public static final String REGEXP = "[^a-zA-Z0-9\\']";
+  
+  public static final String KEYWORD = "keyword";
+  
+  public static final String PUBLISHER = "publisher";
+  
+  public static final String REGEXP_NON_WORDS = "[^a-zA-Z0-9]";
+
+  public static final String EMPTY_STRING = "";
+  
+  public static final String CAPS_CROSSWALK_CODES = "CROSSWALK_CODES";
+
+  public static final Pattern STANDARD_MATCH = Pattern.compile("standard_level_1|standard_level_2");
+  
+  public static final String LEARNING_TARGET_TYPE_0 = "learning_target_level_0";
+  
+  public static final String ABOVE_AVERAGE = "H";
+  
+  public static final String AVERAGE = "M";
+  
+  public static final String BELOW_AVERAGE = "L";
+  
+  public static final String GUT_FRAMEWORK = "GDT";
+
+  public static final String ACTIVE = "active";
 
 }

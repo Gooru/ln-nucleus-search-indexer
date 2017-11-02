@@ -1,11 +1,25 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -15,6 +29,10 @@ import org.gooru.nucleus.search.indexers.app.index.model.SubjectEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEio;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
+import org.gooru.nucleus.search.indexers.app.utils.KeywordCard;
+import org.gooru.nucleus.search.indexers.app.utils.KeywordsExtractor;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -38,10 +56,11 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     String codeId = source.getString(TaxonomyCode.ID);
     taxonomyEo.setId(codeId);
     taxonomyEo.setIndexType(IndexerConstants.TYPE_TAXONOMY);
-    taxonomyEo.setDisplayCode(source.getString(EntityAttributeConstants.CODE, null));
-    taxonomyEo.setTitle(source.getString(EntityAttributeConstants.TITLE, null));
-    taxonomyEo.setDescription(source.getString(EntityAttributeConstants.DESCRIPTION, null));
-    taxonomyEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE, null));
+    taxonomyEo.setDisplayCode(source.getString(EntityAttributeConstants.CODE));
+    String title = source.getString(EntityAttributeConstants.TITLE);
+    taxonomyEo.setTitle(title);
+    taxonomyEo.setDescription(source.getString(EntityAttributeConstants.DESCRIPTION));
+    taxonomyEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE));
     taxonomyEo.setIndexUpdatedTime(new Date());
 
     //Set Competency
@@ -52,7 +71,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       competencyEo.setDisplayCode(competencyObject.getString(EntityAttributeConstants.CODE));
       competencyEo.setTitle(competencyObject.getString(EntityAttributeConstants.TITLE));
       competencyEo.setDescription(competencyObject.getString(EntityAttributeConstants.DESCRIPTION));
-      competencyEo.setCodeType(competencyObject.getString(EntityAttributeConstants.CODE_TYPE, null));
+      competencyEo.setCodeType(competencyObject.getString(EntityAttributeConstants.CODE_TYPE));
       taxonomyEo.setCompetency(competencyEo.getTaxonomyJson());
     }
     
@@ -126,10 +145,65 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       taxonomyEo.setDomain(domain.getDomainJson());
     }
     
-    //TODO
-    // taxonomyEo.setGrade();
+    //Extract and Index keywords
+    if (StringUtils.isNotBlank(title)) {
+      try {
+        JsonArray keywords = extractAndIndexKeywords(title);
+        taxonomyEo.setKeywords(keywords);
+        taxonomyEo.setKeywordsSuggestion(taxonomyEo.getKeywords());
+      } catch (Exception e) {
+        LOGGER.info("Exception while extracting keyword from competency : {}", e.getMessage());
+      }
+    }
+    
+    //TODO taxonomyEo.setGrade();
     
     return taxonomyEo.getTaxonomyJson();
+  }
+
+  private JsonArray extractAndIndexKeywords(String title) throws IOException {
+    Set<String> words = new HashSet<>();
+    List<KeywordCard> keywordsList = KeywordsExtractor.getKeywordsList(title);
+    keywordsList.forEach(keywordCard -> {
+      words.addAll(keywordCard.getTerms());
+    });
+    BulkRequest bulkRequest = new BulkRequest();
+    JsonArray keywords = new JsonArray();
+    for (String word : words) {
+      if (word.trim().length() < 3)
+        continue;
+      keywords.add(word);
+      SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+      QueryBuilder filter = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery(IndexerConstants.KEYWORD, word));
+      sourceBuilder.query(filter);
+      SearchResponse result = null;
+      try {
+        result = IndexService.instance().getDocument(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), sourceBuilder);
+      } catch (Exception e) {
+        LOGGER.debug("Error while searching keyword", word);
+      }
+      if (result != null && result.getHits() != null && result.getHits().getHits().length > 0) {
+        LOGGER.debug("Keyword is already available in index !!" + word);
+        continue;
+      }
+      String id = UUID.randomUUID().toString();
+      JsonObject data = new JsonObject().put(EntityAttributeConstants.ID, id).put(IndexerConstants.KEYWORD, word);
+      IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.QUERY), IndexType.KEYWORD.getType(), id).source(data.toString(),
+              XContentType.JSON);
+      bulkRequest.add(request);
+    }
+    if (bulkRequest.numberOfActions() > 0) {
+      bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
+      try {
+        BulkResponse bulkResponse = getClient().bulk(bulkRequest);
+        if (!bulkResponse.hasFailures()) {
+          LOGGER.debug("Successfully indexed bulk keywords!");
+        }
+      } catch (IOException e) {
+        INDEX_FAILURES_LOGGER.error("Failed Bulk index for keywords! Exception " + e.getMessage());
+      }
+    }
+    return keywords;
   }
   
   @SuppressWarnings("rawtypes")

@@ -2,69 +2,50 @@
    "contentinfo":{
       "properties":{
          "id":{
-            "type":"string",
-            "index":"not_analyzed",
-            "include_in_all":false
+            "type":"keyword"
          },
          "contentFormat":{
-            "type":"string",
-            "analyzer":"keyword_lowercase",
-            "include_in_all":false
+            "type":"text",
+            "analyzer":"keyword_lowercase"
          },
          "indexUpdatedTime":{
             "type":"date",
-            "format":"dateOptionalTime",
-            "include_in_all":false
+            "format":"dateOptionalTime"
          },
          "statistics":{
             "properties":{
                "usedInCollectionCount":{
-                  "type":"integer",
-                  "include_in_all":false
+                  "type":"integer"
                },
                "viewsCount":{
-                  "type":"long",
-                  "include_in_all":false
+                  "type":"long"
                },
                "collectionRemixCount":{
-                  "type":"long",
-                  "include_in_all":false
+                  "type":"long"
                },
                "collaboratorCount":{
-                  "type":"integer",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"integer"
                }
             }
          },
          "resourceInfo":{
             "properties":{
                "text":{
-                  "type":"string",
-                  "index":"not_analyzed",
-                  "include_in_all":false
+                  "type":"keyword"
                },
                "watsonTags":{
                   "properties":{
                      "taxonomies":{
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "concepts":{
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "entities":{
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "include_in_all":false
+                        "type":"keyword"
                      },
                      "keywords":{
-                        "type":"string",
-                        "index":"not_analyzed",
-                        "include_in_all":false
+                        "type":"keyword"
                      }
                   }
                }

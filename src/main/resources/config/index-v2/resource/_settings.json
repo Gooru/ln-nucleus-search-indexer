@@ -1,14 +1,6 @@
  {
     "index": {
-      "store": {
-        "compress": {
-          "stored": "true",
-          "tv": "true"
-        }
-      },
       "translog": {
-        "flush_threshold_ops": "5000",
-        "flush_threshold_period": "30m",
         "flush_threshold_size": "200mb"
       },
       "merge": {
@@ -18,7 +10,6 @@
           "segments_per_tier": "10"
         }
       },
-      "uuid": "fdVdst8UR-ibjTQuqmATFg",
       "analysis": {
         "analyzer": {
           "gooru_kstem": {

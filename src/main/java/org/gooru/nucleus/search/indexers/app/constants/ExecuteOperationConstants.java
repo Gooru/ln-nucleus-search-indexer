@@ -54,6 +54,11 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_DELETED_UNIT = "get_deleted_unit";
 
+  public static final String SAVE_RESOURCE_SUGGESTION = "save_resource_suggestion";
+
+  public static final String SAVE_COLLECTION_SUGGESTION = "save_collection_suggestion";
+  
+  public static final String GET_TENANT = "get_tenant";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();
