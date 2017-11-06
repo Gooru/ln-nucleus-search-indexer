@@ -129,5 +129,7 @@ public class IndexFields {
   public static final String CURRICULUM_INFO = "curriculumInfo";
   public static final String PARENT_TITLE = "parentTitle";
   public static final String TWENTY_ONE_CENTURY_SKILL = "twentyOneCenturySkill";
+  public static final String PUBLISHER_SUGGEST = "publisherSuggest";
+  public static final String PUBLISHER_DOT_PUBLISHER_LOWERCASE = "publisher.publisherLowercase";
 
 }

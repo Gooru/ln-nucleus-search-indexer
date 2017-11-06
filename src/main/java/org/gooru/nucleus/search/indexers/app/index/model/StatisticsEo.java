@@ -71,14 +71,11 @@ public class StatisticsEo {
   }
 
 
-  public Integer getHasFrameBreaker() {
-    return statistics.getInteger("hasFrameBreaker", 0);
+  public Boolean getHasFrameBreaker() {
+    return statistics.getBoolean("hasFrameBreaker", false);
   }
 
-  public void setHasFrameBreaker(Integer hasFrameBreaker) {
-    if (hasFrameBreaker == null) {
-      hasFrameBreaker = 0;
-    }
+  public void setHasFrameBreaker(Boolean hasFrameBreaker) {
     this.statistics = JsonUtil.set(statistics, "hasFrameBreaker", hasFrameBreaker);
   }
 

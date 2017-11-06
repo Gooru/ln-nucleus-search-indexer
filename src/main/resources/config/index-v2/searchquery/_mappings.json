@@ -1,49 +1,36 @@
- {
-            "searchquery": {
-                "properties": {
-                    "indexType": {
-                        "type": "string"
-                    },
-                    "indexUpdatedDate": {
-                        "type": "date",
-                        "format": "dateOptionalTime",
-                        "include_in_all": false
-                    },
-                    "objectType": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "organization": {
-                        "properties": {
-                            "code": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "analyzer": "standard",
-                                "include_in_all": false
-                            },
-                            "name": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "analyzer": "standard",
-                                "include_in_all": false
-                            },
-                            "partyUid": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "analyzer": "standard",
-                                "include_in_all": false
-                            }
-                        }
-                    },
-                    "querysuggestion": {
-                        "type": "string",
-                        "analyzer": "full_text"
-                    },
-                    "searchquery": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    }
-                }
+{
+   "searchquery":{
+      "properties":{
+         "indexType":{
+            "type":"text"
+         },
+         "indexUpdatedDate":{
+            "type":"date",
+            "format":"dateOptionalTime"
+         },
+         "objectType":{
+            "type":"keyword"
+         },
+         "organization":{
+            "properties":{
+               "code":{
+                  "type":"keyword"
+               },
+               "name":{
+                  "type":"keyword"
+               },
+               "partyUid":{
+                  "type":"keyword"
+               }
             }
-        }
+         },
+         "querysuggestion":{
+            "type":"text",
+            "analyzer":"full_text"
+         },
+         "searchquery":{
+            "type":"keyword"
+         }
+      }
+   }
+}

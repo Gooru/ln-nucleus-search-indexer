@@ -1,12 +1,13 @@
 package org.gooru.nucleus.search.indexers.bootstrap.startup;
 
-import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
-import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
-import org.gooru.nucleus.search.indexers.app.components.KafkaRegistry;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
+import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
+import org.gooru.nucleus.search.indexers.app.components.KafkaRegistry;
+import org.gooru.nucleus.search.indexers.app.utils.UtilityManager;
 
 public class Initializers implements Iterable<Initializer> {
 
@@ -17,6 +18,7 @@ public class Initializers implements Iterable<Initializer> {
     initializers.add(DataSourceRegistry.getInstance());
     initializers.add(ElasticSearchRegistry.getInstance());
     initializers.add(KafkaRegistry.getInstance());
+    initializers.add(UtilityManager.getInstance());
     internalIterator = initializers.iterator();
   }
 

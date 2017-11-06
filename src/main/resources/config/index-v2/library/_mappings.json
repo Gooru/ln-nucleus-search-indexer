@@ -1,108 +1,58 @@
- {
-            "library": {
-                "properties": {
-                    "collections": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "id": {
-                        "type": "integer",
-                        "include_in_all": false
-                    },
-                    "indexUpdatedDate": {
-                        "type": "date",
-                        "format": "dateOptionalTime",
-                        "include_in_all": false
-                    },
-                    "organization": {
-                        "properties": {
-                            "code": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "analyzer": "standard",
-                                "include_in_all": false
-                            },
-                            "name": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "analyzer": "standard",
-                                "include_in_all": false
-                            },
-                            "partyUid": {
-                                "type": "string",
-                                "index": "not_analyzed",
-                                "analyzer": "standard",
-                                "include_in_all": false
-                            }
-                        }
-                    },
-                    "partyPermissions": {
-                        "type": "nested",
-                        "properties": {
-                            "name": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            },
-                            "type": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            },
-                            "uId": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            }
-                        }
-                    },
-                    "quizzes": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "resourcesIdList": {
-                        "type": "string",
-                        "include_in_all": false
-                    },
-                    "simple_collections": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "simple_quizzes": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    },
-                    "type": {
-                        "type": "string",
-                        "index": "not_analyzed",
-                        "include_in_all": false
-                    }
-                }
-            },
-            "dictionary": {
-                "analyzer": "standard",
-                "properties": {
-                    "definitions": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    },
-                    "indexUpdatedDate": {
-                        "type": "date",
-                        "format": "dateOptionalTime",
-                        "include_in_all": false
-                    },
-                    "type": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    },
-                    "word": {
-                        "type": "string",
-                        "analyzer": "keyword_lowercase",
-                        "include_in_all": false
-                    }
-                }
+{
+   "library":{
+      "properties":{
+         "collections":{
+            "type":"keyword"
+         },
+         "id":{
+            "type":"integer"
+         },
+         "indexUpdatedDate":{
+            "type":"date",
+            "format":"dateOptionalTime"
+         },
+         "organization":{
+            "properties":{
+               "code":{
+                  "type":"keyword"
+               },
+               "name":{
+                  "type":"keyword"
+               },
+               "partyUid":{
+                  "type":"keyword"
+               }
             }
+         },
+         "partyPermissions":{
+            "type":"nested",
+            "properties":{
+               "name":{
+                  "type":"keyword"
+               },
+               "type":{
+                  "type":"keyword"
+               },
+               "uId":{
+                  "type":"keyword"
+               }
+            }
+         },
+         "quizzes":{
+            "type":"keyword"
+         },
+         "resourcesIdList":{
+            "type":"text"
+         },
+         "simple_collections":{
+            "type":"keyword"
+         },
+         "simple_quizzes":{
+            "type":"keyword"
+         },
+         "type":{
+            "type":"keyword"
+         }
+      }
+   }
 }

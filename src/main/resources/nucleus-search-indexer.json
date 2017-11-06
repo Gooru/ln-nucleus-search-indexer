@@ -7,7 +7,7 @@
     "elasticsearch.indexMiddle" : "local_",
     "elasticsearch.indexSuffix" : "_v2", 
     "elasticsearch.clustername" : "els-local",
-    "elasticsearch.host" : "localhost:9300"
+    "elasticsearch.host" : "localhost:9200"
   },
   "defaultKafkaSettings" : {
   	"bootstrap.servers":"localhost:9092",
@@ -33,9 +33,23 @@
   	"username" : "search",
   	"password" : "search",
   	"autoCommit" : false,
-  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/reports_db",
+  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/search",
   	"maximumPoolSize" : 5,
   	"database" : "reports_db"
+  },
+  "populateResourceSuggestJobSettings" : {
+  	"batchSize" : 100,
+  	"offset" : 0,
+  	"dayOfMonth" : 1,
+  	"hourOfDay" : 4,
+  	"minutes" : 10080
+  },
+  "populateCollectionSuggestJobSettings" : {
+  	"batchSize" : 100,
+  	"offset" : 0,
+  	"dayOfMonth" : 1,
+  	"hourOfDay" : 4,
+  	"minutes" : 10080
   },
   "http.port":8081
 

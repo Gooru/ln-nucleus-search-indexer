@@ -94,8 +94,22 @@ public final class EntityAttributeConstants {
   public static final String CODE_TYPE = "code_type";
   public static final String SUBJECT_CLASSIFICATION = "subject_classification";
 
+  public static final String NAME = "name";
+  public static final String TENANT_TYPE = "tenant_type";
+  public static final String CONTENT_VISIBILITY = "content_visibility";
+  public static final String CLASS_VISIBILITY = "class_visibility";
+  public static final String USER_VISIBILITY = "user_visibility";
+  public static final String PARENT_TENANT = "parent_tenant";
 
-  //Index tracker constants
+  //Suggest Table columns
+  public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
+  public static final String COMPETENCY_DISPLAY_CODE = "competency_display_code";
+  public static final String MICRO_COMPETENCY_INTERNAL_CODE = "micro_competency_internal_code";
+  public static final String MICRO_COMPETENCY_DISPLAY_CODE = "micro_competency_display_code";
+  public static final String IDS_TO_SUGGEST = "ids_to_suggest";
+  public static final String PERFORMANCE_RANGE = "performance_range";
+
+  //Index tracker columns
   public static final String GOORU_OID = "gooru_oid";
   public static final String INDEX_TYPE = "index_type";
   public static final String SUB_FORMAT = "subformat";

@@ -16,4 +16,24 @@ public class BaseIndexRepo {
   protected void closeDBConn(DB db){
     db.close();
   }
+  
+  protected String toPostgresArrayString(String[] input) {
+    if (input.length == 0) {
+      return "{}";
+    }
+
+    StringBuilder sb = new StringBuilder();
+    sb.append('{');
+    int count = 1;
+    for (String code : input) {
+      sb.append('"').append(code).append('"');
+      if (count == input.length) {
+        return sb.append('}').toString();
+      }
+      sb.append(',');
+      count++;
+    }
+
+    return null;
+  }
 }

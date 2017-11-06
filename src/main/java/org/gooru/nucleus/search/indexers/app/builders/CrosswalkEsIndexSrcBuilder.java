@@ -35,7 +35,7 @@ public class CrosswalkEsIndexSrcBuilder<S extends JsonObject, D extends Crosswal
     JsonArray cwSource = source.getJsonArray(IndexerConstants.TYPE_CROSSWALK);
     if (cwSource != null) {
       JsonArray crosswalkCodes = new JsonArray();
-      cwSource.stream().forEach(eqCompetency -> {
+      cwSource.forEach(eqCompetency -> {
         JsonObject equivalentCompetency = (JsonObject) eqCompetency;
         JsonObject crosswalkCode = setCrosswalkObject(equivalentCompetency);
         crosswalkCodes.add(crosswalkCode);
