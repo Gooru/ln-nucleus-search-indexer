@@ -30,7 +30,8 @@ public class TenantEsIndexSrcBuilder<S extends JsonObject, D extends TenantEio> 
   @Override
   protected JsonObject build(JsonObject source, D tenantEo) throws Exception {
 
-    tenantEo.setId(source.getString(EntityAttributeConstants.ID));
+    String id = source.getString(EntityAttributeConstants.ID);
+    tenantEo.setId(id);
     tenantEo.setIndexType(IndexerConstants.TYPE_TENANT);
     tenantEo.setCreatedAt(source.getString(EntityAttributeConstants.CREATED_AT));
     tenantEo.setUpdatedAt(source.getString(EntityAttributeConstants.UPDATED_AT));
@@ -41,17 +42,24 @@ public class TenantEsIndexSrcBuilder<S extends JsonObject, D extends TenantEio> 
     tenantEo.setContentVisibility(source.getString(EntityAttributeConstants.CONTENT_VISIBILITY));
     tenantEo.setClassVisibility(source.getString(EntityAttributeConstants.CLASS_VISIBILITY));
     tenantEo.setUserVisibility(source.getString(EntityAttributeConstants.USER_VISIBILITY));
+    // Set Tenant Setting
+    String fcVisibility = getTenantRepo().fetchTenantSetting(id, EntityAttributeConstants.FC_VISIBILITY);
+    tenantEo.setFCVisibility(fcVisibility);
+
     String parentTenantId = source.getString(EntityAttributeConstants.PARENT_TENANT);
     tenantEo.setParentTenantId(source.getString(EntityAttributeConstants.PARENT_TENANT));
-    //tenantEo.setRootTenantId(rootTenantId);
+    // tenantEo.setRootTenantId(rootTenantId);
 
     // Set Parent
-    if (!StringUtils.isBlank(parentTenantId)) {
+    if (StringUtils.isNotBlank(parentTenantId)) {
       Set<String> parentTenantList = new HashSet<>();
       parentTenantList.add(parentTenantId);
       findParentTenantIds(parentTenantId, parentTenantList);
       tenantEo.setParentTenantIds(parentTenantList);
+      String parentFcVisibility = getTenantRepo().fetchTenantSetting(parentTenantId, EntityAttributeConstants.FC_VISIBILITY);
+      tenantEo.setParentTenantFCVisibility(parentFcVisibility);
     }
+
     return tenantEo.getTenantJson();
   }
 

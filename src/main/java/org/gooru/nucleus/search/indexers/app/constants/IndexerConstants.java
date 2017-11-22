@@ -145,5 +145,7 @@ public final class IndexerConstants {
   public static final String GUT_FRAMEWORK = "GDT";
 
   public static final String ACTIVE = "active";
+  
+  public static final Pattern STATIC_CONTENT_MATCH = Pattern.compile("rubric|taxonomy|tenant|crosswalk");
 
 }
