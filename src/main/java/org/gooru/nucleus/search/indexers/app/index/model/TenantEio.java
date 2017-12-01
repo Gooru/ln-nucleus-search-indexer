@@ -1,6 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -106,6 +107,22 @@ public class TenantEio {
 
   public void setUserVisibility(String userVisibility) {
     tenant = JsonUtil.set(tenant, "userVisibility", userVisibility);
+  }
+  
+  public String getFCVisibility() {
+    return tenant.getString("fcVisibility", null);
+  }
+
+  public void setFCVisibility(String fcVisibility) {
+    tenant = JsonUtil.set(tenant, "fcVisibility", fcVisibility);
+  }
+  
+  public String getParentTenantFCVisibility() {
+    return tenant.getString("parentTenantFCVisibility", null);
+  }
+
+  public void setParentTenantFCVisibility(String parentTenantFCVisibility) {
+    tenant = JsonUtil.set(tenant, "parentTenantFCVisibility", parentTenantFCVisibility);
   }
   
   public String setParentTenantId() {

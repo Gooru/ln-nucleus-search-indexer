@@ -12,4 +12,6 @@ public interface TenantRepository {
   
   JsonObject findByTenantId(String tenantId);
 
+  String fetchTenantSetting(String tenantId, String key);
+
 }

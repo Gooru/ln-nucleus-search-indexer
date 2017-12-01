@@ -340,8 +340,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
           ValidationUtil.rejectIfNotFound(result, "Invalid format type or DB returned null data for id " + indexableId);
           // Get statistics and extracted text data from backup index
-          Map<String, Object> contentInfoAsMap =
-                  getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
+          Map<String, Object> contentInfoAsMap = null;
+          if (!IndexerConstants.STATIC_CONTENT_MATCH.matcher(typeName).matches())
+            contentInfoAsMap = getDocument(indexableId, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
           switch(typeName) {
             case IndexerConstants.TYPE_RESOURCE :
             case IndexerConstants.TYPE_QUESTION :
