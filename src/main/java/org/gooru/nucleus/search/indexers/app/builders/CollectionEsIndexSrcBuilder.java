@@ -194,6 +194,18 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       }
       collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
 
+      // Set REEf
+      Double efficacy = null;
+      Double engagement = null;
+      JsonObject signatureResource = getOriginalResourceRepo().getSignatureResources(collectionEo.getId(), collectionEo.getContentFormat());
+      if (signatureResource != null) {
+        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      }
+      statisticsEo.setEfficacy(efficacy);
+      statisticsEo.setEngagement(engagement);
+      statisticsEo.setRelevance(null);
+      
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       int remixCount = source.getInteger(ScoreConstants.COLLECTION_REMIX_COUNT);
 

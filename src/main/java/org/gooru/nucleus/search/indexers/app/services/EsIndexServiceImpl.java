@@ -349,7 +349,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             case IndexerConstants.TYPE_COLLECTION :
             case IndexerConstants.TYPE_ASSESSMENT :
               setExistingStatisticsData(result, contentInfoAsMap, typeName);
-              result.put("isBuildIndex", true);
               break;
             case IndexerConstants.TYPE_COURSE : 
               CourseIndexService.instance().setExistingStatisticsData(result, contentInfoAsMap);
@@ -739,7 +738,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         JsonArray items = responseJson.getJsonArray("items");
         items.forEach(responseItem -> {
           JsonObject updateError = ((JsonObject) responseItem).getJsonObject("update");
-          if (!responseJson.getBoolean("errors")) {
+          if (responseJson.getBoolean("errors")) {
             JsonObject error = updateError.getJsonObject("error");
             if (error.getString("type").equalsIgnoreCase("document_missing_exception")) {
               INDEX_FAILURES_LOGGER.error("updateBrokenStatus : failed for id : {} : Exception : {}", updateError.getString("_id"), error.getString("reason"));

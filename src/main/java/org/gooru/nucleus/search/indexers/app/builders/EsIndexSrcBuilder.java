@@ -28,6 +28,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexReposi
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
@@ -137,6 +139,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (TenantRepositoryImpl) TenantRepository.instance();
   }
 
+  protected OriginalResourceRepositoryImpl getOriginalResourceRepo() {
+    return (OriginalResourceRepositoryImpl) OriginalResourceRepository.instance();
+  }
+  
   protected RestHighLevelClient getClient() {
     return ElasticSearchRegistry.getRestHighLevelClient();
   }

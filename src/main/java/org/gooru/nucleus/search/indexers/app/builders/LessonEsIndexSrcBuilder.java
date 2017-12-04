@@ -157,6 +157,18 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       statisticsEo.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0);
       statisticsEo.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0);
 
+      // Set REEf
+      Double efficacy = null;
+      Double engagement = null;
+      JsonObject signatureResource = getOriginalResourceRepo().getSignatureResources(lessonEio.getId(), lessonEio.getContentFormat());
+      if (signatureResource != null) {
+        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      }
+      statisticsEo.setEfficacy(efficacy);
+      statisticsEo.setEngagement(engagement);
+      statisticsEo.setRelevance(null);
+      
       //TODO Add logic to store statistics - remixed in units, course, class count
       lessonEio.setStatistics(statisticsEo.getStatistics());
 

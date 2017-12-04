@@ -173,6 +173,18 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
       statisticsEo.setAssessmentCount((!assessmentIds.isEmpty()) ? assessmentIds.size() : 0);
       statisticsEo.setExternalAssessmentCount((!externalAssessmentIds.isEmpty()) ? externalAssessmentIds.size() : 0);
 
+      // Set REEf
+      Double efficacy = null;
+      Double engagement = null;
+      JsonObject signatureResource = getOriginalResourceRepo().getSignatureResources(unitEio.getId(), unitEio.getContentFormat());
+      if (signatureResource != null) {
+        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      }
+      statisticsEo.setEfficacy(efficacy);
+      statisticsEo.setEngagement(engagement);
+      statisticsEo.setRelevance(null);
+      
       //TODO Add logic to store statistics
       unitEio.setStatistics(statisticsEo.getStatistics());
     } catch (Exception e) {

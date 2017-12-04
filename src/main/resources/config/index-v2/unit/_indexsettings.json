@@ -235,6 +235,15 @@
                   },
                   "preComputedWeight":{
                      "type":"double"
+                  },
+                  "efficacy":{
+                     "type":"double"
+                  },
+                  "engagement":{
+                     "type":"double"
+                  },
+                  "relevance":{
+                     "type":"double"
                   }
                }
             },

@@ -122,6 +122,18 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
 
       setCollectionContents(source, originalresourceEo, statisticsEo);
 
+      // Set REEf
+      Double efficacy = null;
+      Double engagement = null;
+      JsonObject signatureResource = getOriginalResourceRepo().getSignatureResources(originalresourceEo.getId(), originalresourceEo.getContentFormat());
+      if (signatureResource != null) {
+        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      }
+      statisticsEo.setEfficacy(efficacy);
+      statisticsEo.setEngagement(engagement);
+      statisticsEo.setRelevance(null);
+      
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.USED_IN_COLLECTION_COUNT, statisticsEo.getUsedInCollectionCount());

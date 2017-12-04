@@ -3,8 +3,12 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.OriginalResource;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
+import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.LazyList;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class OriginalResourceRepositoryImpl implements OriginalResourceRepository {
+public class OriginalResourceRepositoryImpl extends BaseIndexRepo implements OriginalResourceRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
@@ -62,6 +66,26 @@ public class OriginalResourceRepositoryImpl implements OriginalResourceRepositor
       }
     }
     return new JsonObject().put("resources", contentArray);
+  }
+  
+  @Override
+  public JsonObject getSignatureResources(String contentId, String contentType) {
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
+
+    JsonObject returnValue = null;
+    LazyList<SignatureResources> contents = SignatureResources.where(SignatureResources.FETCH_SIGNATURE_RESOURCES, contentId, contentType);
+    if (contents.size() < 1) {
+      LOGGER.warn("Content id: {} not present in DB", contentId);
+    }
+    if (contents.size() > 0) {
+      SignatureResources content = contents.get(0);
+      if (content != null) {
+        returnValue = new JsonObject(content.toJson(false));
+      }
+    }
+    closeDBConn(db);
+    return returnValue;
   }
   
   private PGobject getPGObject(String field, String type, String value) {

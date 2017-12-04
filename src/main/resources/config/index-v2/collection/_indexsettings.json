@@ -594,6 +594,15 @@
                   },
                   "remixedInCourseCount":{
                      "type":"long"
+                  },
+                  "efficacy":{
+                     "type":"double"
+                  },
+                  "engagement":{
+                     "type":"double"
+                  },
+                  "relevance":{
+                     "type":"double"
                   }
                }
             },

@@ -13,5 +13,7 @@ public interface OriginalResourceRepository {
   JsonObject getDeletedContent(String contentId);
   
   JsonObject getUserOriginalResources(String userId);
+  
+  JsonObject getSignatureResources(String contentId, String contentType);
 
 }
