@@ -3,7 +3,6 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.OriginalResource;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
@@ -74,7 +73,7 @@ public class OriginalResourceRepositoryImpl extends BaseIndexRepo implements Ori
     openConnection(db);
 
     JsonObject returnValue = null;
-    LazyList<SignatureResources> contents = SignatureResources.where(SignatureResources.FETCH_SIGNATURE_RESOURCES, contentId, contentType);
+    LazyList<SignatureResources> contents = SignatureResources.findBySQL(SignatureResources.FETCH_SIGNATURE_RESOURCES, contentId, contentType);
     if (contents.size() < 1) {
       LOGGER.warn("Content id: {} not present in DB", contentId);
     }

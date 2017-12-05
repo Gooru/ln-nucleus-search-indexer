@@ -13,6 +13,8 @@ import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.CaseFormat;
+
 import io.vertx.core.impl.StringEscapeUtils;
 
 /**
@@ -30,7 +32,7 @@ class SimpleJsonFormatter implements JsonFormatter {
 
     public SimpleJsonFormatter(boolean pretty, List<String> attributes) {
         this.pretty = pretty;
-        this.attributes = (attributes != null && !attributes.isEmpty()) ? lowerCased(attributes) : null;
+        this.attributes = (attributes != null && !attributes.isEmpty()) ? camelCased(attributes) : null;
     }
 
     @Override
@@ -76,7 +78,7 @@ class SimpleJsonFormatter implements JsonFormatter {
 
         if (this.attributes == null) {
             Set<String> attributeNamesAll = ModelDelegate.attributeNames(model.getClass());
-            names = lowerCased(attributeNamesAll);
+            names = camelCased(attributeNamesAll);
         } else {
             names = this.attributes;
         }
@@ -129,11 +131,11 @@ class SimpleJsonFormatter implements JsonFormatter {
         sb.append('}');
     }
 
-    private static String[] lowerCased(Collection<String> collection) {
+    private static String[] camelCased(Collection<String> collection) {
         String[] array = new String[collection.size()];
         int i = 0;
         for (String elem : collection) {
-            array[i++] = elem.toLowerCase();
+            array[i++] = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, elem);
         }
         return array;
     }

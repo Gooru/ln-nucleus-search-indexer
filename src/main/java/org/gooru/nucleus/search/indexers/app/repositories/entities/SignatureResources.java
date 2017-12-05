@@ -14,6 +14,7 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName(SchemaConstants.ID)
 public class SignatureResources extends Model {
   
-  public static final String FETCH_SIGNATURE_RESOURCES = "resource_id = ? and resource_type = ?";
+  public static final String FETCH_SIGNATURE_RESOURCES =
+          "SELECT AVG(efficacy) AS efficacy, AVG(engagement) AS engagement from signature_resources WHERE resource_id = ? AND resource_type = ?";
 
 }
