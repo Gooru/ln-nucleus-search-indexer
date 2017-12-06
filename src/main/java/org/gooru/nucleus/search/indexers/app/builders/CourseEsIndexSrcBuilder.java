@@ -285,7 +285,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getOriginalResourceRepo().getSignatureResources(courseEio.getId(), courseEio.getContentFormat());
+      JsonObject signatureResource = getIndexRepo().getSignatureResources(courseEio.getId(), courseEio.getContentFormat());
       if (signatureResource != null) {
         efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
         engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);

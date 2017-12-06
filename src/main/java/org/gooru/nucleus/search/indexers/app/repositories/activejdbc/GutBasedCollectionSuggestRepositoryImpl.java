@@ -1,5 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import java.util.Arrays;
+
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.GutBasedCollectionSuggest;
 import org.javalite.activejdbc.DB;
@@ -40,7 +42,7 @@ public class GutBasedCollectionSuggestRepositoryImpl extends BaseIndexRepo imple
       openConnection(db);
       db.openTransaction();
       db.exec(GutBasedCollectionSuggest.INSERT_QUERY, data.getString(EntityAttributeConstants.COMPETENCY_INTERNAL_CODE), data.getString(EntityAttributeConstants.MICRO_COMPETENCY_INTERNAL_CODE),
-              data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), toPostgresArrayString(data.getString(EntityAttributeConstants.IDS_TO_SUGGEST).split(",")));
+              data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), toPostgresArrayString(Arrays.asList(data.getString(EntityAttributeConstants.IDS_TO_SUGGEST).split(","))));
       db.commitTransaction();
       LOGGER.info("Successfully populated collection suggestion for code : {}", id);
     } catch (Throwable e) {

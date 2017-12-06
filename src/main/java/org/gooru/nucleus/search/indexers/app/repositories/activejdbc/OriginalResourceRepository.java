@@ -14,6 +14,4 @@ public interface OriginalResourceRepository {
   
   JsonObject getUserOriginalResources(String userId);
   
-  JsonObject getSignatureResources(String contentId, String contentType);
-
 }

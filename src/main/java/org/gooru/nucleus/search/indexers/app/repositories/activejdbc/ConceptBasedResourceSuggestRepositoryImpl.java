@@ -1,5 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import java.util.Arrays;
+
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.ConceptBasedResourceSuggest;
 import org.javalite.activejdbc.DB;
@@ -40,7 +42,7 @@ public class ConceptBasedResourceSuggestRepositoryImpl extends BaseIndexRepo imp
       openConnection(db);
       db.openTransaction();
       db.exec(ConceptBasedResourceSuggest.INSERT_QUERY, data.getString(EntityAttributeConstants.COMPETENCY_INTERNAL_CODE), data.getString(EntityAttributeConstants.MICRO_COMPETENCY_INTERNAL_CODE), "collection-study",
-              data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), "resource", toPostgresArrayString(data.getString(EntityAttributeConstants.IDS_TO_SUGGEST).split(",")));
+              data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), "resource", toPostgresArrayString(Arrays.asList(data.getString(EntityAttributeConstants.IDS_TO_SUGGEST).split(","))));
       db.commitTransaction();
       LOGGER.info("Successfully populated resource suggestion for code : {}", id);
     } catch (Throwable e) {

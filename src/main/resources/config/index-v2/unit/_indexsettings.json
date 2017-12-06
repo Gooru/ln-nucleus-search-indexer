@@ -329,7 +329,73 @@
                   "frameworkCode":{
                      "type":"keyword"
                   },
+                  "learningTargets":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "hasStandard":{
+                     "type":"integer"
+                  },
+                  "standards":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "standardsDisplay":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "ltDisplay":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
                   "leafInternalCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "leafDisplayCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "allEquivalentInternalCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "allEquivalentDisplayCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "allEquivalentFrameworkCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "gutCodes":{
                      "type":"text",
                      "analyzer":"keyword_lowercase",
                      "copy_to":[

@@ -197,7 +197,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getOriginalResourceRepo().getSignatureResources(collectionEo.getId(), collectionEo.getContentFormat());
+      JsonObject signatureResource = getIndexRepo().getSignatureResources(collectionEo.getId(), collectionEo.getContentFormat());
       if (signatureResource != null) {
         efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
         engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);

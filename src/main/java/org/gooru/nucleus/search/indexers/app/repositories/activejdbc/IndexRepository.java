@@ -3,6 +3,8 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.util.List;
 import java.util.Map;
 
+import io.vertx.core.json.JsonObject;
+
 @SuppressWarnings("rawtypes")
 public interface IndexRepository {
 
@@ -15,4 +17,6 @@ public interface IndexRepository {
   List<Map> getLicenseMetadata(int metadataId);
 
   List<Map> getTwentyOneCenturySkill(String referenceIds);
+
+  JsonObject getSignatureResources(String contentId, String contentType);
 }

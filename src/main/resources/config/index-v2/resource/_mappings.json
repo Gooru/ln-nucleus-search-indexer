@@ -502,6 +502,13 @@
                      "customSpellCheckerSuggest"
                   ]
                },
+               "gutCodes":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ]
+               },
                "taxonomyDataSet":{
                   "type":"text",
                   "analyzer":"snowball"
