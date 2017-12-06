@@ -102,6 +102,9 @@ public class IndexFields {
   public static final String CONTAINING_COLLECTIONS_COUNT = "containingCollectionsCount";
   public static final String LESSON_COUNT = "lessonCount";
   public static final String CROSSWALK_CODES = "crosswalkCodes";
+  public static final String EFFICACY = "efficacy";
+  public static final String ENGAGEMENT = "engagement";
+  public static final String RELEVANCE = "relevance";
 	
 	// license fields
 	

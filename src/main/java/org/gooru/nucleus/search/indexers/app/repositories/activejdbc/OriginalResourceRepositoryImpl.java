@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class OriginalResourceRepositoryImpl implements OriginalResourceRepository {
+public class OriginalResourceRepositoryImpl extends BaseIndexRepo implements OriginalResourceRepository {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
@@ -63,7 +63,7 @@ public class OriginalResourceRepositoryImpl implements OriginalResourceRepositor
     }
     return new JsonObject().put("resources", contentArray);
   }
-  
+
   private PGobject getPGObject(String field, String type, String value) {
     PGobject pgObject = new PGobject();
     pgObject.setType(type);

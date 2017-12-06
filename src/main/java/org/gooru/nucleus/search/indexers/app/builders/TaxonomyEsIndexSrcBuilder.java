@@ -91,6 +91,8 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
         if (!crosswalkCodes.isEmpty()) taxonomyEo.setCrosswalkCodes(crosswalkCodes);
       }
       taxonomyEo.setGutCode(gutCode);
+      JsonArray gutPrerequisites = getTaxonomyRepo().getGutPrerequisites(gutCode);
+      if (!gutPrerequisites.isEmpty()) taxonomyEo.setGutPrerequisites(getTaxonomyRepo().getGutPrerequisites(gutCode));
     }
     
     String subjectCode = null;

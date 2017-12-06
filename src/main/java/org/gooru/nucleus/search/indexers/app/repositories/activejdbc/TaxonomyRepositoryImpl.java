@@ -1,10 +1,13 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.GutCompetencyPrerequisite;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -140,4 +143,37 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     }
     return returnValue;
   }
+  
+  @Override
+  public JsonArray getGutPrerequisites(String gutCompetencyId) {
+    JsonArray responses = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+      LazyList<GutCompetencyPrerequisite> competencyDependencies = GutCompetencyPrerequisite.where(
+              GutCompetencyPrerequisite.SELECT_GUT_COMPETENCY_PREREQUISITE,
+              gutCompetencyId);      
+      if (competencyDependencies.size() < 1) {
+        LOGGER.warn("Prerequisites for {} standard : {} not present in DB", gutCompetencyId);
+      }
+      responses = new JsonArray();
+      if (!competencyDependencies.isEmpty()) {
+          List<String> competencyIds = new ArrayList<>(competencyDependencies.size());
+          competencyDependencies.forEach(competency -> {
+              competencyIds.add(competency.getString(GutCompetencyPrerequisite.PREREQUISITE_GUT_COMPETENCY_ID));
+          });
+          LazyList<TaxonomyCode> competencies = TaxonomyCode
+              .where(TaxonomyCode.FETCH_TAXONOMY_CODES, toPostgresArrayString(competencyIds));
+
+          responses = new JsonArray(JsonFormatterBuilder
+              .buildSimpleJsonFormatter(false, TaxonomyCode.RESPONSE_FIELDS).toJson(competencies));
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch Competency prerequisite : ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return responses;
+  }
+  
 }

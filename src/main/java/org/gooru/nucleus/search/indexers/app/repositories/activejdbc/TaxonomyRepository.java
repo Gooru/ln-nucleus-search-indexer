@@ -3,6 +3,7 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.util.List;
 import java.util.Map;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 @SuppressWarnings("rawtypes")
@@ -18,5 +19,7 @@ public interface TaxonomyRepository {
   JsonObject getCrosswalkCodes(String sourceCodeId);
   
   JsonObject getGDTCode(String targetCodeId);
+  
+  JsonArray getGutPrerequisites(String gutCompetencyId);
 
 }

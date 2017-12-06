@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
 import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.vertx.core.json.JsonObject;
 
 public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepository {
 
@@ -51,5 +55,25 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     closeDBConn(db);
     return metadataReference;
   }
+  
+  @Override
+  public JsonObject getSignatureResources(String contentId, String contentType) {
+    DB db = getDefaultDataSourceDBConnection();
+    openConnection(db);
 
+    JsonObject returnValue = null;
+    LazyList<SignatureResources> contents = SignatureResources.findBySQL(SignatureResources.FETCH_SIGNATURE_RESOURCES, contentId, contentType);
+    if (contents.size() < 1) {
+      LOGGER.warn("Content id: {} not present in DB", contentId);
+    }
+    if (contents.size() > 0) {
+      SignatureResources content = contents.get(0);
+      if (content != null) {
+        returnValue = new JsonObject(content.toJson(false));
+      }
+    }
+    closeDBConn(db);
+    return returnValue;
+  }
+  
 }

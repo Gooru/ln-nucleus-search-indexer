@@ -502,6 +502,13 @@
                      "customSpellCheckerSuggest"
                   ]
                },
+               "gutCodes":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ]
+               },
                "taxonomyDataSet":{
                   "type":"text",
                   "analyzer":"snowball"
@@ -651,6 +658,15 @@
                },
                "externalAssessmentCount":{
                   "type":"long"
+               },
+               "efficacy":{
+                  "type":"double"
+               },
+               "engagement":{
+                  "type":"double"
+               },
+               "relevance":{
+                  "type":"double"
                }
             }
          },

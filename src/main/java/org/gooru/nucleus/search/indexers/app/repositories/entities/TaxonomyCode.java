@@ -1,5 +1,8 @@
 package org.gooru.nucleus.search.indexers.app.repositories.entities;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.gooru.nucleus.search.indexers.app.constants.SchemaConstants;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.DbName;
@@ -54,6 +57,10 @@ public class TaxonomyCode extends Model {
   public final static String FETCH_LT_CODES = "select id, code_type, parent_taxonomy_code_id from taxonomy_code where code_type = 'learning_target_level_0' order by updated_at asc limit ? offset ?";
 
   public final static String FETCH_STANDARD_CODES = "select id, code_type from taxonomy_code where code_type IN ('standard_level_1','standard_level_2') order by updated_at asc limit ? offset ?";
+
+  public final static String FETCH_TAXONOMY_CODES = "id = ANY (?::varchar[])";
+  
+  public static final List<String> RESPONSE_FIELDS = Arrays.asList("title", "code");
 
 }
 

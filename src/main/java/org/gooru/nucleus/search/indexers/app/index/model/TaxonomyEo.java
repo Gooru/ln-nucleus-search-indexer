@@ -157,5 +157,13 @@ public class TaxonomyEo extends JsonObject {
   public void setAllEquivalentFrameworkCodes(JsonArray allEquivalentFrameworkCodes) {
     taxonomy = JsonUtil.set(taxonomy, "allEquivalentFrameworkCodes", new JsonArray(allEquivalentFrameworkCodes.stream().distinct().collect(Collectors.toList())));
   }
+  
+  public JsonArray getGutCodes() {
+    return taxonomy.getJsonArray("gutCodes", null);
+  } 
+  
+  public void setGutCodes(JsonArray gutCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "gutCodes", new JsonArray(gutCodes.stream().distinct().collect(Collectors.toList())));
+  }
 
 }

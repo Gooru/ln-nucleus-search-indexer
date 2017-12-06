@@ -163,6 +163,18 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
 
       setCollectionContents(source, contentEo, statisticsEo);
 
+      // Set REEf
+      Double efficacy = null;
+      Double engagement = null;
+      JsonObject signatureResource = getIndexRepo().getSignatureResources(contentEo.getId(), contentEo.getContentFormat());
+      if (signatureResource != null) {
+        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      }
+      statisticsEo.setEfficacy(efficacy);
+      statisticsEo.setEngagement(engagement);
+      statisticsEo.setRelevance(null);
+      
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.USED_IN_COLLECTION_COUNT, statisticsEo.getUsedInCollectionCount());
