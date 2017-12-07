@@ -156,4 +156,11 @@ public class TaxonomyEio {
     taxonomy = JsonUtil.set(taxonomy, "gutPrerequisites", gutPrerequisites);
   }
 
+  public String getFrameworkCode() {
+    return taxonomy.getString("frameworkCode", null);
+  }
+
+  public void setFrameworkCode(String frameworkCode) {
+    taxonomy = JsonUtil.set(taxonomy, "frameworkCode", frameworkCode);
+  }
 }

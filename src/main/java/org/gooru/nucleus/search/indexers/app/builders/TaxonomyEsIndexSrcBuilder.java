@@ -61,6 +61,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     taxonomyEo.setTitle(title);
     taxonomyEo.setDescription(source.getString(EntityAttributeConstants.DESCRIPTION));
     taxonomyEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE));
+    taxonomyEo.setFrameworkCode(source.getString(EntityAttributeConstants.STANDARD_FRAMEWORK_ID));
     taxonomyEo.setIndexUpdatedTime(new Date());
 
     //Set Competency
