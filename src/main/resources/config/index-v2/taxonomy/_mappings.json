@@ -21,6 +21,9 @@
          "codeType":{
             "type":"keyword"
          },
+         "frameworkCode":{
+            "type":"keyword"
+         },
          "title":{
             "type":"text",
             "analyzer":"standard",
