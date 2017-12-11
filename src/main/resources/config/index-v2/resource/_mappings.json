@@ -844,10 +844,7 @@
                   "analyzer":"keyword_lowercase"
                }
             }
-         },
-               "tent":{
-                  "type":"keyword"
-               }
+         }
       }
    }
 }
