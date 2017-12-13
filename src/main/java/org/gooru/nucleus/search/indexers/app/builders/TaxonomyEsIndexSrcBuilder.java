@@ -61,6 +61,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     taxonomyEo.setTitle(title);
     taxonomyEo.setDescription(source.getString(EntityAttributeConstants.DESCRIPTION));
     taxonomyEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE));
+    taxonomyEo.setFrameworkCode(source.getString(EntityAttributeConstants.STANDARD_FRAMEWORK_ID));
     taxonomyEo.setIndexUpdatedTime(new Date());
 
     //Set Competency
@@ -91,6 +92,8 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
         if (!crosswalkCodes.isEmpty()) taxonomyEo.setCrosswalkCodes(crosswalkCodes);
       }
       taxonomyEo.setGutCode(gutCode);
+      JsonArray gutPrerequisites = getTaxonomyRepo().getGutPrerequisites(gutCode);
+      if (!gutPrerequisites.isEmpty()) taxonomyEo.setGutPrerequisites(getTaxonomyRepo().getGutPrerequisites(gutCode));
     }
     
     String subjectCode = null;

@@ -147,5 +147,20 @@ public class TaxonomyEio {
   public void setKeywordsSuggestion(JsonArray keywords) {
     taxonomy = JsonUtil.set(taxonomy, "keywordsSuggestion", keywords);
   }
+  
+  public JsonArray getGutPrerequisites() {
+    return taxonomy.getJsonArray("gutPrerequisites", null);
+  }
 
+  public void setGutPrerequisites(JsonArray gutPrerequisites) {
+    taxonomy = JsonUtil.set(taxonomy, "gutPrerequisites", gutPrerequisites);
+  }
+
+  public String getFrameworkCode() {
+    return taxonomy.getString("frameworkCode", null);
+  }
+
+  public void setFrameworkCode(String frameworkCode) {
+    taxonomy = JsonUtil.set(taxonomy, "frameworkCode", frameworkCode);
+  }
 }

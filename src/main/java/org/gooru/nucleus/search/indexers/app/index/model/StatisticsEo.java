@@ -315,4 +315,39 @@ public class StatisticsEo {
     }
     statistics.put("usedByStudentCount", usedByStudentCount);
   }
+  
+  public Double getEfficacy() {
+    return statistics.getDouble("efficacy", 0.5);
+  }
+
+  public void setEfficacy(Double efficacy) {
+    if (efficacy == null) {
+      efficacy = 0.5;
+    }
+    this.statistics = JsonUtil.set(statistics, "efficacy", efficacy);
+  }
+  
+
+  public Double getEngagement() {
+    return statistics.getDouble("engagement", 0.5);
+  }
+
+  public void setEngagement(Double engagement) {
+    if (engagement == null) {
+      engagement = 0.5;
+    }
+    this.statistics = JsonUtil.set(statistics, "engagement", engagement);
+  }
+  
+
+  public Double getRelevance() {
+    return statistics.getDouble("relevance", 0.5);
+  }
+
+  public void setRelevance(Double relevance) {
+    if (relevance == null) {
+      relevance = 0.5;
+    }
+    this.statistics = JsonUtil.set(statistics, "relevance", relevance);
+  }
 }

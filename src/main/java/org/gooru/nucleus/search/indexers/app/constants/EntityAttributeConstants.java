@@ -101,7 +101,10 @@ public final class EntityAttributeConstants {
   public static final String USER_VISIBILITY = "user_visibility";
   public static final String PARENT_TENANT = "parent_tenant";
   public static final String FC_VISIBILITY = "fc_visibility";
-
+  public static final String EFFICACY = "efficacy";
+  public static final String ENGAGEMENT = "engagement";
+  public static final String RELEVANCE = "relevance";
+  
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
   public static final String COMPETENCY_DISPLAY_CODE = "competency_display_code";

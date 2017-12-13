@@ -1,5 +1,8 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.gooru.nucleus.search.indexers.app.components.DataSourceRegistry;
 import org.javalite.activejdbc.DB;
 
@@ -16,24 +19,24 @@ public class BaseIndexRepo {
   protected void closeDBConn(DB db){
     db.close();
   }
-  
-  protected String toPostgresArrayString(String[] input) {
-    if (input.length == 0) {
-      return "{}";
-    }
 
-    StringBuilder sb = new StringBuilder();
-    sb.append('{');
-    int count = 1;
-    for (String code : input) {
-      sb.append('"').append(code).append('"');
-      if (count == input.length) {
-        return sb.append('}').toString();
+  public static String toPostgresArrayString(Collection<String> input) {
+      int approxSize = ((input.size() + 1) * 36); // Length of UUID is around
+                                                  // 36 chars
+      Iterator<String> it = input.iterator();
+      if (!it.hasNext()) {
+          return "{}";
       }
-      sb.append(',');
-      count++;
-    }
 
-    return null;
+      StringBuilder sb = new StringBuilder(approxSize);
+      sb.append('{');
+      for (;;) {
+          String s = it.next();
+          sb.append('"').append(s).append('"');
+          if (!it.hasNext()) {
+              return sb.append('}').toString();
+          }
+          sb.append(',');
+      }
   }
 }

@@ -21,6 +21,9 @@
          "codeType":{
             "type":"keyword"
          },
+         "frameworkCode":{
+            "type":"keyword"
+         },
          "title":{
             "type":"text",
             "analyzer":"standard",
@@ -228,6 +231,32 @@
                }
             },
             "copy_to":[ "all" ]
+         },
+         "gutPrerequisites":{
+            "properties":{
+               "id":{
+                  "type":"keyword"
+               },
+               "code":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "title":{
+                  "type":"text",
+                  "analyzer":"standard",
+                  "fields":{
+                     "titleSnowball":{
+                        "type":"text",
+                        "analyzer":"snowball"
+                     },
+                     "titleKStem":{
+                        "type":"text",
+                        "analyzer":"gooru_kstem"
+                     }
+                  },
+                  "copy_to":[ "all" ]
+               }
+            }
          }
       }
    }

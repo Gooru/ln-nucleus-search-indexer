@@ -281,6 +281,19 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       statistics.setRemixedInClassCount(remixedInClassCount);
       Long studentCount = getCourseRepo().getUsedByStudentCount(id);
       statistics.setUsedByStudentCount(studentCount);
+      
+      // Set REEf
+      Double efficacy = null;
+      Double engagement = null;
+      JsonObject signatureResource = getIndexRepo().getSignatureResources(courseEio.getId(), courseEio.getContentFormat());
+      if (signatureResource != null) {
+        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      }
+      statistics.setEfficacy(efficacy);
+      statistics.setEngagement(engagement);
+      statistics.setRelevance(null);
+      
       courseEio.setStatistics(statistics);
     }
     catch(Exception e){

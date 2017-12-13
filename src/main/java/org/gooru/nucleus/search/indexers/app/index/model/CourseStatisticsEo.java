@@ -134,4 +134,40 @@ public class CourseStatisticsEo extends JsonObject {
     }
     this.put(IndexFields.USED_BY_STUDENT_COUNT, usedByStudentCount);
   }
+  
+
+  public Double getEfficacy() {
+    return this.getDouble(IndexFields.EFFICACY, 0.5);
+  }
+
+  public void setEfficacy(Double efficacy) {
+    if (efficacy == null) {
+      efficacy = 0.5;
+    }
+    this.put(IndexFields.EFFICACY, efficacy);
+  }
+  
+
+  public Double getEngagement() {
+    return this.getDouble(IndexFields.ENGAGEMENT, 0.5);
+  }
+
+  public void setEngagement(Double engagement) {
+    if (engagement == null) {
+      engagement = 0.5;
+    }
+    this.put(IndexFields.ENGAGEMENT, engagement);
+  }
+  
+
+  public Double getRelevance() {
+    return this.getDouble(IndexFields.RELEVANCE, 0.5);
+  }
+
+  public void setRelevance(Double relevance) {
+    if (relevance == null) {
+      relevance = 0.5;
+    }
+    this.put(IndexFields.RELEVANCE, relevance);
+  }
 }
