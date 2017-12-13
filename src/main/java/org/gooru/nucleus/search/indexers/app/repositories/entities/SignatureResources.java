@@ -15,6 +15,6 @@ import org.javalite.activejdbc.annotations.Table;
 public class SignatureResources extends Model {
   
   public static final String FETCH_SIGNATURE_RESOURCES =
-          "SELECT AVG(efficacy) AS efficacy, AVG(engagement) AS engagement from signature_resources WHERE resource_id = ? AND resource_type = ?";
+          "SELECT MAX(efficacy) AS efficacy, MAX(engagement) AS engagement from signature_resources WHERE resource_id = ? AND resource_type = ?";
 
 }
