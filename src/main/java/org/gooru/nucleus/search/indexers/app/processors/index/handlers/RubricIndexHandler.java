@@ -8,7 +8,7 @@ import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
-import org.gooru.nucleus.search.indexers.app.services.CourseIndexService;
+import org.gooru.nucleus.search.indexers.app.services.RubricIndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
@@ -37,7 +37,7 @@ public class RubricIndexHandler extends BaseIndexHandler implements IndexHandler
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNull(result, ErrorMsgConstants.RUBRIC_DATA_NULL);
       LOGGER.debug("RuIH->indexDocument : getIndexDataRubric() returned:" + result);
-      CourseIndexService.instance().indexDocument(rubricId, result);
+      RubricIndexService.instance().indexDocument(rubricId, result);
       LOGGER.debug("RuIH->indexDocument : Indexed rubric id : " + rubricId);
     } catch (Exception ex) {
       LOGGER.error("RuIH->Re-index failed for rubric : " + rubricId + " Exception " + ex);
@@ -58,7 +58,7 @@ public class RubricIndexHandler extends BaseIndexHandler implements IndexHandler
       ProcessorContext context = new ProcessorContext(rubricId, ExecuteOperationConstants.GET_DELETED_RUBRIC);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RUBRIC_NOT_DELETED);
-      CourseIndexService.instance().deleteDocument(rubricId);
+      RubricIndexService.instance().deleteDocument(rubricId);
     }
     catch(Exception e){
       LOGGER.error("RuIH-> Delete failed for rubric : " + rubricId + " Exception " + e);
