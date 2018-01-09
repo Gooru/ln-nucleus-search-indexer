@@ -29,7 +29,7 @@ public class RubricIndexServiceImpl extends BaseIndexService implements RubricIn
         IndexRequest request = new IndexRequest(getIndexName(), IndexerConstants.TYPE_RUBRIC, id).source(EsIndexSrcBuilder.get(IndexerConstants.TYPE_RUBRIC).buildSource(data), XContentType.JSON); 
         getHighLevelClient().index(request);
       } catch (Exception e) {
-          LOGGER.info("Exception while indexing");
+          LOGGER.info("Exception while indexing rubric");
           throw new Exception(e);
       }
     }
@@ -42,7 +42,7 @@ public class RubricIndexServiceImpl extends BaseIndexService implements RubricIn
       getHighLevelClient().delete(delete);
     }
     catch(Exception e){
-      LOGGER.error("Failed to delete course from index");
+      LOGGER.error("Failed to delete rubric from index");
       throw new Exception(e);
     }
   }
