@@ -176,7 +176,7 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResources(unitEio.getId(), unitEio.getContentFormat());
+      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(unitEio.getId(), unitEio.getContentFormat());
       if (signatureResource != null) {
         efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
         engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);

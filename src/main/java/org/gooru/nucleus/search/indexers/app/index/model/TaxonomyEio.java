@@ -37,11 +37,11 @@ public class TaxonomyEio {
   }
   
   public String getDisplayCode() {
-    return taxonomy.getString("displayCode", null);
+    return taxonomy.getString("code", null);
   }
 
   public void setDisplayCode(String displayCode) {
-    taxonomy = JsonUtil.set(taxonomy, "displayCode", displayCode);
+    taxonomy = JsonUtil.set(taxonomy, "code", displayCode);
   }
   
   public String getTitle() {
@@ -153,7 +153,7 @@ public class TaxonomyEio {
   }
 
   public void setGutPrerequisites(JsonArray gutPrerequisites) {
-    taxonomy = JsonUtil.set(taxonomy, "gutPrerequisites", gutPrerequisites);
+    taxonomy = JsonUtil.set(taxonomy, "gutPrerequisites", new JsonArray(gutPrerequisites.stream().distinct().collect(Collectors.toList())));
   }
 
   public String getFrameworkCode() {
@@ -163,4 +163,29 @@ public class TaxonomyEio {
   public void setFrameworkCode(String frameworkCode) {
     taxonomy = JsonUtil.set(taxonomy, "frameworkCode", frameworkCode);
   }
+  
+  public JsonArray getSignatureCollections() {
+    return taxonomy.getJsonArray("signatureCollections", null);
+  }
+
+  public void setSignatureCollections(JsonArray signatureCollections) {
+    taxonomy = JsonUtil.set(taxonomy, "signatureCollections", signatureCollections);
+  }
+  
+  public JsonArray getSignatureAssessments() {
+    return taxonomy.getJsonArray("signatureAssessments", null);
+  }
+
+  public void setSignatureAssessments(JsonArray signatureAssessments) {
+    taxonomy = JsonUtil.set(taxonomy, "signatureAssessments", signatureAssessments);
+  }
+  
+  public JsonArray getSignatureResources() {
+    return taxonomy.getJsonArray("signatureResources", null);
+  }
+
+  public void setSignatureResources(JsonArray signatureResources) {
+    taxonomy = JsonUtil.set(taxonomy, "signatureResources", signatureResources);
+  }
+   
 }
