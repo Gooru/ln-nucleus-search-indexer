@@ -37,7 +37,9 @@
                   "analyzer":"gooru_kstem"
                }
             },
-            "copy_to":[ "all" ]
+            "copy_to":[
+               "all"
+            ]
          },
          "description":{
             "type":"text",
@@ -52,7 +54,9 @@
                   "analyzer":"snowball"
                }
             },
-            "copy_to":[ "all" ]
+            "copy_to":[
+               "all"
+            ]
          },
          "gutCode":{
             "type":"text",
@@ -86,7 +90,9 @@
                         "analyzer":"gooru_kstem"
                      }
                   },
-                  "copy_to":[ "all" ]
+                  "copy_to":[
+                     "all"
+                  ]
                },
                "description":{
                   "type":"text",
@@ -101,7 +107,9 @@
                         "analyzer":"snowball"
                      }
                   },
-                  "copy_to":[ "all" ]
+                  "copy_to":[
+                     "all"
+                  ]
                },
                "gutCode":{
                   "type":"text",
@@ -134,7 +142,9 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "copy_to":[ "all" ]
+                  "copy_to":[
+                     "all"
+                  ]
                },
                "subjectClassification":{
                   "type":"text",
@@ -164,7 +174,9 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "copy_to":[ "all" ]
+                  "copy_to":[
+                     "all"
+                  ]
                }
             }
          },
@@ -190,7 +202,9 @@
                         "analyzer":"keyword_lowercase"
                      }
                   },
-                  "copy_to":[ "all" ]
+                  "copy_to":[
+                     "all"
+                  ]
                }
             }
          },
@@ -230,7 +244,9 @@
                   "analyzer":"gooru_kstem"
                }
             },
-            "copy_to":[ "all" ]
+            "copy_to":[
+               "all"
+            ]
          },
          "gutPrerequisites":{
             "properties":{
@@ -254,7 +270,387 @@
                         "analyzer":"gooru_kstem"
                      }
                   },
-                  "copy_to":[ "all" ]
+                  "copy_to":[
+                     "all"
+                  ]
+               }
+            }
+         },
+         "signatureCollections":{
+            "properties":{
+               "id":{
+                  "type":"keyword"
+               },
+               "thumbnail":{
+                  "type":"keyword"
+               },
+               "title":{
+                  "type":"text",
+                  "analyzer":"gooru_kstem",
+                  "copy_to":[
+                     "all"
+                  ]
+               },
+               "efficacy":{
+                  "type":"double"
+               },
+               "engagement":{
+                  "type":"double"
+               },
+               "relevance":{
+                  "type":"double"
+               },
+               "creator":{
+                  "properties":{
+                     "emailId":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "firstName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "fullName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "userId":{
+                        "type":"keyword"
+                     },
+                     "profileImage":{
+                        "type":"keyword"
+                     },
+                     "lastName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "profileVisibility":{
+                        "type":"boolean"
+                     },
+                     "usernameDisplay":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase",
+                        "fields":{
+                           "usernameDisplaySnowball":{
+                              "type":"text",
+                              "analyzer":"snowball"
+                           }
+                        }
+                     },
+                     "tenant":{
+                        "properties":{
+                           "tenantRootId":{
+                              "type":"keyword"
+                           },
+                           "tenantId":{
+                              "type":"keyword"
+                           }
+                        }
+                     }
+                  }
+               },
+               "owner":{
+                  "properties":{
+                     "emailId":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "firstName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "fullName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "userId":{
+                        "type":"keyword"
+                     },
+                     "lastName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "profileVisibility":{
+                        "type":"boolean"
+                     },
+                     "usernameDisplay":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase",
+                        "fields":{
+                           "usernameDisplaySnowball":{
+                              "type":"text",
+                              "analyzer":"snowball"
+                           }
+                        }
+                     },
+                     "profileImage":{
+                        "type":"keyword"
+                     },
+                     "tenant":{
+                        "properties":{
+                           "tenantRootId":{
+                              "type":"keyword"
+                           },
+                           "tenantId":{
+                              "type":"keyword"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "signatureAssessments":{
+            "properties":{
+               "id":{
+                  "type":"keyword"
+               },
+               "thumbnail":{
+                  "type":"keyword"
+               },
+               "title":{
+                  "type":"text",
+                  "analyzer":"gooru_kstem",
+                  "copy_to":[
+                     "all"
+                  ]
+               },
+               "efficacy":{
+                  "type":"double"
+               },
+               "engagement":{
+                  "type":"double"
+               },
+               "relevance":{
+                  "type":"double"
+               },
+               "creator":{
+                  "properties":{
+                     "emailId":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "firstName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "fullName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "userId":{
+                        "type":"keyword"
+                     },
+                     "profileImage":{
+                        "type":"keyword"
+                     },
+                     "lastName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "profileVisibility":{
+                        "type":"boolean"
+                     },
+                     "usernameDisplay":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase",
+                        "fields":{
+                           "usernameDisplaySnowball":{
+                              "type":"text",
+                              "analyzer":"snowball"
+                           }
+                        }
+                     },
+                     "tenant":{
+                        "properties":{
+                           "tenantRootId":{
+                              "type":"keyword"
+                           },
+                           "tenantId":{
+                              "type":"keyword"
+                           }
+                        }
+                     }
+                  }
+               },
+               "owner":{
+                  "properties":{
+                     "emailId":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "firstName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "fullName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "userId":{
+                        "type":"keyword"
+                     },
+                     "lastName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "profileVisibility":{
+                        "type":"boolean"
+                     },
+                     "usernameDisplay":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase",
+                        "fields":{
+                           "usernameDisplaySnowball":{
+                              "type":"text",
+                              "analyzer":"snowball"
+                           }
+                        }
+                     },
+                     "profileImage":{
+                        "type":"keyword"
+                     },
+                     "tenant":{
+                        "properties":{
+                           "tenantRootId":{
+                              "type":"keyword"
+                           },
+                           "tenantId":{
+                              "type":"keyword"
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "signatureResources":{
+            "properties":{
+               "id":{
+                  "type":"keyword"
+               },
+               "thumbnail":{
+                  "type":"keyword"
+               },
+               "title":{
+                  "type":"text",
+                  "analyzer":"gooru_kstem",
+                  "copy_to":[
+                     "all"
+                  ]
+               },
+               "url":{
+                  "type":"keyword"
+               },
+               "contentSubFormat":{
+                  "type":"keyword"
+               },
+               "efficacy":{
+                  "type":"double"
+               },
+               "engagement":{
+                  "type":"double"
+               },
+               "relevance":{
+                  "type":"double"
+               },
+               "creator":{
+                  "properties":{
+                     "emailId":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "firstName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "fullName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "userId":{
+                        "type":"keyword"
+                     },
+                     "profileImage":{
+                        "type":"keyword"
+                     },
+                     "lastName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "profileVisibility":{
+                        "type":"boolean"
+                     },
+                     "usernameDisplay":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase",
+                        "fields":{
+                           "usernameDisplaySnowball":{
+                              "type":"text",
+                              "analyzer":"snowball"
+                           }
+                        }
+                     },
+                     "tenant":{
+                        "properties":{
+                           "tenantRootId":{
+                              "type":"keyword"
+                           },
+                           "tenantId":{
+                              "type":"keyword"
+                           }
+                        }
+                     }
+                  }
+               },
+               "owner":{
+                  "properties":{
+                     "emailId":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "firstName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "fullName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "userId":{
+                        "type":"keyword"
+                     },
+                     "lastName":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
+                     },
+                     "profileVisibility":{
+                        "type":"boolean"
+                     },
+                     "usernameDisplay":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase",
+                        "fields":{
+                           "usernameDisplaySnowball":{
+                              "type":"text",
+                              "analyzer":"snowball"
+                           }
+                        }
+                     },
+                     "profileImage":{
+                        "type":"keyword"
+                     },
+                     "tenant":{
+                        "properties":{
+                           "tenantRootId":{
+                              "type":"keyword"
+                           },
+                           "tenantId":{
+                              "type":"keyword"
+                           }
+                        }
+                     }
+                  }
                }
             }
          }

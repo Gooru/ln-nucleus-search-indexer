@@ -60,7 +60,7 @@ public class TaxonomyCode extends Model {
 
   public final static String FETCH_TAXONOMY_CODES = "id = ANY (?::varchar[])";
   
-  public static final List<String> RESPONSE_FIELDS = Arrays.asList("title", "code");
+  public static final List<String> RESPONSE_FIELDS = Arrays.asList("title", "code", "id");
 
 }
 

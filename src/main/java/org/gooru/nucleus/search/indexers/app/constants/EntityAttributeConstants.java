@@ -104,7 +104,9 @@ public final class EntityAttributeConstants {
   public static final String EFFICACY = "efficacy";
   public static final String ENGAGEMENT = "engagement";
   public static final String RELEVANCE = "relevance";
-  
+  public static final String ITEM_ID = "item_id";
+  public static final String RESOURCE_ID = "resource_id";
+
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
   public static final String COMPETENCY_DISPLAY_CODE = "competency_display_code";

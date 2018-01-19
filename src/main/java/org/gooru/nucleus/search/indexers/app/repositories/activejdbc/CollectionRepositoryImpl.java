@@ -58,18 +58,15 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + contentID);
 
     Collection result = Collection.findById(getPGObject("id", UUID_TYPE, contentID));
- //   LOGGER.debug("CollectionRepositoryImpl : getAssessment : " + result);
 
     JsonObject returnValue = null;
     String[] attributes =
       {"id", "title", "created_at", "updated_at", "creator_id", "original_creator_id", "original_collection_id", "publish_date", "format",
         "learning_objective", "collaborator", "orientation", "grading", "setting", "metadata", "taxonomy", "thumbnail", "visible_on_profile",
         "course_id", "unit_id", "lesson_id"};
- //   LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById attributes: " + String.join(", ", attributes));
 
     if (result != null) {
       returnValue = new JsonObject(result.toJson(false, attributes));
-    //  LOGGER.debug("CollectionRepositoryImpl : getAssessment : findById returned: " + returnValue);
     }
     LOGGER.debug("CollectionRepositoryImpl : getAssessment : afterAddingContainmentInfo : " + returnValue);
 
@@ -77,12 +74,12 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
   }
 
   @Override
-  public JsonObject getCollectionByType(String contentID, String format) {
+  public JsonObject getCollectionByType(String contentId, String format) {
     DB db = getDefaultDataSourceDBConnection();
     openConnection(db);
-    LazyList<Collection> collections = Collection.where(Collection.COLLECTION_QUERY, format, contentID, false);
+    LazyList<Collection> collections = Collection.where(Collection.COLLECTION_QUERY, format, contentId, false);
     if (collections.size() < 1) {
-      LOGGER.warn("Collection id: {} not present in DB", contentID);
+      LOGGER.warn("Collection id: {} not present in DB", contentId);
     }
     Collection collection = collections.get(0);
     JsonObject returnValue = null;

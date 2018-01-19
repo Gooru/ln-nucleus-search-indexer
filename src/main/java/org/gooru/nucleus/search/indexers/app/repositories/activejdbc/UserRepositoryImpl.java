@@ -23,15 +23,11 @@ public class UserRepositoryImpl extends BaseIndexRepo implements UserRepository 
     LOGGER.debug("UserRepositoryImpl : getUser: " + userID);
 
     User result = User.findById(getPGObject("id", UUID_TYPE, userID));
-    //LOGGER.debug("UserRepositoryImpl : getUser : findById : " + result);
-
     JsonObject returnValue = null;
     
     if (result != null) {
       returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
     }
-    //LOGGER.debug("UserRepositoryImpl : getUser : findById returned: " + returnValue);
-
     closeDBConn(db);
     return returnValue;
   }

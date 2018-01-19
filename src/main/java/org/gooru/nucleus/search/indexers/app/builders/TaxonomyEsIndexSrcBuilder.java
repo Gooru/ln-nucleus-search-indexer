@@ -23,10 +23,12 @@ import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.index.model.CollectionEo;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.DomainEo;
 import org.gooru.nucleus.search.indexers.app.index.model.SubjectEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEio;
+import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
@@ -96,6 +98,15 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       if (!gutPrerequisites.isEmpty()) taxonomyEo.setGutPrerequisites(getTaxonomyRepo().getGutPrerequisites(gutCode));
     }
     
+    JsonArray signatureCollections = getIndexRepo().getSignatureItems(codeId, IndexerConstants.TYPE_COLLECTION);
+    taxonomyEo.setSignatureCollections(generateSignatureItems(signatureCollections, IndexerConstants.TYPE_COLLECTION));
+    
+    JsonArray signatureAsssessments = getIndexRepo().getSignatureItems(codeId, IndexerConstants.TYPE_ASSESSMENT);
+    taxonomyEo.setSignatureAssessments(generateSignatureItems(signatureAsssessments, IndexerConstants.TYPE_ASSESSMENT));
+    
+    JsonArray signatureResources = getIndexRepo().getSignatureResourcesByCodeId(codeId);
+    taxonomyEo.setSignatureResources(generateSignatureItems(signatureResources, IndexerConstants.TYPE_RESOURCE));
+    
     String subjectCode = null;
     String courseCode = null;
     String domainCode = null;
@@ -162,6 +173,69 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     //TODO taxonomyEo.setGrade();
     
     return taxonomyEo.getTaxonomyJson();
+  }
+
+  private JsonArray generateSignatureItems(JsonArray signatureCollections, String contentType) {
+    JsonArray items = new JsonArray();
+    if (signatureCollections != null) {
+      signatureCollections.forEach(o -> {
+        JsonObject si = (JsonObject) o;
+        CollectionEo content = new CollectionEo();
+        String id = null;
+        if (IndexerConstants.COLLECTION_FORMATS.matcher(contentType).matches()) {
+          id = si.getString(EntityAttributeConstants.ITEM_ID);
+        } else if (contentType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+          id = si.getString(EntityAttributeConstants.RESOURCE_ID);
+        }
+        content.setId(id);
+        if (content.getId() != null) {
+          JsonObject contentData = new JsonObject();
+          if (IndexerConstants.COLLECTION_FORMATS.matcher(contentType).matches()) {
+            contentData = getCollectionRepo().getCollectionById(content.getId());
+          } else if (contentType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+            contentData = getOriginalResourceRepo().getResourceById(content.getId());
+          }
+          content.setTitle(contentData.getString(EntityAttributeConstants.TITLE, null));
+          content.setThumbnail(contentData.getString(EntityAttributeConstants.THUMBNAIL, null));
+          // Set Creator
+          String creatorId = contentData.getString(EntityAttributeConstants.CREATOR_ID, null);
+          if (creatorId != null) {
+            UserEo creatorEo = new UserEo();
+            JsonObject creator = getUserRepo().getUser(creatorId);
+            if (creator != null && !creator.isEmpty()) {
+              setUser(creator, creatorEo);
+              content.setCreator(creatorEo.getUser());
+            }
+          }
+          // Set Owner
+          String ownerId = contentData.getString(EntityAttributeConstants.OWNER_ID, null);
+          if (ownerId != null) {
+            UserEo ownerEo = new UserEo();
+            JsonObject owner = getUserRepo().getUser(ownerId);
+            if (owner != null && !owner.isEmpty()) {
+              setUser(owner, ownerEo);
+              content.setOwner(ownerEo.getUser());
+            }
+          }
+          // Set REEf
+          Double efficacy = null;
+          Double engagement = null;
+          if (!contentData.isEmpty()) {
+            efficacy = (Double) contentData.getValue(EntityAttributeConstants.EFFICACY);
+            engagement = (Double) contentData.getValue(EntityAttributeConstants.ENGAGEMENT);
+          }
+          if (contentType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
+            content.setUrl(contentData.getString(EntityAttributeConstants.URL, null));
+            content.setContentSubFormat(contentData.getString(EntityAttributeConstants.CONTENT_SUB_FORMAT, null));
+          }
+          content.setEfficacy(efficacy);
+          content.setEngagement(engagement);
+          content.setRelevance(null);
+          items.add(content.getCollectionJson());
+        }
+      });
+    }
+    return items;
   }
 
   private JsonArray extractAndIndexKeywords(String title) throws IOException {
