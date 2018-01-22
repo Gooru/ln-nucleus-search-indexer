@@ -326,6 +326,30 @@
                         }
                      }
                   },
+                  "domain":{
+                     "type":"nested",
+                     "include_in_parent":true,
+                     "properties":{
+                        "codeId":{
+                           "type":"text",
+                           "analyzer":"keyword_lowercase"
+                        },
+                        "codeTypeId":{
+                           "type":"text",
+                           "analyzer":"keyword_lowercase"
+                        },
+                        "label":{
+                           "type":"text",
+                           "analyzer":"keyword_lowercase",
+                           "fields":{
+                              "labelSnowball":{
+                                 "type":"text",
+                                 "analyzer":"snowball"
+                              }
+                           }
+                        }
+                     }
+                  },
                   "frameworkCode":{
                      "type":"keyword"
                   },
