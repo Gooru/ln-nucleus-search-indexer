@@ -1,8 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +12,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.CollectionContentEo;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseEio;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseStatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ResourceInfoEo;
-import org.gooru.nucleus.search.indexers.app.index.model.TaxonomySetEo;
+import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
@@ -68,81 +66,15 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       
       // Set taxonomy data 
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
-      if(taxonomy != null && !taxonomy.isEmpty()){
-        JsonObject taxonomyJson = new JsonObject(taxonomy);
-        if(taxonomyJson != null && !taxonomyJson.isEmpty()) {
-          JsonArray subjectArray = new JsonArray();
-          JsonArray courseArray = new JsonArray();
-          JsonArray subjectLabelArray = new JsonArray();
-          JsonArray courseLabelArray = new JsonArray();
-          JsonArray frameworkCode = new JsonArray();
-          JsonArray leafSLInternalCodes = new JsonArray();
-          JsonArray displayObjectArray = new JsonArray();
-
-          TaxonomySetEo taxonomyDataSet = new TaxonomySetEo();
-          JsonObject curriculumTaxonomy = new JsonObject();
-          List<String> standardDesc = new ArrayList<>();
-          JsonArray standardDisplayArray = new JsonArray();
-
-          for(String code : taxonomyJson.fieldNames()){
-            JsonObject displayObject = new JsonObject();
-            String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
-            JsonObject taxData = taxonomyJson.getJsonObject(code);
-            if(taxData != null && !taxData.isEmpty()){
-              JsonObject subject = new JsonObject();
-              if(codes.length == 1){
-                subject.put(IndexFields.CODE_ID, code);
-              }
-              else if(codes.length > 1){
-                subject.put(IndexFields.CODE_ID, code.substring(0, StringUtils.ordinalIndexOf(code, "-", 1)));
-              }
-              subject.put(IndexFields.LABEL, taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
-              subjectLabelArray.add(taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
-              subjectArray.add(subject);
-              
-              if(codes.length == 2){
-                JsonObject course = new JsonObject();
-                course.put(IndexFields.CODE_ID, taxData.getString(EntityAttributeConstants.CODE));
-                course.put(IndexFields.LABEL, taxData.getString(EntityAttributeConstants.TITLE));
-                courseLabelArray.add(taxData.getString(EntityAttributeConstants.TITLE));
-                courseArray.add(course);
-              }
-              
-              if(taxData.getString(EntityAttributeConstants.FRAMEWORK_CODE) != null){
-                frameworkCode.add(taxData.getString(EntityAttributeConstants.FRAMEWORK_CODE));
-              }
-              
-              standardDisplayArray.add(taxData.getString(EntityAttributeConstants.CODE));
-              standardDesc.add(taxData.getString(EntityAttributeConstants.TITLE));
-              leafSLInternalCodes.add(code);
-              
-              displayObject.put(EntityAttributeConstants.ID, code);
-              displayObject.put(EntityAttributeConstants.CODE, taxData.getString(EntityAttributeConstants.CODE));
-              displayObject.put(EntityAttributeConstants.TITLE, taxData.getString(EntityAttributeConstants.TITLE));
-              displayObject.put(IndexFields.FRAMEWORK_CODE, taxData.getString(EntityAttributeConstants.FRAMEWORK_CODE));
-              displayObject.put(IndexFields.PARENT_TITLE, taxData.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
-              displayObjectArray.add(displayObject);
-            }
-          }
-          
-          if(courseArray.size() > 0 || subjectArray.size() > 0){
-            JsonObject taxonomyObj = new JsonObject();
-            taxonomyObj.put(IndexerConstants.SUBJECT, subjectArray);
-            taxonomyObj.put(IndexerConstants.COURSE, courseArray);
-            taxonomyObj.put(IndexFields.FRAMEWORK_CODE, frameworkCode.stream().distinct().collect(Collectors.toList()));
-            taxonomyObj.put(IndexFields.LEAF_INTERNAL_CODE, leafSLInternalCodes);
-            taxonomyDataSet.setSubject(subjectLabelArray);
-            taxonomyDataSet.setCourse(courseLabelArray);
-            curriculumTaxonomy.put(IndexFields.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
-                    .put(IndexFields.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
-                    .put(IndexFields.CURRICULUM_NAME, frameworkCode != null ? frameworkCode.stream().distinct().collect(Collectors.toList()) : new JsonArray())
-                    .put(IndexFields.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
-            taxonomyDataSet.setCurriculum(curriculumTaxonomy);
-            taxonomyObj.put(IndexFields.TAXONOMY_SET, taxonomyDataSet.getTaxonomyJson());
-            courseEio.setTaxonomy(taxonomyObj);
-          }
-        }
+      JsonObject taxonomyObject = null;
+      TaxonomyEo taxonomyEo = new TaxonomyEo();
+      try {
+        if (taxonomy != null) taxonomyObject = new JsonObject(taxonomy);
+        addTaxonomy(taxonomyObject, taxonomyEo);
+      } catch (Exception e) {
+        LOGGER.error("Unable to convert Taxonomy to JsonObject", e.getMessage());
       }
+      courseEio.setTaxonomy(taxonomyEo.getTaxonomyJson());
       
       // Set sequence data
       String editorialStr = source.getString(EntityAttributeConstants.EDITORIAL_TAGS, null);
