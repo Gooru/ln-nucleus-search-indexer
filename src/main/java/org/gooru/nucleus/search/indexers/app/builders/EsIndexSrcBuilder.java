@@ -247,6 +247,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
             setDisplayObject(code, displayCodeJson, displayObject);
             displayObjectArray.add(displayObject);
           }
+          
+          leafSLInternalCodes.add(code);
+          setDisplayObject(code, displayCodeJson, displayObject);
+          displayObjectArray.add(displayObject);
         }
         
         setTaxonomyMeta(subjectArray, courseArray, domainArray, subjectLabelArray, courseLabelArray, domainLabelArray, subjectCode, courseCode,
@@ -284,7 +288,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     curriculumTaxonomy.put(IndexFields.CURRICULUM_CODE, standardDisplayArray != null ? standardDisplayArray : new JsonArray())
             .put(IndexFields.CURRICULUM_DESC, standardDesc != null ? standardDesc : new JsonArray())
             .put(IndexFields.CURRICULUM_NAME, frameworkCodeArray != null ? frameworkCodeArray.stream().distinct().collect(Collectors.toList()) : new JsonArray())
-            .put(IndexFields.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray : new JsonArray());
+            .put(IndexFields.CURRICULUM_INFO, displayObjectArray != null ? displayObjectArray.stream().distinct().collect(Collectors.toList()) : new JsonArray());
     taxonomyDataSet.setCurriculum(curriculumTaxonomy);
     taxonomyEo.setTaxonomyDataSet(taxonomyDataSet.getTaxonomyJson().toString());
     taxonomyEo.setTaxonomySet(taxonomyDataSet.getTaxonomyJson());
