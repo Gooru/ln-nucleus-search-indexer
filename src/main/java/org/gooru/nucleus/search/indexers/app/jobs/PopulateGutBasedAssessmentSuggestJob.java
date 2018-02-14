@@ -32,10 +32,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService implements JobInitializer {
+public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService implements JobInitializer {
   
-  private static final Logger LOGGER = LoggerFactory.getLogger(PopulateGutBasedCollectionSuggestJob.class);
-  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [CROSSWALK_CODES] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
+  private static final Logger LOGGER = LoggerFactory.getLogger(PopulateGutBasedAssessmentSuggestJob.class);
+  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"assessment\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [CROSSWALK_CODES] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
@@ -43,17 +43,17 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
   private static final int MINUTES = 21600;
 
   private static class PopulatGutSuggestionHolder {
-    public static final PopulateGutBasedCollectionSuggestJob INSTANCE = new PopulateGutBasedCollectionSuggestJob();
+    public static final PopulateGutBasedAssessmentSuggestJob INSTANCE = new PopulateGutBasedAssessmentSuggestJob();
   }
 
-  public static PopulateGutBasedCollectionSuggestJob instance() {
+  public static PopulateGutBasedAssessmentSuggestJob instance() {
     return PopulatGutSuggestionHolder.INSTANCE;
   }
   
   @Override
   public void deployJob(JsonObject config) {
     LOGGER.info("Deploying Populate Gut Suggestion Job....");
-    JsonObject params = config.getJsonObject("populateCollectionSuggestJobSettings");
+    JsonObject params = config.getJsonObject("populateAssessmentSuggestJobSettings");
 
     Integer dayOfMonth = params.getInteger("dayOfMonth", DAY_OF_MONTH);
     Integer hourOfDay = params.getInteger("hourOfDay", HOUR_OF_DAY);
@@ -72,7 +72,7 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
           Integer limit = params.getInteger("batchSize", BATCH_SIZE);
           Long offset = params.getLong("offset", OFFSET);
           Long totalProcessed = 0L;
-          SignatureItemsRepository.instance().deleteSuggestions(IndexerConstants.COLLECTION);
+          SignatureItemsRepository.instance().deleteSuggestions(IndexerConstants.ASSESSMENT);
           while (true) {
             JsonArray ltCodesArray = TaxonomyCodeRepository.instance().getLTCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, offset);
             if (ltCodesArray.size() == 0) {
@@ -223,7 +223,7 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
           }
           suggestJson.put(EntityAttributeConstants.PERFORMANCE_RANGE, perfMapEntry.getKey());
           suggestJson.put(EntityAttributeConstants.ITEM_ID, itemId);
-          suggestJson.put(EntityAttributeConstants.ITEM_FORMAT, IndexerConstants.COLLECTION);
+          suggestJson.put(EntityAttributeConstants.ITEM_FORMAT, IndexerConstants.ASSESSMENT);
           SignatureItemsRepository.instance().saveSuggestions(code, suggestJson);
         }
       }

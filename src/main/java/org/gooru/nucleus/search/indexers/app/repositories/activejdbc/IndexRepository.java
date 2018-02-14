@@ -23,5 +23,4 @@ public interface IndexRepository {
 
   JsonArray getSignatureResourcesByCodeId(String codeId);
 
-  JsonArray getSignatureItems(String codeId, String contentType);
 }

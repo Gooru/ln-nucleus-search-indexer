@@ -96,13 +96,14 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       taxonomyEo.setGutCode(gutCode);
       JsonArray gutPrerequisites = getTaxonomyRepo().getGutPrerequisites(gutCode);
       if (!gutPrerequisites.isEmpty()) taxonomyEo.setGutPrerequisites(getTaxonomyRepo().getGutPrerequisites(gutCode));
+      
+      JsonArray signatureCollections = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_COLLECTION);
+      taxonomyEo.setSignatureCollections(generateSignatureItems(signatureCollections, IndexerConstants.TYPE_COLLECTION));
+      
+      JsonArray signatureAsssessments = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_ASSESSMENT);
+      taxonomyEo.setSignatureAssessments(generateSignatureItems(signatureAsssessments, IndexerConstants.TYPE_ASSESSMENT));
+      
     }
-    
-    JsonArray signatureCollections = getIndexRepo().getSignatureItems(codeId, IndexerConstants.TYPE_COLLECTION);
-    taxonomyEo.setSignatureCollections(generateSignatureItems(signatureCollections, IndexerConstants.TYPE_COLLECTION));
-    
-    JsonArray signatureAsssessments = getIndexRepo().getSignatureItems(codeId, IndexerConstants.TYPE_ASSESSMENT);
-    taxonomyEo.setSignatureAssessments(generateSignatureItems(signatureAsssessments, IndexerConstants.TYPE_ASSESSMENT));
     
     JsonArray signatureResources = getIndexRepo().getSignatureResourcesByCodeId(codeId);
     taxonomyEo.setSignatureResources(generateSignatureItems(signatureResources, IndexerConstants.TYPE_RESOURCE));
@@ -197,6 +198,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
           }
           content.setTitle(contentData.getString(EntityAttributeConstants.TITLE, null));
           content.setThumbnail(contentData.getString(EntityAttributeConstants.THUMBNAIL, null));
+          content.setCurated(contentData.getBoolean(EntityAttributeConstants.IS_CURATED, false));
           // Set Creator
           String creatorId = contentData.getString(EntityAttributeConstants.CREATOR_ID, null);
           if (creatorId != null) {
