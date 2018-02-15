@@ -3,6 +3,7 @@ package org.gooru.nucleus.search.indexers.app.processors;
 import io.vertx.core.json.JsonObject;
 import org.gooru.nucleus.search.indexers.app.constants.ContentFormat;
 import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.processors.event.handlers.EventHandlerBuilder;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
@@ -42,11 +43,9 @@ class MessageProcessor implements Processor {
           LOGGER.debug("Event name : " + eventName + " Content Format : " + contentFormat);
           LOGGER.debug("Event body Json : " + eventBody.toString());
           if (contentFormat != null) {
-            if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name())) {
+            if (IndexerConstants.RESOURCE_FORMATS.matcher(contentFormat).matches()) {
               processResourceEvents();
-            } else if (contentFormat.equalsIgnoreCase(ContentFormat.ASSESSMENT.name())
-                    || contentFormat.equalsIgnoreCase(ContentFormat.COLLECTION.name())
-                    || contentFormat.equalsIgnoreCase(ContentFormat.EXTERNAL_ASSESSMENT.name())) {
+            } else if (IndexerConstants.COLLECTION_FORMATS.matcher(contentFormat).matches()) {
               processCollectionEvents();
             } else if (contentFormat.equalsIgnoreCase(ContentFormat.COURSE.name())) {
               processCourseEvents();

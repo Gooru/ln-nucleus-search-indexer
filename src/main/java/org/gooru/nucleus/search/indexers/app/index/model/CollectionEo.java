@@ -112,5 +112,13 @@ public class CollectionEo {
     }
     this.collection = JsonUtil.set(collection, "relevance", relevance);
   }
+  
+  public Boolean isCurated() {
+    return collection.getBoolean("isCurated", false);
+  }
+
+  public void setCurated(Boolean isCurated) {
+    collection = JsonUtil.set(collection, "isCurated", isCurated);
+  }
 
 }

@@ -108,13 +108,19 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
           }
         }
       }
-      
+
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+      String aggTaxonomy = source.getString(EntityAttributeConstants.AGGREGATED_TAXONOMY, null);
+      String aggGutCodes = source.getString(EntityAttributeConstants.AGGREGATED_GUT_CODES, null);
       JsonObject taxonomyObject = null;
+      JsonObject aggTaxonomyObject = null;
+      JsonObject aggGutCodesObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
       try {
         if (StringUtils.isNotBlank(taxonomy) && !taxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) taxonomyObject = new JsonObject(taxonomy);
-        addTaxonomy(taxonomyObject, taxonomyEo);
+        if (StringUtils.isNotBlank(aggTaxonomy) && !aggTaxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggTaxonomyObject = new JsonObject(aggTaxonomy);
+        if (StringUtils.isNotBlank(aggGutCodes) && !aggGutCodes.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggGutCodesObject = new JsonObject(aggGutCodes);
+        addTaxonomy(taxonomyObject, taxonomyEo, aggTaxonomyObject, aggGutCodesObject);
       } catch (Exception e) {
         LOGGER.error("Unable to convert Taxonomy to JsonObject", e);
       }

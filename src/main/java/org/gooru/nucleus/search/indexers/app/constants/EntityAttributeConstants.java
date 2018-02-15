@@ -106,14 +106,20 @@ public final class EntityAttributeConstants {
   public static final String RELEVANCE = "relevance";
   public static final String ITEM_ID = "item_id";
   public static final String RESOURCE_ID = "resource_id";
+  public static final String AGGREGATED_TAXONOMY = "aggregated_taxonomy";
+  public static final String AGGREGATED_GUT_CODES = "aggregated_gut_codes";
+  public static final String IS_CURATED = "is_curated";
 
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
   public static final String COMPETENCY_DISPLAY_CODE = "competency_display_code";
   public static final String MICRO_COMPETENCY_INTERNAL_CODE = "micro_competency_internal_code";
   public static final String MICRO_COMPETENCY_DISPLAY_CODE = "micro_competency_display_code";
+  public static final String COMPETENCY_GUT_CODE = "competency_gut_code";
+  public static final String MICRO_COMPETENCY_GUT_CODE = "micro_competency_gut_code";
   public static final String IDS_TO_SUGGEST = "ids_to_suggest";
   public static final String PERFORMANCE_RANGE = "performance_range";
+  public static final String ITEM_FORMAT = "item_format";
 
   //Index tracker columns
   public static final String GOORU_OID = "gooru_oid";

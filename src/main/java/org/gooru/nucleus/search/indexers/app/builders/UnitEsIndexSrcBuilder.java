@@ -3,6 +3,7 @@ package org.gooru.nucleus.search.indexers.app.builders;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
@@ -97,11 +98,17 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
       statisticsEo.setCollaboratorCount(collaboratorCount);
       
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+      String aggTaxonomy = source.getString(EntityAttributeConstants.AGGREGATED_TAXONOMY, null);
+      String aggGutCodes = source.getString(EntityAttributeConstants.AGGREGATED_GUT_CODES, null);
       JsonObject taxonomyObject = null;
+      JsonObject aggTaxonomyObject = null;
+      JsonObject aggGutCodesObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
       try {
-        if (taxonomy != null) taxonomyObject = new JsonObject(taxonomy);
-        addTaxonomy(taxonomyObject, taxonomyEo);
+        if (StringUtils.isNotBlank(taxonomy) && !taxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) taxonomyObject = new JsonObject(taxonomy);
+        if (StringUtils.isNotBlank(aggTaxonomy) && !aggTaxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggTaxonomyObject = new JsonObject(aggTaxonomy);
+        if (StringUtils.isNotBlank(aggGutCodes) && !aggGutCodes.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggGutCodesObject = new JsonObject(aggGutCodes);
+        addTaxonomy(taxonomyObject, taxonomyEo, aggTaxonomyObject, aggGutCodesObject);
       } catch (Exception e) {
         LOGGER.error("Unable to convert Taxonomy to JsonObject", e.getMessage());
       }

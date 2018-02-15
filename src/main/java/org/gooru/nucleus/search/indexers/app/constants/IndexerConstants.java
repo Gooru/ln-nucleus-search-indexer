@@ -22,7 +22,7 @@ public final class IndexerConstants {
   
   public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
 
-  public static final Pattern COLLECTION_FORMATS = Pattern.compile("collection|assessment|assessment-external");
+  public static final Pattern COLLECTION_FORMATS = Pattern.compile("collection|assessment|assessment-external|collection-external");
 
   public static final String COLLECTION_IDS = "collection_ids";
 

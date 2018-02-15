@@ -169,7 +169,7 @@ public class TaxonomyEio {
   }
 
   public void setSignatureCollections(JsonArray signatureCollections) {
-    taxonomy = JsonUtil.set(taxonomy, "signatureCollections", signatureCollections);
+    taxonomy = JsonUtil.set(taxonomy, "signatureCollections",  new JsonArray(signatureCollections.stream().distinct().collect(Collectors.toList())));
   }
   
   public JsonArray getSignatureAssessments() {
@@ -177,7 +177,7 @@ public class TaxonomyEio {
   }
 
   public void setSignatureAssessments(JsonArray signatureAssessments) {
-    taxonomy = JsonUtil.set(taxonomy, "signatureAssessments", signatureAssessments);
+    taxonomy = JsonUtil.set(taxonomy, "signatureAssessments",  new JsonArray(signatureAssessments.stream().distinct().collect(Collectors.toList())));
   }
   
   public JsonArray getSignatureResources() {
@@ -185,7 +185,7 @@ public class TaxonomyEio {
   }
 
   public void setSignatureResources(JsonArray signatureResources) {
-    taxonomy = JsonUtil.set(taxonomy, "signatureResources", signatureResources);
+    taxonomy = JsonUtil.set(taxonomy, "signatureResources",  new JsonArray(signatureResources.stream().distinct().collect(Collectors.toList())));
   }
    
 }

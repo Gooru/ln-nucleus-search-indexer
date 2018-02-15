@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureItems;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -99,25 +98,5 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     }
     return responses;
   }
-  
-  @Override
-  public JsonArray getSignatureItems(String codeId, String contentType) {
-    JsonArray responses = null;
-    DB db = getDefaultDataSourceDBConnection();
-    try {
-      openConnection(db);
-
-      LazyList<SignatureItems> contents = SignatureItems.where(SignatureItems.FETCH_SIGNATURE_ITEMS, codeId, codeId, contentType);
-      if (contents.size() < 1) {
-        LOGGER.warn("Code id: {} not present in signature_items DB", codeId);
-      } else {
-        responses = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(contents));
-      }
-    } catch (Exception ex) {
-      LOGGER.error("Failed to fetch signature_items : ", ex);
-    } finally {
-      closeDBConn(db);
-    }
-    return responses;
-  }
+ 
 }
