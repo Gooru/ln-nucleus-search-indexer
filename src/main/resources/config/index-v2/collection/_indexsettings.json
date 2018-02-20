@@ -405,7 +405,7 @@
                            "type":"text",
                            "analyzer":"keyword_lowercase"
                         },
-                        "codeTypeId":{
+                        "subjectClassification":{
                            "type":"text",
                            "analyzer":"keyword_lowercase"
                         },

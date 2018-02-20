@@ -323,6 +323,10 @@
                                  "analyzer":"snowball"
                               }
                            }
+                        },
+                        "subjectClassification":{
+                           "type":"text",
+                           "analyzer":"keyword_lowercase"
                         }
                      }
                   },

@@ -520,10 +520,6 @@
                            "type":"text",
                            "analyzer":"keyword_lowercase"
                         },
-                        "codeTypeId":{
-                           "type":"text",
-                           "analyzer":"keyword_lowercase"
-                        },
                         "label":{
                            "type":"text",
                            "analyzer":"keyword_lowercase",
@@ -533,6 +529,10 @@
                                  "analyzer":"snowball"
                               }
                            }
+                        },
+                        "subjectClassification":{
+                           "type":"text",
+                           "analyzer":"keyword_lowercase"
                         }
                      }
                   },

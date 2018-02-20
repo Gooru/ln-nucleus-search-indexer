@@ -359,6 +359,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
         subjectLabelArray.add(subjectTitle);
         subject.setLabel(subjectTitle);
+        subject.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
       }
       subject.setCodeId(subjectCode);
       subjectArray.add(subject.getCode());
