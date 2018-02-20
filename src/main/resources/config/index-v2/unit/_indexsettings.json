@@ -458,6 +458,13 @@
                         "customSpellCheckerSuggest"
                      ]
                   },
+                  "allEqRelatedInternalCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
                   "taxonomySet":{
                      "properties":{
                         "subject":{

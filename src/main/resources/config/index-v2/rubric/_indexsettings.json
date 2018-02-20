@@ -437,6 +437,13 @@
                         "customSpellCheckerSuggest"
                      ]
                   },
+                  "allEqRelatedInternalCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
                   "subject":{
                      "type":"nested",
                      "include_in_parent":true,
