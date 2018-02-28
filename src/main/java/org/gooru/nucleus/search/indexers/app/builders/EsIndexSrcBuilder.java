@@ -209,6 +209,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
 
     if (taxonomyObject != null && !taxonomyObject.isEmpty()) {
       for (String code : taxonomyObject.fieldNames()) {
+        if(code.contains(IndexerConstants.HYPHEN_SEPARATOR)) {
         JsonObject displayCodeJson = taxonomyObject.getJsonObject(code);
         JsonObject displayObject = new JsonObject();
 
@@ -271,6 +272,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         
         setTaxonomyMeta(subjectArray, courseArray, domainArray, subjectLabelArray, courseLabelArray, domainLabelArray, subjectCode, courseCode,
                 domainCode);
+      }
       }
     }
     
