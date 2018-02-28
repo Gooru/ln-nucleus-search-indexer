@@ -43,4 +43,12 @@ public class CodeEo {
     code = JsonUtil.set(code, "hasTaxonomyRepresentation", hasTaxonomyRepresentation);
   }
 
+  public String getSubjectClassification() {
+    return code.getString("subjectClassification", null);
+  }
+
+  public void setSubjectClassification(String subjectClassification) {
+    code = JsonUtil.set(code, "subjectClassification", subjectClassification);
+  }
+  
 }

@@ -131,7 +131,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
       JsonObject displayGuide = null;
       if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
-      statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getBoolean(EntityAttributeConstants.IS_FRAME_BREAKER) : false);
+      statisticsEo.setHasFrameBreaker(displayGuide != null ? (Boolean.valueOf(displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER).toString())) : false);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
 
       // Set display guide

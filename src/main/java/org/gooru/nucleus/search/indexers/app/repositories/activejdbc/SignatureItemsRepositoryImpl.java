@@ -79,7 +79,7 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
 
       LazyList<SignatureItems> contents = SignatureItems.where(SignatureItems.FETCH_SIGNATURE_ITEMS, gutCode, gutCode, contentType);
       if (contents.size() < 1) {
-        LOGGER.warn("Code id: {} not present in signature_items DB", gutCode);
+        LOGGER.warn("Code id: {} not present in signature_items DB for contentType : {}", gutCode, contentType);
       } else {
         responses = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(contents));
       }

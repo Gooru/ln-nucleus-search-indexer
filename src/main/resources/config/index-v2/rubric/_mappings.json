@@ -396,15 +396,18 @@
                      "customSpellCheckerSuggest"
                   ]
                },
+               "allEqRelatedInternalCodes":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ]
+               },
                "subject":{
                   "type":"nested",
                   "include_in_parent":true,
                   "properties":{
                      "codeId":{
-                        "type":"text",
-                        "analyzer":"keyword_lowercase"
-                     },
-                     "codeTypeId":{
                         "type":"text",
                         "analyzer":"keyword_lowercase"
                      },
@@ -417,6 +420,10 @@
                               "analyzer":"snowball"
                            }
                         }
+                     },
+                     "subjectClassification":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
                      }
                   }
                },

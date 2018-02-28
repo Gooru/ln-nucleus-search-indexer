@@ -294,6 +294,10 @@
                               "analyzer":"snowball"
                            }
                         }
+                     },
+                     "subjectClassification":{
+                        "type":"text",
+                        "analyzer":"keyword_lowercase"
                      }
                   }
                },
@@ -419,6 +423,13 @@
                   ]
                },
                "relatedGutCodes":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase",
+                  "copy_to":[
+                     "customSpellCheckerSuggest"
+                  ]
+               },
+               "allEqRelatedInternalCodes":{
                   "type":"text",
                   "analyzer":"keyword_lowercase",
                   "copy_to":[

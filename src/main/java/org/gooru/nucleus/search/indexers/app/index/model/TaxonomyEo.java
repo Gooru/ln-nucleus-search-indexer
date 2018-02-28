@@ -204,6 +204,14 @@ public class TaxonomyEo extends JsonObject {
   
   public void setRelatedGutCodes(JsonArray relatedGutCodes) {
     taxonomy = JsonUtil.set(taxonomy, "relatedGutCodes", new JsonArray(relatedGutCodes.stream().distinct().collect(Collectors.toList())));
+  } 
+  
+  public JsonArray getAllEqRelatedInternalCodes() {
+    return taxonomy.getJsonArray("allEqRelatedInternalCodes", null);
   }
 
+  public void setAllEqRelatedInternalCodes(JsonArray allEqRelatedInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "allEqRelatedInternalCodes", new JsonArray(allEqRelatedInternalCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
 }
