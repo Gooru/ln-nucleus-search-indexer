@@ -370,6 +370,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         subjectLabelArray.add(subjectTitle);
         subject.setLabel(subjectTitle);
         subject.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
+        if(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID) != null) 
+          subjectArray.add(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID).toString());
       }
       subject.setCodeId(subjectCode);
       subjectArray.add(subject.getCode());
@@ -387,6 +389,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         String courseTitle = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
         courseLabelArray.add(courseTitle);
         course.setLabel(courseTitle);
+        if(courseData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_COURSE_ID) != null) 
+          courseArray.add(courseData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_COURSE_ID).toString());
       }
       course.setCodeId(courseCode);
       courseArray.add(course.getCode());
@@ -404,6 +408,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         String domainTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
         domainLabelArray.add(domainTitle);
         domain.setLabel(domainTitle);
+        if(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID) != null) 
+          domainArray.add(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID).toString());
       }
       domain.setCodeId(domainCode);
       domainArray.add(domain.getCode());

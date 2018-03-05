@@ -233,7 +233,12 @@
          },
          "contentSubFormat":{
             "type":"text",
-            "analyzer":"keyword_lowercase"
+            "analyzer":"keyword_lowercase", 
+            "fields":{
+            	"keyword":{
+            		"type":"keyword"
+            	}
+            }
          },
          "contentSubFormatEscaped":{
             "type":"text",

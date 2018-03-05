@@ -109,6 +109,9 @@ public final class EntityAttributeConstants {
   public static final String AGGREGATED_TAXONOMY = "aggregated_taxonomy";
   public static final String AGGREGATED_GUT_CODES = "aggregated_gut_codes";
   public static final String IS_CURATED = "is_curated";
+  public static final String DEFAULT_TAXONOMY_SUBJECT_ID = "default_taxonomy_subject_id";
+  public static final String DEFAULT_TAXONOMY_COURSE_ID = "default_taxonomy_course_id";
+  public static final String DEFAULT_TAXONOMY_DOMAIN_ID = "default_taxonomy_domain_id";
 
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
