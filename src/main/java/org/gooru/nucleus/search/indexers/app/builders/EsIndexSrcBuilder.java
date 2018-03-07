@@ -364,58 +364,64 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
           JsonArray courseLabelArray, JsonArray domainLabelArray, String subjectCode, String courseCode, String domainCode) {
     if (subjectCode != null) {
       CodeEo subject = new CodeEo();
+      CodeEo gutCode = new CodeEo();
       List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
       if (subjectData != null && subjectData.size() > 0) {
         String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
         subjectLabelArray.add(subjectTitle);
         subject.setLabel(subjectTitle);
         subject.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
-        if(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID) != null) 
-          subjectArray.add(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID).toString());
+        if(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID) != null) {
+          gutCode.setCodeId(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID).toString());
+          subjectArray.add(gutCode.getCode());
+        }
       }
       subject.setCodeId(subjectCode);
       subjectArray.add(subject.getCode());
       JsonObject gdtCode = getTaxonomyRepo().getGDTCode(subjectCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
-        CodeEo gutSubject = new CodeEo();
-        gutSubject.setCodeId(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
-        subjectArray.add(gutSubject.getCode());
+        gutCode.setCodeId(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
+        subjectArray.add(gutCode.getCode());
       }
     }
     if (courseCode != null) {
       CodeEo course = new CodeEo();
+      CodeEo gutCode = new CodeEo();
       List<Map> courseData = getTaxonomyRepo().getTaxonomyData(courseCode, IndexerConstants.COURSE);
       if (courseData != null && courseData.size() > 0) {
         String courseTitle = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
         courseLabelArray.add(courseTitle);
         course.setLabel(courseTitle);
-        if(courseData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_COURSE_ID) != null) 
-          courseArray.add(courseData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_COURSE_ID).toString());
+        if(courseData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_COURSE_ID) != null) {
+          gutCode.setCodeId(courseData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_COURSE_ID).toString());
+          courseArray.add(gutCode.getCode());
+        }
       }
       course.setCodeId(courseCode);
       courseArray.add(course.getCode());
       JsonObject gdtCode = getTaxonomyRepo().getGDTCode(courseCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
-        CodeEo gutCode = new CodeEo();
         gutCode.setCodeId(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
         courseArray.add(gutCode.getCode());
       }
     }
     if (domainCode != null) {
       CodeEo domain = new CodeEo();
+      CodeEo gutCode = new CodeEo();
       List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
       if (domainData != null && domainData.size() > 0) {
         String domainTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
         domainLabelArray.add(domainTitle);
         domain.setLabel(domainTitle);
-        if(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID) != null) 
-          domainArray.add(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID).toString());
+        if(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID) != null) {
+          gutCode.setCodeId(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID).toString());
+          domainArray.add(gutCode.getCode());
+        }
       }
       domain.setCodeId(domainCode);
       domainArray.add(domain.getCode());
       JsonObject gdtCode = getTaxonomyRepo().getGDTCode(domainCode);
       if (gdtCode != null && !gdtCode.isEmpty()) {
-        CodeEo gutCode = new CodeEo();
         gutCode.setCodeId(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
         domainArray.add(gutCode.getCode());
       }
