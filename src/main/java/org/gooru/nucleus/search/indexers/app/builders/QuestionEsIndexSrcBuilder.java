@@ -53,7 +53,8 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
       JsonObject metadata = null;
       if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
-      setMetaData(metadata, contentEo);
+      JsonObject dataMap = setMetaData(metadata);
+      if (dataMap != null && !dataMap.isEmpty()) contentEo.setMetadata(dataMap);
       
       // Set Question
       QuestionEo questionEo = new QuestionEo();

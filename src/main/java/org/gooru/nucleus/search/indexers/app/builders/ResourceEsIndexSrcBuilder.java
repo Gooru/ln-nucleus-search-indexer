@@ -62,7 +62,8 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
           metadata.put(EntityAttributeConstants.AUDIENCE, audienceArray);
         }
       }
-      setMetaData(metadata, originalresourceEo);
+      JsonObject dataMap = setMetaData(metadata);
+      if (dataMap != null && !dataMap.isEmpty()) originalresourceEo.setMetadata(dataMap);
 
       // Set display guide values
       JsonObject displayGuide = new JsonObject();

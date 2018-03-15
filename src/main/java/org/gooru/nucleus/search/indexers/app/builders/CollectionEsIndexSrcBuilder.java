@@ -90,39 +90,13 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
           collectionEo.setOwner(ownerEo.getUser());
         }
       }
+      
       // Set Metadata
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
-      if (metadataString != null) {
-        JsonObject metadata = new JsonObject(metadataString);
-        if (metadata != null) {
-          JsonObject metadataAsMap = new JsonObject();
-          for (String fieldName : metadata.fieldNames()) {
-            if(!fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)){
-              String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
-              Object metaValue = metadata.getValue(fieldName);
-
-              if(key.equalsIgnoreCase(IndexerConstants.LANG_OBJECTIVE)){
-                collectionEo.setLanguageObjective((String)metaValue);
-              }
-              
-              // Temp logic to only process array fields
-              if(metaValue instanceof JsonArray){
-                JsonArray references = metadata.getJsonArray(fieldName);
-                if (references != null) {
-                  JsonArray value = new JsonArray();
-                  String referenceIds = references.toString();
-                  List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
-                  for (Map metaMap : metacontent) {
-                    value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
-                  }
-                  if (value != null && !value.isEmpty()) metadataAsMap.put(key, value);
-                  if (metadataAsMap != null && !metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
-                }
-              }
-            }
-          }
-        }
-      }
+      JsonObject metadata = null;
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
+      JsonObject dataMap = setMetaData(metadata);
+      if (dataMap != null && !dataMap.isEmpty()) collectionEo.setMetadata(dataMap);
       
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator

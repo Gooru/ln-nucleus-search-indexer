@@ -264,7 +264,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     GetResponse response = null;
     try {
       GetRequest getRequest = new GetRequest(indexName, getIndexTypeByType(type), id);
-      getHighLevelClient().get(getRequest);
+      response = getHighLevelClient().get(getRequest);
     } catch (Exception e) {
       LOGGER.info("Document not found in index for id : {} : EXCEPTION : {}", id, e.getMessage());
     }
