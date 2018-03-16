@@ -49,6 +49,8 @@ import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.CaseFormat;
+
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -485,6 +487,44 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       }
     }
     return null;
+  }
+  
+  protected JsonObject setMetaData(JsonObject metaData) {
+    JsonObject dataMap = new JsonObject();
+    if (metaData != null) {
+      for (String fieldName : metaData.fieldNames()) {
+        // Temp logic to only process array fields
+        Object metaValue = metaData.getValue(fieldName);
+        if (metaValue instanceof JsonArray) {
+          JsonArray value = extractMetaValues(metaData, fieldName);
+          String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
+          if (value != null && !value.isEmpty())
+            dataMap.put(key, value);
+        }
+      }
+    }
+    return dataMap;
+  }
+
+  @SuppressWarnings("rawtypes")
+  private JsonArray extractMetaValues(JsonObject metadata, String fieldName){
+    JsonArray value = new JsonArray();
+    JsonArray references = metadata.getJsonArray(fieldName);
+    if (references != null && references.size() > 0) {
+      String referenceIds = references.toString();
+      List<Map> metacontent = null;
+      if (fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)) {
+        metacontent = getIndexRepo().getTwentyOneCenturySkill(referenceIds.substring(1, referenceIds.length() - 1));
+      } else {
+        metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
+      }
+      if (metacontent != null) {
+        for (Map metaMap : metacontent) {
+          value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
+        }
+      }
+    }
+    return value;
   }
   
 }

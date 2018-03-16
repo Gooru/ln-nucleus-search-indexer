@@ -71,8 +71,6 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       LazyList<TaxonomyCodeMapping> list = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
       if (list != null && list.size() > 0) {
         result = list.get(0);
-      } else {
-        LOGGER.warn("GDT code for {} standard : {} not present in DB", targetCodeId);
       }
 
       if (result != null) {

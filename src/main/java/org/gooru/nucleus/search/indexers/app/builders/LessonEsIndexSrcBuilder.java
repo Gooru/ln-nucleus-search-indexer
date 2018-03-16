@@ -1,10 +1,15 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -13,10 +18,13 @@ import org.gooru.nucleus.search.indexers.app.index.model.CourseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.LessonEio;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
+import org.gooru.nucleus.search.indexers.app.index.model.TaxonomySetEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UnitEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.javalite.activejdbc.LazyList;
 
 import io.vertx.core.json.JsonArray;
@@ -35,6 +43,7 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
     return IndexType.LESSON.getType();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   protected JsonObject build(JsonObject source, D lessonEio) throws Exception {
     try {
@@ -125,6 +134,47 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       JsonObject unitData = getUnitRepo().getUnitById(unit.getId());
       unit.setTitle(unitData.getString(EntityAttributeConstants.TITLE, null));
       lessonEio.setUnit(unit.getUnitJson());
+      
+      Map<String, Object> unitResponse = IndexService.instance().getDocument(unit.getId(), IndexNameHolder.getIndexName(EsIndex.UNIT), IndexerConstants.TYPE_UNIT);
+      Map<String, Object> taxonomyAsMap = null;
+      if (unitResponse != null && !unitResponse.isEmpty()) taxonomyAsMap = (Map<String, Object>) unitResponse.get(IndexFields.TAXONOMY);
+      if (taxonomyAsMap != null && !taxonomyAsMap.isEmpty()) {
+        List<String> lessonTaxSubject = new ArrayList<String>(); 
+        List<String> lessonTaxCourse = new ArrayList<String>();
+        List<String> lessonTaxDomain = new ArrayList<String>();
+        if (taxonomyAsMap.containsKey(IndexFields.SUBJECT)) {
+          JsonArray subjectArray = new JsonArray();
+          subjectArray = taxonomyEo.getSubject();
+          subjectArray.add(taxonomyAsMap.get(IndexFields.SUBJECT));
+          if (!subjectArray.isEmpty()) taxonomyEo.setSubject(subjectArray);
+          List<String> unitTaxSubject = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.SUBJECT);
+          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.SUBJECT) != null) lessonTaxSubject = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.SUBJECT).getList();
+          if (!unitTaxSubject.isEmpty()) lessonTaxSubject.addAll(unitTaxSubject);
+        }
+        if (taxonomyAsMap.containsKey(IndexFields.COURSE)) {
+          JsonArray courseArray = new JsonArray();
+          courseArray = taxonomyEo.getCourse();
+          courseArray.add(taxonomyAsMap.get(IndexFields.COURSE));
+          if (!courseArray.isEmpty()) taxonomyEo.setCourse(courseArray);
+          List<String> unitTaxCourse = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.COURSE);
+          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.COURSE) != null) lessonTaxCourse = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.COURSE).getList();
+          if (!unitTaxCourse.isEmpty()) lessonTaxCourse.addAll(unitTaxCourse);
+        }
+        if (taxonomyAsMap.containsKey(IndexFields.DOMAIN)) {
+          JsonArray domainArray = new JsonArray(); 
+          domainArray = taxonomyEo.getDomain();
+          domainArray.add(taxonomyAsMap.get(IndexFields.DOMAIN));
+          if (!domainArray.isEmpty()) taxonomyEo.setDomain(domainArray);
+          List<String> unitTaxDomain = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.DOMAIN);
+          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.DOMAIN) != null) lessonTaxDomain = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.DOMAIN).getList();
+          if (lessonTaxDomain == null) lessonTaxDomain = new ArrayList<>();
+          if (!unitTaxDomain.isEmpty()) lessonTaxDomain.addAll(unitTaxDomain);
+        }
+        JsonObject taxonomyDataSet = taxonomyEo.getTaxonomySet();
+        taxonomyDataSet.put(IndexFields.SUBJECT, lessonTaxSubject).put(IndexFields.COURSE, lessonTaxCourse).put(IndexFields.DOMAIN, lessonTaxDomain);
+        taxonomyEo.setTaxonomySet(taxonomyDataSet);
+        lessonEio.setTaxonomy(taxonomyEo.getTaxonomyJson());
+      }
       
       //Set Collection Details
       JsonArray collectionTitles = new JsonArray();
