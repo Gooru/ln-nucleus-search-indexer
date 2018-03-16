@@ -20,8 +20,6 @@ public class UserRepositoryImpl extends BaseIndexRepo implements UserRepository 
     DB db = getDefaultDataSourceDBConnection();
     openConnection(db);
 
-    LOGGER.debug("UserRepositoryImpl : getUser: " + userID);
-
     User result = User.findById(getPGObject("id", UUID_TYPE, userID));
     JsonObject returnValue = null;
     
