@@ -9,9 +9,6 @@ public interface LearningMapsRepository {
   static LearningMapsRepository instance() {
     return new LearningMapsRepositoryImpl();
   }
-  void saveRQCALearningMaps(List<Map<String, Object>> data);
- 
-  void saveCULForLearningMaps(Map<String, Object> data);
   
   void updateRQCALearningMaps(List<Map<String, Object>> array);
   

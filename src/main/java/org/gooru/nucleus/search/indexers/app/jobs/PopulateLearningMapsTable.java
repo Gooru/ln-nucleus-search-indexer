@@ -66,11 +66,12 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
           Integer limit = params.getInteger("batchSize", BATCH_SIZE);
           Long offset = params.getLong("offset", OFFSET);
           Long totalProcessed = 0L;
-         
+
           processContents();
-          
+
           while (true) {
-            JsonArray gutCodesArray = TaxonomyCodeRepository.instance().getStdLTCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, offset);
+            JsonArray gutCodesArray =
+                    TaxonomyCodeRepository.instance().getStdLTCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, offset);
             if (gutCodesArray.size() == 0) {
               break;
             }
@@ -81,7 +82,7 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
               break;
             }
           }
-          
+
           LOGGER.info("LM :: Total processed GUT codes for CUL : {} ", totalProcessed);
           LOGGER.info("LM :: Total time taken to populate : {}", (System.currentTimeMillis() - startTime));
         } catch (Exception e) {
@@ -89,7 +90,7 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
         }
       }
     }, dayOfMonth, hourOfDay, minutes);
-    //scheduler.cancelCurrent();
+    // scheduler.cancelCurrent();
   }
 
   @SuppressWarnings("unchecked")
@@ -162,8 +163,8 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
   @SuppressWarnings("unchecked")
   private void processContents() {
     try {
-      Response searchResponse = performRequest("POST",
-              "/" + IndexNameHolder.getIndexName(EsIndex.RESOURCE) + ","  + IndexNameHolder.getIndexName(EsIndex.COLLECTION)+ "/_search", AGG_QUERY);
+      Response searchResponse = performRequest("POST", "/" + IndexNameHolder.getIndexName(EsIndex.RESOURCE) + ","
+              + IndexNameHolder.getIndexName(EsIndex.COLLECTION) + "," + IndexNameHolder.getIndexName(EsIndex.RUBRIC) + "/_search", AGG_QUERY);
       if (searchResponse.getEntity() != null) {
         Map<String, Object> responseAsMap;
         responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(searchResponse.getEntity()),
@@ -179,17 +180,17 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
           Map<String, Object> lmJson = new HashMap<>();
           lmJson.put("id", id.toUpperCase());
           for (Map<String, Object> ctMap : contentTypeAggList) {
-            lmJson.put(ctMap.get("key").toString(),(Integer)ctMap.get("doc_count"));
+            lmJson.put(ctMap.get("key").toString(), (Integer) ctMap.get("doc_count"));
           }
           lmArray.add(lmJson);
         });
         LOGGER.info("Processed all learning maps count : {}", lmArray.size());
         LearningMapsRepository.instance().updateRQCALearningMaps(lmArray);
-      } 
+      }
     } catch (ParseException | IOException e) {
-      LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ",e);
+      LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
     } catch (Exception e1) {
-      LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ",e1);
+      LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
     }
   }
 
