@@ -49,7 +49,7 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
   @Override
   public void deployJob(JsonObject config) {
     LOGGER.info("Deploying Populate Learning Maps Job....");
-    JsonObject params = config.getJsonObject("PopulateLearningMapsTableSettings");
+    JsonObject params = config.getJsonObject("populateLearningMapsTableSettings");
 
     Integer dayOfMonth = params.getInteger("dayOfMonth", DAY_OF_MONTH);
     Integer hourOfDay = params.getInteger("hourOfDay", HOUR_OF_DAY);

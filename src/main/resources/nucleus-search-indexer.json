@@ -58,6 +58,13 @@
   	"hourOfDay" : 4,
   	"minutes" : 10080
   },
+  "populateLearningMapsTableSettings" : {
+  	"batchSize" : 100,
+  	"offset" : 0,
+  	"dayOfMonth" : 1,
+  	"hourOfDay" : 4,
+  	"minutes" : 10080
+  },
   "http.port":8081
 
 }
