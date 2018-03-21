@@ -280,7 +280,12 @@
             },
             "contentFormat":{
                "type":"text",
-               "analyzer":"keyword_lowercase"
+               "analyzer":"keyword_lowercase",
+               "fields":{
+                  "keyword":{
+                     "type":"keyword"
+                  }
+               }
             },
             "contentSubFormat":{
                "type":"text",
@@ -596,6 +601,11 @@
                   "gutCodes":{
                      "type":"text",
                      "analyzer":"keyword_lowercase",
+                     "fields":{
+                        "keyword":{
+                           "type":"keyword"
+                        }
+                     },
                      "copy_to":[
                         "customSpellCheckerSuggest"
                      ]

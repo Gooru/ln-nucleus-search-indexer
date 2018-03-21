@@ -20,7 +20,9 @@
                   "analyzer":"gooru_kstem"
                }
             },
-            "copy_to":[ "all" ]
+            "copy_to":[
+               "all"
+            ]
          },
          "url":{
             "type":"keyword"
@@ -211,7 +213,9 @@
                   "analyzer":"snowball"
                }
             },
-            "copy_to":[ "all" ]
+            "copy_to":[
+               "all"
+            ]
          },
          "narration":{
             "type":"text",
@@ -229,15 +233,20 @@
          },
          "contentFormat":{
             "type":"text",
-            "analyzer":"keyword_lowercase"
+            "analyzer":"keyword_lowercase",
+            "fields":{
+               "keyword":{
+                  "type":"keyword"
+               }
+            }
          },
          "contentSubFormat":{
             "type":"text",
-            "analyzer":"keyword_lowercase", 
+            "analyzer":"keyword_lowercase",
             "fields":{
-            	"keyword":{
-            		"type":"keyword"
-            	}
+               "keyword":{
+                  "type":"keyword"
+               }
             }
          },
          "contentSubFormatEscaped":{
@@ -545,6 +554,11 @@
                "gutCodes":{
                   "type":"text",
                   "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "keyword":{
+                        "type":"keyword"
+                     }
+                  },
                   "copy_to":[
                      "customSpellCheckerSuggest"
                   ]

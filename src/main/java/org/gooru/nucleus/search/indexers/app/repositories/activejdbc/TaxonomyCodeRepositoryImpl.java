@@ -215,5 +215,24 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     }
     return result;
   }
+  
+  @Override
+  public JsonArray getStdLTCodeByFrameworkAndOffset(String frameworkCode, Integer limit, Long offset) {
+    DB db = getDefaultDataSourceDBConnection();
+    JsonArray result = null;
+    try {
+      openConnection(db);
+      LazyList<TaxonomyCode> codes =
+              TaxonomyCode.findBySQL(TaxonomyCode.FETCH_GDT_STD_LT_CODES, frameworkCode, limit != null ? limit : 10, offset != null ? offset : 0);
+      if (codes != null) {
+        result = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(codes));
+      }
+    } catch (Exception ex) {
+      LOGGER.error("TCRI:getStdLTCodeByFrameworkAndOffset: Failed to fetch taxonomy codes ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return result;
+  }
 
 }
