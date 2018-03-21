@@ -63,6 +63,14 @@
                "type":"date",
                "format":"dateOptionalTime"
             },
+            "contentFormat":{
+               "type":"text",
+               "fields":{
+                  "keyword":{
+                     "type":"keyword"
+                  }
+               }
+            },
             "owner":{
                "properties":{
                   "emailId":{
@@ -423,6 +431,11 @@
                   "gutCodes":{
                      "type":"text",
                      "analyzer":"keyword_lowercase",
+                     "fields":{
+                        "keyword":{
+                           "type":"keyword"
+                        }
+                     },
                      "copy_to":[
                         "customSpellCheckerSuggest"
                      ]

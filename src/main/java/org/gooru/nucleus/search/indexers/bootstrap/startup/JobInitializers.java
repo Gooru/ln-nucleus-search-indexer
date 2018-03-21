@@ -7,6 +7,7 @@ import java.util.List;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateGutBasedAssessmentSuggestJob;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateGutBasedCollectionSuggestJob;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateGutBasedResourceSuggestJob;
+import org.gooru.nucleus.search.indexers.app.jobs.PopulateLearningMapsTable;
 
 public class JobInitializers implements Iterable<JobInitializer> {
 
@@ -17,6 +18,7 @@ public class JobInitializers implements Iterable<JobInitializer> {
     initializers.add(PopulateGutBasedResourceSuggestJob.instance());
     initializers.add(PopulateGutBasedCollectionSuggestJob.instance());
     initializers.add(PopulateGutBasedAssessmentSuggestJob.instance());
+    initializers.add(PopulateLearningMapsTable.instance());
     internalIterator = initializers.iterator();
   }
 

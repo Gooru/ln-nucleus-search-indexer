@@ -199,11 +199,21 @@
          },
          "contentFormat":{
             "type":"text",
-            "analyzer":"keyword_lowercase"
+            "analyzer":"keyword_lowercase",
+            "fields":{
+               "keyword":{
+                  "type":"keyword"
+               }
+            }
          },
          "contentSubFormat":{
             "type":"text",
-            "analyzer":"keyword_lowercase"
+            "analyzer":"keyword_lowercase",
+            "fields":{
+               "keyword":{
+                  "type":"keyword"
+               }
+            }
          },
          "thumbnail":{
             "type":"keyword"
@@ -453,6 +463,11 @@
                "gutCodes":{
                   "type":"text",
                   "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "keyword":{
+                        "type":"keyword"
+                     }
+                  },
                   "copy_to":[
                      "customSpellCheckerSuggest"
                   ]

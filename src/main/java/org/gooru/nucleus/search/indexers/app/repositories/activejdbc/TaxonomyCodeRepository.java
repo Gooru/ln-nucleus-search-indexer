@@ -33,4 +33,6 @@ public interface TaxonomyCodeRepository {
 
   Long getLTCount();
 
+  JsonArray getStdLTCodeByFrameworkAndOffset(String frameworkCode, Integer limit, Long offset);
+
 }
