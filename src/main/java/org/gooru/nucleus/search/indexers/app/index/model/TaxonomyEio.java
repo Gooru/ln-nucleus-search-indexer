@@ -187,5 +187,20 @@ public class TaxonomyEio {
   public void setSignatureResources(JsonArray signatureResources) {
     taxonomy = JsonUtil.set(taxonomy, "signatureResources",  new JsonArray(signatureResources.stream().distinct().collect(Collectors.toList())));
   }
-   
+  
+  public JsonArray getGutData() {
+    return taxonomy.getJsonArray("gutData", null);
+  }
+
+  public void setGutData(JsonArray gutData) {
+    taxonomy = JsonUtil.set(taxonomy, "gutData",  new JsonArray(gutData.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getGutCodes() {
+    return taxonomy.getJsonArray("gutCodes", null);
+  }
+
+  public void setGutCodes(JsonArray gutCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "gutCodes",  new JsonArray(gutCodes.stream().distinct().collect(Collectors.toList())));
+  } 
 }

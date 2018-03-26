@@ -18,7 +18,7 @@ public interface TaxonomyRepository {
   
   JsonObject getCrosswalkCodes(String sourceCodeId);
   
-  JsonObject getGDTCode(String targetCodeId);
+  JsonArray getGDTCode(String targetCodeId);
   
   JsonArray getGutPrerequisites(String gutCompetencyId);
 

@@ -380,11 +380,6 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       }
       subject.setCodeId(subjectCode);
       subjectArray.add(subject.getCode());
-      JsonObject gdtCode = getTaxonomyRepo().getGDTCode(subjectCode);
-      if (gdtCode != null && !gdtCode.isEmpty()) {
-        gutCode.setCodeId(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
-        subjectArray.add(gutCode.getCode());
-      }
     }
     if (courseCode != null) {
       CodeEo course = new CodeEo();
@@ -401,11 +396,6 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       }
       course.setCodeId(courseCode);
       courseArray.add(course.getCode());
-      JsonObject gdtCode = getTaxonomyRepo().getGDTCode(courseCode);
-      if (gdtCode != null && !gdtCode.isEmpty()) {
-        gutCode.setCodeId(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
-        courseArray.add(gutCode.getCode());
-      }
     }
     if (domainCode != null) {
       CodeEo domain = new CodeEo();
@@ -422,11 +412,6 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       }
       domain.setCodeId(domainCode);
       domainArray.add(domain.getCode());
-      JsonObject gdtCode = getTaxonomyRepo().getGDTCode(domainCode);
-      if (gdtCode != null && !gdtCode.isEmpty()) {
-        gutCode.setCodeId(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
-        domainArray.add(gutCode.getCode());
-      }
     }
   }
   
@@ -444,16 +429,21 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         if (!displayCodeJson.isEmpty() && displayCodeJson.getString(EntityAttributeConstants.CODE) != null)
           eqDisplayCodesArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
       }
-      JsonObject gdtCode = getTaxonomyRepo().getGDTCode(leafCode);
-      if (gdtCode != null && !gdtCode.isEmpty()) {
-        gutCodes.add(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
-        List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
-        if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
-          equivalentCompetencyList.forEach(equivalentCompetency -> {
-            eqInternalCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString());
-            eqDisplayCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
-          });
-        }
+      JsonArray gdtArray = getTaxonomyRepo().getGDTCode(leafCode);
+      if (gdtArray != null && gdtArray.size() > 0) {
+        gdtArray.forEach(a -> {
+          JsonObject gdtCode = (JsonObject) a;
+          if (gdtCode != null && !gdtCode.isEmpty()) {
+            gutCodes.add(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
+            List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gdtCode.getString(TaxonomyCode.SOURCE_TAXONOMY_CODE_ID));
+            if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
+              equivalentCompetencyList.forEach(equivalentCompetency -> {
+                eqInternalCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString());
+                eqDisplayCodesArray.add(equivalentCompetency.get(TaxonomyCode.TARGET_DISPLAY_CODE).toString());
+              });
+            }
+          }
+        });
       }
     });
     eqObject.put("gutCodes", gutCodes);
