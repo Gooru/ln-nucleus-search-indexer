@@ -79,7 +79,10 @@ public class IndexFields {
 	public static final String HAS_FRAME_BREAKER = "hasFrameBreaker";
   public static final String STATUS_IS_BROKEN = "statusIsBroken";
   public static final String HAS_TWENTY_ONE_CENTURY_SKILLS = "has21stCenturySkills";
-
+  public static final String PREREQUISITES = "prerequisites";
+  public static final String SIGNATURE_RESOURCES = "signatureResources";
+  public static final String SIGNATURE_COLLECTIONS = "signatureCollections";
+  public static final String SIGNATURE_ASSESSMENTS = "signatureAssessments";
 	
 	// course fields 
 	
@@ -134,5 +137,6 @@ public class IndexFields {
   public static final String TWENTY_ONE_CENTURY_SKILL = "twentyOneCenturySkill";
   public static final String PUBLISHER_SUGGEST = "publisherSuggest";
   public static final String PUBLISHER_DOT_PUBLISHER_LOWERCASE = "publisher.publisherLowercase";
+  public static final String CODE_TYPE = "codeType";
 
 }

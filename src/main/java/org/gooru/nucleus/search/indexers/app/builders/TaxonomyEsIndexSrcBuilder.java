@@ -78,35 +78,48 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       taxonomyEo.setCompetency(competencyEo.getTaxonomyJson());
     }
     
-    //Set Crosswalk
-    JsonObject gutCodeObject = getTaxonomyRepo().getGDTCode(codeId);
-    if (gutCodeObject != null && !gutCodeObject.isEmpty()) {
-      String gutCode = gutCodeObject.getString(TaxonomyCodeMapping.SOURCE_TAXONOMY_CODE_ID);
-      List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gutCode);
-      if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
-        JsonArray crosswalkCodes = new JsonArray();
-        equivalentCompetencyList.forEach(eqCompetency -> {
-          if (!eqCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(codeId)) {
-            JsonObject crosswalkCode = setCrosswalkObject(eqCompetency);
-            crosswalkCodes.add(crosswalkCode);
-          }
-        });
-        if (!crosswalkCodes.isEmpty()) taxonomyEo.setCrosswalkCodes(crosswalkCodes);
-      }
-      taxonomyEo.setGutCode(gutCode);
-      JsonArray gutPrerequisites = getTaxonomyRepo().getGutPrerequisites(gutCode);
-      if (!gutPrerequisites.isEmpty()) taxonomyEo.setGutPrerequisites(getTaxonomyRepo().getGutPrerequisites(gutCode));
-      
-      JsonArray signatureCollections = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_COLLECTION);
-      taxonomyEo.setSignatureCollections(generateSignatureItems(signatureCollections, IndexerConstants.TYPE_COLLECTION));
-      
-      JsonArray signatureAsssessments = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_ASSESSMENT);
-      taxonomyEo.setSignatureAssessments(generateSignatureItems(signatureAsssessments, IndexerConstants.TYPE_ASSESSMENT));
-      
-    }
-    
     JsonArray signatureResources = getIndexRepo().getSignatureResourcesByCodeId(codeId);
-    taxonomyEo.setSignatureResources(generateSignatureItems(signatureResources, IndexerConstants.TYPE_RESOURCE));
+    
+    //Set Crosswalk
+    JsonArray gutArray = getTaxonomyRepo().getGDTCode(codeId);
+    if (gutArray != null && gutArray.size() > 0) {
+      JsonArray gutDataAsList = new JsonArray();
+      JsonArray gutCodes = new JsonArray();
+      gutArray.forEach(a -> {
+        JsonObject gutData = new JsonObject();
+        JsonObject gutCodeObject = (JsonObject) a;
+        if (gutCodeObject != null && !gutCodeObject.isEmpty()) {
+          String gutCode = gutCodeObject.getString(TaxonomyCodeMapping.SOURCE_TAXONOMY_CODE_ID);
+          List<Map> equivalentCompetencyList = getTaxonomyRepo().getEquivalentCompetencies(gutCode);
+          if (equivalentCompetencyList != null && !equivalentCompetencyList.isEmpty()) {
+            JsonArray crosswalkCodes = new JsonArray();
+            equivalentCompetencyList.forEach(eqCompetency -> {
+              if (!eqCompetency.get(TaxonomyCode.TARGET_TAXONOMY_CODE_ID).toString().equalsIgnoreCase(codeId)) {
+                JsonObject crosswalkCode = setCrosswalkObject(eqCompetency);
+                crosswalkCodes.add(crosswalkCode);
+              }
+            });
+            if (!crosswalkCodes.isEmpty()) gutData.put(IndexFields.CROSSWALK_CODES, crosswalkCodes);
+          }
+          gutCodes.add(gutCode);
+          JsonArray gutPrerequisites = getTaxonomyRepo().getGutPrerequisites(gutCode);
+          JsonArray signatureCollections = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_COLLECTION);
+          JsonArray signatureAsssessments = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_ASSESSMENT);
+          gutData.put(EntityAttributeConstants.ID, gutCode);
+          JsonObject gutTaxCode = getTaxonomyCodeRepo().getCode(gutCode);
+          gutData.put(IndexFields.TITLE, gutTaxCode.getString(IndexFields.TITLE));
+          gutData.put(IndexFields.CODE_TYPE, gutTaxCode.getString(EntityAttributeConstants.CODE_TYPE));
+          gutData.put(IndexFields.CODE, gutCodeObject.getString(EntityAttributeConstants.SOURCE_DISPLAY_CODE));
+          gutData.put(IndexFields.PREREQUISITES, gutPrerequisites);
+          gutData.put(IndexFields.SIGNATURE_RESOURCES, generateSignatureItems(signatureResources, IndexerConstants.TYPE_RESOURCE));
+          gutData.put(IndexFields.SIGNATURE_COLLECTIONS, generateSignatureItems(signatureCollections, IndexerConstants.TYPE_COLLECTION));
+          gutData.put(IndexFields.SIGNATURE_ASSESSMENTS, generateSignatureItems(signatureAsssessments, IndexerConstants.TYPE_ASSESSMENT));
+          gutDataAsList.add(gutData);
+        }
+      });
+      if (!gutCodes.isEmpty()) taxonomyEo.setGutCodes(gutCodes);
+      if (!gutDataAsList.isEmpty()) taxonomyEo.setGutData(gutDataAsList);
+    }
     
     String subjectCode = null;
     String courseCode = null;

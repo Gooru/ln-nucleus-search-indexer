@@ -93,6 +93,7 @@ public final class EntityAttributeConstants {
   public static final String STANDARD_FRAMEWORK_ID = "standard_framework_id";
   public static final String CODE_TYPE = "code_type";
   public static final String SUBJECT_CLASSIFICATION = "subject_classification";
+  public static final String SOURCE_DISPLAY_CODE = "source_display_code";
 
   public static final String NAME = "name";
   public static final String TENANT_TYPE = "tenant_type";
