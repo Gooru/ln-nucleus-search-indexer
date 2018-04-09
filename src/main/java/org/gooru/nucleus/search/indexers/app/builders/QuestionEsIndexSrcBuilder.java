@@ -17,6 +17,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.QuestionEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
 import io.vertx.core.json.JsonArray;
@@ -121,7 +122,9 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       
       // Set Statistics
       StatisticsEo statisticsEo = new StatisticsEo();
-
+      Boolean isFeatured = false;
+      if(course.getId() != null) isFeatured = CourseRepository.instance().isFeatured(course.getId());
+      statisticsEo.setFeatured(isFeatured);
       statisticsEo.setHasNoThumbnail(contentEo.getThumbnail() != null ? 0 : 1);
       statisticsEo.setHasNoDescription(contentEo.getDescription() != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount((contentEo.getCollectionIds() != null) ? contentEo.getCollectionIds().size() : 0);

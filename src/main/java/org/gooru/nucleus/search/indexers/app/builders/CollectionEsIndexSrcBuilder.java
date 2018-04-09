@@ -18,6 +18,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
@@ -133,6 +134,16 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         collectionEo.setResourceTitles(new JsonArray(resourceTitles.stream().distinct().collect(Collectors.toList())));
         collectionEo.setCollectionContents(collectionContents);
       }
+      
+      //Set course
+      CourseEo course = new CourseEo(); 
+      course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
+      course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
+      collectionEo.setCourse(course.getCourseJson());
+      Boolean isFeatured = false;
+      if(course.getId() != null) isFeatured = CourseRepository.instance().isFeatured(course.getId());
+      statisticsEo.setFeatured(isFeatured);
+      
       // Set Statistics
       statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
       statisticsEo.setHasNoDescription(learningObjective != null ? 0 : 1);
@@ -226,12 +237,6 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       if(license != null){
         collectionEo.setLicense(license);
       }
-
-      //Set course
-      CourseEo course = new CourseEo(); 
-      course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
-      course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
-      collectionEo.setCourse(course.getCourseJson());
       
       //Set Collection Tenant 
       String tenantId = source.getString(EntityAttributeConstants.TENANT);
