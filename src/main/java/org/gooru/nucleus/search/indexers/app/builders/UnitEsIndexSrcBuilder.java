@@ -145,7 +145,7 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
         List<String> taxCourseLabels = new ArrayList<String>();
         if (taxonomyAsMap.containsKey(IndexFields.SUBJECT)) {
           JsonArray subjectArray = new JsonArray();
-          subjectArray = taxonomyEo.getSubject();
+          if (taxonomyEo.getSubject() != null) subjectArray = taxonomyEo.getSubject();
           subjectArray.addAll(new JsonArray((List<Map<String, Object>>) taxonomyAsMap.get(IndexFields.SUBJECT)));
           if (!subjectArray.isEmpty()) taxonomyEo.setSubject(subjectArray);
           List<String> taxSubjectLabelsOfParent = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.SUBJECT);
@@ -154,7 +154,7 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
         }
         if (taxonomyAsMap.containsKey(IndexFields.COURSE)) {
           JsonArray courseArray = new JsonArray();
-          courseArray = taxonomyEo.getCourse();
+          if (taxonomyEo.getCourse() != null) courseArray = taxonomyEo.getCourse();
           courseArray.addAll(new JsonArray((List<Map<String, Object>>) taxonomyAsMap.get(IndexFields.COURSE)));
           if (!courseArray.isEmpty()) taxonomyEo.setCourse(courseArray);
           List<String> taxCourseLabelsOfParent = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.COURSE);
