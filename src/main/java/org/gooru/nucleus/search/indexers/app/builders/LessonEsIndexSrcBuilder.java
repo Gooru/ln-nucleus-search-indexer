@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import org.gooru.nucleus.search.indexers.app.index.model.CourseEo;
 import org.gooru.nucleus.search.indexers.app.index.model.LessonEio;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
-import org.gooru.nucleus.search.indexers.app.index.model.TaxonomySetEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UnitEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
@@ -139,39 +137,41 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       Map<String, Object> taxonomyAsMap = null;
       if (unitResponse != null && !unitResponse.isEmpty()) taxonomyAsMap = (Map<String, Object>) unitResponse.get(IndexFields.TAXONOMY);
       if (taxonomyAsMap != null && !taxonomyAsMap.isEmpty()) {
-        List<String> lessonTaxSubject = new ArrayList<String>(); 
-        List<String> lessonTaxCourse = new ArrayList<String>();
-        List<String> lessonTaxDomain = new ArrayList<String>();
+        List<String> taxSubjectLabels = new ArrayList<String>(); 
+        List<String> taxCourseLabels = new ArrayList<String>();
+        List<String> taxDomainLabels = new ArrayList<String>();
         if (taxonomyAsMap.containsKey(IndexFields.SUBJECT)) {
           JsonArray subjectArray = new JsonArray();
           subjectArray = taxonomyEo.getSubject();
-          subjectArray.add(taxonomyAsMap.get(IndexFields.SUBJECT));
+          subjectArray.addAll(new JsonArray((List<Map<String, Object>>) taxonomyAsMap.get(IndexFields.SUBJECT)));
           if (!subjectArray.isEmpty()) taxonomyEo.setSubject(subjectArray);
-          List<String> unitTaxSubject = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.SUBJECT);
-          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.SUBJECT) != null) lessonTaxSubject = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.SUBJECT).getList();
-          if (!unitTaxSubject.isEmpty()) lessonTaxSubject.addAll(unitTaxSubject);
+          List<String> taxSubjectLabelsOfParent = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.SUBJECT);
+          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.SUBJECT) != null) taxSubjectLabels = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.SUBJECT).getList();
+          if (!taxSubjectLabelsOfParent.isEmpty()) taxSubjectLabels.addAll(taxSubjectLabelsOfParent);
         }
         if (taxonomyAsMap.containsKey(IndexFields.COURSE)) {
           JsonArray courseArray = new JsonArray();
           courseArray = taxonomyEo.getCourse();
-          courseArray.add(taxonomyAsMap.get(IndexFields.COURSE));
+          courseArray.addAll(new JsonArray((List<Map<String, Object>>) taxonomyAsMap.get(IndexFields.COURSE)));
           if (!courseArray.isEmpty()) taxonomyEo.setCourse(courseArray);
-          List<String> unitTaxCourse = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.COURSE);
-          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.COURSE) != null) lessonTaxCourse = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.COURSE).getList();
-          if (!unitTaxCourse.isEmpty()) lessonTaxCourse.addAll(unitTaxCourse);
+          List<String> taxCourseLabelsOfParent = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.COURSE);
+          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.COURSE) != null) taxCourseLabels = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.COURSE).getList();
+          if (!taxCourseLabelsOfParent.isEmpty()) taxCourseLabels.addAll(taxCourseLabelsOfParent);
         }
         if (taxonomyAsMap.containsKey(IndexFields.DOMAIN)) {
           JsonArray domainArray = new JsonArray(); 
           domainArray = taxonomyEo.getDomain();
-          domainArray.add(taxonomyAsMap.get(IndexFields.DOMAIN));
+          domainArray.addAll(new JsonArray((List<Map<String, Object>>) taxonomyAsMap.get(IndexFields.DOMAIN)));
           if (!domainArray.isEmpty()) taxonomyEo.setDomain(domainArray);
-          List<String> unitTaxDomain = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.DOMAIN);
-          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.DOMAIN) != null) lessonTaxDomain = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.DOMAIN).getList();
-          if (lessonTaxDomain == null) lessonTaxDomain = new ArrayList<>();
-          if (!unitTaxDomain.isEmpty()) lessonTaxDomain.addAll(unitTaxDomain);
+          List<String> taxDomainLabelsOfParent = (List<String>) ((Map<String, Object>) taxonomyAsMap.get(IndexFields.TAXONOMY_SET)).get(IndexFields.DOMAIN);
+          if (taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.DOMAIN) != null) taxDomainLabels = taxonomyEo.getTaxonomySet().getJsonArray(IndexFields.DOMAIN).getList();
+          if (taxDomainLabels == null) taxDomainLabels = new ArrayList<>();
+          if (!taxDomainLabelsOfParent.isEmpty()) taxDomainLabels.addAll(taxDomainLabelsOfParent);
         }
         JsonObject taxonomyDataSet = taxonomyEo.getTaxonomySet();
-        taxonomyDataSet.put(IndexFields.SUBJECT, lessonTaxSubject).put(IndexFields.COURSE, lessonTaxCourse).put(IndexFields.DOMAIN, lessonTaxDomain);
+        taxonomyDataSet.put(IndexFields.SUBJECT, taxSubjectLabels.stream().distinct().collect(Collectors.toList()))
+        .put(IndexFields.COURSE, taxCourseLabels.stream().distinct().collect(Collectors.toList()))
+        .put(IndexFields.DOMAIN, taxDomainLabels.stream().distinct().collect(Collectors.toList()));
         taxonomyEo.setTaxonomySet(taxonomyDataSet);
         lessonEio.setTaxonomy(taxonomyEo.getTaxonomyJson());
       }
