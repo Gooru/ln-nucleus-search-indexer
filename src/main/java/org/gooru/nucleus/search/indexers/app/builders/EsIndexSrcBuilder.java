@@ -289,14 +289,13 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         
     if (!relatedLeafInternalCodes.isEmpty()) {
       taxonomyEo.setRelatedLeafInternalCodes(relatedLeafInternalCodes);
-      JsonObject eqSLObject = setEquivalentCodes(leafAggInternalCodes, taxonomyObject);
+      JsonObject eqSLObject = setEquivalentCodes(leafAggInternalCodes, aggTaxonomyObject);
       if (!(eqSLObject.getJsonArray("gutCodes")).isEmpty()) {
         relatedGutCodes.addAll(eqSLObject.getJsonArray("gutCodes"));
-        taxonomyEo.setRelatedGutCodes(relatedGutCodes);
       }
-      JsonArray leafEqIntenralCodes = taxonomyEo.getAllEquivalentInternalCodes();
-      if (!(eqSLObject.getJsonArray("eqInternalCodesArray")).isEmpty())  leafEqIntenralCodes.addAll(eqSLObject.getJsonArray("eqInternalCodesArray"));
-      if (!leafEqIntenralCodes.isEmpty()) taxonomyEo.setAllEqRelatedInternalCodes(leafEqIntenralCodes);
+      JsonArray leafEqInternalCodes = taxonomyEo.getAllEquivalentInternalCodes();
+      if (!(eqSLObject.getJsonArray("eqInternalCodesArray")).isEmpty())  leafEqInternalCodes.addAll(eqSLObject.getJsonArray("eqInternalCodesArray"));
+      if (leafEqInternalCodes != null && !leafEqInternalCodes.isEmpty()) taxonomyEo.setAllEqRelatedInternalCodes(leafEqInternalCodes);
     }
     if (!relatedGutCodes.isEmpty()) {
       taxonomyEo.setRelatedGutCodes(relatedGutCodes);
@@ -432,7 +431,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       eqInternalCodesArray.add(leafCode);
       if (taxonomyObject != null) {
         JsonObject displayCodeJson = taxonomyObject.getJsonObject(leafCode);
-        if (!displayCodeJson.isEmpty() && displayCodeJson.getString(EntityAttributeConstants.CODE) != null)
+        if (displayCodeJson != null && !displayCodeJson.isEmpty() && displayCodeJson.getString(EntityAttributeConstants.CODE) != null)
           eqDisplayCodesArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
       }
       JsonArray gdtArray = getTaxonomyRepo().getGDTCode(leafCode);
@@ -522,5 +521,5 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     }
     return value;
   }
-  
+
 }
