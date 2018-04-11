@@ -293,7 +293,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       if (!(eqSLObject.getJsonArray("gutCodes")).isEmpty()) {
         relatedGutCodes.addAll(eqSLObject.getJsonArray("gutCodes"));
       }
-      JsonArray leafEqInternalCodes = taxonomyEo.getAllEquivalentInternalCodes();
+      JsonArray leafEqInternalCodes = new JsonArray();
+      if (taxonomyEo.getAllEquivalentInternalCodes() != null) leafEqInternalCodes = taxonomyEo.getAllEquivalentInternalCodes();
       if (!(eqSLObject.getJsonArray("eqInternalCodesArray")).isEmpty())  leafEqInternalCodes.addAll(eqSLObject.getJsonArray("eqInternalCodesArray"));
       if (leafEqInternalCodes != null && !leafEqInternalCodes.isEmpty()) taxonomyEo.setAllEqRelatedInternalCodes(leafEqInternalCodes);
     }
