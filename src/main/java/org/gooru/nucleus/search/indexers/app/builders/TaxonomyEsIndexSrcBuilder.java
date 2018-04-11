@@ -176,16 +176,16 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     }
     List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
     if (subjectData != null && subjectData.size() > 0) {
-      String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
-      if (subjectLabelArray != null) subjectLabelArray.add(subjectTitle);
-      codeEo.setLabel(subjectTitle);
+      String title = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
+      if (subjectLabelArray != null) subjectLabelArray.add(title);
+      codeEo.setLabel(title);
       codeEo.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
     }
     codeEo.setCodeId(subjectCode);
   }
   
   @SuppressWarnings("rawtypes")
-  private String extractCourse(String code, CodeEo codeEo, JsonArray courseLabelArray) {
+  private void extractCourse(String code, CodeEo codeEo, JsonArray courseLabelArray) {
     String courseCode = null;
     String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
     if (codes.length == 2) {
@@ -195,16 +195,15 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     }
     List<Map> courseData = getTaxonomyRepo().getTaxonomyData(courseCode, IndexerConstants.COURSE);
     if (courseData != null && courseData.size() > 0) {
-      String subjectTitle = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
-      if (courseLabelArray != null) courseLabelArray.add(subjectTitle);
-      codeEo.setLabel(subjectTitle);
+      String title = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
+      if (courseLabelArray != null) courseLabelArray.add(title);
+      codeEo.setLabel(title);
     }
     codeEo.setCodeId(courseCode);
-    return courseCode;
   }
 
   @SuppressWarnings("rawtypes")
-  private String extractDomain(String code, CodeEo codeEo, JsonArray domainLabelArray) {
+  private void extractDomain(String code, CodeEo codeEo, JsonArray domainLabelArray) {
     String domainCode = null;
     String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
     if (codes.length == 3) {
@@ -214,12 +213,11 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     }
     List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
     if (domainData != null && domainData.size() > 0) {
-      String subjectTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
-      if (domainLabelArray != null) domainLabelArray.add(subjectTitle);
-      codeEo.setLabel(subjectTitle);
+      String title = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
+      if (domainLabelArray != null) domainLabelArray.add(title);
+      codeEo.setLabel(title);
     }
     codeEo.setCodeId(domainCode);
-    return domainCode;
   }
 
   private JsonArray generateSignatureItems(JsonArray signatureCollections, String contentType) {
