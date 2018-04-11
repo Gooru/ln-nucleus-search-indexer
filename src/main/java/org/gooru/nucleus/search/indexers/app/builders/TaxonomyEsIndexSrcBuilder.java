@@ -23,10 +23,9 @@ import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexType;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.index.model.CodeEo;
 import org.gooru.nucleus.search.indexers.app.index.model.CollectionEo;
-import org.gooru.nucleus.search.indexers.app.index.model.CourseEo;
-import org.gooru.nucleus.search.indexers.app.index.model.DomainEo;
-import org.gooru.nucleus.search.indexers.app.index.model.SubjectEo;
+import org.gooru.nucleus.search.indexers.app.index.model.GutEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEio;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
@@ -86,6 +85,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
       JsonArray gutDataAsList = new JsonArray();
       JsonArray gutCodes = new JsonArray();
       gutArray.forEach(a -> {
+        GutEo gutEo = new GutEo();
         JsonObject gutData = new JsonObject();
         JsonObject gutCodeObject = (JsonObject) a;
         if (gutCodeObject != null && !gutCodeObject.isEmpty()) {
@@ -105,73 +105,49 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
           JsonArray gutPrerequisites = getTaxonomyRepo().getGutPrerequisites(gutCode);
           JsonArray signatureCollections = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_COLLECTION);
           JsonArray signatureAsssessments = getSignatureItemsRepo().getSignatureItemsByGutCode(gutCode, IndexerConstants.TYPE_ASSESSMENT);
-          gutData.put(EntityAttributeConstants.ID, gutCode);
+          gutEo.setId(gutCode);
           JsonObject gutTaxCode = getTaxonomyCodeRepo().getCode(gutCode);
-          gutData.put(IndexFields.TITLE, gutTaxCode.getString(IndexFields.TITLE));
-          gutData.put(IndexFields.CODE_TYPE, gutTaxCode.getString(EntityAttributeConstants.CODE_TYPE));
-          gutData.put(IndexFields.CODE, gutCodeObject.getString(EntityAttributeConstants.SOURCE_DISPLAY_CODE));
-          gutData.put(IndexFields.PREREQUISITES, gutPrerequisites);
-          gutData.put(IndexFields.SIGNATURE_RESOURCES, generateSignatureItems(signatureResources, IndexerConstants.TYPE_RESOURCE));
-          gutData.put(IndexFields.SIGNATURE_COLLECTIONS, generateSignatureItems(signatureCollections, IndexerConstants.TYPE_COLLECTION));
-          gutData.put(IndexFields.SIGNATURE_ASSESSMENTS, generateSignatureItems(signatureAsssessments, IndexerConstants.TYPE_ASSESSMENT));
-          gutDataAsList.add(gutData);
+          gutEo.setTitle(gutTaxCode.getString(IndexFields.TITLE));
+          gutEo.setCodeType(gutTaxCode.getString(EntityAttributeConstants.CODE_TYPE));
+          gutEo.setDisplayCode(gutCodeObject.getString(EntityAttributeConstants.SOURCE_DISPLAY_CODE));
+          gutEo.setPrerequisites(gutPrerequisites);
+          gutEo.setSignatureResources(generateSignatureItems(signatureResources, IndexerConstants.TYPE_RESOURCE));
+          gutEo.setSignatureCollections(generateSignatureItems(signatureCollections, IndexerConstants.TYPE_COLLECTION));
+          gutEo.setSignatureAssessments(generateSignatureItems(signatureAsssessments, IndexerConstants.TYPE_ASSESSMENT));
+          
+          CodeEo subjectCodeEo = new CodeEo();
+          JsonArray subjectLabelArray = new JsonArray();
+          extractSubject(gutCode, subjectCodeEo, subjectLabelArray);
+          if (!subjectLabelArray.isEmpty()) gutEo.setSubject(subjectLabelArray.getString(0));
+          
+          CodeEo courseCodeEo = new CodeEo();
+          JsonArray courseLabelArray = new JsonArray();
+          extractCourse(gutCode, courseCodeEo, courseLabelArray);
+          if (!courseLabelArray.isEmpty()) gutEo.setCourse(courseLabelArray.getString(0));
+          
+          CodeEo domainCodeEo = new CodeEo();
+          JsonArray domainLabelArray = new JsonArray();
+          extractDomain(gutCode, domainCodeEo, domainLabelArray);
+          if (!domainLabelArray.isEmpty()) gutEo.setDomain(domainLabelArray.getString(0));
+          
+          gutDataAsList.add(gutEo.getGutJson());
         }
       });
       if (!gutCodes.isEmpty()) taxonomyEo.setGutCodes(gutCodes);
       if (!gutDataAsList.isEmpty()) taxonomyEo.setGutData(gutDataAsList);
     }
     
-    String subjectCode = null;
-    String courseCode = null;
-    String domainCode = null;
-    String[] codes = codeId.split(IndexerConstants.HYPHEN_SEPARATOR);
-    if (codes.length > 0) {
-      if (codes.length == 1) {
-        subjectCode = codeId;
-      } else if (codes.length > 1) {
-        subjectCode = codeId.substring(0, StringUtils.ordinalIndexOf(codeId, "-", 1));
-      }
-      if (codes.length == 2) {
-        courseCode = codeId;
-      } else if (codes.length > 2) {
-        courseCode = codeId.substring(0, StringUtils.ordinalIndexOf(codeId, "-", 2));
-      }
-      if (codes.length == 3) {
-        domainCode = codeId;
-      } else if (codes.length > 3) {
-        domainCode = codeId.substring(0, StringUtils.ordinalIndexOf(codeId, "-", 3));
-      }
-    }
-    if (subjectCode != null) {
-      SubjectEo subject = new SubjectEo();
-      List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
-      if (subjectData != null && subjectData.size() > 0) {
-        subject.setTitle(subjectData.get(0).get(EntityAttributeConstants.TITLE).toString());
-        subject.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
-      }
-      subject.setId(subjectCode);
-      taxonomyEo.setSubject(subject.getSubjectJson());
-    }
-    if (courseCode != null) {
-      CourseEo course = new CourseEo();
-      List<Map> courseData = getTaxonomyRepo().getTaxonomyData(courseCode, IndexerConstants.COURSE);
-      if (courseData != null && courseData.size() > 0) {
-        String courseTitle = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
-        course.setTitle(courseTitle);
-      }
-      course.setId(courseCode);
-      taxonomyEo.setCourse(course.getCourseJson());
-    }
-    if (domainCode != null) {
-      DomainEo domain = new DomainEo();
-      List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
-      if (domainData != null && domainData.size() > 0) {
-        String domainTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
-        domain.setTitle(domainTitle);
-      }
-      domain.setId(domainCode);
-      taxonomyEo.setDomain(domain.getDomainJson());
-    }
+    CodeEo subjectCodeEo = new CodeEo();
+    extractSubject(codeId, subjectCodeEo, null);
+    if (subjectCodeEo.getCodeId() != null) taxonomyEo.setSubject(subjectCodeEo.getCodeJson());
+    
+    CodeEo courseCodeEo = new CodeEo();
+    extractCourse(codeId, courseCodeEo, null);
+    if (courseCodeEo.getCodeId() != null) taxonomyEo.setCourse(courseCodeEo.getCodeJson());
+    
+    CodeEo domainCodeEo = new CodeEo();
+    extractDomain(codeId, domainCodeEo, null);
+    if (domainCodeEo.getCodeId() != null) taxonomyEo.setDomain(domainCodeEo.getCodeJson());
     
     //Extract and Index keywords
     if (StringUtils.isNotBlank(title)) {
@@ -187,6 +163,63 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     //TODO taxonomyEo.setGrade();
     
     return taxonomyEo.getTaxonomyJson();
+  }
+
+  @SuppressWarnings("rawtypes")
+  private void extractSubject(String code, CodeEo codeEo, JsonArray subjectLabelArray) {
+    String subjectCode = null;
+    String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
+    if (codes.length == 1) {
+      subjectCode = code;
+    } else if (codes.length > 1) {
+      subjectCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 1));
+    }
+    List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
+    if (subjectData != null && subjectData.size() > 0) {
+      String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
+      if (subjectLabelArray != null) subjectLabelArray.add(subjectTitle);
+      codeEo.setLabel(subjectTitle);
+      codeEo.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
+    }
+    codeEo.setCodeId(subjectCode);
+  }
+  
+  @SuppressWarnings("rawtypes")
+  private String extractCourse(String code, CodeEo codeEo, JsonArray courseLabelArray) {
+    String courseCode = null;
+    String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
+    if (codes.length == 2) {
+      courseCode = code;
+    } else if (codes.length > 2) {
+      courseCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 2));
+    }
+    List<Map> courseData = getTaxonomyRepo().getTaxonomyData(courseCode, IndexerConstants.COURSE);
+    if (courseData != null && courseData.size() > 0) {
+      String subjectTitle = courseData.get(0).get(EntityAttributeConstants.TITLE).toString();
+      if (courseLabelArray != null) courseLabelArray.add(subjectTitle);
+      codeEo.setLabel(subjectTitle);
+    }
+    codeEo.setCodeId(courseCode);
+    return courseCode;
+  }
+
+  @SuppressWarnings("rawtypes")
+  private String extractDomain(String code, CodeEo codeEo, JsonArray domainLabelArray) {
+    String domainCode = null;
+    String[] codes = code.split(IndexerConstants.HYPHEN_SEPARATOR);
+    if (codes.length == 3) {
+      domainCode = code;
+    } else if (codes.length > 3) {
+      domainCode = code.substring(0, StringUtils.ordinalIndexOf(code, "-", 3));
+    }
+    List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
+    if (domainData != null && domainData.size() > 0) {
+      String subjectTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
+      if (domainLabelArray != null) domainLabelArray.add(subjectTitle);
+      codeEo.setLabel(subjectTitle);
+    }
+    codeEo.setCodeId(domainCode);
+    return domainCode;
   }
 
   private JsonArray generateSignatureItems(JsonArray signatureCollections, String contentType) {
