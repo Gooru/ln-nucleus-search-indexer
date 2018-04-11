@@ -5,10 +5,14 @@ import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 public class CodeEo {
 
-  private JsonObject code;
+  private JsonObject code = null;
 
   public CodeEo() {
     this.code = new JsonObject();
+  }
+
+  public JsonObject getCodeJson() {
+    return !code.isEmpty() ? code : null;
   }
 
   public JsonObject getCode() {
@@ -50,5 +54,5 @@ public class CodeEo {
   public void setSubjectClassification(String subjectClassification) {
     code = JsonUtil.set(code, "subjectClassification", subjectClassification);
   }
-  
+
 }
