@@ -29,8 +29,8 @@ import io.vertx.core.json.JsonObject;
 public class PopulateLearningMapsTable extends BaseIndexService implements JobInitializer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulateLearningMapsTable.class);
-  private static final String AGG_QUERY = "{ \"size\" :0, \"query\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"tenant.tenantId\" : \"ba956a97-ae15-11e5-a302-f8a963065976\" } },{\"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"all\", \"description^1.5F\", \"text\", \"tags^3.0F\", \"title^5.0F\", \"narration\", \"collectionTitles\", \"originalCreator.usernameDisplay\", \"creator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"taxonomy.course.label^1.4F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceSource.attribution\", \"copyrightOwnerList.copyrightOwnerListSnowball\", \"info.publisher\", \"info.publisher.publisherSnowball\", \"copyrightOwnerList.copyrightOwnerListStandard\" ], \"boost\" : 1.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"standard\" } } ] } }, \"_source\" : [ ], \"aggs\" : { \"gut\" : { \"terms\" : { \"field\" : \"taxonomy.gutCodes\" , \"size\" : 4000}, \"aggs\": { \"contentType\": { \"terms\": { \"field\": \"contentFormat.keyword\" } } } } } }";
-  private static final String TAX_QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"gutCode\" : GUT_CODE } } ] } }, \"size\" : 10, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"title\", \"description\", \"codeType\", \"keywords\", \"competency.title\", \"competency.description\" ], \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : true } }, \"from\" : 0, \"_source\" : [ \"id\", \"codeType\", \"title\", \"description\", \"gutCode\", \"keywords\", \"course\", \"subject\", \"domain\", \"competency\", \"gutPrerequisites\", \"signatureCollections\", \"signatureAssessments\", \"signatureResources\", \"code\" ] }";
+  private static final String AGG_QUERY = "{ \"size\" :0, \"query\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"tenant.tenantId\" : \"ba956a97-ae15-11e5-a302-f8a963065976\" } },{\"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"all\", \"description^1.5F\", \"text\", \"tags^3.0F\", \"title^5.0F\", \"narration\", \"collectionTitles\", \"originalCreator.usernameDisplay\", \"creator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"taxonomy.course.label^1.4F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceSource.attribution\", \"copyrightOwnerList.copyrightOwnerListSnowball\", \"info.publisher\", \"info.publisher.publisherSnowball\", \"copyrightOwnerList.copyrightOwnerListStandard\" ], \"boost\" : 1.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"standard\" } } ] } }, \"_source\" : [ ], \"aggs\" : { \"gut\" : { \"terms\" : { \"field\" : \"taxonomy.gutCodes.keyword\" , \"size\" : 4000}, \"aggs\": { \"contentType\": { \"terms\": { \"field\": \"contentFormat.keyword\" } } } } } }";
+  private static final String TAX_QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"gutCodes\" : GUT_CODE } } ] } }, \"size\" : 10, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"title\", \"description\", \"codeType\", \"keywords\", \"competency.title\", \"competency.description\" ], \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : true } }, \"from\" : 0, \"_source\" : [ \"id\", \"codeType\", \"title\", \"description\", \"gutCodes\", \"keywords\", \"course\", \"subject\", \"domain\", \"competency\", \"gutPrerequisites\", \"gutData\", \"code\" ] }";
   private static final String CUL_QUERY = "{ \"query\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"tenant.tenantId\" : \"ba956a97-ae15-11e5-a302-f8a963065976\" } }, { \"nested\" : { \"path\" : \"taxonomy.subject\", \"query\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"taxonomy.subject.codeId\" : GUT_SUBJECT } } ] } } } }, { \"term\" : { \"publishStatus\" : \"published\" } }, { \"query_string\" : { \"query\" : KEYWORD_QUERY, \"fields\" : [ \"_all\", \"all\", \"title^5.0F\", \"collectionTitles\", \"creator.usernameDisplay\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"taxonomy.course.label\", \"taxonomy.subject.label\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\" ], \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"standard\" } } ] } }, \"size\" : 10, \"from\" : 0, \"aggs\": { \"contentType\": { \"terms\": { \"field\": \"contentFormat.keyword\" } } } }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
@@ -120,12 +120,21 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
                 queryBuilder.append(" OR ");
               queryBuilder.append(keyword);
             }
-            List<String> sc = (List<String>) source.get("signatureCollections");
-            List<String> sr = (List<String>) source.get("signatureResources");
-            List<String> sa = (List<String>) source.get("signatureAssessments");
-            lmJson.put("signature_collection", sc != null ? sc.size() : 0);
-            lmJson.put("signature_resource", sr != null ? sr.size() : 0);
-            lmJson.put("signature_assessment", sa != null ? sa.size() : 0);
+            List<Map<String, Object>> gutAsList = (List<Map<String, Object>>) source.get("gutData");
+            for (Map<String, Object> gutAsMap : gutAsList) {
+              Map<String, Object> gutData = (Map<String, Object>) gutAsMap;
+              if (gutData.get("id").toString().equalsIgnoreCase(gut)) {
+                List<String> sc = (List<String>) gutData.get("signatureCollections");
+                List<String> sr = (List<String>) gutData.get("signatureResources");
+                List<String> sa = (List<String>) gutData.get("signatureAssessments");
+
+                lmJson.put("signature_collection", sc != null ? sc.size() : 0);
+                lmJson.put("signature_resource", sr != null ? sr.size() : 0);
+                lmJson.put("signature_assessment", sa != null ? sa.size() : 0);
+              } else {
+                continue;
+              }
+            }
           }
           if (queryBuilder.length() > 0)
             queryString = queryBuilder.toString();
@@ -158,7 +167,6 @@ public class PopulateLearningMapsTable extends BaseIndexService implements JobIn
       }
     });
   }
-    
 
   @SuppressWarnings("unchecked")
   private void processContents() {
