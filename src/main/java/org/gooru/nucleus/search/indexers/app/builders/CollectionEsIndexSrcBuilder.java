@@ -18,6 +18,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
@@ -90,39 +91,13 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
           collectionEo.setOwner(ownerEo.getUser());
         }
       }
+      
       // Set Metadata
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
-      if (metadataString != null) {
-        JsonObject metadata = new JsonObject(metadataString);
-        if (metadata != null) {
-          JsonObject metadataAsMap = new JsonObject();
-          for (String fieldName : metadata.fieldNames()) {
-            if(!fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)){
-              String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
-              Object metaValue = metadata.getValue(fieldName);
-
-              if(key.equalsIgnoreCase(IndexerConstants.LANG_OBJECTIVE)){
-                collectionEo.setLanguageObjective((String)metaValue);
-              }
-              
-              // Temp logic to only process array fields
-              if(metaValue instanceof JsonArray){
-                JsonArray references = metadata.getJsonArray(fieldName);
-                if (references != null) {
-                  JsonArray value = new JsonArray();
-                  String referenceIds = references.toString();
-                  List<Map> metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
-                  for (Map metaMap : metacontent) {
-                    value.add(metaMap.get(EntityAttributeConstants.LABEL).toString().toLowerCase().replaceAll("[^\\dA-Za-z]", "_"));
-                  }
-                  if (value != null && !value.isEmpty()) metadataAsMap.put(key, value);
-                  if (metadataAsMap != null && !metadataAsMap.isEmpty()) collectionEo.setMetadata(metadataAsMap);
-                }
-              }
-            }
-          }
-        }
-      }
+      JsonObject metadata = null;
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
+      JsonObject dataMap = setMetaData(metadata);
+      if (dataMap != null && !dataMap.isEmpty()) collectionEo.setMetadata(dataMap);
       
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
@@ -159,6 +134,16 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         collectionEo.setResourceTitles(new JsonArray(resourceTitles.stream().distinct().collect(Collectors.toList())));
         collectionEo.setCollectionContents(collectionContents);
       }
+      
+      //Set course
+      CourseEo course = new CourseEo(); 
+      course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
+      course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
+      collectionEo.setCourse(course.getCourseJson());
+      Boolean isFeatured = false;
+      if(course.getId() != null) isFeatured = CourseRepository.instance().isFeatured(course.getId());
+      statisticsEo.setFeatured(isFeatured);
+      
       // Set Statistics
       statisticsEo.setHasNoThumbnail(thumbnail != null ? 0 : 1);
       statisticsEo.setHasNoDescription(learningObjective != null ? 0 : 1);
@@ -184,11 +169,17 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       }
       
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+      String aggTaxonomy = source.getString(EntityAttributeConstants.AGGREGATED_TAXONOMY, null);
+      String aggGutCodes = source.getString(EntityAttributeConstants.AGGREGATED_GUT_CODES, null);
       JsonObject taxonomyObject = null;
+      JsonObject aggTaxonomyObject = null;
+      JsonObject aggGutCodesObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
       try {
-        if (taxonomy != null) taxonomyObject = new JsonObject(taxonomy);
-        addTaxonomy(taxonomyObject, taxonomyEo);
+        if (StringUtils.isNotBlank(taxonomy) && !taxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) taxonomyObject = new JsonObject(taxonomy);
+        if (StringUtils.isNotBlank(aggTaxonomy) && !aggTaxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggTaxonomyObject = new JsonObject(aggTaxonomy);
+        if (StringUtils.isNotBlank(aggGutCodes) && !aggGutCodes.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggGutCodesObject = new JsonObject(aggGutCodes);
+        addTaxonomy(taxonomyObject, taxonomyEo, aggTaxonomyObject, aggGutCodesObject);
       } catch (Exception e) {
         LOGGER.error("Unable to convert Taxonomy to JsonObject", e.getMessage());
       }
@@ -197,7 +188,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResources(collectionEo.getId(), collectionEo.getContentFormat());
+      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(collectionEo.getId(), collectionEo.getContentFormat());
       if (signatureResource != null) {
         efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
         engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
@@ -246,12 +237,6 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       if(license != null){
         collectionEo.setLicense(license);
       }
-
-      //Set course
-      CourseEo course = new CourseEo(); 
-      course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
-      course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
-      collectionEo.setCourse(course.getCourseJson());
       
       //Set Collection Tenant 
       String tenantId = source.getString(EntityAttributeConstants.TENANT);

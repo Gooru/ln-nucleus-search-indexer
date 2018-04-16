@@ -62,7 +62,8 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
           metadata.put(EntityAttributeConstants.AUDIENCE, audienceArray);
         }
       }
-      setMetaData(metadata, originalresourceEo);
+      JsonObject dataMap = setMetaData(metadata);
+      if (dataMap != null && !dataMap.isEmpty()) originalresourceEo.setMetadata(dataMap);
 
       // Set display guide values
       JsonObject displayGuide = new JsonObject();
@@ -125,7 +126,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResources(originalresourceEo.getId(), originalresourceEo.getContentFormat());
+      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(originalresourceEo.getId(), originalresourceEo.getContentFormat());
       if (signatureResource != null) {
         efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
         engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);

@@ -108,13 +108,19 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
           }
         }
       }
-      
+
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
+      String aggTaxonomy = source.getString(EntityAttributeConstants.AGGREGATED_TAXONOMY, null);
+      String aggGutCodes = source.getString(EntityAttributeConstants.AGGREGATED_GUT_CODES, null);
       JsonObject taxonomyObject = null;
+      JsonObject aggTaxonomyObject = null;
+      JsonObject aggGutCodesObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
       try {
         if (StringUtils.isNotBlank(taxonomy) && !taxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) taxonomyObject = new JsonObject(taxonomy);
-        addTaxonomy(taxonomyObject, taxonomyEo);
+        if (StringUtils.isNotBlank(aggTaxonomy) && !aggTaxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggTaxonomyObject = new JsonObject(aggTaxonomy);
+        if (StringUtils.isNotBlank(aggGutCodes) && !aggGutCodes.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggGutCodesObject = new JsonObject(aggGutCodes);
+        addTaxonomy(taxonomyObject, taxonomyEo, aggTaxonomyObject, aggGutCodesObject);
       } catch (Exception e) {
         LOGGER.error("Unable to convert Taxonomy to JsonObject", e);
       }
@@ -227,45 +233,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         break;
       }
     }
-  }
-
-  protected void setMetaData(JsonObject metaData, ContentEio contentEo) {
-    if (metaData != null) {
-      JsonObject dataMap = new JsonObject();
-      for (String fieldName : metaData.fieldNames()) {
-        // Temp logic to only process array fields
-        Object metaValue = metaData.getValue(fieldName);
-        if (metaValue instanceof JsonArray) {
-          JsonArray value = extractMetaValues(metaData, fieldName);
-          String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
-          if (value != null && !value.isEmpty())
-            dataMap.put(key, value);
-          if (dataMap != null && !dataMap.isEmpty())
-            contentEo.setMetadata(dataMap);
-        }
-      }
-    }
-  }
-
-  @SuppressWarnings("rawtypes")
-  private JsonArray extractMetaValues(JsonObject metadata, String fieldName){
-    JsonArray value = new JsonArray();
-    JsonArray references = metadata.getJsonArray(fieldName);
-    if (references != null && references.size() > 0) {
-      String referenceIds = references.toString();
-      List<Map> metacontent = null;
-      if (fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)) {
-        metacontent = getIndexRepo().getTwentyOneCenturySkill(referenceIds.substring(1, referenceIds.length() - 1));
-      } else {
-        metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
-      }
-      if (metacontent != null) {
-        for (Map metaMap : metacontent) {
-          value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
-        }
-      }
-    }
-    return value;
   }
   
   private void extractAndIndexPublishers(List<String> copyrightOwners) {

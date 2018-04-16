@@ -264,7 +264,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     GetResponse response = null;
     try {
       GetRequest getRequest = new GetRequest(indexName, getIndexTypeByType(type), id);
-      getHighLevelClient().get(getRequest);
+      response = getHighLevelClient().get(getRequest);
     } catch (Exception e) {
       LOGGER.info("Document not found in index for id : {} : EXCEPTION : {}", id, e.getMessage());
     }
@@ -379,7 +379,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           // LOGGER.debug("index source data : " + result.toString());
           IndexRequest request = new IndexRequest(indexName, getIndexTypeByType(typeName), indexableId).source(EsIndexSrcBuilder.get(typeName).buildSource(result), XContentType.JSON); 
           getHighLevelClient().index(request);
-          LOGGER.debug("EISI->indexDocument : Indexed " + typeName + " id  : " + indexableId);
+          LOGGER.info("EISI->indexDocument : Indexed " + typeName + " id  : " + indexableId);
         } catch (Exception ex) {
           LOGGER.error("EISI->Re-index failed for " + typeName + " id : " + indexableId + " Exception ", ex);
           INDEX_FAILURES_LOGGER.error(" buildIndex() : Failed : " + typeName + " id : " + indexableId);

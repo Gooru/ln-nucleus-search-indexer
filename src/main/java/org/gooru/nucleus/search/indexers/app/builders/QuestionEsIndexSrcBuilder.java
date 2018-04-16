@@ -17,6 +17,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.QuestionEo;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
 import io.vertx.core.json.JsonArray;
@@ -53,7 +54,8 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
       JsonObject metadata = null;
       if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
-      setMetaData(metadata, contentEo);
+      JsonObject dataMap = setMetaData(metadata);
+      if (dataMap != null && !dataMap.isEmpty()) contentEo.setMetadata(dataMap);
       
       // Set Question
       QuestionEo questionEo = new QuestionEo();
@@ -120,7 +122,9 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       
       // Set Statistics
       StatisticsEo statisticsEo = new StatisticsEo();
-
+      Boolean isFeatured = false;
+      if(course.getId() != null) isFeatured = CourseRepository.instance().isFeatured(course.getId());
+      statisticsEo.setFeatured(isFeatured);
       statisticsEo.setHasNoThumbnail(contentEo.getThumbnail() != null ? 0 : 1);
       statisticsEo.setHasNoDescription(contentEo.getDescription() != null ? 0 : 1);
       statisticsEo.setUsedInCollectionCount((contentEo.getCollectionIds() != null) ? contentEo.getCollectionIds().size() : 0);
@@ -131,7 +135,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       String displayGuideString = source.getString(EntityAttributeConstants.DISPLAY_GUIDE, null);
       JsonObject displayGuide = null;
       if (displayGuideString != null && !displayGuideString.equalsIgnoreCase(IndexerConstants.STR_NULL)) displayGuide = new JsonObject(displayGuideString);
-      statisticsEo.setHasFrameBreaker(displayGuide != null ? displayGuide.getBoolean(EntityAttributeConstants.IS_FRAME_BREAKER) : false);
+      statisticsEo.setHasFrameBreaker(displayGuide != null ? (Boolean.valueOf(displayGuide.getInteger(EntityAttributeConstants.IS_FRAME_BREAKER).toString())) : false);
       statisticsEo.setStatusIsBroken(displayGuide != null ? displayGuide.getInteger(EntityAttributeConstants.IS_BROKEN) : null);
 
       // Set display guide
@@ -166,7 +170,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResources(contentEo.getId(), contentEo.getContentFormat());
+      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(contentEo.getId(), contentEo.getContentFormat());
       if (signatureResource != null) {
         efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
         engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);

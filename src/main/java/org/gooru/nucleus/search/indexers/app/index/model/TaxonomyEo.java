@@ -150,12 +150,20 @@ public class TaxonomyEo extends JsonObject {
     taxonomy = JsonUtil.set(taxonomy, "allEquivalentDisplayCodes", new JsonArray(allEquivalentDisplayCodes.stream().distinct().collect(Collectors.toList())));
   }
   
-  public JsonArray getAllEquivalentFrameworkCodes() {
-    return taxonomy.getJsonArray("allEquivalentFrameworkCodes", null);
+  public JsonArray getAllEqCourseInternalCodes() {
+    return taxonomy.getJsonArray("allEqCourseInternalCodes", null);
   }
 
-  public void setAllEquivalentFrameworkCodes(JsonArray allEquivalentFrameworkCodes) {
-    taxonomy = JsonUtil.set(taxonomy, "allEquivalentFrameworkCodes", new JsonArray(allEquivalentFrameworkCodes.stream().distinct().collect(Collectors.toList())));
+  public void setAllEqCourseInternalCodes(JsonArray allEqCourseInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "allEqCourseInternalCodes", new JsonArray(allEqCourseInternalCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getAllEqDomainInternalCodes() {
+    return taxonomy.getJsonArray("allEqDomainInternalCodes", null);
+  }
+
+  public void setAllEqDomainInternalCodes(JsonArray allEqDomainInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "allEqDomainInternalCodes", new JsonArray(allEqDomainInternalCodes.stream().distinct().collect(Collectors.toList())));
   }
   
   public JsonArray getGutCodes() {
@@ -165,5 +173,45 @@ public class TaxonomyEo extends JsonObject {
   public void setGutCodes(JsonArray gutCodes) {
     taxonomy = JsonUtil.set(taxonomy, "gutCodes", new JsonArray(gutCodes.stream().distinct().collect(Collectors.toList())));
   }
+  
+  public JsonArray getLeafAggGutCodes() {
+    return taxonomy.getJsonArray("leafAggGutCodes", null);
+  } 
+  
+  public void setLeafAggGutCodes(JsonArray leafAggGutCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "leafAggGutCodes", new JsonArray(leafAggGutCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getLeafAggInternalCodes() {
+    return taxonomy.getJsonArray("leafAggInternalCodes", null);
+  } 
+  
+  public void setLeafAggInternalCodes(JsonArray leafAggInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "leafAggInternalCodes", new JsonArray(leafAggInternalCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getRelatedLeafInternalCodes() {
+    return taxonomy.getJsonArray("relatedLeafInternalCodes", null);
+  } 
+  
+  public void setRelatedLeafInternalCodes(JsonArray relatedLeafInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "relatedLeafInternalCodes", new JsonArray(relatedLeafInternalCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
+  public JsonArray getRelatedGutCodes() {
+    return taxonomy.getJsonArray("relatedGutCodes", null);
+  } 
+  
+  public void setRelatedGutCodes(JsonArray relatedGutCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "relatedGutCodes", new JsonArray(relatedGutCodes.stream().distinct().collect(Collectors.toList())));
+  } 
+  
+  public JsonArray getAllEqRelatedInternalCodes() {
+    return taxonomy.getJsonArray("allEqRelatedInternalCodes", null);
+  }
 
+  public void setAllEqRelatedInternalCodes(JsonArray allEqRelatedInternalCodes) {
+    taxonomy = JsonUtil.set(taxonomy, "allEqRelatedInternalCodes", new JsonArray(allEqRelatedInternalCodes.stream().distinct().collect(Collectors.toList())));
+  }
+  
 }

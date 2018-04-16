@@ -62,25 +62,23 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
   }
   
   @Override
-  public JsonObject getGDTCode(String targetCodeId) {
-    JsonObject returnValue = null;
+  public JsonArray getGDTCode(String targetCodeId) {
+    JsonArray returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
       openConnection(db);
-      TaxonomyCodeMapping result = null;
-      LazyList<TaxonomyCodeMapping> list = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
-      if (list != null && list.size() > 0) {
-        result = list.get(0);
-      } else {
-        LOGGER.warn("GDT code for {} standard : {} not present in DB", targetCodeId);
+      LazyList<TaxonomyCodeMapping> gutArray = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
+      if (gutArray == null || gutArray.size() < 1) {
+        LOGGER.debug("GUT for framework code : {} not present in DB", targetCodeId);
+        return null;
       }
 
-      if (result != null) {
-        returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+      if (gutArray != null) {
+        returnValue = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(gutArray));
       }
       return returnValue;
     } catch (Exception ex) {
-      LOGGER.error("Failed to fetch taxonomy details ", ex);
+      LOGGER.error("Failed to fetch taxonomy_code_mapping details ", ex);
     } finally {
       closeDBConn(db);
     }

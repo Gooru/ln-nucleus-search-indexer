@@ -206,7 +206,12 @@
             },
             "contentFormat":{
                "type":"text",
-               "analyzer":"keyword_lowercase"
+               "analyzer":"keyword_lowercase",
+               "fields":{
+                  "keyword":{
+                     "type":"keyword"
+                  }
+               }
             },
             "question":{
                "properties":{
@@ -402,15 +407,58 @@
                         "customSpellCheckerSuggest"
                      ]
                   },
+                  "gutCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "fields":{
+                        "keyword":{
+                           "type":"keyword"
+                        }
+                     },
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "leafAggInternalCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "leafAggGutCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "relatedLeafInternalCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "relatedGutCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
+                  "allEqRelatedInternalCodes":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase",
+                     "copy_to":[
+                        "customSpellCheckerSuggest"
+                     ]
+                  },
                   "subject":{
                      "type":"nested",
                      "include_in_parent":true,
                      "properties":{
                         "codeId":{
-                           "type":"text",
-                           "analyzer":"keyword_lowercase"
-                        },
-                        "codeTypeId":{
                            "type":"text",
                            "analyzer":"keyword_lowercase"
                         },
@@ -423,6 +471,10 @@
                                  "analyzer":"snowball"
                               }
                            }
+                        },
+                        "subjectClassification":{
+                           "type":"text",
+                           "analyzer":"keyword_lowercase"
                         }
                      }
                   },
