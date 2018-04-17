@@ -237,8 +237,10 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
           JsonObject contentData = new JsonObject();
           if (IndexerConstants.COLLECTION_FORMATS.matcher(contentType).matches()) {
             contentData = getCollectionRepo().getCollectionById(content.getId());
+            content.setDescription(contentData.getString(EntityAttributeConstants.LEARNING_OBJECTIVE, null));
           } else if (contentType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) {
             contentData = getOriginalResourceRepo().getResourceById(content.getId());
+            content.setDescription(contentData.getString(EntityAttributeConstants.DESCRIPTION, null));
           }
           content.setTitle(contentData.getString(EntityAttributeConstants.TITLE, null));
           content.setThumbnail(contentData.getString(EntityAttributeConstants.THUMBNAIL, null));
