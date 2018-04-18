@@ -35,7 +35,7 @@ import io.vertx.core.json.JsonObject;
 public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService implements JobInitializer {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulateGutBasedCollectionSuggestJob.class);
-  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [CROSSWALK_CODES] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
+  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.gutCodes\" : [GUT_CODE] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
@@ -118,25 +118,12 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
       JsonObject taxonomyCodeObject = (JsonObject) taxonomyCode;
       String code = taxonomyCodeObject.getString(EntityAttributeConstants.ID);
       try {
-        if (!SignatureItemsRepository.instance().hasCuratedSuggestion(code)) {
+        if (!SignatureItemsRepository.instance().hasCuratedSuggestion(code, IndexerConstants.COLLECTION)) {
           LOGGER.info("Proceed to populate, as suggestions are not present in table for code : {} ", code);
-          
-          ProcessorContext context = new ProcessorContext(code, ExecuteOperationConstants.GET_CROSSWALK);
-          JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-          if (result == null) {
-            continue;
-          }
-          Set<String> crosswalkCodes = new HashSet<>();
-          JsonArray cwSource = result.getJsonArray(IndexerConstants.TYPE_CROSSWALK);
-          if (cwSource != null) {
-            cwSource.forEach(eqCompetency -> {
-              JsonObject equivalentCompetency = (JsonObject) eqCompetency;
-              crosswalkCodes.add(equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_TAXONOMY_CODE_ID).toLowerCase());
-            });
-          }
-          if (!crosswalkCodes.isEmpty()) {
-            String query = QUERY.replaceAll("CROSSWALK_CODES", convertArrayToString(StringUtils.join(crosswalkCodes, IndexerConstants.COMMA)));
-            Response searchResponse = performRequest("POST",
+
+          if (!code.isEmpty()) {
+            String query = QUERY.replaceAll("GUT_CODE", convertArrayToString(StringUtils.join(code.toLowerCase(), IndexerConstants.COMMA)));
+           Response searchResponse = performRequest("POST",
                     "/" + IndexNameHolder.getIndexName(EsIndex.COLLECTION) + "/" + IndexerConstants.TYPE_COLLECTION + "/_search", query);
             if (searchResponse.getEntity() != null) {
               Map<String, Object> responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(searchResponse.getEntity()),
@@ -152,7 +139,7 @@ public class PopulateGutBasedCollectionSuggestJob extends BaseIndexService imple
                   extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
                 }
               } else {
-                LOGGER.info("No matching suggestions for cw codes : {} ", crosswalkCodes);
+                LOGGER.info("No matching suggestions for gut : {} ", code);
               }
             }
           } else {
