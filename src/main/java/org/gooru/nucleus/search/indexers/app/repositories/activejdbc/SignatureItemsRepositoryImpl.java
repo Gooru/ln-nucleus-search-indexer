@@ -16,13 +16,13 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
   private static final Logger LOGGER = LoggerFactory.getLogger(SignatureItemsRepositoryImpl.class);
 
   @Override
-  public Boolean hasCuratedSuggestion(String codeId) {
+  public Boolean hasCuratedSuggestion(String codeId, String itemFormat) {
     DB db = getDefaultDataSourceDBConnection();
     Boolean returnValue = false;
     try {
       openConnection(db);
       LazyList<SignatureItems> result =
-              SignatureItems.where(SignatureItems.FETCH_CURATED_SUGGESTION_BY_C_OR_MC, codeId, codeId);
+              SignatureItems.where(SignatureItems.FETCH_CURATED_SUGGESTION_BY_C_OR_MC, codeId, codeId, itemFormat);
 
       if (result != null && result.size() > 0) {
         returnValue = true;
