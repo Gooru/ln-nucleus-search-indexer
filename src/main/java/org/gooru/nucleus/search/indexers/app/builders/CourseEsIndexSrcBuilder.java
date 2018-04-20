@@ -130,6 +130,13 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
         courseEio.setLicense(license);
       }
       
+      // Set Metadata
+      String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
+      JsonObject metadata = null;
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
+      JsonObject dataMap = setMetaData(metadata);
+      if (dataMap != null && !dataMap.isEmpty()) courseEio.setMetadata(dataMap);
+      
       //Set Extracted Text
       ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
       String extractedText = source.getString(IndexerConstants.TEXT);

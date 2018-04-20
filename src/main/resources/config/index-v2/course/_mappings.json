@@ -48,6 +48,45 @@
                }
             }
          },
+         "metadata":{
+            "properties":{
+               "educationalUse":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "readingLevel":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "depthOfKnowledge":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "momentsOfLearning":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "audience":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "advertisementLevel":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "hazardLevel":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "mediaFeature":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase"
+               },
+               "grade":{
+                  "type":"keyword"
+               }
+            }
+         },
          "owner":{
             "properties":{
                "emailId":{
