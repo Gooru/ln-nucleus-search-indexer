@@ -194,6 +194,14 @@ public class CourseEio extends JsonObject {
     this.put(IndexFields.LICENSE, license);
   }
 
+  public JsonObject getMetadata() {
+    return this.getJsonObject("metadata", null);
+  }
+
+  public void setMetadata(JsonObject metadata) {
+    this.put("metadata", metadata);
+  }
+
   public String getPublishDate() {
     return this.getString(IndexFields.PUBLISH_DATE);
   }
