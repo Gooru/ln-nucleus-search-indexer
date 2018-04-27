@@ -13,14 +13,14 @@ import org.javalite.activejdbc.annotations.Table;
 @Table(SchemaConstants.LEARNING_MAP_STATS)
 @IdName(SchemaConstants.ID)
 public class LearningMaps extends Model {
-  public final static String INSERT_QUERY = "insert into learning_map_stats (id,resource,question,collection,assessment"
-          + ") values (?,?,?,?,?) ON CONFLICT ON CONSTRAINT lms_pkey DO UPDATE SET resource = ?,question = ?,collection = ?,assessment = ?";
+  public final static String INSERT_QUERY = "insert into learning_map_stats (id,resource,question,collection,assessment,rubric"
+          + ") values (?,?,?,?,?,?) ON CONFLICT ON CONSTRAINT lms_pkey DO UPDATE SET resource = ?,question = ?,collection = ?,assessment = ?,rubric = ?";
 
   public final static String INSERT_CUL_QUERY =
           "insert into learning_map_stats (id,course,unit,lesson, signature_resource, signature_collection, signature_assessment"
                   + ") values (?,?,?,?,?,?,?) ON CONFLICT ON CONSTRAINT lms_pkey DO UPDATE SET course = ?,unit = ?,lesson = ?, signature_resource = ?, signature_collection = ?, signature_assessment = ?";
 
-  public final static String UPDATE_RQCA_QUERY = "UPDATE learning_map_stats SET resource = ?, question = ?, collection = ?, assessment = ? WHERE id = ?";
+  public final static String UPDATE_RQCA_QUERY = "UPDATE learning_map_stats SET resource = ?, question = ?, collection = ?, assessment = ?, rubric = ? WHERE id = ?";
 
   public final static String UPDATE_CUL_QUERY = "UPDATE learning_map_stats SET course = ?, unit = ?, lesson = ?, signature_resource = ?, signature_collection = ?, signature_assessment = ? WHERE id = ?";
 

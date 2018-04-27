@@ -32,6 +32,14 @@ public class CollectionEo {
     collection = JsonUtil.set(collection, "title", title);
   }
 
+  public String getDescription() {
+    return collection.getString("description", null);
+  }
+
+  public void setDescription(String description) {
+    collection = JsonUtil.set(collection, "description", description);
+  }
+  
   public String getThumbnail() {
     return collection.getString("thumbnail", null);
   }

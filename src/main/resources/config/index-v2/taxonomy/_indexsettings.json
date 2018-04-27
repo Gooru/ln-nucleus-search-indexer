@@ -210,6 +210,20 @@
                               "all"
                            ]
                         },
+                        "description":{
+                           "type":"text",
+                           "analyzer":"standard",
+                           "fields":{
+                              "descriptionKStem":{
+                                 "type":"text",
+                                 "analyzer":"gooru_kstem"
+                              },
+                              "descriptionSnowball":{
+                                 "type":"text",
+                                 "analyzer":"snowball"
+                              }
+                           }
+                        },
                         "efficacy":{
                            "type":"double"
                         },
@@ -333,6 +347,20 @@
                            "copy_to":[
                               "all"
                            ]
+                        },
+                        "description":{
+                           "type":"text",
+                           "analyzer":"standard",
+                           "fields":{
+                              "descriptionKStem":{
+                                 "type":"text",
+                                 "analyzer":"gooru_kstem"
+                              },
+                              "descriptionSnowball":{
+                                 "type":"text",
+                                 "analyzer":"snowball"
+                              }
+                           }
                         },
                         "efficacy":{
                            "type":"double"

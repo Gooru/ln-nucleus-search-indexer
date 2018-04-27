@@ -2,25 +2,19 @@ package org.gooru.nucleus.search.indexers.app.jobs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
-import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
-import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
-import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.SignatureItemsRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
 import org.gooru.nucleus.search.indexers.app.services.BaseIndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.JobInitializer;
@@ -35,7 +29,7 @@ import io.vertx.core.json.JsonObject;
 public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService implements JobInitializer {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulateGutBasedAssessmentSuggestJob.class);
-  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"assessment\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [CROSSWALK_CODES] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
+  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"assessment\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.gutCodes\" : [GUT_CODE] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
@@ -118,24 +112,11 @@ public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService imple
       JsonObject taxonomyCodeObject = (JsonObject) taxonomyCode;
       String code = taxonomyCodeObject.getString(EntityAttributeConstants.ID);
       try {
-        if (!SignatureItemsRepository.instance().hasCuratedSuggestion(code)) {
-          LOGGER.info("Proceed to populate, as suggestions are not present in table for code : {} ", code);
+        if (!SignatureItemsRepository.instance().hasCuratedSuggestion(code, IndexerConstants.ASSESSMENT)) {
+          LOGGER.debug("Proceed to populate, as suggestions are not present in table for code : {} ", code);
           
-          ProcessorContext context = new ProcessorContext(code, ExecuteOperationConstants.GET_CROSSWALK);
-          JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-          if (result == null) {
-            continue;
-          }
-          Set<String> crosswalkCodes = new HashSet<>();
-          JsonArray cwSource = result.getJsonArray(IndexerConstants.TYPE_CROSSWALK);
-          if (cwSource != null) {
-            cwSource.forEach(eqCompetency -> {
-              JsonObject equivalentCompetency = (JsonObject) eqCompetency;
-              crosswalkCodes.add(equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_TAXONOMY_CODE_ID).toLowerCase());
-            });
-          }
-          if (!crosswalkCodes.isEmpty()) {
-            String query = QUERY.replaceAll("CROSSWALK_CODES", convertArrayToString(StringUtils.join(crosswalkCodes, IndexerConstants.COMMA)));
+          if (!code.isEmpty()) {
+            String query = QUERY.replaceAll("GUT_CODE", convertArrayToString(StringUtils.join(code.toLowerCase(), IndexerConstants.COMMA)));
             Response searchResponse = performRequest("POST",
                     "/" + IndexNameHolder.getIndexName(EsIndex.COLLECTION) + "/" + IndexerConstants.TYPE_COLLECTION + "/_search", query);
             if (searchResponse.getEntity() != null) {
@@ -147,23 +128,22 @@ public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService imple
               if (totalHits > 0) {
                 Map<String, List<String>> suggestByPerfAsMap = new HashMap<>();
                 deserializeResponseAndPopulate(taxonomyCodeObject, code, hitsMap, suggestByPerfAsMap);
-                LOGGER.info("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
+                LOGGER.debug("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
                 if (!suggestByPerfAsMap.isEmpty()) {
                   extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
                 }
               } else {
-                LOGGER.info("No matching suggestions for cw codes : {} ", crosswalkCodes);
+                LOGGER.debug("No matching suggestions for gut : {} ", code);
               }
             }
           } else {
-            LOGGER.info("No mapping for gut : {} ", code);
+            LOGGER.debug("No mapping for gut : {} ", code);
           }
         } else {
-          LOGGER.info("Already suggestions are populated for this code : {} ", code);
+          LOGGER.debug("Already suggestions are populated for this code : {} ", code);
         }
       } catch (Exception e) {
-        LOGGER.info("Error while checking or populating suggestions : {}, Exception : {}", code, e);
-        e.printStackTrace();
+        LOGGER.debug("Error while checking or populating suggestions : {}, Exception : {}", code, e);
       }
     }
   }
@@ -184,11 +164,11 @@ public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService imple
       if ((hitCount <= 3 && !(suggestIdList.size() < hitCount)) || suggestIdList.size() == 3) {
         highSuggestIds = suggestIds;
         suggestIds = new ArrayList<>();
-      } else if ((!(suggestIdList.size() > 6) && !(suggestIdList.size() < hitCount)) || (hitCount >= 6 && suggestIdList.size() == 6)) {
+      } else if ((!(suggestIdList.size() > 5) && !(suggestIdList.size() < hitCount)) || (hitCount >= 5 && suggestIdList.size() == 5)) {
         mediumSuggestIds = suggestIds;
         suggestIds = new ArrayList<>();
       }
-      if (hitCount >= 9 && suggestIdList.size() == 9) {
+      if (hitCount >= 5 && suggestIdList.size() == 5) {
         break;
       }
     }

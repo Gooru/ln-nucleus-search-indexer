@@ -9,7 +9,7 @@ public interface SignatureItemsRepository {
     return new SignatureItemsRepositoryImpl();
   }
   
-  Boolean hasCuratedSuggestion(String codeId);
+  Boolean hasCuratedSuggestion(String codeId, String itemFormat);
 
   void saveSuggestions(String id, JsonObject data);
 
