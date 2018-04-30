@@ -58,12 +58,27 @@
   	"hourOfDay" : 4,
   	"minutes" : 10080
   },
-  "populateLearningMapsTableSettings" : {
+  "populateLearningMapsStatsTableSettings" : {
   	"batchSize" : 100,
   	"offset" : 0,
   	"dayOfMonth" : 1,
   	"hourOfDay" : 4,
   	"minutes" : 10080
+  },
+  "populateLearningMapsSettings" : {
+  	"batchSize" : 10,
+        "offset" : 0,
+        "dayOfMonth" : 1,
+        "hourOfDay" : 4,
+        "minutes" : 1,
+        "username" : "USERNAME",
+        "password" : "PASSWORD",
+        "host ": "http://staging.gooru.org",
+        "clientData" : {
+        	"client_key":"CLIENT_KEY",
+        	"client_id":"CLIENT_ID",
+        	"grant_type":"GRANT_TYPE"
+        }
   },
   "http.port":8081
 
