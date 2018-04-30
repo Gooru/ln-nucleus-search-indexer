@@ -35,4 +35,6 @@ public interface TaxonomyCodeRepository {
 
   JsonArray getStdLTCodeByFrameworkAndOffset(String frameworkCode, Integer limit, Long offset);
 
+  JsonObject getGutCode(String codeId);
+
 }

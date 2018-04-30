@@ -26,7 +26,8 @@ public final class ErrorMsgConstants {
   public static final String CROSSWALK_UNAVAILABLE = "Given crosswalk exist in DB !!, Delete from index failed"; 
   public static final String TAXONOMY_UNAVAILABLE = "Given taxonomy code exist in DB !!, Delete from index failed"; 
   public static final String RUBRIC_UNAVAILABLE = "Given rubric exist in DB !!, Delete from index failed"; 
-  
+  public static final String GUT_UNAVAILABLE = "Given gut code exist in DB !!, Delete from index failed"; 
+
   private ErrorMsgConstants() {
     throw new AssertionError();
   }

@@ -142,6 +142,10 @@ public class FetchContentHandler implements DBHandler {
           result = TenantRepository.instance().getTenant(context.getId());
           break;
           
+        case ExecuteOperationConstants.GET_GUT:
+          result = TaxonomyCodeRepository.instance().getGutCode(context.getId());
+          break;
+          
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
           throw new InvalidRequestException();
