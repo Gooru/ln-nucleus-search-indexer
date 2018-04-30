@@ -64,6 +64,7 @@ dependencies {
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
     compile "io.vertx:vertx-hazelcast:${vertxVersion}"
+    compile 'io.vertx:vertx-web-client:3.5.1'
 
     compile "org.apache.kafka:kafka-clients:${kafkaVersion}"
     compile "com.zaxxer:HikariCP:${hikariVersion}"
