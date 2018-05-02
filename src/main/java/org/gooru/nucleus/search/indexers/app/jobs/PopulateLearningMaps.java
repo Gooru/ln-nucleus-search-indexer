@@ -37,7 +37,7 @@ import io.vertx.ext.web.codec.BodyCodec;
 public class PopulateLearningMaps  extends BaseIndexService implements JobInitializer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulateLearningMaps.class);
-  private static final String TAX_QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"gutCodes\" : GUT_CODE } } ] } }, \"size\" : 10, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"title\", \"description\", \"codeType\", \"keywords\", \"competency.title\", \"competency.description\" ], \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : true } }, \"from\" : 0, \"_source\" : [ \"id\", \"codeType\", \"title\", \"description\", \"gutCodes\", \"keywords\", \"course\", \"subject\", \"domain\", \"competency\", \"gutPrerequisites\", \"gutData\", \"code\" ] }";
+  private static final String GUT_QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"id\" : GUT_CODE } } ] } }, \"size\" : 10, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"title\", \"description\", \"codeType\", \"keywords\", \"competency.title\", \"competency.description\" ], \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : true } }, \"from\" : 0, \"_source\" : [ ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
@@ -204,8 +204,8 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
   @SuppressWarnings("unchecked")
   private void fetchSignatureContentStats(String gut, Map<String, Object> lmJson) {
     try {
-      String query = TAX_QUERY.replaceAll("GUT_CODE", convertArrayToString(StringUtils.join(gut.toLowerCase(), IndexerConstants.COMMA)));
-      Response searchResponse = performRequest("POST", "/" + IndexNameHolder.getIndexName(EsIndex.TAXONOMY) + "/_search", query);
+      String query = GUT_QUERY.replaceAll("GUT_CODE", convertArrayToString(StringUtils.join(gut, IndexerConstants.COMMA)));
+      Response searchResponse = performRequest("POST", "/" + IndexNameHolder.getIndexName(EsIndex.GUT) + "/_search", query);
       if (searchResponse.getEntity() != null) {
         Map<String, Object> responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(searchResponse.getEntity()),
                 new TypeReference<Map<String, Object>>() {
@@ -214,22 +214,14 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
         List<Map<String, Object>> hits = (List<Map<String, Object>>) hitsMap.get("hits");
         for (Map<String, Object> hit : hits) {
           Map<String, Object> source = (Map<String, Object>) hit.get("_source");
-          List<Map<String, Object>> gutAsList = (List<Map<String, Object>>) source.get("gutData");
-          for (Map<String, Object> gutAsMap : gutAsList) {
-            Map<String, Object> gutData = (Map<String, Object>) gutAsMap;
-            if (gutData.get("id").toString().equalsIgnoreCase(gut)) {
-              List<String> sc = (List<String>) gutData.get("signatureCollections");
-              List<String> sr = (List<String>) gutData.get("signatureResources");
-              List<String> sa = (List<String>) gutData.get("signatureAssessments");
+          List<Map<String, Object>> sc = (List<Map<String, Object>>) source.get("signatureCollections");
+          List<Map<String, Object>> sr = (List<Map<String, Object>>) source.get("signatureResources");
+          List<Map<String, Object>> sa = (List<Map<String, Object>>) source.get("signatureAssessments");
 
-              lmJson.put("signature_collection_count", sc != null ? sc.size() : 0);
-              lmJson.put("signature_resource_count", sr != null ? sr.size() : 0);
-              lmJson.put("signature_assessment_count", sa != null ? sa.size() : 0);
-            } else {
-              continue;
-            }
-          }
-        }
+          lmJson.put("signature_collection_count", sc != null ? sc.size() : 0);
+          lmJson.put("signature_resource_count", sr != null ? sr.size() : 0);
+          lmJson.put("signature_assessment_count", sa != null ? sa.size() : 0);
+        }   
       }
     } catch (Exception e) {
       LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
