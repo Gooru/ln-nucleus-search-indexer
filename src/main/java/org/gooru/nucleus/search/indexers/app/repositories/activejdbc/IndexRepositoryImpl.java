@@ -99,4 +99,25 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     return responses;
   }
  
+  @Override
+  public JsonArray getSignatureResourcesByGutCode(String gutCodeId) {
+    JsonArray responses = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+
+      LazyList<SignatureResources> contents = SignatureResources.where(SignatureResources.FETCH_SIGNATURE_RESOURCES_BY_GUT_CODE, gutCodeId, gutCodeId);
+      if (contents.size() < 1) {
+        LOGGER.warn("Code id: {} not present in signature_resources DB", gutCodeId);
+      } else {
+        responses = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(contents));
+      }
+    } catch (Exception ex) {
+      LOGGER.error("getSignatureResourcesByGutCode::Failed to fetch signature_resources : ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return responses;
+  }
+ 
 }

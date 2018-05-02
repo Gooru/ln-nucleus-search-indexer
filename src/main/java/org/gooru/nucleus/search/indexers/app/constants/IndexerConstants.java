@@ -18,6 +18,8 @@ public final class IndexerConstants {
   
   public static final String TYPE_TAXONOMY = "taxonomy";
 
+  public static final String TYPE_GUT = "gut";
+
   public static final String TYPE_TENANT = "tenant";
   
   public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");

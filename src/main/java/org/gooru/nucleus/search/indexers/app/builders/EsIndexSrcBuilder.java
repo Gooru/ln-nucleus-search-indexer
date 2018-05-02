@@ -82,6 +82,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.RUBRIC.getType(), new RubricEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.TAXONOMY.getType(), new TaxonomyEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.TENANT.getType(), new TenantEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.GUT.getType(), new GutEsIndexSrcBuilder<>());
   }
 
   public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {

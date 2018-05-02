@@ -31,6 +31,7 @@ public final class ScoreConstants {
   public static final String BROKEN_STATUS_DISPLAY = "displayGuide.is_broken";
   public static final String CONTENT_QUALITY_INDICATOR = "contentQualityIndicator";
   public static final String PUBLISHER_QUALITY_INDICATOR = "publisherQualityIndicator";
+  public static final String IS_FEATURED = "isFeatured";
 
   public static final String[] DEMOTE_DOMAINS = {"wikipedia"};
 
@@ -39,7 +40,7 @@ public final class ScoreConstants {
     "(((viewsCount != null && viewsCount != 0)? ((viewsCount/maxViewCount) * 2.5) : 0.0)+((hasNoThumbnail != null ) ? ((hasNoThumbnail > 0)? -1.0 :" +
       " 1.0) : 0.0)+((hasNoDescription != null)? ((hasNoDescription > 0)? -2.0 : 2.2):0.0)+((isCopied != null)? ((isCopied > 0)?  0.0 : 1.4):0.0)+(" +
       "(hasNoStandard != null)? ((hasNoStandard > 0 )? 0.0 : 1.4) : 0.0)+((resourceCount <= 2 || resourceCount > 8 )? 0.0 :2.0)+((questionCount == " +
-      "0)? 0.0:1.7)+((collectionItemCount < 1 ? -10.0 : 0.0)) +((isPublished == 1)? 2.5 : 0.0))";
+      "0)? 0.0:1.7)+((collectionItemCount < 1 ? -10.0 : 0.0)) +((isPublished == 1)? 2.5 : 0.0)+((isFeatured == 1)? 2.5 : 0.0))";
 
   // Score max/99 percentile values
   public static final int MAX_RESOURCE_USED_99PERSENT_VAL = 25;

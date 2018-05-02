@@ -149,6 +149,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       rankingFields.put(ScoreConstants.PUBLISH_STATUS, originalresourceEo.getPublishStatus());
       rankingFields.put(ScoreConstants.CONTENT_QUALITY_INDICATOR, statisticsEo.getContentQualityIndicator());
       rankingFields.put(ScoreConstants.PUBLISHER_QUALITY_INDICATOR, statisticsEo.getPublisherQualityIndicator());
+      rankingFields.put(ScoreConstants.IS_FEATURED, statisticsEo.isFeatured());
 
       JsonObject taxJson = originalresourceEo.getTaxonomy();
       int hasNoStandard = 1;

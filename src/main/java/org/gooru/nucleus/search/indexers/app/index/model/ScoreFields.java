@@ -41,6 +41,8 @@ public class ScoreFields {
   private Integer publisherQualityIndicator = null;
 
   private Integer contentQualityIndicator = null;
+  
+  private boolean isFeatured = false;
 
   private static final String PUBLISHED = "published";
 
@@ -115,6 +117,10 @@ public class ScoreFields {
     
     if(scoreFieldsMap.get(ScoreConstants.CONTENT_QUALITY_INDICATOR) != null){
       this.contentQualityIndicator = (Integer) scoreFieldsMap.get(ScoreConstants.CONTENT_QUALITY_INDICATOR);
+    }
+    
+    if (scoreFieldsMap.get(ScoreConstants.IS_FEATURED) != null) {
+      this.isFeatured = (boolean) scoreFieldsMap.get(ScoreConstants.IS_FEATURED);
     }
     
   }
@@ -212,6 +218,14 @@ public class ScoreFields {
 
   public void setContentQualityIndicator(Integer contentQualityIndicator) {
     this.contentQualityIndicator = contentQualityIndicator;
+  }
+
+  public boolean isFeatured() {
+    return isFeatured;
+  }
+
+  public void setFeatured(boolean isFeatured) {
+    this.isFeatured = isFeatured;
   }
 
 }

@@ -14,4 +14,6 @@ public interface LearningMapsRepository {
   
   void updateCULForLearningMaps(Map<String, Object> data);
 
+  void updateRQCACULLearningMaps(Map<String, Object> data);
+
 }

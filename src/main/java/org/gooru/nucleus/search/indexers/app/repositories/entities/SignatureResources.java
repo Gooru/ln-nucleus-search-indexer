@@ -23,6 +23,9 @@ public class SignatureResources extends Model {
   public static final String FETCH_SIGNATURE_RESOURCES_BY_CODE =
           "competency_internal_code = ? OR micro_competency_internal_code = ?";
 
+  public static final String FETCH_SIGNATURE_RESOURCES_BY_GUT_CODE =
+          "competency_gut_code = ? OR micro_competency_gut_code = ?";
+
   public static final List<String> RESPONSE_FIELDS = Arrays.asList("resource_id", "efficacy", "engagement");
 
 }

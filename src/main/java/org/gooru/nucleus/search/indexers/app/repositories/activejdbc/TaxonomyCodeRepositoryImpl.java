@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -40,6 +41,17 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
       LOGGER.error("Failed to fetch taxonomy code ", ex);
     } finally {
       closeDBConn(db);
+    }
+    return returnValue;
+  }
+  
+  @Override
+  public JsonObject getGutCode(String codeId) {
+    TaxonomyCode result = TaxonomyCode.findById(codeId);
+
+    JsonObject returnValue = null;
+    if (result != null && !result.getString(TaxonomyCode.CODE_TYPE).equalsIgnoreCase("standard_level_0") && result.getString(TaxonomyCode.STANDARD_FRAMEWORK_ID).equalsIgnoreCase("GDT")) {
+      returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
     }
     return returnValue;
   }

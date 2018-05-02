@@ -21,6 +21,8 @@ public class TaxonomyCode extends Model {
   public static final String CODE = "code";
   public static final String TITLE = "title";
   public static final String DESCRIPTION = "description";
+  public static final String CODE_TYPE = "code_type";
+  public static final String STANDARD_FRAMEWORK_ID = "standard_framework_id";
 
   public static final String SOURCE_TAXONOMY_CODE_ID = "source_taxonomy_code_id";
 

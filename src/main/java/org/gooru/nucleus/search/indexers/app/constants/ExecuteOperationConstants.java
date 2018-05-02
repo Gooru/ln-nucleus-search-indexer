@@ -59,6 +59,8 @@ public final class ExecuteOperationConstants {
   public static final String SAVE_COLLECTION_SUGGESTION = "save_collection_suggestion";
   
   public static final String GET_TENANT = "get_tenant";
+  
+  public static final String GET_GUT = "get_gut";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

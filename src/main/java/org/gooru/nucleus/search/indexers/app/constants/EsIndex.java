@@ -23,7 +23,8 @@ public enum EsIndex {
   LESSON("lesson"), 
   RUBRIC("rubric"), 
   QUERY("query", new String[]{"keyword"}), 
-  TENANT("tenant");
+  TENANT("tenant"), 
+  GUT("gut");
 
   private final String name;
 

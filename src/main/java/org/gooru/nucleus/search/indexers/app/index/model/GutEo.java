@@ -51,8 +51,8 @@ public class GutEo extends JsonObject {
     gut = JsonUtil.set(gut, "codeType", codeType);
   }
 
-  public JsonArray getSubject() {
-    return gut.getJsonArray("subject", null);
+  public String getSubject() {
+    return gut.getString("subject", null);
   }
 
   public void setSubject(String subject) {

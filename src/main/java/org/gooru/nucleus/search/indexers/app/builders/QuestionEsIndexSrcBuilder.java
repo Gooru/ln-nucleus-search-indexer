@@ -193,6 +193,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       rankingFields.put(ScoreConstants.PUBLISH_STATUS, contentEo.getPublishStatus());
       rankingFields.put(ScoreConstants.CONTENT_QUALITY_INDICATOR, statisticsEo.getContentQualityIndicator());
       rankingFields.put(ScoreConstants.PUBLISHER_QUALITY_INDICATOR, statisticsEo.getPublisherQualityIndicator());
+      rankingFields.put(ScoreConstants.IS_FEATURED, statisticsEo.isFeatured());
 
       JsonObject taxJson = contentEo.getTaxonomy();
       int hasNoStandard = 1;
