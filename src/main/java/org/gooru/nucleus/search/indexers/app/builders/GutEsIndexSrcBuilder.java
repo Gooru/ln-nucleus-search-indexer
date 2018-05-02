@@ -60,7 +60,7 @@ public class GutEsIndexSrcBuilder<S extends JsonObject, D extends GutEio> extend
     String title = source.getString(IndexFields.TITLE);
     gutEo.setTitle(source.getString(IndexFields.TITLE));
     gutEo.setCodeType(source.getString(EntityAttributeConstants.CODE_TYPE));
-    gutEo.setDisplayCode(source.getString(EntityAttributeConstants.SOURCE_DISPLAY_CODE));
+    gutEo.setDisplayCode(source.getString(EntityAttributeConstants.CODE));
     gutEo.setIndexType(IndexerConstants.TYPE_GUT);
     gutEo.setIndexUpdatedTime(new Date());
 
