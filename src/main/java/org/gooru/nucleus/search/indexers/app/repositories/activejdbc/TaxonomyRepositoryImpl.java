@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.GutCompetencyPrerequisite;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourse;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
@@ -174,4 +176,24 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     return responses;
   }
   
+  @Override
+  public String getCourseCodeByTitle(String courseTitle) {
+    String response = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+
+      LazyList<TaxonomyCourse> contents = TaxonomyCourse.where(TaxonomyCourse.FETCH_COURSE_BY_TITLE, courseTitle);
+      if (contents.size() < 1) {
+        LOGGER.warn("Course Title: {} not present in taxonomy_course table", courseTitle);
+      } else {
+        response = contents.get(0).getString(EntityAttributeConstants.ID);
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch taxonomy_course : ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return response;
+  }
 }

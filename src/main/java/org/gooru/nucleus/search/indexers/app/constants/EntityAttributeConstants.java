@@ -113,6 +113,8 @@ public final class EntityAttributeConstants {
   public static final String DEFAULT_TAXONOMY_SUBJECT_ID = "default_taxonomy_subject_id";
   public static final String DEFAULT_TAXONOMY_COURSE_ID = "default_taxonomy_course_id";
   public static final String DEFAULT_TAXONOMY_DOMAIN_ID = "default_taxonomy_domain_id";
+  public static final String SUBJECT = "subject";
+  public static final String GOORU_COURSE = "gooru_course";
 
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";

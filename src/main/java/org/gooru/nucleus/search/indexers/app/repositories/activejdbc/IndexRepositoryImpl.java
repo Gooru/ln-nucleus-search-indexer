@@ -3,7 +3,9 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.util.List;
 import java.util.Map;
 
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourseOld;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -119,5 +121,27 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     }
     return responses;
   }
+  
+  @Override
+  public String getCurrentCourseCodeByOldTitle(String courseTitle) {
+    String response = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+
+      LazyList<TaxonomyCourseOld> contents = TaxonomyCourseOld.where(TaxonomyCourseOld.FETCH_COURSE_BY_OLD_TITLE, courseTitle);
+      if (contents.size() < 1) {
+        LOGGER.warn("Course Title: {} not present in taxonomy_course_old table", courseTitle);
+      } else {
+        response = contents.get(0).getString(EntityAttributeConstants.ID);
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch taxonomy course : ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return response;
+  }
+ 
  
 }
