@@ -22,6 +22,6 @@ public interface TaxonomyRepository {
   
   JsonArray getGutPrerequisites(String gutCompetencyId);
   
-  String getCourseCodeByTitle(String courseTitle);
+  String getCourseCodeByTitleAndFw(String courseTitle, String framework);
 
 }

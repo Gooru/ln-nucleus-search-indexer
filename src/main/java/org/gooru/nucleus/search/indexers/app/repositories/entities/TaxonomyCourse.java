@@ -13,6 +13,6 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName(SchemaConstants.ID)
 public class TaxonomyCourse extends Model {
 
-  public static final String FETCH_COURSE_BY_TITLE = "title = ?";
+  public static final String FETCH_COURSE_BY_TITLE_AND_FW = "title = ? and standard_framework_id = ?";
 
 }

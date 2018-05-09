@@ -177,13 +177,13 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
   }
   
   @Override
-  public String getCourseCodeByTitle(String courseTitle) {
+  public String getCourseCodeByTitleAndFw(String courseTitle, String framework) {
     String response = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
       openConnection(db);
 
-      LazyList<TaxonomyCourse> contents = TaxonomyCourse.where(TaxonomyCourse.FETCH_COURSE_BY_TITLE, courseTitle);
+      LazyList<TaxonomyCourse> contents = TaxonomyCourse.where(TaxonomyCourse.FETCH_COURSE_BY_TITLE_AND_FW, courseTitle, framework);
       if (contents.size() < 1) {
         LOGGER.warn("Course Title: {} not present in taxonomy_course table", courseTitle);
       } else {
