@@ -25,8 +25,9 @@ public class SchemaConstants {
   public static final String SIGNATURE_ITEMS = "signature_items";
   public static final String GUT_COMPETENCY_PREREQUISITE = "gut_competency_prerequisite";
   public static final String LEARNING_MAP_STATS = "learning_map_stats";
+  public static final String TAXONOMY_COURSE = "taxonomy_course";
+  public static final String TAXONOMY_COURSE_OLD = "taxonomy_course_old";
 
-  
   public static final String RESOURCE_INDEX_DELETE_TRACKER = "resource_index_delete_tracker";
   public static final String COLLECTION_INDEX_DELETE_TRACKER = "collection_index_delete_tracker";
   //Primary Key Column Names

@@ -1,6 +1,5 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;

@@ -25,4 +25,6 @@ public interface IndexRepository {
 
   JsonArray getSignatureResourcesByGutCode(String gutCodeId);
 
+  String getCurrentCourseCodeByOldTitle(String courseTitle);
+
 }

@@ -22,8 +22,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepos
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
-import com.google.common.base.CaseFormat;
-
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
