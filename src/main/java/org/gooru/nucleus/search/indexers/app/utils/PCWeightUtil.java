@@ -23,7 +23,7 @@ public final class PCWeightUtil {
   public static double getResourcePcWeight(final ScoreFields rankingData) throws Exception {
     try {
       float usedInSCollectionCount = (float) rankingData.getResourceUsedCollectionCount() / ScoreConstants.MAX_RESOURCE_USED_99PERSENT_VAL;
-      float frameBreakerScore = (rankingData.getHasFrameBreaker()) ? 1f : ScoreConstants.DEMOTE_FRAME_BREAKER;
+      float frameBreakerScore = (!rankingData.getHasFrameBreaker()) ? 1f : ScoreConstants.DEMOTE_FRAME_BREAKER;
       float thumbnailScore = (rankingData.getHasNoThumbnail() == 0) ? 1f : ScoreConstants.DEMOTE_THUMBNAIL;
       float descScore = computeDescriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
       float domainBoost = (rankingData.getDomainBoost() == 1) ? 1f : ScoreConstants.DEMOTE_DOMAIN;
