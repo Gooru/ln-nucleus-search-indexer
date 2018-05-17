@@ -63,7 +63,7 @@
       }
    },
    "mappings":{
-      "taxonomy":{
+      "gut":{
          "properties":{
             "all":{
                "type":"text"

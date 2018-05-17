@@ -232,6 +232,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
     JsonObject content = contents.getJsonObject(contentType);
     lmJson.put(contentType +"_count", content.getInteger("totalHitCount"));
     lmJson.put(contentType, content.toString());
+    if (contentType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) LOGGER.info("Resource Count : {}",content.getInteger("totalHitCount"));
   }
   
 }
