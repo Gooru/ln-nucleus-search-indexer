@@ -85,6 +85,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexNameHolder.getIndexName(EsIndex.TAXONOMY);
     case IndexerConstants.TYPE_TENANT:
       return IndexNameHolder.getIndexName(EsIndex.TENANT);
+    case IndexerConstants.TYPE_GUT:
+      return IndexNameHolder.getIndexName(EsIndex.GUT);
     default:
       return null;
     }
@@ -112,6 +114,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexerConstants.TYPE_TAXONOMY;
     case IndexerConstants.TYPE_TENANT:
       return IndexerConstants.TYPE_TENANT;
+    case IndexerConstants.TYPE_GUT:
+      return IndexerConstants.TYPE_GUT;
     default:
       return null;
     }
@@ -139,6 +143,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return ExecuteOperationConstants.GET_TAXONOMY_CODE;
     case IndexerConstants.TYPE_TENANT:
       return ExecuteOperationConstants.GET_TENANT;
+    case IndexerConstants.TYPE_GUT:
+      return ExecuteOperationConstants.GET_GUT;
     default:
       return null;
     }
@@ -207,6 +213,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           break;
         case IndexerConstants.TYPE_TAXONOMY:
           TaxonomyIndexService.instance().deleteIndexedTaxonomy(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_GUT:
+          GutIndexService.instance().deleteIndexedGut(deletableId, type);
           break;
         default:
           LOGGER.error("Invalid type passed in, not able to delete");
@@ -364,6 +373,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             case IndexerConstants.TYPE_TAXONOMY:
             case IndexerConstants.TYPE_CROSSWALK:
             case IndexerConstants.TYPE_TENANT:
+            case IndexerConstants.TYPE_GUT:
               break;
             default:
               throw new BadRequestException("Invalid format type! Please pass valid format to index!");

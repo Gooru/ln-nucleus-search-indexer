@@ -82,6 +82,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.RUBRIC.getType(), new RubricEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.TAXONOMY.getType(), new TaxonomyEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.TENANT.getType(), new TenantEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.GUT.getType(), new GutEsIndexSrcBuilder<>());
   }
 
   public static IsEsIndexSrcBuilder<?, ?> get(String requestBuilderName) {
@@ -364,27 +365,36 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     displayObject.put(IndexFields.PARENT_TITLE, displayCodeJson.getString(EntityAttributeConstants.TAX_PARENT_TITLE));
   }
 
-  @SuppressWarnings("rawtypes")
   private void extractSCDAndSetTaxMeta(String code, JsonArray subjectArray, JsonArray courseArray, JsonArray domainArray, JsonArray subjectLabelArray,
           JsonArray courseLabelArray, JsonArray domainLabelArray) {
-    String subjectCode = extractSubject(code);
-    if (subjectCode != null) {
-      CodeEo subject = new CodeEo();
+    extractSubjectMeta(code, subjectArray, subjectLabelArray);
+    extractCourseMeta(code, courseArray, courseLabelArray);
+    extractDomainMeta(code, domainArray, domainLabelArray);
+  }
+
+  @SuppressWarnings("rawtypes")
+  private void extractDomainMeta(String code, JsonArray domainArray, JsonArray domainLabelArray) {
+    String domainCode = extractDomain(code);
+    if (domainCode != null) {
+      CodeEo domain = new CodeEo();
       CodeEo gutCode = new CodeEo();
-      List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
-      if (subjectData != null && subjectData.size() > 0) {
-        String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
-        subjectLabelArray.add(subjectTitle);
-        subject.setLabel(subjectTitle);
-        subject.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
-        if (subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID) != null) {
-          gutCode.setCodeId(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID).toString());
-          subjectArray.add(gutCode.getCode());
+      List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
+      if (domainData != null && domainData.size() > 0) {
+        String domainTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
+        domainLabelArray.add(domainTitle);
+        domain.setLabel(domainTitle);
+        if (domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID) != null) {
+          gutCode.setCodeId(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID).toString());
+          domainArray.add(gutCode.getCode());
         }
       }
-      subject.setCodeId(subjectCode);
-      subjectArray.add(subject.getCode());
+      domain.setCodeId(domainCode);
+      domainArray.add(domain.getCode());
     }
+  }
+
+  @SuppressWarnings("rawtypes")
+  private void extractCourseMeta(String code, JsonArray courseArray, JsonArray courseLabelArray) {
     String courseCode = extractCourse(code);
     if (courseCode != null) {
       CodeEo course = new CodeEo();
@@ -402,22 +412,27 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       course.setCodeId(courseCode);
       courseArray.add(course.getCode());
     }
-    String domainCode = extractDomain(code);
-    if (domainCode != null) {
-      CodeEo domain = new CodeEo();
+  }
+
+  @SuppressWarnings("rawtypes")
+  private void extractSubjectMeta(String code, JsonArray subjectArray, JsonArray subjectLabelArray) {
+    String subjectCode = extractSubject(code);
+    if (subjectCode != null) {
+      CodeEo subject = new CodeEo();
       CodeEo gutCode = new CodeEo();
-      List<Map> domainData = getTaxonomyRepo().getTaxonomyData(domainCode, IndexerConstants.DOMAIN);
-      if (domainData != null && domainData.size() > 0) {
-        String domainTitle = domainData.get(0).get(EntityAttributeConstants.TITLE).toString();
-        domainLabelArray.add(domainTitle);
-        domain.setLabel(domainTitle);
-        if (domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID) != null) {
-          gutCode.setCodeId(domainData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_DOMAIN_ID).toString());
-          domainArray.add(gutCode.getCode());
+      List<Map> subjectData = getTaxonomyRepo().getTaxonomyData(subjectCode, IndexerConstants.SUBJECT);
+      if (subjectData != null && subjectData.size() > 0) {
+        String subjectTitle = subjectData.get(0).get(EntityAttributeConstants.TITLE).toString();
+        subjectLabelArray.add(subjectTitle);
+        subject.setLabel(subjectTitle);
+        subject.setSubjectClassification(subjectData.get(0).get(EntityAttributeConstants.SUBJECT_CLASSIFICATION).toString());
+        if (subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID) != null) {
+          gutCode.setCodeId(subjectData.get(0).get(EntityAttributeConstants.DEFAULT_TAXONOMY_SUBJECT_ID).toString());
+          subjectArray.add(gutCode.getCode());
         }
       }
-      domain.setCodeId(domainCode);
-      domainArray.add(domain.getCode());
+      subject.setCodeId(subjectCode);
+      subjectArray.add(subject.getCode());
     }
   }
   

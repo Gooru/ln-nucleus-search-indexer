@@ -45,6 +45,17 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
   }
   
   @Override
+  public JsonObject getGutCode(String codeId) {
+    TaxonomyCode result = TaxonomyCode.findById(codeId);
+
+    JsonObject returnValue = null;
+    if (result != null && !result.getString(TaxonomyCode.CODE_TYPE).equalsIgnoreCase("standard_level_0") && result.getString(TaxonomyCode.STANDARD_FRAMEWORK_ID).equalsIgnoreCase("GDT")) {
+      returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
+    }
+    return returnValue;
+  }
+  
+  @Override
   public Long getLTCountByFramework(String frameworkCode) {
     LOGGER.debug("TaxonomyRepositoryImpl : getTotalCount() ");
     DB db = getDefaultDataSourceDBConnection();

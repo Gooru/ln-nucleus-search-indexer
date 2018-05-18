@@ -23,7 +23,7 @@ public final class PCWeightUtil {
   public static double getResourcePcWeight(final ScoreFields rankingData) throws Exception {
     try {
       float usedInSCollectionCount = (float) rankingData.getResourceUsedCollectionCount() / ScoreConstants.MAX_RESOURCE_USED_99PERSENT_VAL;
-      float frameBreakerScore = (rankingData.getHasFrameBreaker()) ? 1f : ScoreConstants.DEMOTE_FRAME_BREAKER;
+      float frameBreakerScore = (!rankingData.getHasFrameBreaker()) ? 1f : ScoreConstants.DEMOTE_FRAME_BREAKER;
       float thumbnailScore = (rankingData.getHasNoThumbnail() == 0) ? 1f : ScoreConstants.DEMOTE_THUMBNAIL;
       float descScore = computeDescriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
       float domainBoost = (rankingData.getDomainBoost() == 1) ? 1f : ScoreConstants.DEMOTE_DOMAIN;
@@ -34,9 +34,10 @@ public final class PCWeightUtil {
       float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f;
       Double publisherQualityIndicator = (rankingData.getPublisherQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getPublisherQualityIndicator()) / 5) : null;
       Double contentQualityIndicator = (rankingData.getContentQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getContentQualityIndicator()) / 5) : null;
+      float featuredScore = (rankingData.isFeatured()) ? 1f : 0f;
 
       double usageSignalWeight = (double) (((double) (normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2) * 0.5);
-      double otherSignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore + publishStatusScore) / 8) * 0.2);
+      double otherSignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore + publishStatusScore + featuredScore) / 9) * 0.2);
       double editorialTagSignals = 0;
       if(contentQualityIndicator != null) {
         editorialTagSignals = contentQualityIndicator * 0.3;
@@ -67,6 +68,7 @@ public final class PCWeightUtil {
       scollectionMvelInputs.put("resourceCount", rankingData.getResouceCount());
       scollectionMvelInputs.put("maxViewCount", ScoreConstants.MAX_COLLECTION_VIEWS_99PERSENT_VAL);
       scollectionMvelInputs.put("isPublished", rankingData.getIsPublished());
+      scollectionMvelInputs.put("isFeatured", rankingData.isFeatured());
       VariableResolverFactory inputFactory = new MapVariableResolverFactory(scollectionMvelInputs);
       Double scPreComputedWeight = 0.0;
       scPreComputedWeight = (Double) MVEL.executeExpression(scollectionScoreCompiled, inputFactory);

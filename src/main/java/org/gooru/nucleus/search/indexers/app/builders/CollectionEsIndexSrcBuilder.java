@@ -22,8 +22,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepos
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
-import com.google.common.base.CaseFormat;
-
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -215,6 +213,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       rankingFields.put(ScoreConstants.SATS_HAS_NO_DESC, statisticsEo.getHasNoDescription());
       rankingFields.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, collectionEo.getOriginalCollectionId());
       rankingFields.put(ScoreConstants.PUBLISH_STATUS, collectionEo.getPublishStatus());
+      rankingFields.put(ScoreConstants.IS_FEATURED, statisticsEo.isFeatured());
       JsonObject taxJson = collectionEo.getTaxonomy();
       int hasNoStandard = 1;
       
