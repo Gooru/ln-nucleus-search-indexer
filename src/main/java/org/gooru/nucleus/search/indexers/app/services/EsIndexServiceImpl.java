@@ -87,6 +87,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexNameHolder.getIndexName(EsIndex.TENANT);
     case IndexerConstants.TYPE_GUT:
       return IndexNameHolder.getIndexName(EsIndex.GUT);
+    case IndexerConstants.TYPE_CONTENT_INFO:
+      return IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO);
     default:
       return null;
     }
@@ -116,6 +118,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexerConstants.TYPE_TENANT;
     case IndexerConstants.TYPE_GUT:
       return IndexerConstants.TYPE_GUT;
+    case IndexerConstants.TYPE_CONTENT_INFO:
+      return IndexerConstants.TYPE_CONTENT_INFO;
     default:
       return null;
     }
@@ -660,7 +664,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     ProcessorContext context = new ProcessorContext(id, getExecuteOperation(contentType));
     JsonObject inputJson = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
     ValidationUtil.rejectIfNotFound(inputJson, ErrorMsgConstants.ORIGINAL_RESOURCE_DATA_NULL);
-    LOGGER.debug("EISI->indexDocument: getIndexDataContent() returned:" + inputJson);
+    //LOGGER.debug("EISI->indexDocument: getIndexDataContent() returned:" + inputJson);
     return inputJson;
   }
 
