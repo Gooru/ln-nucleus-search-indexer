@@ -11,6 +11,7 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourse;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomySubject;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
@@ -191,6 +192,27 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       }
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch taxonomy_course : ", ex);
+    } finally {
+      closeDBConn(db);
+    }
+    return response;
+  }
+  
+  @Override
+  public String getGutSubjectCodeByTitle(String subjectTitle) {
+    String response = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openConnection(db);
+
+      LazyList<TaxonomySubject> contents = TaxonomySubject.where(TaxonomySubject.FETCH_GUT_SUBJECT_BY_TITLE, subjectTitle);
+      if (contents.size() < 1) {
+        LOGGER.warn("Subject Title: {} not present in taxonomy_subject table", subjectTitle);
+      } else {
+        response = contents.get(0).getString(EntityAttributeConstants.ID);
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch subject : ", ex);
     } finally {
       closeDBConn(db);
     }
