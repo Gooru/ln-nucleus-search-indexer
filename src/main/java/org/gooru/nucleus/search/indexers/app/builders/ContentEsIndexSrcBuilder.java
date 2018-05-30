@@ -109,6 +109,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
       }
 
+      Set<String> gooruSubjectCodes = null;
       Set<String> gooruCourseCodes = null;
       // Set info
       String infoStr = source.getString(EntityAttributeConstants.INFO);
@@ -120,6 +121,17 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
         if (info.containsKey(EntityAttributeConstants.CRAWLED_SUB) && StringUtils.isNotBlank(info.getString(EntityAttributeConstants.CRAWLED_SUB))) {
           infoEo.put(EntityAttributeConstants.CRAWLED_SUB_ANALYZED, info.getString(EntityAttributeConstants.CRAWLED_SUB));
+        }
+        if (info.containsKey(EntityAttributeConstants.GOORU_SUBJECT)) {
+          JsonArray gooruSubs = info.getJsonArray(EntityAttributeConstants.GOORU_SUBJECT);
+          gooruSubjectCodes = new HashSet<>();
+          for (Object o : gooruSubs) {
+            String subjectTitle = (String) o;
+            String subjectCode = getTaxonomyRepo().getGutSubjectCodeByTitle(subjectTitle);
+            if (StringUtils.isNotBlank(subjectCode)) {
+              gooruSubjectCodes.add(subjectCode);
+            }
+          }
         }
         if (info.containsKey(EntityAttributeConstants.GOORU_COURSE)) {
           JsonArray gooruCourses = info.getJsonArray(EntityAttributeConstants.GOORU_COURSE);
@@ -158,6 +170,12 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         if (StringUtils.isNotBlank(aggGutCodes) && !aggGutCodes.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggGutCodesObject = new JsonObject(aggGutCodes);
         if (StringUtils.isNotBlank(subject) && !subject.equalsIgnoreCase(IndexerConstants.STR_NULL)) gooruSubjectObject = new JsonObject(subject);
         
+        if (gooruSubjectCodes != null && !gooruSubjectCodes.isEmpty()) {
+          if (aggGutCodesObject == null) aggGutCodesObject = new JsonObject();
+          for (String gooruSubjectCode : gooruSubjectCodes) {
+            aggGutCodesObject.put(gooruSubjectCode, new JsonObject());
+          }
+        }
         if (gooruCourseCodes != null && !gooruCourseCodes.isEmpty()) {
           if (aggGutCodesObject == null) aggGutCodesObject = new JsonObject();
           for (String gooruCourseCode : gooruCourseCodes) {

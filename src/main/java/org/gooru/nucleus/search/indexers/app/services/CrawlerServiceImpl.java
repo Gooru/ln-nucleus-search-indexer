@@ -39,9 +39,9 @@ public class CrawlerServiceImpl implements CrawlerService {
     Document doc = null;
     try {
       connection = Jsoup.connect(url);
-      doc = connection.get();
+      doc = connection.userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36").get();
     } catch (Exception e) {
-      LOGGER.error("Error while extracting url", e.getMessage());
+      LOGGER.error("Error while extracting url : {}", e.getMessage());
       return text;
     }
     text = doc.text();
