@@ -72,7 +72,7 @@ dependencies {
     compile "org.javalite:activejdbc:${activejdbcVersion}"
     compile "org.javalite:activejdbc-instrumentation:${activejdbcVersion}"
     compile "org.jsoup:jsoup:1.8.3"
-    compile "com.itextpdf:itextpdf:5.5.8"
+    compile "com.itextpdf:itextpdf:5.5.13"
     compile "org.elasticsearch.client:elasticsearch-rest-client-sniffer:${elasticsearchVersion}"
     compile "org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}"
 	

@@ -11,6 +11,10 @@ public final class RouteConstants {
   private static final String MARK_BROKEN = "mark-broken";
   private static final String MARK_UNBROKEN = "mark-unbroken";
   private static final String POPULATE_SUGGEST = "populate-suggest";
+  private static final String CLASSIFY_RESOURCE = "classify-resource";
+  private static final String DOMAIN = "domain";
+  private static final String STANDARD = "standard";
+  private static final String SLASH = "/";
 
   private static final String DELETE = "delete";
   public static final String TYPE_IN_PATH = "/:type";
@@ -23,6 +27,9 @@ public final class RouteConstants {
   public static final String EP_BUILD_CONTENT_DELETE = API_BASE_ROUTE + DELETE + TYPE_IN_PATH;
 
   public static final String EP_POPULATE_SUGGESTION_RESOURCE = API_BASE_ROUTE + POPULATE_SUGGEST + TYPE_IN_PATH;
+
+  public static final String EP_CLASSIFY_RESOURCE_TO_DOMAIN = API_BASE_ROUTE + CLASSIFY_RESOURCE + SLASH + DOMAIN + TYPE_IN_PATH;
+  public static final String EP_CLASSIFY_RESOURCE_TO_STANDARD = API_BASE_ROUTE + CLASSIFY_RESOURCE + SLASH + STANDARD + TYPE_IN_PATH;
 
   public static final String HTTP_PORT = "http.port";
   public static final String INDEXABLE_IDS = "ids";

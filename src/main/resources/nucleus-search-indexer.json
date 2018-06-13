@@ -56,21 +56,14 @@
   	"offset" : 0,
   	"dayOfMonth" : 1,
   	"hourOfDay" : 4,
-  	"minutes" : 10080
-  },
-  "populateLearningMapsStatsTableSettings" : {
-  	"batchSize" : 100,
-  	"offset" : 0,
-  	"dayOfMonth" : 1,
-  	"hourOfDay" : 4,
-  	"minutes" : 10080
+  	"minutes" : 1008000
   },
   "populateLearningMapsSettings" : {
   	"batchSize" : 10,
         "offset" : 0,
         "dayOfMonth" : 1,
         "hourOfDay" : 4,
-        "minutes" : 1,
+        "minutes" : 100000,
         "username" : "USERNAME",
         "password" : "PASSWORD",
         "host ": "http://staging.gooru.org",

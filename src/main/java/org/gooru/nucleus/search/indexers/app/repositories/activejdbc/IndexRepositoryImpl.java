@@ -24,12 +24,12 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
   @Override
   public List<Map> getMetadata(String referenceIds) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
     List<Map> metadataReference = db.findAll(Content.FETCH_METADATA, referenceIds);
     if (metadataReference.size() < 1) {
       LOGGER.warn("Metadata Reference id: {} not present in DB", referenceIds);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return metadataReference;
   }
 
@@ -37,13 +37,13 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
   @Override
   public List<Map> getLicenseMetadata(int metadataId) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
 
     List<Map> metadataReference = db.findAll(Content.FETCH_LICENSE_METADATA, metadataId);
     if (metadataReference.size() < 1) {
       LOGGER.warn("Metadata Reference id: {} not present in DB", metadataId);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return metadataReference;
   }
   
@@ -51,19 +51,19 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
   @Override
   public List<Map> getTwentyOneCenturySkill(String referenceIds) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
     List<Map> metadataReference = db.findAll(Content.FETCH_TWENTY_ONE_CENTURY_SKILL, referenceIds);
     if (metadataReference.size() < 1) {
       LOGGER.warn("Metadata Reference id: {} not present in DB", referenceIds);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return metadataReference;
   }
   
   @Override
   public JsonObject getSignatureResourcesByContentId(String contentId, String contentType) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
 
     JsonObject returnValue = null;
     LazyList<SignatureResources> contents = SignatureResources.findBySQL(SignatureResources.FETCH_SIGNATURE_RESOURCES, contentId, contentType);
@@ -76,7 +76,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
         returnValue = new JsonObject(content.toJson(false));
       }
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
   
@@ -85,7 +85,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     JsonArray responses = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
 
       LazyList<SignatureResources> contents = SignatureResources.where(SignatureResources.FETCH_SIGNATURE_RESOURCES_BY_CODE, codeId, codeId);
       if (contents.size() < 1) {
@@ -96,7 +96,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch signature_resources : ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return responses;
   }
@@ -106,7 +106,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     JsonArray responses = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
 
       LazyList<SignatureResources> contents = SignatureResources.where(SignatureResources.FETCH_SIGNATURE_RESOURCES_BY_GUT_CODE, gutCodeId, gutCodeId);
       if (contents.size() < 1) {
@@ -117,7 +117,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     } catch (Exception ex) {
       LOGGER.error("getSignatureResourcesByGutCode::Failed to fetch signature_resources : ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return responses;
   }
@@ -127,7 +127,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     String response = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
 
       LazyList<TaxonomyCourseOld> contents = TaxonomyCourseOld.where(TaxonomyCourseOld.FETCH_COURSE_BY_OLD_TITLE, courseTitle);
       if (contents.size() < 1) {
@@ -138,7 +138,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch taxonomy course : ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return response;
   }

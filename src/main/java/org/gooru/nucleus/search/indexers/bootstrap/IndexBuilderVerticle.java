@@ -3,7 +3,7 @@ package org.gooru.nucleus.search.indexers.bootstrap;
 import org.gooru.nucleus.search.indexers.app.constants.HttpConstants;
 import org.gooru.nucleus.search.indexers.app.constants.RouteConstants;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
-import org.gooru.nucleus.search.indexers.app.services.PopulateSuggestService;
+import org.gooru.nucleus.search.indexers.app.services.PopulateDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,8 @@ public class IndexBuilderVerticle extends AbstractVerticle {
     markBrokenStatus(router);
     markUnBrokenStatus(router);
     deleteDocument(router);
-    populateSuggestTable(router);
+    classifyResourcesToDomain(router);
+    classifyResourcesToStandard(router);
     
     // If the port is not present in configuration then we end up
     // throwing as we are casting it to int. This is what we want.
@@ -158,22 +159,44 @@ public class IndexBuilderVerticle extends AbstractVerticle {
     }));
   }
   
-  private void populateSuggestTable(final Router router) {
+  private void classifyResourcesToDomain(final Router router) {
     router.route().handler(BodyHandler.create());
-    router.post(RouteConstants.EP_POPULATE_SUGGESTION_RESOURCE).handler(context -> vertx.executeBlocking(future -> {
+    router.post(RouteConstants.EP_CLASSIFY_RESOURCE_TO_DOMAIN).handler(context -> vertx.executeBlocking(future -> {
       String type = context.pathParam(RouteConstants.TYPE);
       JsonObject requestBody = context.getBodyAsJson();
       if (type != null) {
         try {
-          PopulateSuggestService.instance().populateSuggestTable(context, type, requestBody);
-          future.complete("Suggest Table population completed!");
+          PopulateDataService.instance().classifyResourcesToDomain(context, type, requestBody);
+          future.complete("classifying resources completed!");
         } catch (Exception e) {
           future.fail(e);
         }
       }
     }, result -> {
       if (result.failed()) {
-        LOGGER.error("Suggest table population failed !!!");
+        LOGGER.error("classifying resources failed !!!");
+        context.response().setStatusCode(HttpConstants.HttpStatus.ERROR.getCode())
+                .setStatusMessage(HttpConstants.HttpStatus.ERROR.getMessage()).end();
+      }
+    }));
+  }
+  
+  private void classifyResourcesToStandard(final Router router) {
+    router.route().handler(BodyHandler.create());
+    router.post(RouteConstants.EP_CLASSIFY_RESOURCE_TO_STANDARD).handler(context -> vertx.executeBlocking(future -> {
+      String type = context.pathParam(RouteConstants.TYPE);
+      JsonObject requestBody = context.getBodyAsJson();
+      if (type != null) {
+        try {
+          PopulateDataService.instance().classifyResourcesToStandards(context, type, requestBody);
+          future.complete("classifying resources completed!");
+        } catch (Exception e) {
+          future.fail(e);
+        }
+      }
+    }, result -> {
+      if (result.failed()) {
+        LOGGER.error("classifying resources failed !!!");
         context.response().setStatusCode(HttpConstants.HttpStatus.ERROR.getCode())
                 .setStatusMessage(HttpConstants.HttpStatus.ERROR.getMessage()).end();
       }

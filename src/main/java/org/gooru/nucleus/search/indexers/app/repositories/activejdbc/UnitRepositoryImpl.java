@@ -1,6 +1,5 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
@@ -8,7 +7,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +53,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     Integer unitCount = 0;
     DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      openDefaultDBConnection(db);
       Long unitCountL = Unit.count(Unit.GET_UNIT_COUNT, courseId, false);
       LOGGER.debug("Unit count : {} for course : {}", unitCountL, courseId);
       unitCount =  unitCountL != null ? unitCountL.intValue() : 0;
@@ -63,20 +61,8 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     catch(Exception e){
       LOGGER.error("Not able to fetch unit count for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return unitCount;
-  }
-
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
   }
   
   @Override
@@ -84,7 +70,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     JsonObject returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       Unit result = Unit.findById(getPGObject("id", UUID_TYPE, unitId));
       if (result != null && !result.getBoolean(Unit.IS_DELETED)) {
         returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
@@ -92,7 +78,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     } catch (Exception e) {
       LOGGER.error("Not able to fetch unit : {} error : {}", unitId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
   
@@ -101,7 +87,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     LazyList<Unit> lessons = null;
     DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      openDefaultDBConnection(db);
       lessons = Unit.where(Unit.GET_UNIT_BY_COURSE_ID, courseId, false);
       if (lessons.size() < 1) {
         LOGGER.warn("Units for course: {} not present in DB", courseId);
@@ -110,7 +96,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     catch(Exception e){
       LOGGER.error("Not able to fetch units for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return lessons;
   }
   

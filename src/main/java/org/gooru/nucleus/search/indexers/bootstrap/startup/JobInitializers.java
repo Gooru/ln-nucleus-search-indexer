@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gooru.nucleus.search.indexers.app.jobs.PopulateGutBasedAssessmentSuggestJob;
-import org.gooru.nucleus.search.indexers.app.jobs.PopulateGutBasedCollectionSuggestJob;
-import org.gooru.nucleus.search.indexers.app.jobs.PopulateGutBasedResourceSuggestJob;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateLearningMaps;
-import org.gooru.nucleus.search.indexers.app.jobs.PopulateLearningMapsStatsTable;
+import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureAssessmentJob;
+import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureCollectionJob;
+import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureResourceJob;
 
 public class JobInitializers implements Iterable<JobInitializer> {
 
@@ -16,10 +15,9 @@ public class JobInitializers implements Iterable<JobInitializer> {
 
   public JobInitializers() {
     List<JobInitializer> initializers = new ArrayList<>();
-    initializers.add(PopulateGutBasedResourceSuggestJob.instance());
-    initializers.add(PopulateGutBasedCollectionSuggestJob.instance());
-    initializers.add(PopulateGutBasedAssessmentSuggestJob.instance());
-    initializers.add(PopulateLearningMapsStatsTable.instance());
+    initializers.add(PopulateSignatureResourceJob.instance());
+    initializers.add(PopulateSignatureCollectionJob.instance());
+    initializers.add(PopulateSignatureAssessmentJob.instance());
     initializers.add(PopulateLearningMaps.instance());
     internalIterator = initializers.iterator();
   }

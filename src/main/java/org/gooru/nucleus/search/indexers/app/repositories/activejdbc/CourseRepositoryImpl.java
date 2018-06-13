@@ -1,6 +1,5 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
@@ -9,7 +8,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,25 +29,13 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     }
     return returnValue;
   }
-  
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
-  }
 
   @Override
   public Integer getUnitCount(String courseId) {
     Integer unitCount = 0;
     DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      openDefaultDBConnection(db);
       Long unitCountL = Unit.count(Unit.GET_UNIT_COUNT, courseId, false);
       LOGGER.debug("Unit count : {} for course : {}", unitCountL, courseId);
       unitCount =  unitCountL != null ? unitCountL.intValue() : 0;
@@ -57,7 +43,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     catch(Exception e){
       LOGGER.error("Not able to fetch unit count for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return unitCount;
   }
 
@@ -86,7 +72,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     JsonObject returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       Course result = Course.findById(getPGObject("id", UUID_TYPE, courseId));
       // LOGGER.debug("CourseRepositoryImpl : getCourseById : " + result);
 
@@ -96,7 +82,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     } catch (Exception e) {
       LOGGER.error("Not able to fetch course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
   
@@ -105,7 +91,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     Boolean isFeatured = false;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       Course result = Course.findById(getPGObject("id", UUID_TYPE, courseId));
       // LOGGER.debug("CourseRepositoryImpl : isFeatured : " + result);
 
@@ -117,7 +103,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     } catch (Exception e) {
       LOGGER.error("Not able to fetch featured flag for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return isFeatured;
   }
   
@@ -127,7 +113,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     Long count = 0L;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       List countList = db.firstColumn(Course.GET_USED_BY_STUDENT_COUNT, courseId);
       if (countList == null || countList.size() < 1) {
         LOGGER.warn("Students for course : {} not present in DB", courseId);
@@ -137,7 +123,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     } catch (Exception e) {
       LOGGER.error("Not able to fetch Students count for course : {} error : {}", courseId, e);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -148,7 +134,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     Long count = 0L;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       List countList = db.firstColumn(Course.GET_REMIXED_IN_CLASS_COUNT, courseId);
       if (countList == null || countList.size() < 1) {
         LOGGER.warn("RemixedInClass count for course : {} not present in DB", courseId);
@@ -158,7 +144,7 @@ public class CourseRepositoryImpl extends BaseIndexRepo implements CourseReposit
     } catch (Exception e) {
       LOGGER.error("Not able to fetch RemixedInClass count for course : {} error : {}", courseId, e);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }

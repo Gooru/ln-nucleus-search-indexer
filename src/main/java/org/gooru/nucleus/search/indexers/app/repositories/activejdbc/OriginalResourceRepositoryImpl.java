@@ -1,12 +1,10 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.OriginalResource;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +69,7 @@ public class OriginalResourceRepositoryImpl extends BaseIndexRepo implements Ori
     DB db = getDefaultDataSourceDBConnection();
     JsonObject returnValue = null;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       OriginalResource result = OriginalResource.findById(getPGObject("id", UUID_TYPE, contentId));
       if (result != null && !result.getBoolean(OriginalResource.IS_DELETED)) {
         returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
@@ -81,21 +79,9 @@ public class OriginalResourceRepositoryImpl extends BaseIndexRepo implements Ori
     } catch (Exception e) {
       LOGGER.error("Not able to fetch original resource : {} error : {}", contentId, e);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return returnValue;
-  }
-  
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
   }
 
 }

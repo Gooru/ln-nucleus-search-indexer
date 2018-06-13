@@ -25,5 +25,7 @@ public interface TaxonomyRepository {
   String getCourseCodeByTitleAndFw(String courseTitle, String framework);
   
   String getGutSubjectCodeByTitle(String subjectTitle);
+  
+  List<String> getAllDomainUnderCourseByFw(String domainId, String fw);
 
 }

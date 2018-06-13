@@ -147,6 +147,20 @@ public class BaseIndexService {
     return stringbuilder.toString();
   }
   
+  public String convertArrayToLWAndString(String inputString) {
+    StringBuilder stringbuilder = new StringBuilder();
+    if (inputString != null) {
+      String[] stringArray = inputString.split(IndexerConstants.COMMA);
+      for (String text : stringArray) {
+        if (stringbuilder.length() > 0) {
+          stringbuilder.append(IndexerConstants.COMMA);
+        }
+        stringbuilder = stringbuilder.append("\"" + text.toLowerCase() + "\"");
+      }
+    }
+    return stringbuilder.toString();
+  }
+  
   protected Response performRequest(String method, String indexUrl, String requestPayload) throws Exception {
     StringEntity entity = null;
     if (!StringUtil.isNullOrEmpty(requestPayload)) {

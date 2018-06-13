@@ -1,12 +1,10 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Rubric;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +49,7 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
     Integer questionCount = 0;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       List countList = db.firstColumn(Rubric.FETCH_MAPPED_QUESTIONS, rubricId);
       if (countList == null || countList.size() < 1) {
         LOGGER.warn("No Mapped Questions for Rubric : {}", rubricId);
@@ -61,21 +59,9 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
     } catch (Exception e) {
       LOGGER.error("Not able to fetch Mapped question count for rubric : {} error : {}", rubricId, e);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return questionCount;
-  }
-  
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
   }
   
 }

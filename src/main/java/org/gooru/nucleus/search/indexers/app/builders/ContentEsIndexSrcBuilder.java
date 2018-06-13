@@ -109,8 +109,8 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
       }
 
-      Set<String> gooruSubjectCodes = null;
-      Set<String> gooruCourseCodes = null;
+      Set<String> infoGooruSubjectCodes = null;
+      Set<String> infoGooruCourseCodes = null;
       // Set info
       String infoStr = source.getString(EntityAttributeConstants.INFO);
       if (StringUtils.isNotBlank(infoStr) && !infoStr.equalsIgnoreCase(IndexerConstants.STR_NULL)) {
@@ -124,24 +124,24 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
         if (info.containsKey(EntityAttributeConstants.GOORU_SUBJECT)) {
           JsonArray gooruSubs = info.getJsonArray(EntityAttributeConstants.GOORU_SUBJECT);
-          gooruSubjectCodes = new HashSet<>();
+          infoGooruSubjectCodes = new HashSet<>();
           for (Object o : gooruSubs) {
             String subjectTitle = (String) o;
             String subjectCode = getTaxonomyRepo().getGutSubjectCodeByTitle(subjectTitle);
             if (StringUtils.isNotBlank(subjectCode)) {
-              gooruSubjectCodes.add(subjectCode);
+              infoGooruSubjectCodes.add(subjectCode);
             }
           }
         }
         if (info.containsKey(EntityAttributeConstants.GOORU_COURSE)) {
           JsonArray gooruCourses = info.getJsonArray(EntityAttributeConstants.GOORU_COURSE);
-          gooruCourseCodes = new HashSet<>();
+          infoGooruCourseCodes = new HashSet<>();
           for (Object o : gooruCourses) {
             String courseTitle = (String) o;
             String courseCode = getIndexRepo().getCurrentCourseCodeByOldTitle(courseTitle);
             if (StringUtils.isBlank(courseCode)) courseCode = getTaxonomyRepo().getCourseCodeByTitleAndFw(courseTitle, IndexerConstants.GUT_FRAMEWORK);
             if (StringUtils.isNotBlank(courseCode)) {
-              gooruCourseCodes.add(courseCode);
+              infoGooruCourseCodes.add(courseCode);
             }
           }
         }
@@ -155,6 +155,16 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
 
       }  
       
+      //Get Machine classified Domains
+      JsonObject mlObject = getMachineClassifiedTagsRepo().getMachineClassifiedContents(id);
+      String mlDomains = null;
+      String mlTags = null;
+      
+      if (mlObject != null) {
+        mlDomains = mlObject.getString("machine_classified_domains", null);
+        mlTags = mlObject.getString("machine_classified_tags", null);
+      }
+        
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       String aggTaxonomy = source.getString(EntityAttributeConstants.AGGREGATED_TAXONOMY, null);
       String aggGutCodes = source.getString(EntityAttributeConstants.AGGREGATED_GUT_CODES, null);
@@ -162,30 +172,46 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       JsonObject taxonomyObject = null;
       JsonObject aggTaxonomyObject = null;
       JsonObject aggGutCodesObject = null;
-      JsonObject gooruSubjectObject = null;
+      JsonObject subjectFieldObject = null;
       TaxonomyEo taxonomyEo = new TaxonomyEo();
       try {
         if (StringUtils.isNotBlank(taxonomy) && !taxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) taxonomyObject = new JsonObject(taxonomy);
         if (StringUtils.isNotBlank(aggTaxonomy) && !aggTaxonomy.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggTaxonomyObject = new JsonObject(aggTaxonomy);
         if (StringUtils.isNotBlank(aggGutCodes) && !aggGutCodes.equalsIgnoreCase(IndexerConstants.STR_NULL)) aggGutCodesObject = new JsonObject(aggGutCodes);
-        if (StringUtils.isNotBlank(subject) && !subject.equalsIgnoreCase(IndexerConstants.STR_NULL)) gooruSubjectObject = new JsonObject(subject);
-        
-        if (gooruSubjectCodes != null && !gooruSubjectCodes.isEmpty()) {
+        if (StringUtils.isNotBlank(subject) && !subject.equalsIgnoreCase(IndexerConstants.STR_NULL)) subjectFieldObject = new JsonObject(subject);
+        if (mlTags != null && !mlTags.equalsIgnoreCase(IndexerConstants.EMPTY_OBJECT)) {
+          mlTags = mlTags.replace("{", IndexerConstants.EMPTY_STRING).replace("}", IndexerConstants.EMPTY_STRING);
+          String[] mlCodes = mlTags.split(IndexerConstants.COMMA);
           if (aggGutCodesObject == null) aggGutCodesObject = new JsonObject();
-          for (String gooruSubjectCode : gooruSubjectCodes) {
-            aggGutCodesObject.put(gooruSubjectCode, new JsonObject());
+          for (String mlCode : mlCodes) {
+            aggGutCodesObject.put(mlCode, new JsonObject());
           }
         }
-        if (gooruCourseCodes != null && !gooruCourseCodes.isEmpty()) {
+        if (mlDomains != null && !mlDomains.equalsIgnoreCase(IndexerConstants.EMPTY_OBJECT)) {
+          mlDomains = mlDomains.replace("{", IndexerConstants.EMPTY_STRING).replace("}", IndexerConstants.EMPTY_STRING);
+          String[] mlDomainCodes = mlDomains.split(IndexerConstants.COMMA);
           if (aggGutCodesObject == null) aggGutCodesObject = new JsonObject();
-          for (String gooruCourseCode : gooruCourseCodes) {
-            aggGutCodesObject.put(gooruCourseCode, new JsonObject());
+          for (String mlDomainCode : mlDomainCodes) {
+            aggGutCodesObject.put(mlDomainCode, new JsonObject());
           }
         }
-        if (gooruSubjectObject != null) {
+                
+        if (infoGooruSubjectCodes != null && !infoGooruSubjectCodes.isEmpty()) {
           if (aggGutCodesObject == null) aggGutCodesObject = new JsonObject();
-          for (String key : gooruSubjectObject.fieldNames()) {
-            aggGutCodesObject.put(key, gooruSubjectObject.getValue(key));
+          for (String infoGooruSubjectCode : infoGooruSubjectCodes) {
+            aggGutCodesObject.put(infoGooruSubjectCode, new JsonObject());
+          }
+        }
+        if (infoGooruCourseCodes != null && !infoGooruCourseCodes.isEmpty()) {
+          if (aggGutCodesObject == null) aggGutCodesObject = new JsonObject();
+          for (String infoGooruCourseCode : infoGooruCourseCodes) {
+            aggGutCodesObject.put(infoGooruCourseCode, new JsonObject());
+          }
+        }
+        if (subjectFieldObject != null) {
+          if (aggGutCodesObject == null) aggGutCodesObject = new JsonObject();
+          for (String key : subjectFieldObject.fieldNames()) {
+            aggGutCodesObject.put(key, subjectFieldObject.getValue(key));
           }
         }
         addTaxonomy(taxonomyObject, taxonomyEo, aggTaxonomyObject, aggGutCodesObject);
