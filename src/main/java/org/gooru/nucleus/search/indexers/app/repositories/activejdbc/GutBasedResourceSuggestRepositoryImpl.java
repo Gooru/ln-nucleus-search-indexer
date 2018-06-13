@@ -20,7 +20,7 @@ public class GutBasedResourceSuggestRepositoryImpl extends BaseIndexRepo impleme
     DB db = getDefaultDataSourceDBConnection();
     Boolean returnValue = false;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<GutBasedResourceSuggest> result =
               GutBasedResourceSuggest.where(GutBasedResourceSuggest.FETCH_SUGGESTION_BY_C_OR_MC, codeId, codeId);
 
@@ -30,7 +30,7 @@ public class GutBasedResourceSuggestRepositoryImpl extends BaseIndexRepo impleme
     } catch (Exception ex) {
       LOGGER.error("GBCSRI:hasSuggestion: Failed to fetch resource suggestions ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return returnValue;
   }
@@ -39,7 +39,7 @@ public class GutBasedResourceSuggestRepositoryImpl extends BaseIndexRepo impleme
   public void saveSuggestions(String id, JsonObject data) {
    DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       db.openTransaction();
       db.exec(GutBasedResourceSuggest.INSERT_QUERY, data.getString(EntityAttributeConstants.COMPETENCY_INTERNAL_CODE), data.getString(EntityAttributeConstants.MICRO_COMPETENCY_INTERNAL_CODE),
               data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), toPostgresArrayString(Arrays.asList(data.getString(EntityAttributeConstants.IDS_TO_SUGGEST).split(","))));

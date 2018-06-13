@@ -78,6 +78,8 @@ public final class IndexerConstants {
   
   public static final String EMPTY_ARRAY = "[\"\"]";
 
+  public static final String EMPTY_OBJECT = "{}";
+
   public static final String QUESTIONS = "questions";
 
   public static final String COMMA = ",";

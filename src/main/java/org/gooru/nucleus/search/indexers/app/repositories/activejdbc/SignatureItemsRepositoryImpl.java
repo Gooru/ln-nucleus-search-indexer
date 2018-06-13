@@ -20,7 +20,7 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
     DB db = getDefaultDataSourceDBConnection();
     Boolean returnValue = false;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<SignatureItems> result =
               SignatureItems.where(SignatureItems.FETCH_CURATED_SUGGESTION_BY_C_OR_MC, codeId, codeId, itemFormat);
 
@@ -30,7 +30,7 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
     } catch (Exception ex) {
       LOGGER.error("SIRI:hasCuratedSuggestion: Failed to fetch curated suggestions ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return returnValue;
   }
@@ -39,7 +39,7 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
   public void saveSuggestions(String id, JsonObject data) {
    DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       db.openTransaction();
       db.exec(SignatureItems.INSERT_QUERY, data.getString(EntityAttributeConstants.COMPETENCY_GUT_CODE), data.getString(EntityAttributeConstants.MICRO_COMPETENCY_GUT_CODE),
                   data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), data.getString(EntityAttributeConstants.ITEM_ID), data.getString(EntityAttributeConstants.ITEM_FORMAT));      
@@ -57,7 +57,7 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
   public void deleteSuggestions(String itemFormat) {
    DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       db.openTransaction();
       db.exec(SignatureItems.DELETE_RECORDS, false, itemFormat);
       db.commitTransaction();
@@ -75,7 +75,7 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
     JsonArray responses = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
 
       LazyList<SignatureItems> contents = SignatureItems.where(SignatureItems.FETCH_SIGNATURE_ITEMS, gutCode, gutCode, contentType);
       if (contents.size() < 1) {
@@ -86,7 +86,7 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch signature_items : ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return responses;
   }

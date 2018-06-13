@@ -1,5 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import java.util.List;
+
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -36,5 +38,7 @@ public interface TaxonomyCodeRepository {
   JsonArray getStdLTCodeByFrameworkAndOffset(String frameworkCode, Integer limit, Long offset);
 
   JsonObject getGutCode(String codeId);
+
+  List<String> getAllStandardByDomain(String domainId, String fw);
 
 }

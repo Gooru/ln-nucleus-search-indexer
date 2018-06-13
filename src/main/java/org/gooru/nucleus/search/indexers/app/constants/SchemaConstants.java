@@ -24,13 +24,16 @@ public class SchemaConstants {
   public static final String SIGNATURE_RESOURCES = "signature_resources";
   public static final String SIGNATURE_ITEMS = "signature_items";
   public static final String GUT_COMPETENCY_PREREQUISITE = "gut_competency_prerequisite";
-  public static final String LEARNING_MAP_STATS = "learning_map_stats";
+  public static final String LEARNING_MAPS = "learning_maps";
   public static final String TAXONOMY_COURSE = "taxonomy_course";
   public static final String TAXONOMY_COURSE_OLD = "taxonomy_course_old";
   public static final String TAXONOMY_SUBJECT = "taxonomy_subject";
+  public static final String TAXONOMY_DOMAIN = "taxonomy_domain";
+  public static final String MACHINE_CLASSIFIED_CONTENTS = "machine_classified_content";
 
   public static final String RESOURCE_INDEX_DELETE_TRACKER = "resource_index_delete_tracker";
   public static final String COLLECTION_INDEX_DELETE_TRACKER = "collection_index_delete_tracker";
+  public static final String INDEXER_JOB_STATUS = "indexer_job_status";
   //Primary Key Column Names
   public static final String ID = "id";
   public static final String UNIT_ID = "unit_id";
@@ -38,5 +41,6 @@ public class SchemaConstants {
   public static final String COURSE_ID = "cource_id";
   public static final String SOURCE_TAXONOMY_CODE_ID = "source_taxonomy_code_id";
   public static final String GUT_COMPETENCY_ID =   "gut_competency_id";
+  public static final String KEY = "key";
 
 }

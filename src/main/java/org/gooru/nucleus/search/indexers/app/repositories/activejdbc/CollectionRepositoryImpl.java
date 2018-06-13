@@ -1,6 +1,5 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +74,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
   @Override
   public JsonObject getCollectionByType(String contentId, String format) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
     LazyList<Collection> collections = Collection.where(Collection.COLLECTION_QUERY, format, contentId, false);
     if (collections.size() < 1) {
       LOGGER.warn("Collection id: {} not present in DB", contentId);
@@ -86,7 +84,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     if (collection != null) {
       returnValue = new JsonObject(collection.toJson(false));
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
 
@@ -94,26 +92,14 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
   @Override
   public List<Map> getContentsOfCollection(String collectionId) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
 
     List<Map> collectionMeta = db.findAll(Collection.FETCH_RESOURCE_META, collectionId, false);
     if (collectionMeta.size() < 1) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return collectionMeta;
-  }
-
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
   }
 
   @Override
@@ -156,7 +142,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     JsonObject returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       Collection result = Collection.findById(getPGObject("id", UUID_TYPE, collectionId));
       if (result != null && !result.getBoolean(Collection.IS_DELETED)) {
         returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
@@ -164,7 +150,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     } catch (Exception e) {
       LOGGER.error("Not able to fetch collection : {} error : {}", collectionId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
   
@@ -173,7 +159,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     LazyList<Collection> collections = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_COURSE, courseId, false);
       if (collections.size() < 1) {
         LOGGER.warn("Collections for course: {} not present in DB", courseId);
@@ -181,7 +167,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     } catch (Exception e) {
       LOGGER.error("Not able to fetch collections for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return collections;
   }
   
@@ -190,7 +176,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     LazyList<Collection> collections = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_LESSON, lessonId, false);
       if (collections.size() < 1) {
         LOGGER.warn("Collections for lesson: {} not present in DB", lessonId);
@@ -198,7 +184,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     } catch (Exception e) {
       LOGGER.error("Not able to fetch collections for lesson : {} error : {}", lessonId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return collections;
   }
   
@@ -206,7 +192,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
   public LazyList<Collection> getCollectionsByUnitId(String unitId) {
     LazyList<Collection> collections = null;
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
     try {
       collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_UNIT, unitId, false);
       if (collections.size() < 1) {
@@ -215,7 +201,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     } catch (Exception e) {
       LOGGER.error("Not able to fetch collections for unit : {} error : {}", unitId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return collections;
   }
 
@@ -225,7 +211,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     Long count = 0L;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       List countList = db.firstColumn(Collection.GET_STUDENTS_OF_COLLECTION, collectionId);
       if (countList == null || countList.size() < 1) {
         LOGGER.warn("Students for collection : {} not present in DB", collectionId);
@@ -235,7 +221,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     } catch (Exception e) {
       LOGGER.error("Not able to fetch Students count for collection : {} error : {}", collectionId, e);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -246,7 +232,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     Long count = 0L;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       List countList = db.firstColumn(Collection.GET_USED_IN_COURSE_COUNT, collectionId);
       if (countList == null || countList.size() < 1) {
         LOGGER.warn("RemixedInCourse Count for collection : {} not present in DB", collectionId);
@@ -256,7 +242,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     } catch (Exception e) {
       LOGGER.error("Not able to fetch RemixedInCourse count for collection : {} error : {}", collectionId, e);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }

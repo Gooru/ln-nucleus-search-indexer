@@ -12,12 +12,16 @@ import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexTrackerRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.SignatureItemsRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.IndexerJobStatus;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.services.BaseIndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.JobInitializer;
+import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +30,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService implements JobInitializer {
+public class PopulateSignatureAssessmentJob extends BaseIndexService implements JobInitializer {
   
-  private static final Logger LOGGER = LoggerFactory.getLogger(PopulateGutBasedAssessmentSuggestJob.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PopulateSignatureAssessmentJob.class);
   private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"assessment\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.gutCodes\" : [GUT_CODE] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
@@ -37,74 +41,91 @@ public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService imple
   private static final int MINUTES = 21600;
 
   private static class PopulatGutSuggestionHolder {
-    public static final PopulateGutBasedAssessmentSuggestJob INSTANCE = new PopulateGutBasedAssessmentSuggestJob();
+    public static final PopulateSignatureAssessmentJob INSTANCE = new PopulateSignatureAssessmentJob();
   }
 
-  public static PopulateGutBasedAssessmentSuggestJob instance() {
+  public static PopulateSignatureAssessmentJob instance() {
     return PopulatGutSuggestionHolder.INSTANCE;
   }
   
   @Override
-  public void deployJob(JsonObject config) {
-    LOGGER.info("Deploying Populate Gut Suggestion Job....");
-    JsonObject params = config.getJsonObject("populateAssessmentSuggestJobSettings");
+    public void deployJob(JsonObject config) {
+        LOGGER.info("Deploying Populate Signature Asssessment Job....");
+        JsonObject params = config.getJsonObject("populateAssessmentSuggestJobSettings");
 
-    Integer dayOfMonth = params.getInteger("dayOfMonth", DAY_OF_MONTH);
-    Integer hourOfDay = params.getInteger("hourOfDay", HOUR_OF_DAY);
-    Integer minutes = params.getInteger("minutes", MINUTES);
+        Integer dayOfMonth = params.getInteger("dayOfMonth", DAY_OF_MONTH);
+        Integer hourOfDay = params.getInteger("hourOfDay", HOUR_OF_DAY);
+        Integer minutes = params.getInteger("minutes", MINUTES);
 
-    MonthlyTimer.schedule(new Runnable() {
-      public void run() {
-        try {
-          long startTime = System.currentTimeMillis();
-          LOGGER.info("Starting Populate Gut Suggestion Job....");
-          Long totalCountOfStdsLts = TaxonomyCodeRepository.instance().getStandardLtsCountByFramework(IndexerConstants.GUT_FRAMEWORK);
-          Long totalCountOfLTs = TaxonomyCodeRepository.instance().getLTCountByFramework(IndexerConstants.GUT_FRAMEWORK);
-          Long totalCountOfSTDs = TaxonomyCodeRepository.instance().getStandardCountByFramework(IndexerConstants.GUT_FRAMEWORK);
-          LOGGER.info("Total no:of codes to process : {}", totalCountOfStdsLts);
-          Long expireCount = params.getLong("processCount", totalCountOfStdsLts);
-          Integer limit = params.getInteger("batchSize", BATCH_SIZE);
-          Long offset = params.getLong("offset", OFFSET);
-          Long totalProcessed = 0L;
-          SignatureItemsRepository.instance().deleteSuggestions(IndexerConstants.ASSESSMENT);
-          while (true) {
-            JsonArray ltCodesArray = TaxonomyCodeRepository.instance().getLTCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, offset);
-            if (ltCodesArray.size() == 0) {
-              break;
-            }
-            processTaxonomyCodes(ltCodesArray);
-            totalProcessed += ltCodesArray.size();
-            offset += limit;
-            if (totalProcessed >= totalCountOfLTs || totalProcessed >= expireCount) {
-              break;
-            }
-          }
-          LOGGER.info("Processed all learning targets count : {}", totalCountOfLTs);
+        MinutesTimer.schedule(new Runnable() {
+            public void run() {
+                try {
+                    LazyList<IndexerJobStatus> jobDetails =
+                        IndexTrackerRepository.instance().getJobStatus("populate-signature-assessment");
+                    String jobStatus = null;
+                    if (jobDetails != null && !jobDetails.isEmpty())
+                        jobStatus = ((IndexerJobStatus) (jobDetails.get(0))).getString("status");
+                    if (jobStatus != null && jobStatus.equalsIgnoreCase("start") || jobStatus.equalsIgnoreCase("run-periodically")) {
+                        long startTime = System.currentTimeMillis();
+                        LOGGER.info("Starting Populate Gut Suggestion Job....");
+                        Long totalCountOfStdsLts = TaxonomyCodeRepository.instance()
+                            .getStandardLtsCountByFramework(IndexerConstants.GUT_FRAMEWORK);
+                        Long totalCountOfLTs =
+                            TaxonomyCodeRepository.instance().getLTCountByFramework(IndexerConstants.GUT_FRAMEWORK);
+                        Long totalCountOfSTDs = TaxonomyCodeRepository.instance()
+                            .getStandardCountByFramework(IndexerConstants.GUT_FRAMEWORK);
+                        LOGGER.info("Total no:of codes to process : {}", totalCountOfStdsLts);
+                        Long expireCount = params.getLong("processCount", totalCountOfStdsLts);
+                        Integer limit = params.getInteger("batchSize", BATCH_SIZE);
+                        Long offset = params.getLong("offset", OFFSET);
+                        Long totalProcessed = 0L;
+                        SignatureItemsRepository.instance().deleteSuggestions(IndexerConstants.ASSESSMENT);
+                        while (true) {
+                            JsonArray ltCodesArray = TaxonomyCodeRepository.instance()
+                                .getLTCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, offset);
+                            if (ltCodesArray.size() == 0) {
+                                break;
+                            }
+                            processTaxonomyCodes(ltCodesArray);
+                            totalProcessed += ltCodesArray.size();
+                            offset += limit;
+                            if (totalProcessed >= totalCountOfLTs || totalProcessed >= expireCount) {
+                                break;
+                            }
+                        }
+                        LOGGER.info("Processed all learning targets count : {}", totalCountOfLTs);
 
-          Long stdOffset = params.getLong("offset", 0L);
-          while (true) {
-            JsonArray standardCodesArray = TaxonomyCodeRepository.instance().getStandardCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, stdOffset);
-            if (standardCodesArray.size() == 0) {
-              break;
+                        Long stdOffset = params.getLong("offset", 0L);
+                        while (true) {
+                            JsonArray standardCodesArray = TaxonomyCodeRepository.instance()
+                                .getStandardCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, stdOffset);
+                            if (standardCodesArray.size() == 0) {
+                                break;
+                            }
+                            processTaxonomyCodes(standardCodesArray);
+                            totalProcessed += standardCodesArray.size();
+                            stdOffset += limit;
+                            if (totalProcessed >= totalCountOfStdsLts || totalProcessed >= expireCount) {
+                                break;
+                            }
+                        }
+                        if (!jobStatus.equalsIgnoreCase("run-periodically"))
+                            jobStatus = "completed";
+                        IndexTrackerRepository.instance().saveJobStatus("populate-signature-assessment", jobStatus);
+                        LOGGER.info("Processed all standards count : {}", totalCountOfSTDs);
+                        LOGGER.info("Total processed std and lt codes : {} ", totalProcessed);
+                        LOGGER.info("Total time taken to populate : {}", (System.currentTimeMillis() - startTime));
+                    } else {
+                        LOGGER.info("populate-signature-assessment is disabled");
+                    }
+                } catch (Exception e) {
+                    LOGGER.info("Error while populating resource suggestions : Ex ::", e);
+                    e.printStackTrace();
+                }
             }
-            processTaxonomyCodes(standardCodesArray);
-            totalProcessed += standardCodesArray.size();
-            stdOffset += limit;
-            if (totalProcessed >= totalCountOfStdsLts || totalProcessed >= expireCount) {
-              break;
-            }
-          }
-          LOGGER.info("Processed all standards count : {}", totalCountOfSTDs);
-          LOGGER.info("Total processed std and lt codes : {} ", totalProcessed);
-          LOGGER.info("Total time taken to populate : {}", (System.currentTimeMillis() - startTime));
-        } catch (Exception e) {
-          LOGGER.info("Error while populating resource suggestions : Ex ::", e);
-          e.printStackTrace();
-        }
-      }
-    }, dayOfMonth, hourOfDay, minutes);
-    //scheduler.cancelCurrent();
-  }
+        }, dayOfMonth, hourOfDay, minutes);
+        // scheduler.cancelCurrent();
+    }
 
   @SuppressWarnings("unchecked")
   private void processTaxonomyCodes(JsonArray taxonomyCodeArray) {
@@ -159,6 +180,7 @@ public class PopulateGutBasedAssessmentSuggestJob extends BaseIndexService imple
     for (Map<String, Object> hit : hits) {
       Map<String, Object> fields = (Map<String, Object>) hit.get("_source");
       String id = (String) fields.get(EntityAttributeConstants.ID);
+      if (ContentRepository.instance().isOEExistInCollection(id)) continue;
       suggestIds.add(id);
       suggestIdList.add(id);
       if ((hitCount <= 3 && !(suggestIdList.size() < hitCount)) || suggestIdList.size() == 3) {

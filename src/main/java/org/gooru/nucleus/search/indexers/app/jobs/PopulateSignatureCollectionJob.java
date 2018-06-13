@@ -2,28 +2,26 @@ package org.gooru.nucleus.search.indexers.app.jobs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
-import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
-import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
-import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
-import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.GutBasedResourceSuggestRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexTrackerRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.SignatureItemsRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.IndexerJobStatus;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
 import org.gooru.nucleus.search.indexers.app.services.BaseIndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.JobInitializer;
+import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +30,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class PopulateGutBasedResourceSuggestJob extends BaseIndexService implements JobInitializer {
+public class PopulateSignatureCollectionJob extends BaseIndexService implements JobInitializer {
   
-  private static final Logger LOGGER = LoggerFactory.getLogger(PopulateGutBasedResourceSuggestJob.class);
-  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"contentFormat\" : \"resource\" } }, { \"term\" : { \"publishStatus\" : \"published\" } }, { \"terms\" : { \"taxonomy.allEquivalentInternalCodes\" : [CROSSWALK_CODES] } }, { \"term\" : { \"statistics.statusIsBroken\" : 0 } } ] } }, \"size\" : 20, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"description^1.5F\", \"text\", \"tags^3.0F\", \"title^5.0F\", \"narration\", \"collectionTitles\", \"originalCreator.usernameDisplay\", \"creator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"taxonomy.course.label^1.4F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceSource.attribution\", \"copyrightOwnerList.copyrightOwnerListSnowball\", \"info.publisher\", \"info.publisher.publisherSnowball\", \"copyrightOwnerList.copyrightOwnerListStandard\" ], \"boost\" : 1.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"standard\" } }, \"from\" : 0, \"_source\" : [ \"id\", \"contentFormat\", \"url\", \"title\", \"description\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"shortTitle\", \"narration\", \"publishStatus\", \"collectionId\", \"visibleOnProfile\", \"originalCreator\", \"creator\", \"contentSubFormat\", \"collectionIds\", \"collectionTitles\", \"question\", \"metadata\", \"taxonomy\", \"statistics\", \"license\", \"info\", \"course\", \"copyrightOwnerList\", \"isCopyrightOwner\" ], \"rescore\" : { \"window_size\" : 300, \"query\" : { \"score_mode\" : \"multiply\", \"rescore_query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"((_score/60*100) - _score) * doc['statistics.preComputedWeight'].value\" }} } } } } }";
+  private static final Logger LOGGER = LoggerFactory.getLogger(PopulateSignatureCollectionJob.class);
+  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.gutCodes\" : [GUT_CODE] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
@@ -43,25 +41,31 @@ public class PopulateGutBasedResourceSuggestJob extends BaseIndexService impleme
   private static final int MINUTES = 21600;
 
   private static class PopulatGutSuggestionHolder {
-    public static final PopulateGutBasedResourceSuggestJob INSTANCE = new PopulateGutBasedResourceSuggestJob();
+    public static final PopulateSignatureCollectionJob INSTANCE = new PopulateSignatureCollectionJob();
   }
 
-  public static PopulateGutBasedResourceSuggestJob instance() {
+  public static PopulateSignatureCollectionJob instance() {
     return PopulatGutSuggestionHolder.INSTANCE;
   }
   
   @Override
   public void deployJob(JsonObject config) {
-    LOGGER.info("Deploying Populate Gut Suggestion Job....");
-    JsonObject params = config.getJsonObject("populateResourceSuggestJobSettings");
+    LOGGER.info("Deploying Populate Signature Collection Job....");
+    JsonObject params = config.getJsonObject("populateCollectionSuggestJobSettings");
 
     Integer dayOfMonth = params.getInteger("dayOfMonth", DAY_OF_MONTH);
     Integer hourOfDay = params.getInteger("hourOfDay", HOUR_OF_DAY);
     Integer minutes = params.getInteger("minutes", MINUTES);
 
-    MonthlyTimer.schedule(new Runnable() {
+    MinutesTimer.schedule(new Runnable() {
       public void run() {
         try {
+            LazyList<IndexerJobStatus> jobDetails = IndexTrackerRepository.instance().getJobStatus("populate-signature-collection");
+            String jobStatus = null;
+            if (jobDetails != null && !jobDetails.isEmpty())
+                jobStatus = ((IndexerJobStatus) (jobDetails.get(0))).getString("status");
+            if (jobStatus != null && jobStatus.equalsIgnoreCase("start") || jobStatus.equalsIgnoreCase("run-periodically")) {
+                                
           long startTime = System.currentTimeMillis();
           LOGGER.info("Starting Populate Gut Suggestion Job....");
           Long totalCountOfStdsLts = TaxonomyCodeRepository.instance().getStandardLtsCountByFramework(IndexerConstants.GUT_FRAMEWORK);
@@ -72,6 +76,7 @@ public class PopulateGutBasedResourceSuggestJob extends BaseIndexService impleme
           Integer limit = params.getInteger("batchSize", BATCH_SIZE);
           Long offset = params.getLong("offset", OFFSET);
           Long totalProcessed = 0L;
+          SignatureItemsRepository.instance().deleteSuggestions(IndexerConstants.COLLECTION);
           while (true) {
             JsonArray ltCodesArray = TaxonomyCodeRepository.instance().getLTCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, offset);
             if (ltCodesArray.size() == 0) {
@@ -99,9 +104,15 @@ public class PopulateGutBasedResourceSuggestJob extends BaseIndexService impleme
               break;
             }
           }
+          if (!jobStatus.equalsIgnoreCase("run-periodically"))
+              jobStatus = "completed";
+          IndexTrackerRepository.instance().saveJobStatus("populate-signature-collection", jobStatus);
           LOGGER.info("Processed all standards count : {}", totalCountOfSTDs);
           LOGGER.info("Total processed std and lt codes : {} ", totalProcessed);
           LOGGER.info("Total time taken to populate : {}", (System.currentTimeMillis() - startTime));
+          } else {
+                LOGGER.info("populate-signature-collection is disabled");
+            }
         } catch (Exception e) {
           LOGGER.info("Error while populating resource suggestions : Ex ::", e);
           e.printStackTrace();
@@ -117,25 +128,13 @@ public class PopulateGutBasedResourceSuggestJob extends BaseIndexService impleme
       JsonObject taxonomyCodeObject = (JsonObject) taxonomyCode;
       String code = taxonomyCodeObject.getString(EntityAttributeConstants.ID);
       try {
-        if (!GutBasedResourceSuggestRepository.instance().hasSuggestion(code)) {
-          LOGGER.info("Proceed to populate, as suggestions are not present in table for code : {} ", code);
+        if (!SignatureItemsRepository.instance().hasCuratedSuggestion(code, IndexerConstants.COLLECTION)) {
+          LOGGER.debug("Proceed to populate, as suggestions are not present in table for code : {} ", code);
 
-          ProcessorContext context = new ProcessorContext(code, ExecuteOperationConstants.GET_CROSSWALK);
-          JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
-          if (result == null) {
-            continue;
-          }
-          Set<String> crosswalkCodes = new HashSet<>();
-          JsonArray cwSource = result.getJsonArray(IndexerConstants.TYPE_CROSSWALK);
-          if (cwSource != null) {
-            cwSource.forEach(eqCompetency -> {
-              JsonObject equivalentCompetency = (JsonObject) eqCompetency;
-              crosswalkCodes.add(equivalentCompetency.getString(TaxonomyCodeMapping.TARGET_TAXONOMY_CODE_ID).toLowerCase());
-            });
-          }
-          if (!crosswalkCodes.isEmpty()) {
-            String query = QUERY.replaceAll("CROSSWALK_CODES", convertArrayToString(StringUtils.join(crosswalkCodes, IndexerConstants.COMMA)));
-            Response searchResponse = performRequest("POST", "/"+IndexNameHolder.getIndexName(EsIndex.RESOURCE)+"/"+IndexerConstants.TYPE_RESOURCE+"/_search", query);
+          if (!code.isEmpty()) {
+            String query = QUERY.replaceAll("GUT_CODE", convertArrayToString(StringUtils.join(code.toLowerCase(), IndexerConstants.COMMA)));
+           Response searchResponse = performRequest("POST",
+                    "/" + IndexNameHolder.getIndexName(EsIndex.COLLECTION) + "/" + IndexerConstants.TYPE_COLLECTION + "/_search", query);
             if (searchResponse.getEntity() != null) {
               Map<String, Object> responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(searchResponse.getEntity()),
                       new TypeReference<Map<String, Object>>() {});
@@ -143,92 +142,89 @@ public class PopulateGutBasedResourceSuggestJob extends BaseIndexService impleme
               Long totalHits = ((Integer) hitsMap.get("total")).longValue();
               LOGGER.debug("search count : {}", totalHits);
               if (totalHits > 0) {
-                Map<String, StringBuffer> suggestByPerfAsMap = new HashMap<>();
+                Map<String, List<String>> suggestByPerfAsMap = new HashMap<>();
                 deserializeResponseAndPopulate(taxonomyCodeObject, code, hitsMap, suggestByPerfAsMap);
-                LOGGER.info("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
+                LOGGER.debug("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
                 if (!suggestByPerfAsMap.isEmpty()) {
                   extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
                 }
               } else {
-                LOGGER.info("No matching suggestions for cw codes : {} ", crosswalkCodes);
+                LOGGER.debug("No matching suggestions for gut : {} ", code);
               }
             }
           } else {
-            LOGGER.info("No mapping for gut : {} ", code);
+            LOGGER.debug("No mapping for gut : {} ", code);
           }
         } else {
-          LOGGER.info("Already suggestions are populated for this code : {} ", code);
+          LOGGER.debug("Already suggestions are populated for this code : {} ", code);
         }
       } catch (Exception e) {
-        LOGGER.info("Error while checking or populating suggestions : {}, Exception : {}", code, e);
-        e.printStackTrace();
+        LOGGER.debug("Error while checking or populating suggestions : {}, Exception : {}", code, e);
       }
     }
   }
 
   @SuppressWarnings("unchecked")
-  private void deserializeResponseAndPopulate(JsonObject taxonomyCodeObject, String code, Map<String, Object> hitsMap, Map<String, StringBuffer> suggestByPerfAsMap) {
-    StringBuffer suggestIds = new StringBuffer();
-    StringBuffer highSuggestIds = new StringBuffer();
-    StringBuffer mediumSuggestIds = new StringBuffer();
+  private void deserializeResponseAndPopulate(JsonObject taxonomyCodeObject, String code, Map<String, Object> hitsMap, Map<String, List<String>> suggestByPerfAsMap) {
+    List<String> suggestIds = new ArrayList<>();
+    List<String> highSuggestIds = new ArrayList<>();
+    List<String> mediumSuggestIds = new ArrayList<>();
     List<String> suggestIdList = new ArrayList<>();
     long hitCount = ((Integer) hitsMap.get("total")).longValue();
     List<Map<String, Object>> hits = (List<Map<String, Object>>) (hitsMap).get("hits");
     for (Map<String, Object> hit : hits) {
       Map<String, Object> fields = (Map<String, Object>) hit.get("_source");
       String id = (String) fields.get(EntityAttributeConstants.ID);
-      if (suggestIds.length() > 0) {
-        suggestIds.append(IndexerConstants.COMMA);
-      }
-      suggestIds.append(id);
+      if (ContentRepository.instance().isOEExistInCollection(id)) continue;
+      suggestIds.add(id);
       suggestIdList.add(id);
       if ((hitCount <= 3 && !(suggestIdList.size() < hitCount)) || suggestIdList.size() == 3) {
         highSuggestIds = suggestIds;
-        suggestIds = new StringBuffer();
-      } else if ((!(suggestIdList.size() > 6) && !(suggestIdList.size() < hitCount)) || (hitCount >= 6 && suggestIdList.size() == 6)) {
+        suggestIds = new ArrayList<>();
+      } else if ((!(suggestIdList.size() > 5) && !(suggestIdList.size() < hitCount)) || (hitCount >= 5 && suggestIdList.size() == 5)) {
         mediumSuggestIds = suggestIds;
-        suggestIds = new StringBuffer();
+        suggestIds = new ArrayList<>();
       }
-      if (hitCount >= 9 && suggestIdList.size() == 9) {
+      if (hitCount >= 5 && suggestIdList.size() == 5) {
         break;
       }
     }
-    if (highSuggestIds.length() > 0)
+    if (highSuggestIds.size() > 0)
       suggestByPerfAsMap.put(IndexerConstants.ABOVE_AVERAGE, highSuggestIds);
-    if (mediumSuggestIds.length() > 0)
+    if (mediumSuggestIds.size() > 0)
       suggestByPerfAsMap.put(IndexerConstants.AVERAGE, mediumSuggestIds);
-    if (suggestIds.length() > 0)
+    if (suggestIds.size() > 0)
       suggestByPerfAsMap.put(IndexerConstants.BELOW_AVERAGE, suggestIds);
     
   }
 
-  private void extractAndPopulateSuggestions(JsonObject taxonomyCodeObject, Map<String, StringBuffer> perfMap) {
+  private void extractAndPopulateSuggestions(JsonObject taxonomyCodeObject, Map<String, List<String>> perfMap) {
     if (!perfMap.isEmpty()) {
       String code = taxonomyCodeObject.getString(EntityAttributeConstants.ID);
-      String displayCode = taxonomyCodeObject.getString(EntityAttributeConstants.CODE);
       String codeType = taxonomyCodeObject.getString(EntityAttributeConstants.CODE_TYPE);
       String competency = null;
       String mcCompetency = null;
-      String mcCompetencyDisplayCode = null;
       if (IndexerConstants.STANDARD_MATCH.matcher(codeType).matches()) {
         competency = code;
       } else if (codeType.equalsIgnoreCase(IndexerConstants.LEARNING_TARGET_TYPE_0)) {
         mcCompetency = code;
-        mcCompetencyDisplayCode = displayCode;
         competency = taxonomyCodeObject.getString(TaxonomyCode.PARENT_TAXONOMY_CODE_ID);
       }
-      for (Entry<String, StringBuffer> perfMapEntry : perfMap.entrySet()) {
-        JsonObject suggestJson = new JsonObject();
-        suggestJson.put(EntityAttributeConstants.COMPETENCY_INTERNAL_CODE, competency);
-        suggestJson.put(EntityAttributeConstants.COMPETENCY_DISPLAY_CODE, displayCode);
-        if (mcCompetency != null)
-          suggestJson.put(EntityAttributeConstants.MICRO_COMPETENCY_INTERNAL_CODE, mcCompetency);
-        suggestJson.put(EntityAttributeConstants.MICRO_COMPETENCY_DISPLAY_CODE, mcCompetencyDisplayCode);
-        suggestJson.put(EntityAttributeConstants.PERFORMANCE_RANGE, perfMapEntry.getKey());
-        suggestJson.put(EntityAttributeConstants.IDS_TO_SUGGEST, perfMapEntry.getValue());
-        GutBasedResourceSuggestRepository.instance().saveSuggestions(code, suggestJson);
+      for (Entry<String, List<String>> perfMapEntry : perfMap.entrySet()) {
+        List<String> suggestIds = perfMapEntry.getValue();
+        for (String itemId : suggestIds) {
+          JsonObject suggestJson = new JsonObject();
+          suggestJson.put(EntityAttributeConstants.COMPETENCY_GUT_CODE, competency);
+          if (mcCompetency != null) {
+            suggestJson.put(EntityAttributeConstants.MICRO_COMPETENCY_GUT_CODE, mcCompetency);
+          }
+          suggestJson.put(EntityAttributeConstants.PERFORMANCE_RANGE, perfMapEntry.getKey());
+          suggestJson.put(EntityAttributeConstants.ITEM_ID, itemId);
+          suggestJson.put(EntityAttributeConstants.ITEM_FORMAT, IndexerConstants.COLLECTION);
+          SignatureItemsRepository.instance().saveSuggestions(code, suggestJson);
+        }
       }
     }
   }
-  
+
 }

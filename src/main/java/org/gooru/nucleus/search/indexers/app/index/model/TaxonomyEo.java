@@ -118,6 +118,17 @@ public class TaxonomyEo extends JsonObject {
     taxonomy = JsonUtil.set(taxonomy, "hasStandard", hasStandard);
   }
   
+  public Integer getHasGutStandard() {
+    return taxonomy.getInteger("hasGutStandard", 0);
+  }
+
+  public void setHasGutStandard(Integer hasGutStandard) {
+    if (hasGutStandard == null) {
+      hasGutStandard = 0;
+    }
+    taxonomy = JsonUtil.set(taxonomy, "hasGutStandard", hasGutStandard);
+  }
+  
   public JsonArray getLeafDisplayCodes() {
     return taxonomy.getJsonArray("leafDisplayCodes", null);
   }

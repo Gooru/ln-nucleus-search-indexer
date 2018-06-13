@@ -1,6 +1,11 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyDomain;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
@@ -30,7 +35,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     JsonObject returnValue = null;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       TaxonomyCode result = TaxonomyCode.findById(codeId);
 
       if (result != null) {
@@ -39,7 +44,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch taxonomy code ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return returnValue;
   }
@@ -61,12 +66,12 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     Long count = 0L;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       count = TaxonomyCode.count(TaxonomyCode.FETCH_GDT_LTS, frameworkCode);
     } catch (Exception ex) {
       LOGGER.error("TCRI:getOrderedCode: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -77,12 +82,12 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     Long count = 0L;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       count = TaxonomyCode.count(TaxonomyCode.FETCH_GDT_STDS, frameworkCode);
     } catch (Exception ex) {
       LOGGER.error("TCRI:getOrderedCode: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -93,12 +98,12 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     Long count = 0L;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       count = TaxonomyCode.count(TaxonomyCode.FETCH_GDT_LTS_STDS, frameworkCode);
     } catch (Exception ex) {
       LOGGER.error("TCRI:getOrderedCode: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -108,7 +113,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     JsonArray result = null;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<TaxonomyCode> codes =
               TaxonomyCode.findBySQL(TaxonomyCode.FETCH_GDT_LT_CODES, frameworkCode, limit != null ? limit : 10, offset != null ? offset : 0);
       if (codes != null) {
@@ -117,7 +122,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     } catch (Exception ex) {
       LOGGER.error("TCRI:getLTCodeByOffset: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return result;
   }
@@ -127,7 +132,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     JsonArray result = null;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<TaxonomyCode> codes =
               TaxonomyCode.findBySQL(TaxonomyCode.FETCH_GDT_STANDARD_CODES, frameworkCode, limit != null ? limit : 10, offset != null ? offset : 0);
       if (codes != null) {
@@ -136,7 +141,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     } catch (Exception ex) {
       LOGGER.error("TCRI:getStandardCodeByOffset: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return result;
   }
@@ -147,12 +152,12 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     Long count = 0L;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       count = TaxonomyCode.count(TaxonomyCode.FETCH_GDT_LTS);
     } catch (Exception ex) {
       LOGGER.error("TCRI:getOrderedCode: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -163,12 +168,12 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     Long count = 0L;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       count = TaxonomyCode.count(TaxonomyCode.FETCH_STDS);
     } catch (Exception ex) {
       LOGGER.error("TCRI:getOrderedCode: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -179,12 +184,12 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     Long count = 0L;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       count = TaxonomyCode.count(TaxonomyCode.FETCH_LTS_STDS);
     } catch (Exception ex) {
       LOGGER.error("TCRI:getOrderedCode: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return count;
   }
@@ -194,7 +199,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     JsonArray result = null;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<TaxonomyCode> codes =
               TaxonomyCode.findBySQL(TaxonomyCode.FETCH_LT_CODES, limit != null ? limit : 10, offset != null ? offset : 0);
       if (codes != null) {
@@ -203,7 +208,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     } catch (Exception ex) {
       LOGGER.error("TCRI:getLTCodeByOffset: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return result;
   }
@@ -213,7 +218,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     JsonArray result = null;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<TaxonomyCode> codes =
               TaxonomyCode.findBySQL(TaxonomyCode.FETCH_STANDARD_CODES, limit != null ? limit : 10, offset != null ? offset : 0);
       if (codes != null) {
@@ -222,7 +227,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     } catch (Exception ex) {
       LOGGER.error("TCRI:getStandardCodeByOffset: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return result;
   }
@@ -232,7 +237,7 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     DB db = getDefaultDataSourceDBConnection();
     JsonArray result = null;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<TaxonomyCode> codes =
               TaxonomyCode.findBySQL(TaxonomyCode.FETCH_GDT_STD_LT_CODES, frameworkCode, limit != null ? limit : 10, offset != null ? offset : 0);
       if (codes != null) {
@@ -241,9 +246,34 @@ public class TaxonomyCodeRepositoryImpl extends BaseIndexRepo implements Taxonom
     } catch (Exception ex) {
       LOGGER.error("TCRI:getStdLTCodeByFrameworkAndOffset: Failed to fetch taxonomy codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return result;
   }
 
+  @Override
+  public List<String> getAllStandardByDomain(String domainId, String fw) {
+    List<String> standardList = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openDefaultDBConnection(db);
+
+      LazyList<TaxonomyCode> standards = TaxonomyCode.where(TaxonomyCode.FETCH_STANDARD_BY_DOMAIN, domainId, fw);
+      if (standards.size() < 1) {
+        LOGGER.warn("Domain: {} not present in taxonomy_code table", domainId);
+      } else {
+       
+        List<String> standardIds = new ArrayList<>(standards.size());
+        standards.forEach(competency -> {
+            standardIds.add(competency.getString(TaxonomyDomain.ID));
+        });        
+        standardList = standardIds;
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch standard : ", ex);
+    } finally {
+      closeDefaultDBConn(db);
+    }
+    return standardList;
+  }
 }

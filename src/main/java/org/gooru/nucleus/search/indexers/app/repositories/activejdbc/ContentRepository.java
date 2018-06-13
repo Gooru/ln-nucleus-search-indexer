@@ -17,6 +17,7 @@ public interface ContentRepository {
 
   JsonObject getContentByType(String contentId, String contentFormat);
 
+  @SuppressWarnings("rawtypes")
   List<Map> getCollectionMeta(String parentContentId);
 
   JsonObject getQuestionAndOriginalResourceIds(String collectionId);
@@ -26,5 +27,7 @@ public interface ContentRepository {
   JsonObject getUserQuestions(String userId);
 
   JsonObject getQuestionById(String contentId);
+
+  Boolean isOEExistInCollection(String collectionId);
 
 }

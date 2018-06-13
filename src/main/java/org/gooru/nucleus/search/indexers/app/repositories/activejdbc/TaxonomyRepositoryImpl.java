@@ -11,6 +11,7 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Taxonomy;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCodeMapping;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourse;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyDomain;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomySubject;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
@@ -48,7 +49,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     if (query != null) {
       DB db = getDefaultDataSourceDBConnection();
       try{
-        openConnection(db);
+        openDefaultDBConnection(db);
         taxMetaList = db.findAll(query, codeId);
         if (taxMetaList.size() < 1) {
           LOGGER.warn("Taxonomy info for {} level for id : {} not present in DB", level, codeId);
@@ -58,7 +59,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
         LOGGER.error("Failed to fetch taxonomy details ", ex);
       }
       finally {
-        closeDBConn(db);
+        closeDefaultDBConn(db);
       }
     }
     return taxMetaList;
@@ -69,7 +70,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     JsonArray returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<TaxonomyCodeMapping> gutArray = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
       if (gutArray == null || gutArray.size() < 1) {
         LOGGER.debug("GUT for framework code : {} not present in DB", targetCodeId);
@@ -83,7 +84,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch taxonomy_code_mapping details ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return returnValue;
   }
@@ -94,7 +95,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     String query = TaxonomyCodeMapping.GET_EQUIVALENT_CODE;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       equivalentCodes = db.findAll(query, sourceCodeId);
       if (equivalentCodes.size() < 1) {
         LOGGER.warn("Equivalent codes for {} standard : {} not present in DB", sourceCodeId);
@@ -102,7 +103,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch Equivalent codes ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return equivalentCodes;
   }
@@ -150,7 +151,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     JsonArray responses = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<GutCompetencyPrerequisite> competencyDependencies = GutCompetencyPrerequisite.where(
               GutCompetencyPrerequisite.SELECT_GUT_COMPETENCY_PREREQUISITE,
               gutCompetencyId);      
@@ -172,7 +173,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch Competency prerequisite : ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return responses;
   }
@@ -182,7 +183,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     String response = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
 
       LazyList<TaxonomyCourse> contents = TaxonomyCourse.where(TaxonomyCourse.FETCH_COURSE_BY_TITLE_AND_FW, courseTitle, framework);
       if (contents.size() < 1) {
@@ -193,7 +194,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch taxonomy_course : ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return response;
   }
@@ -203,7 +204,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     String response = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
 
       LazyList<TaxonomySubject> contents = TaxonomySubject.where(TaxonomySubject.FETCH_GUT_SUBJECT_BY_TITLE, subjectTitle);
       if (contents.size() < 1) {
@@ -214,8 +215,35 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch subject : ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return response;
   }
+  
+  @Override
+  public List<String> getAllDomainUnderCourseByFw(String courseId, String fw) {
+    List<String> domainList = null;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openDefaultDBConnection(db);
+
+      LazyList<TaxonomyDomain> domains = TaxonomyDomain.where(TaxonomyDomain.FETCH_DOMAIN_BY_COURSE_AND_FW, courseId, IndexerConstants.GUT_FRAMEWORK);
+      if (domains.size() < 1) {
+        LOGGER.warn("Course: {} not present in taxonomy_domain table", courseId);
+      } else {
+       
+        List<String> domainIds = new ArrayList<>(domains.size());
+        domains.forEach(competency -> {
+            domainIds.add(competency.getString(TaxonomyDomain.ID));
+        });        
+        domainList = domainIds;
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch domain : ", ex);
+    } finally {
+      closeDefaultDBConn(db);
+    }
+    return domainList;
+  }
+  
 }

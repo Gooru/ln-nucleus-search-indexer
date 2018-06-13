@@ -1,6 +1,5 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +11,6 @@ import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.form
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
 import org.javalite.common.Convert;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +81,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   @Override
   public JsonObject getContentByType(String contentId, String contentFormat) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
 
     JsonObject returnValue = null;
     List<Content> contents = Content.where(Content.FETCH_CONTENT_QUERY, contentFormat, contentId, false);
@@ -94,7 +92,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     if (content != null) {
       returnValue = new JsonObject(content.toJson(false));
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
 
@@ -102,12 +100,12 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   @Override
   public List<Map> getCollectionMeta(String parentContentId) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
     List<Map> collectionMeta = db.findAll(Content.FETCH_COLLECTION_META, parentContentId);
     if (collectionMeta.size() < 1) {
       LOGGER.warn("Collections for resource : {} not present in DB", parentContentId);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return collectionMeta;
   }
   
@@ -134,18 +132,6 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     result.put(IndexerConstants.ORIGINAL_CONTENT_IDS, originalContentIds);
     result.put(IndexerConstants.QUESTION_IDS, questionIds);
     return result;
-  }
-
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
   }
 
   @Override
@@ -188,7 +174,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     JsonObject returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       Content result = Content.findById(getPGObject("id", UUID_TYPE, contentId));
       if (result != null && !result.getBoolean(Content.IS_DELETED)) {
         returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
@@ -196,8 +182,25 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
     } catch (Exception e) {
       LOGGER.error("Not able to fetch content : {} error : {}", contentId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
+  
+  @Override
+    public Boolean isOEExistInCollection(String collectionId) {
+        Boolean hasOEQuestion = false;
+        DB db = getDefaultDataSourceDBConnection();
+        try {
+            openDefaultDBConnection(db);
+            List<Content> contents = Content.where(Content.GET_OE_QUESTION_OF_COLLECTION, collectionId);
+            if (contents != null && contents.size() > 0) {
+                hasOEQuestion = true;
+            }
+        } catch (Exception e) {
+            LOGGER.error("Not able to fetch content for collection : {} error : {}", collectionId, e);
+        }
+        closeDefaultDBConn(db);
+        return hasOEQuestion;
+    }
  
 }

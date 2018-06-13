@@ -1,6 +1,5 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
@@ -8,7 +7,6 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     Integer lessonCount = 0;
     DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      openDefaultDBConnection(db);
       Long lessonCountL = Lesson.count(Lesson.GET_LESSON_BY_UNIT_ID, unitId, false);
       LOGGER.debug("Lesson count : {} for course : {}", lessonCountL, unitId);
       lessonCount =  lessonCountL != null ? lessonCountL.intValue() : 0;
@@ -64,7 +62,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     catch(Exception e){
       LOGGER.error("Not able to fetch lesson count for unit : {} error : {}", unitId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return lessonCount;
   }
   
@@ -73,7 +71,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     JsonObject returnValue = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       Lesson result = Lesson.findById(getPGObject("id", UUID_TYPE, lessonId));
       if (result != null && !result.getBoolean(Lesson.IS_DELETED)) {
         returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
@@ -81,7 +79,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     } catch (Exception e) {
       LOGGER.error("Not able to fetch lesson : {} error : {}", lessonId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
   
@@ -90,7 +88,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     Integer lessonCount = 0;
     DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      openDefaultDBConnection(db);
       Long lessonCountL = Lesson.count(Lesson.GET_LESSON_BY_COURSE_ID, courseId, false);
       LOGGER.debug("Lesson count : {} for course : {}", lessonCountL, courseId);
       lessonCount =  lessonCountL != null ? lessonCountL.intValue() : 0;
@@ -98,7 +96,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     catch(Exception e){
       LOGGER.error("Not able to fetch lesson count for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return lessonCount;
   }
   
@@ -107,7 +105,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     LazyList<Lesson> lessons = null;
     DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      openDefaultDBConnection(db);
       lessons = Lesson.where(Lesson.GET_LESSON_BY_UNIT_ID, unitId, false);
       if (lessons.size() < 1) {
         LOGGER.warn("Lessons for unit: {} not present in DB", unitId);
@@ -116,7 +114,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     catch(Exception e){
       LOGGER.error("Not able to fetch lessons for unit : {} error : {}", unitId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return lessons;
   }
   
@@ -125,7 +123,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     LazyList<Lesson> lessons = null;
     DB db = getDefaultDataSourceDBConnection();
     try{
-      openConnection(db);
+      openDefaultDBConnection(db);
       lessons = Lesson.where(Lesson.GET_LESSON_BY_COURSE_ID, courseId, false);
       if (lessons.size() < 1) {
         LOGGER.warn("Lessons for course: {} not present in DB", courseId);
@@ -134,19 +132,8 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     catch(Exception e){
       LOGGER.error("Not able to fetch lessons for course : {} error : {}", courseId, e);
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return lessons;
   }
-  
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
-  }
+
 }
