@@ -20,7 +20,7 @@ public class ConceptBasedResourceSuggestRepositoryImpl extends BaseIndexRepo imp
     DB db = getDefaultDataSourceDBConnection();
     Boolean returnValue = false;
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       LazyList<ConceptBasedResourceSuggest> result =
               ConceptBasedResourceSuggest.where(ConceptBasedResourceSuggest.FETCH_SUGGESTION_BY_C_OR_MC, codeId, codeId);
 
@@ -30,7 +30,7 @@ public class ConceptBasedResourceSuggestRepositoryImpl extends BaseIndexRepo imp
     } catch (Exception ex) {
       LOGGER.error("CBRSRI:hasSuggestion: Failed to fetch resource suggestions ", ex);
     } finally {
-      closeDBConn(db);
+      closeDefaultDBConn(db);
     }
     return returnValue;
   }
@@ -39,7 +39,7 @@ public class ConceptBasedResourceSuggestRepositoryImpl extends BaseIndexRepo imp
   public void saveResourceSuggest(String id, JsonObject data) {
    DB db = getDefaultDataSourceDBConnection();
     try {
-      openConnection(db);
+      openDefaultDBConnection(db);
       db.openTransaction();
       db.exec(ConceptBasedResourceSuggest.INSERT_QUERY, data.getString(EntityAttributeConstants.COMPETENCY_INTERNAL_CODE), data.getString(EntityAttributeConstants.MICRO_COMPETENCY_INTERNAL_CODE), "collection-study",
               data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), "resource", toPostgresArrayString(Arrays.asList(data.getString(EntityAttributeConstants.IDS_TO_SUGGEST).split(","))));

@@ -1,11 +1,8 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
-import java.sql.SQLException;
-
 import org.gooru.nucleus.search.indexers.app.repositories.entities.User;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
-import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +15,7 @@ public class UserRepositoryImpl extends BaseIndexRepo implements UserRepository 
   @Override
   public JsonObject getUser(String userID) {
     DB db = getDefaultDataSourceDBConnection();
-    openConnection(db);
+    openDefaultDBConnection(db);
 
     User result = User.findById(getPGObject("id", UUID_TYPE, userID));
     JsonObject returnValue = null;
@@ -26,19 +23,8 @@ public class UserRepositoryImpl extends BaseIndexRepo implements UserRepository 
     if (result != null) {
       returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(result));
     }
-    closeDBConn(db);
+    closeDefaultDBConn(db);
     return returnValue;
   }
 
-  private PGobject getPGObject(String field, String type, String value) {
-    PGobject pgObject = new PGobject();
-    pgObject.setType(type);
-    try {
-      pgObject.setValue(value);
-      return pgObject;
-    } catch (SQLException e) {
-      LOGGER.error("Not able to set value for field: {}, type: {}, value: {}", field, type, value);
-      return null;
-    }
-  }
 }

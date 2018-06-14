@@ -8,8 +8,8 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MonthlyTimer {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MonthlyTimer.class);
+public class WeeklyTimer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WeeklyTimer.class);
   private final Runnable task;
 
   // when
@@ -26,11 +26,11 @@ public class MonthlyTimer {
   }
 
   // create a new instance
-  public static MonthlyTimer schedule(Runnable runnable, int dayOfMonth, int hourOfDay, int minutes) {
-    return new MonthlyTimer(runnable, dayOfMonth, hourOfDay, minutes);
+  public static WeeklyTimer schedule(Runnable runnable, int dayOfMonth, int hourOfDay, int minutes) {
+    return new WeeklyTimer(runnable, dayOfMonth, hourOfDay, minutes);
   }
 
-  private MonthlyTimer(Runnable runnable, int day, int hour, int minutes) {
+  private WeeklyTimer(Runnable runnable, int day, int hour, int minutes) {
     this.task = runnable;
     this.dayOfMonth = day;
     this.hourOfDay = hour;
@@ -59,10 +59,7 @@ public class MonthlyTimer {
   private Date nextDate() {
     Calendar runDate = Calendar.getInstance();
     LOGGER.info("CURRENT TIME: : {}",runDate.getTime());
-    runDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    runDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
-    runDate.set(Calendar.MINUTE, 0);
-    runDate.add(Calendar.MONTH, 1);
+    runDate.add(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
     LOGGER.info("SCHEDULED TIME : : {}",runDate.getTime());// set to next month
     return runDate.getTime();
   }

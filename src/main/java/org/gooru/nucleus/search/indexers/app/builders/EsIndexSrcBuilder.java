@@ -28,6 +28,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexReposi
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.MachineClassifyContentRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.MachineClassifyContentRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.RubricRepository;
@@ -152,6 +154,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (SignatureItemsRepositoryImpl) SignatureItemsRepository.instance();
   }
   
+  protected MachineClassifyContentRepository getMachineClassifiedTagsRepo() {
+    return (MachineClassifyContentRepositoryImpl) MachineClassifyContentRepository.instance();
+  }
+  
   protected RestHighLevelClient getClient() {
     return ElasticSearchRegistry.getRestHighLevelClient();
   }
@@ -220,30 +226,36 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
             if (codes.length == 4) {
               standardArray.add(code);
               leafSLInternalCodes.add(code);
-              leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
-              standardDesc.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
-              standardDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
-              frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+              if (!displayCodeJson.isEmpty()) {
+                leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+                standardDesc.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
+                standardDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+                frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
 
-              setDisplayObject(code, displayCodeJson, displayObject);
-              displayObjectArray.add(displayObject);
+                setDisplayObject(code, displayCodeJson, displayObject);
+                displayObjectArray.add(displayObject);
+              }
             }
             if (codes.length == 5) {
               learningTargetArray.add(code);
               leafSLInternalCodes.add(code);
-              leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
-              ltDescArray.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
-              ltDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
-              frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
+              if (!displayCodeJson.isEmpty()) {
+                leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+                ltDescArray.add(displayCodeJson.getString(EntityAttributeConstants.TITLE));
+                ltDisplayArray.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+                frameworkCodeArray.add(displayCodeJson.getString(EntityAttributeConstants.FRAMEWORK_CODE));
 
-              setDisplayObject(code, displayCodeJson, displayObject);
-              displayObjectArray.add(displayObject);
+                setDisplayObject(code, displayCodeJson, displayObject);
+                displayObjectArray.add(displayObject);
+              }
             }
 
             leafSLInternalCodes.add(code);
-            leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
-            setDisplayObject(code, displayCodeJson, displayObject);
-            displayObjectArray.add(displayObject);
+            if (!displayCodeJson.isEmpty()) {
+              leafSLDisplayCodes.add(displayCodeJson.getString(EntityAttributeConstants.CODE));
+              setDisplayObject(code, displayCodeJson, displayObject);
+              displayObjectArray.add(displayObject);
+            }
           }
 
           extractSCDAndSetTaxMeta(code, subjectArray, courseArray, domainArray, subjectLabelArray, courseLabelArray, domainLabelArray);
@@ -252,6 +264,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     }
     
     taxonomyEo.setHasStandard(0);
+    taxonomyEo.setHasGutStandard(0);
     if (standardArray.size() > 0) {
       taxonomyEo.setHasStandard(1);
       taxonomyEo.setStandards(standardArray);
@@ -304,6 +317,7 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
       relatedGutCodes.forEach(c -> {
         String code = (String) c;
         extractSCDAndSetTaxMeta(code, subjectArray, courseArray, domainArray, subjectLabelArray, courseLabelArray, domainLabelArray);
+        if(((String[]) code.split(IndexerConstants.HYPHEN_SEPARATOR)).length >= 4) taxonomyEo.setHasGutStandard(1);
       });
     }
     

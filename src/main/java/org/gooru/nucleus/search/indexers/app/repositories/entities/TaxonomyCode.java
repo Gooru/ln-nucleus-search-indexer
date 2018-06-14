@@ -64,6 +64,8 @@ public class TaxonomyCode extends Model {
 
   public final static String FETCH_TAXONOMY_CODES = "id = ANY (?::varchar[])";
   
+  public final static String FETCH_STANDARD_BY_DOMAIN = "taxonomy_domain_id = ? AND code_type IN ('standard_level_1','standard_level_2') AND standard_framework_id = ?";
+
   public static final List<String> RESPONSE_FIELDS = Arrays.asList("title", "code", "id");
 
 }
