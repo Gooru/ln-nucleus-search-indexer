@@ -202,6 +202,19 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       statisticsEo.setViewsCount(viewsCount);
       statisticsEo.setCollectionRemixCount(remixCount);
 
+      // Set Library
+      statisticsEo.setLibraryContent(false);
+      JsonObject libraryObject = getLibraryRepo().getLibraryContentById(collectionEo.getId());
+      if (libraryObject != null && !libraryObject.isEmpty()) {
+        JsonObject library = new JsonObject();
+        library.put(EntityAttributeConstants.ID, libraryObject.getLong(EntityAttributeConstants.LIBRARY_ID));
+        library.put(EntityAttributeConstants.NAME, libraryObject.getString(EntityAttributeConstants.NAME));
+        library.put(EntityAttributeConstants.DESCRIPTION, libraryObject.getString(EntityAttributeConstants.DESCRIPTION));
+        library.put(IndexerConstants.SHORT_NAME, libraryObject.getString(EntityAttributeConstants.SHORT_NAME));
+        collectionEo.setLibrary(library);
+        statisticsEo.setLibraryContent(true);
+      }
+      
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);
       rankingFields.put(ScoreConstants.VIEW_COUNT, viewsCount);

@@ -113,7 +113,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
       if (collections.size() > 0) {
         Collection content = collections.get(0);
         if (content != null) {
-          returnValue = new JsonObject(content.toJson(false));
+            returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
         }
       }
     } catch (Exception e) {

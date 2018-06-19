@@ -15,7 +15,7 @@ public class RubricEventsHandler extends BaseEventHandler implements IndexEventH
 
   public RubricEventsHandler(JsonObject eventJson) {
     this.eventJson = eventJson;
-    this.questionIndexHandler = getQuestionIndexHandler();
+    this.questionIndexHandler = getQuestionAndResourceReferenceIndexHandler();
     this.rubricIndexHandler = getRubricIndexHandler();
   }
 

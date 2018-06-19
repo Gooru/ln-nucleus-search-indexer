@@ -213,4 +213,12 @@ public class LessonEio implements Serializable {
   public void setPublishStatus(String publishStatus) {
     lesson = JsonUtil.set(lesson, IndexFields.PUBLISH_STATUS, publishStatus);
   }
+  
+  public JsonObject getLibrary() {
+    return lesson.getJsonObject("library", null);
+  }
+
+  public void setLibrary(JsonObject library) {
+    this.lesson = JsonUtil.set(lesson, "library", library);
+  }
 }

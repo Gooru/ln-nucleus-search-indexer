@@ -225,6 +225,19 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       statisticsEo.setEngagement(engagement);
       statisticsEo.setRelevance(null);
       
+      //Set Library
+      statisticsEo.setLibraryContent(false);
+      JsonObject libraryObject = getLibraryRepo().getLibraryContentById(lessonEio.getId());
+      if (libraryObject != null && !libraryObject.isEmpty()) {
+        JsonObject library = new JsonObject();
+        library.put(EntityAttributeConstants.ID, libraryObject.getLong(EntityAttributeConstants.LIBRARY_ID));
+        library.put(EntityAttributeConstants.NAME, libraryObject.getString(EntityAttributeConstants.NAME));
+        library.put(EntityAttributeConstants.DESCRIPTION, libraryObject.getString(EntityAttributeConstants.DESCRIPTION));
+        library.put(IndexerConstants.SHORT_NAME, libraryObject.getString(EntityAttributeConstants.SHORT_NAME));
+        lessonEio.setLibrary(library);
+        statisticsEo.setLibraryContent(true);
+      }
+      
       //TODO Add logic to store statistics - remixed in units, course, class count
       lessonEio.setStatistics(statisticsEo.getStatistics());
 

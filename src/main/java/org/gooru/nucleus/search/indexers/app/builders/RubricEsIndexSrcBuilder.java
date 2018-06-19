@@ -143,6 +143,20 @@ public class RubricEsIndexSrcBuilder<S extends JsonObject, D extends RubricEio> 
       Integer questionCount = getRubricRepo().getQuestionCountByRubricId(id);
       if (content.getId() != null) questionCount++;
       statisticsEo.setQuestionCount(questionCount);
+      
+      //Set Library
+      statisticsEo.setLibraryContent(false);
+      JsonObject libraryObject = getLibraryRepo().getLibraryContentById(rubricEo.getId());
+      if (libraryObject != null && !libraryObject.isEmpty()) {
+        JsonObject library = new JsonObject();
+        library.put(EntityAttributeConstants.ID, libraryObject.getLong(EntityAttributeConstants.LIBRARY_ID));
+        library.put(EntityAttributeConstants.NAME, libraryObject.getString(EntityAttributeConstants.NAME));
+        library.put(EntityAttributeConstants.DESCRIPTION, libraryObject.getString(EntityAttributeConstants.DESCRIPTION));
+        library.put(IndexerConstants.SHORT_NAME, libraryObject.getString(EntityAttributeConstants.SHORT_NAME));
+        rubricEo.setLibrary(library);
+        statisticsEo.setLibraryContent(true);
+      }
+      
       rubricEo.setStatistics(statisticsEo.getStatistics());
 
       // Set Rubric Tenant

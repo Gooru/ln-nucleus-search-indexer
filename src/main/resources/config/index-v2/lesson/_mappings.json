@@ -621,6 +621,43 @@
                   "copy_to":[ "all" ]
                }
             }
+         },
+         "library":{
+            "properties":{
+               "id":{
+                  "type":"long"
+               },
+               "name":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "snowball":{
+                        "type":"text",
+                        "analyzer":"snowball"
+                     }
+                  }
+               },
+               "description":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "snowball":{
+                        "type":"text",
+                        "analyzer":"snowball"
+                     }
+                  }
+               },
+               "shortName":{
+                  "type":"text",
+                  "analyzer":"keyword_lowercase",
+                  "fields":{
+                     "snowball":{
+                        "type":"text",
+                        "analyzer":"snowball"
+                     }
+                  }
+               }
+            }
          }
       }
    }

@@ -291,5 +291,13 @@ public class CollectionEio implements Serializable {
   public void setTenant(JsonObject tenant) {
     collection = JsonUtil.set(collection, "tenant", tenant);
   }
+  
+  public JsonObject getLibrary() {
+    return collection.getJsonObject("library", null);
+  }
+
+  public void setLibrary(JsonObject library) {
+    this.collection = JsonUtil.set(collection, "library", library);
+  }
 
 }

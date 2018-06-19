@@ -58,8 +58,8 @@ public class FetchContentHandler implements DBHandler {
           result = OriginalResourceRepository.instance().getResource(context.getId());
           break;
 
-        case ExecuteOperationConstants.GET_QUESTION:
-          result = ContentRepository.instance().getResource(context.getId());
+        case ExecuteOperationConstants.GET_QUESTION_OR_RESOURCE_REFERENCE:
+          result = ContentRepository.instance().getQuestionOrResourceReference(context.getId());
           break;
 
         case ExecuteOperationConstants.GET_COLLECTION_QUESTION_AND_ORIGINAL_RESOURCE_IDS:
@@ -74,7 +74,7 @@ public class FetchContentHandler implements DBHandler {
           result = OriginalResourceRepository.instance().getDeletedContent(context.getId());
           break;
           
-        case ExecuteOperationConstants.GET_DELETED_QUESTION:
+        case ExecuteOperationConstants.GET_DELETED_QUESTION_OR_RESOURCE_REFERENCE:
           result = ContentRepository.instance().getDeletedContent(context.getId());
           break;
 
@@ -145,6 +145,9 @@ public class FetchContentHandler implements DBHandler {
         case ExecuteOperationConstants.GET_GUT:
           result = TaxonomyCodeRepository.instance().getGutCode(context.getId());
           break;
+        case ExecuteOperationConstants.GET_USER_RESOURCE_REFERENCES:
+          result = ContentRepository.instance().getUserCopiedResources(context.getId());
+          break;  
           
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");

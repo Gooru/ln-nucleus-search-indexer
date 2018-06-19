@@ -222,4 +222,11 @@ public class UnitEio implements Serializable {
     unit = JsonUtil.set(unit, IndexFields.PUBLISH_STATUS, publishStatus);
   }
   
+  public JsonObject getLibrary() {
+    return unit.getJsonObject("library", null);
+  }
+
+  public void setLibrary(JsonObject library) {
+    this.unit = JsonUtil.set(unit, "library", library);
+  }
 }
