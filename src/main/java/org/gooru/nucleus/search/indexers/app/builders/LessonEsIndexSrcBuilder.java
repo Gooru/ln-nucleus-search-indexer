@@ -230,7 +230,7 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       JsonObject libraryObject = getLibraryRepo().getLibraryContentById(lessonEio.getId());
       if (libraryObject != null && !libraryObject.isEmpty()) {
         JsonObject library = new JsonObject();
-        library.put(EntityAttributeConstants.ID, libraryObject.getLong(EntityAttributeConstants.LIBRARY_ID));
+        library.put(EntityAttributeConstants.ID, libraryObject.getLong(EntityAttributeConstants.ID));
         library.put(EntityAttributeConstants.NAME, libraryObject.getString(EntityAttributeConstants.NAME));
         library.put(EntityAttributeConstants.DESCRIPTION, libraryObject.getString(EntityAttributeConstants.DESCRIPTION));
         library.put(IndexerConstants.SHORT_NAME, libraryObject.getString(EntityAttributeConstants.SHORT_NAME));

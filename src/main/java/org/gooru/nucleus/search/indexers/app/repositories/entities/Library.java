@@ -14,6 +14,6 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName(SchemaConstants.ID)
 public class Library extends Model {
 
-    public static final String FETCH_LIBRARY_CONTENT = "select * from library l inner join library_content lc on l.id = lc.library_id where lc.content_id = ?::uuid";
+    public static final String FETCH_LIBRARY_CONTENT = "select l.* from library l inner join library_content lc on l.id = lc.library_id where lc.content_id = ?::uuid";
     
 }
