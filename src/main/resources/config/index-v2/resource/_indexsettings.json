@@ -65,6 +65,14 @@
                   "titleKStem":{
                      "type":"text",
                      "analyzer":"gooru_kstem"
+                  },
+                  "lowercase":{
+                     "type":"text",
+                     "analyzer":"keyword_lowercase"
+                  },
+                  "keyword":{
+                     "type":"text",
+                     "analyzer":"keyword"
                   }
                },
                "copy_to":[

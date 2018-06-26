@@ -640,7 +640,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         //Extract text from URL
         long extractionStartTime = System.currentTimeMillis();
         String text = CrawlerService.instance().extractUrl(url);
-        LOGGER.info("Time to extract url for id : {} is {}ms ", (System.currentTimeMillis() - extractionStartTime), id);
+        LOGGER.info("Time to extract url for id : {} is {}ms ", id, (System.currentTimeMillis() - extractionStartTime));
 
         //Build contentInfo index source
         JsonObject contentInfoJson = buildContentInfoEsIndexSrc(id, contentFormat, text);
@@ -691,7 +691,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
     return null;
   }
-
   
   public void buildInfoIndex(String id, JsonObject source) {
     if (source != null && !source.isEmpty()) {
