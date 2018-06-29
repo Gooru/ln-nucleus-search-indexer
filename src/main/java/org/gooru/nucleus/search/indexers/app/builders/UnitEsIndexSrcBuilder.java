@@ -230,6 +230,19 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
       statisticsEo.setEngagement(engagement);
       statisticsEo.setRelevance(null);
       
+      // Set Library
+      statisticsEo.setLibraryContent(false);
+      JsonObject libraryObject = getLibraryRepo().getLibraryContentById(unitEio.getId());
+      if (libraryObject != null && !libraryObject.isEmpty()) {
+        JsonObject library = new JsonObject();
+        library.put(EntityAttributeConstants.ID, libraryObject.getLong(EntityAttributeConstants.ID));
+        library.put(EntityAttributeConstants.NAME, libraryObject.getString(EntityAttributeConstants.NAME));
+        library.put(EntityAttributeConstants.DESCRIPTION, libraryObject.getString(EntityAttributeConstants.DESCRIPTION));
+        library.put(IndexerConstants.SHORT_NAME, libraryObject.getString(EntityAttributeConstants.SHORT_NAME));
+        unitEio.setLibrary(library);
+        statisticsEo.setLibraryContent(true);
+      }
+      
       //TODO Add logic to store statistics
       unitEio.setStatistics(statisticsEo.getStatistics());
     } catch (Exception e) {

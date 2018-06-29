@@ -73,6 +73,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             if (200 <= responseCode && responseCode <= 399) contentType = connection.getContentType();
         } catch (IOException exception) {
             LOGGER.error("Exception while checking url : {} IOException : {}", url, exception.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("Error while checking url : {} Exception :: {}", url, e.getMessage());
         } finally {
             if (connection != null) {
                 connection.disconnect();

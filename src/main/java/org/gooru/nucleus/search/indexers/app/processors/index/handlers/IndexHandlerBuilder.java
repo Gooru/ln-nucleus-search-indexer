@@ -11,7 +11,7 @@ public final class IndexHandlerBuilder {
   }
   
   public static IndexHandler buildQuestionIndexHandler() {
-    return new QuestionIndexHandler();
+    return new QuestionAndResourceReferenceIndexHandler();
   }
 
   public static IndexHandler buildCollectionIndexHandler() {

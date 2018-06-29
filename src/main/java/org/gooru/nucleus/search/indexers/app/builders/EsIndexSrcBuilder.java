@@ -28,6 +28,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexReposi
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LibraryRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LibraryRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.MachineClassifyContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.MachineClassifyContentRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
@@ -74,8 +76,9 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
 
   private static void registerESIndexSrcBuilders() {
-    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionAndResourceReferenceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RESOURCE.getType(), new ResourceEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.RESOURCE_REFERENCE.getType(), new QuestionAndResourceReferenceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COURSE.getType(), new CourseEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.CROSSWALK.getType(), new CrosswalkEsIndexSrcBuilder<>());
@@ -154,8 +157,12 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (SignatureItemsRepositoryImpl) SignatureItemsRepository.instance();
   }
   
-  protected MachineClassifyContentRepository getMachineClassifiedTagsRepo() {
+  protected MachineClassifyContentRepositoryImpl getMachineClassifiedTagsRepo() {
     return (MachineClassifyContentRepositoryImpl) MachineClassifyContentRepository.instance();
+  }
+  
+  protected LibraryRepositoryImpl getLibraryRepo() {
+    return (LibraryRepositoryImpl) LibraryRepository.instance();
   }
   
   protected RestHighLevelClient getClient() {

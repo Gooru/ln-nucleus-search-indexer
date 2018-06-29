@@ -289,4 +289,12 @@ public class CourseEio extends JsonObject {
   public void setContentFormat(String contentFormat) {
     this.put(IndexFields.CONTENT_FORMAT, contentFormat);
   }
+  
+  public JsonObject getLibrary() {
+    return this.getJsonObject("library", null);
+  }
+
+  public void setLibrary(JsonObject library) {
+    this.put("library", library);
+  }
 }

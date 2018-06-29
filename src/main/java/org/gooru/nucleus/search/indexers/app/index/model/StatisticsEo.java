@@ -350,4 +350,15 @@ public class StatisticsEo {
     }
     this.statistics = JsonUtil.set(statistics, "relevance", relevance);
   }
+  
+  public Boolean isLibraryContent() {
+    return statistics.getBoolean("isLibraryContent", false);
+  }
+
+  public void setLibraryContent(Boolean isLibraryContent) {
+    if (isLibraryContent == null) {
+        isLibraryContent = false;
+    }
+    this.statistics = JsonUtil.set(statistics, "isLibraryContent", isLibraryContent);
+  }
 }

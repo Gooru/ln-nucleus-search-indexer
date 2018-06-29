@@ -26,7 +26,7 @@ import io.vertx.core.json.JsonObject;
 /**
  * @author SearchTeam
  */
-public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio> extends ContentEsIndexSrcBuilder<S, D> {
+public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio> extends ContentEsIndexSrcBuilder<S, D> {
 
   @Override
   public JsonObject build(JsonObject source, D contentEo) throws Exception {
@@ -72,6 +72,7 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
           StringBuilder answerText = new StringBuilder();
           for (int index = 0; index < answerArray.size(); index++) {
             JsonObject answerObject = answerArray.getJsonObject(index);
+            if (!answerObject.getBoolean(EntityAttributeConstants.IS_CORRECT)) continue;
             String answerString = answerObject.getString(EntityAttributeConstants.ANSWER_TEXT, null);
             if (answerString != null) {
               if (answerText.length() > 0) {
@@ -154,6 +155,18 @@ public class QuestionEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
         if (editorialTags.containsKey(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR)
                 && editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR) != null)
           statisticsEo.setPublisherQualityIndicator(editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR));
+      }
+      // Set Library
+      statisticsEo.setLibraryContent(false);
+      JsonObject libraryObject = getLibraryRepo().getLibraryContentById(contentEo.getId());
+      if (libraryObject != null && !libraryObject.isEmpty()) {
+        JsonObject library = new JsonObject();
+        library.put(EntityAttributeConstants.ID, libraryObject.getLong(EntityAttributeConstants.ID));
+        library.put(EntityAttributeConstants.NAME, libraryObject.getString(EntityAttributeConstants.NAME));
+        library.put(EntityAttributeConstants.DESCRIPTION, libraryObject.getString(EntityAttributeConstants.DESCRIPTION));
+        library.put(IndexerConstants.SHORT_NAME, libraryObject.getString(EntityAttributeConstants.SHORT_NAME));
+        contentEo.setLibrary(library);
+        statisticsEo.setLibraryContent(true);
       }
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);

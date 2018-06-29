@@ -33,12 +33,26 @@ public class ResourceIndexServiceImpl implements ResourceIndexService {
   public void deleteIndexedQuestion(String key, String type) throws Exception {
     try {
       LOGGER.debug("RISI->deleteIndexedQuestion : Processing delete question for id : " + key);
-      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION);
+      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_RESOURCE_REFERENCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.QUESTION_NOT_DELETED);
       IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("RISI->deleteIndexedQuestion : Delete question from index failed for question id : " + key + " Exception : " + ex);
+      throw new Exception(ex);
+    }
+  }
+  
+  @Override
+  public void deleteIndexedResourceReference(String key, String type) throws Exception {
+    try {
+      LOGGER.debug("RISI->deleteIndexedResourceReference : Processing delete resource reference for id : " + key);
+      ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_RESOURCE_REFERENCE);
+      JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+      ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RESOURCE_REF_NOT_DELETED);
+      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+    } catch (Exception ex) {
+      LOGGER.error("RISI->deleteIndexedResourceReference : Delete resource from index failed for resource reference id : " + key + " Exception : " + ex);
       throw new Exception(ex);
     }
   }

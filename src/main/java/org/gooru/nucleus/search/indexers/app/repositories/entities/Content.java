@@ -29,7 +29,7 @@ public class Content extends Model {
   public static final String FETCH_QUESTION_AND_ORIGINAL_RESOURCE_IDS = "collection_id = ?::uuid";
   public static final String CONTENT_FORMAT = "content_format";
   public static final String IS_DELETED = "is_deleted";
-  public static final String FETCH_USER_QUESTIONS = "content_format = ?::content_format_type and (creator_id = ?::uuid or original_creator_id = ?::uuid) and is_deleted = ?";
+  public static final String FETCH_USER_CONTENTS = "content_format = ?::content_format_type and (creator_id = ?::uuid or original_creator_id = ?::uuid) and is_deleted = ?";
   public static final String FETCH_TWENTY_ONE_CENTURY_SKILL = "select * from twenty_one_century_skill where id = any(string_to_array(?,',')::integer[]);";
   public static final String GET_OE_QUESTION_OF_COLLECTION = "contentSubFormat = 'open_ended_question' and is_deleted = false and collection_id = ?:uuid";
 }

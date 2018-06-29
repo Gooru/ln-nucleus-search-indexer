@@ -116,6 +116,8 @@ public final class EntityAttributeConstants {
   public static final String SUBJECT = "subject";
   public static final String GOORU_COURSE = "gooru_course";
   public static final String GOORU_SUBJECT = "gooru_subject";
+  public static final String LIBRARY_ID = "library_id";
+  public static final String IS_CORRECT = "is_correct";
 
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
@@ -132,6 +134,7 @@ public final class EntityAttributeConstants {
   public static final String GOORU_OID = "gooru_oid";
   public static final String INDEX_TYPE = "index_type";
   public static final String SUB_FORMAT = "subformat";
+  public static final String SHORT_NAME = "short_name";
 
   private EntityAttributeConstants() {
     throw new AssertionError();

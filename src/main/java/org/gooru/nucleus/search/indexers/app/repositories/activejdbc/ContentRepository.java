@@ -11,7 +11,7 @@ public interface ContentRepository {
     return new ContentRepositoryImpl();
   }
 
-  JsonObject getResource(String contentID);
+  JsonObject getQuestionOrResourceReference(String contentID);
 
   JsonObject getQuestion(String contentID);
 
@@ -30,4 +30,5 @@ public interface ContentRepository {
 
   Boolean isOEExistInCollection(String collectionId);
 
+  JsonObject getUserCopiedResources(String userId);
 }

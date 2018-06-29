@@ -39,7 +39,7 @@ public class OriginalResourceRepositoryImpl extends BaseIndexRepo implements Ori
       if (contents.size() > 0) {
         OriginalResource content = contents.get(0);
         if (content != null) {
-          returnValue = new JsonObject(content.toJson(false));
+            returnValue =  new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
         }
       }
     } catch (Exception e) {
