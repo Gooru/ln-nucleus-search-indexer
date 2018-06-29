@@ -72,6 +72,7 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
           StringBuilder answerText = new StringBuilder();
           for (int index = 0; index < answerArray.size(); index++) {
             JsonObject answerObject = answerArray.getJsonObject(index);
+            if (!answerObject.getBoolean(EntityAttributeConstants.IS_CORRECT)) continue;
             String answerString = answerObject.getString(EntityAttributeConstants.ANSWER_TEXT, null);
             if (answerString != null) {
               if (answerText.length() > 0) {
