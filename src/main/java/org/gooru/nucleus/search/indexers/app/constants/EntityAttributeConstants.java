@@ -118,7 +118,8 @@ public final class EntityAttributeConstants {
   public static final String GOORU_SUBJECT = "gooru_subject";
   public static final String LIBRARY_ID = "library_id";
   public static final String IS_CORRECT = "is_correct";
-
+  public static final String KEY_CLASSIFICATION = "key_classification";
+  
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";
   public static final String COMPETENCY_DISPLAY_CODE = "competency_display_code";

@@ -162,4 +162,13 @@ public final class IndexerConstants {
 
   public static final String SHORT_NAME = "shortName";
 
+  public static final String[] TW_FRAMEWORKS = new String[] {"hewlett_deep_learning_model", "conley_four_keys_model","p21_framework_model","national_research_center_model"};
+
+  public static final String VALUE = "value";
+  
+  public static final String TWCS = "21cs";
+
+  public static final String UNDERSCORE = "_";
+
+
 }
