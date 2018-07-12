@@ -70,6 +70,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexNameHolder.getIndexName(EsIndex.COLLECTION);
     case IndexerConstants.TYPE_QUESTION:
     case IndexerConstants.TYPE_RESOURCE:
+    case IndexerConstants.TYPE_RESOURCE_REFERENCE:
       return IndexNameHolder.getIndexName(EsIndex.RESOURCE);
     case IndexerConstants.TYPE_COURSE:
       return IndexNameHolder.getIndexName(EsIndex.COURSE);
@@ -101,6 +102,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
       return IndexerConstants.TYPE_COLLECTION;
     case IndexerConstants.TYPE_QUESTION:
     case IndexerConstants.TYPE_RESOURCE:
+    case IndexerConstants.TYPE_RESOURCE_REFERENCE:
       return IndexerConstants.TYPE_RESOURCE;
     case IndexerConstants.TYPE_COURSE:
       return IndexerConstants.TYPE_COURSE;
@@ -130,7 +132,8 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     case IndexerConstants.TYPE_RESOURCE:
       return ExecuteOperationConstants.GET_RESOURCE;
     case IndexerConstants.TYPE_QUESTION:
-      return ExecuteOperationConstants.GET_QUESTION;
+    case IndexerConstants.TYPE_RESOURCE_REFERENCE:
+      return ExecuteOperationConstants.GET_QUESTION_OR_RESOURCE_REFERENCE;
     case IndexerConstants.TYPE_COLLECTION:
       return ExecuteOperationConstants.GET_COLLECTION;
     case IndexerConstants.TYPE_COURSE:
@@ -220,6 +223,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           break;
         case IndexerConstants.TYPE_GUT:
           GutIndexService.instance().deleteIndexedGut(deletableId, type);
+          break;
+        case IndexerConstants.TYPE_RESOURCE_REFERENCE:
+          ResourceIndexService.instance().deleteIndexedResourceReference(deletableId, type);
           break;
         default:
           LOGGER.error("Invalid type passed in, not able to delete");
@@ -634,7 +640,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         //Extract text from URL
         long extractionStartTime = System.currentTimeMillis();
         String text = CrawlerService.instance().extractUrl(url);
-        LOGGER.info("Time to extract url for id : {} is {}ms ", (System.currentTimeMillis() - extractionStartTime), id);
+        LOGGER.info("Time to extract url for id : {} is {}ms ", id, (System.currentTimeMillis() - extractionStartTime));
 
         //Build contentInfo index source
         JsonObject contentInfoJson = buildContentInfoEsIndexSrc(id, contentFormat, text);
@@ -685,7 +691,6 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     }
     return null;
   }
-
   
   public void buildInfoIndex(String id, JsonObject source) {
     if (source != null && !source.isEmpty()) {

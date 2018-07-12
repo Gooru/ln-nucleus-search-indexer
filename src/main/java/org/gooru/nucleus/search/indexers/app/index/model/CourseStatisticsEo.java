@@ -170,4 +170,15 @@ public class CourseStatisticsEo extends JsonObject {
     }
     this.put(IndexFields.RELEVANCE, relevance);
   }
+  
+  public Boolean isLibraryContent() {
+    return this.getBoolean("isLibraryContent", false);
+  }
+
+  public void setLibraryContent(Boolean isLibraryContent) {
+    if (isLibraryContent == null) {
+        isLibraryContent = false;
+    }
+    this.put("isLibraryContent", isLibraryContent);
+  }
 }

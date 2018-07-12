@@ -28,6 +28,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexReposi
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LessonRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LibraryRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LibraryRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.MachineClassifyContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.MachineClassifyContentRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.OriginalResourceRepository;
@@ -74,8 +76,9 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
 
   private static void registerESIndexSrcBuilders() {
-    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.QUESTION.getType(), new QuestionAndResourceReferenceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RESOURCE.getType(), new ResourceEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.RESOURCE_REFERENCE.getType(), new QuestionAndResourceReferenceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COURSE.getType(), new CourseEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.CROSSWALK.getType(), new CrosswalkEsIndexSrcBuilder<>());
@@ -154,8 +157,12 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     return (SignatureItemsRepositoryImpl) SignatureItemsRepository.instance();
   }
   
-  protected MachineClassifyContentRepository getMachineClassifiedTagsRepo() {
+  protected MachineClassifyContentRepositoryImpl getMachineClassifiedTagsRepo() {
     return (MachineClassifyContentRepositoryImpl) MachineClassifyContentRepository.instance();
+  }
+  
+  protected LibraryRepositoryImpl getLibraryRepo() {
+    return (LibraryRepositoryImpl) LibraryRepository.instance();
   }
   
   protected RestHighLevelClient getClient() {
@@ -521,10 +528,15 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         // Temp logic to only process array fields
         Object metaValue = metaData.getValue(fieldName);
         if (metaValue instanceof JsonArray) {
-          JsonArray value = extractMetaValues(metaData, fieldName);
+          JsonObject extractedMeta = extractMetaValues(metaData, fieldName);
+          JsonArray value = extractedMeta.getJsonArray(IndexerConstants.VALUE);
           String key = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, fieldName);
           if (value != null && !value.isEmpty())
             dataMap.put(key, value);
+          if (extractedMeta.containsKey(IndexerConstants.TWCS)) {
+            JsonArray twcs = (JsonArray) extractedMeta.getValue(IndexerConstants.TWCS);
+            dataMap.put(IndexerConstants.TWCS, twcs);
+          }
         }
       }
     }
@@ -532,7 +544,8 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   }
 
   @SuppressWarnings("rawtypes")
-  private JsonArray extractMetaValues(JsonObject metadata, String fieldName){
+  private JsonObject extractMetaValues(JsonObject metadata, String fieldName){
+    JsonObject metaObject = new JsonObject();
     JsonArray value = new JsonArray();
     JsonArray references = metadata.getJsonArray(fieldName);
     if (references != null && references.size() > 0) {
@@ -544,12 +557,35 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
         metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
       }
       if (metacontent != null) {
+        List<Map<String, String>> twcsList = new ArrayList<>();
         for (Map metaMap : metacontent) {
           value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
+          if (fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)) {
+              Map<String, String> classification = new HashMap<>();
+              classification.put(IndexFields.CODE, metaMap.get(EntityAttributeConstants.LABEL).toString());
+              classification.put(IndexFields.CLASSIFICATION, metaMap.get(EntityAttributeConstants.KEY_CLASSIFICATION).toString());
+              for (String key : IndexerConstants.TW_FRAMEWORKS) {
+                 add21csFwClassification(twcsList, metaMap, classification, key);
+              }
+          }
         }
+        if (!twcsList.isEmpty()) metaObject.put(IndexerConstants.TWCS, twcsList);
       }
     }
-    return value;
+    metaObject.put(IndexerConstants.VALUE, value);
+    return metaObject;
   }
+
+    @SuppressWarnings("rawtypes")
+    private void add21csFwClassification(List<Map<String, String>> twcsList, Map metaMap,
+        Map<String, String> classification, String key) {
+        if (Boolean.valueOf(metaMap.get(key).toString()))  {
+              Map<String, String> twcs = new HashMap<>();
+              key = key.replaceAll("_model", IndexerConstants.EMPTY_STRING).replaceAll(IndexerConstants.UNDERSCORE, " ");
+              twcs.put(IndexFields.FRAMEWORK, key);
+              twcs.putAll(classification);
+              twcsList.add(twcs);
+          }
+    }
 
 }

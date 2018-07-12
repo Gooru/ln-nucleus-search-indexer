@@ -138,5 +138,7 @@ public class IndexFields {
     public static final String PUBLISHER_SUGGEST = "publisherSuggest";
     public static final String PUBLISHER_DOT_PUBLISHER_LOWERCASE = "publisher.publisherLowercase";
     public static final String CODE_TYPE = "codeType";
+    public static final String FRAMEWORK = "framework";
+    public static final String CLASSIFICATION = "classification";
 
 }

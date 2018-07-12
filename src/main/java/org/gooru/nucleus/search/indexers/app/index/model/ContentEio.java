@@ -323,5 +323,13 @@ public class ContentEio implements Serializable {
   public void setTenant(JsonObject tenant) {
     content = JsonUtil.set(content, "tenant", tenant);
   }
+  
+  public JsonObject getLibrary() {
+      return content.getJsonObject("library", null);
+  }
+
+  public void setLibrary(JsonObject library) {
+      this.content = JsonUtil.set(content, "library", library);
+  }
 
 }

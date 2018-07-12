@@ -257,4 +257,12 @@ public class RubricEio {
 	public void setStatistics(JsonObject statistics) {
 		this.rubric = JsonUtil.set(rubric, "statistics", statistics);
 	}
+	
+	public JsonObject getLibrary() {
+	    return rubric.getJsonObject("library", null);
+	}
+
+	public void setLibrary(JsonObject library) {
+	  this.rubric = JsonUtil.set(rubric, "library", library);
+	}
 }

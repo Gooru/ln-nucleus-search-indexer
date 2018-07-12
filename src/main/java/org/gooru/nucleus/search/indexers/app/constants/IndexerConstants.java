@@ -22,7 +22,9 @@ public final class IndexerConstants {
 
   public static final String TYPE_TENANT = "tenant";
   
-  public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question");
+  public static final String TYPE_RESOURCE_REFERENCE = "resource-reference";
+
+  public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question|resource-reference");
 
   public static final Pattern COLLECTION_FORMATS = Pattern.compile("collection|assessment|assessment-external|collection-external");
 
@@ -36,6 +38,10 @@ public final class IndexerConstants {
 
   public static final String ORIGINAL_CONTENT_IDS = "original_content_ids";
 
+  public static final String RESOURCE_REFERENCES_IDS = "resource_reference_ids";
+
+  public static final String RESOURCE_REFERENCES = "resource_references";
+  
   public static final String SUBJECT = "subject";
 
   public static final String COURSE = "course";
@@ -153,5 +159,16 @@ public final class IndexerConstants {
   public static final String ACTIVE = "active";
   
   public static final Pattern STATIC_CONTENT_MATCH = Pattern.compile("rubric|taxonomy|tenant|crosswalk");
+
+  public static final String SHORT_NAME = "shortName";
+
+  public static final String[] TW_FRAMEWORKS = new String[] {"hewlett_deep_learning_model", "conley_four_keys_model","p21_framework_model","national_research_center_model"};
+
+  public static final String VALUE = "value";
+  
+  public static final String TWCS = "21cs";
+
+  public static final String UNDERSCORE = "_";
+
 
 }

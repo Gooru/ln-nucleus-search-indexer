@@ -4,7 +4,7 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_RESOURCE = "get_resource";
 
-  public static final String GET_QUESTION = "get_question";
+  public static final String GET_QUESTION_OR_RESOURCE_REFERENCE = "get_question";
 
   public static final String GET_CONTENT_BY_TYPE = "get_content_by_type";
 
@@ -34,7 +34,7 @@ public final class ExecuteOperationConstants {
 
   public static final String GET_USER_QUESTIONS = "get_user_questions";
 
-  public static final String GET_DELETED_QUESTION = "get_deleted_question";
+  public static final String GET_DELETED_QUESTION_OR_RESOURCE_REFERENCE = "get_deleted_question";
 
   public static final String GET_GDT_MAPPING = "get_gdt_mapping";
 
@@ -61,6 +61,8 @@ public final class ExecuteOperationConstants {
   public static final String GET_TENANT = "get_tenant";
   
   public static final String GET_GUT = "get_gut";
+  
+  public static final String GET_USER_RESOURCE_REFERENCES = "get_user_resource_references";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();
