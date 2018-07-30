@@ -3,7 +3,6 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCode;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyDomain;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
