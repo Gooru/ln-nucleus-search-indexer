@@ -66,7 +66,7 @@ public class PopulateResourcesWithMachineClassifiedTags extends BaseIndexService
             String jobStatus = null;
             if (jobDetails != null && !jobDetails.isEmpty())
                 jobStatus = ((IndexerJobStatus) (jobDetails.get(0))).getString("status");
-            if (jobStatus != null && jobStatus.equalsIgnoreCase("start") || jobStatus.equalsIgnoreCase("run-periodically")) {
+            if (jobStatus != null && (jobStatus.equalsIgnoreCase("start") || jobStatus.equalsIgnoreCase("run-periodically"))) {
                 long startTime = System.currentTimeMillis();
                 LOGGER.info("Starting Job for Machine classify resource to tags....");
 

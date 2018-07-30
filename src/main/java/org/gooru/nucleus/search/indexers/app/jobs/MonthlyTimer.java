@@ -59,10 +59,13 @@ public class MonthlyTimer {
   private Date nextDate() {
     Calendar runDate = Calendar.getInstance();
     LOGGER.info("CURRENT TIME: : {}",runDate.getTime());
-    runDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    runDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
-    runDate.set(Calendar.MINUTE, 0);
-    runDate.add(Calendar.MONTH, 1);
+    if (minutes > 0) runDate.add(Calendar.MINUTE, minutes);
+    else {
+        runDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        runDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        runDate.set(Calendar.MINUTE, 0);
+        runDate.add(Calendar.MONTH, 1);
+    }
     LOGGER.info("SCHEDULED TIME : : {}",runDate.getTime());// set to next month
     return runDate.getTime();
   }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.gooru.nucleus.search.indexers.app.jobs.PopulateCompetencyContentMap;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateLearningMaps;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureAssessmentJob;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureCollectionJob;
@@ -19,6 +20,7 @@ public class JobInitializers implements Iterable<JobInitializer> {
     initializers.add(PopulateSignatureCollectionJob.instance());
     initializers.add(PopulateSignatureAssessmentJob.instance());
     initializers.add(PopulateLearningMaps.instance());
+    initializers.add(PopulateCompetencyContentMap.instance());
     internalIterator = initializers.iterator();
   }
 
