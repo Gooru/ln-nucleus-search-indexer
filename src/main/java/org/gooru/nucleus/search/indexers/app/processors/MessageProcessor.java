@@ -68,6 +68,8 @@ class MessageProcessor implements Processor {
       
     } catch (InvalidRequestException e) {
       TRANSMIT_FAIL_LOGGER.error((eventBody != null ? eventBody : null).toString());
+    } catch (Exception e) {
+        TRANSMIT_FAIL_LOGGER.error("Exception during event based indexing :: {} \n Exception :: {}", (eventBody != null ? eventBody : null).toString(), e);
     }
   }
 
