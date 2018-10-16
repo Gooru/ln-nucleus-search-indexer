@@ -16,7 +16,6 @@ public class SchemaConstants {
   public static final String TAXONOMY_CODE_MAPPING = "taxonomy_code_mapping";
   public static final String RUBRIC = "rubric";
   public static final String TAXONOMY_CODE = "taxonomy_code";
-  public static final String CONCEPT_BASED_RESOURCE_SUGGEST = "concept_based_resource_suggest";
   public static final String GUT_BASED_RESOURCE_SUGGEST = "gut_based_resource_suggest";
   public static final String GUT_BASED_COLLECTION_SUGGEST = "gut_based_collection_suggest";
   public static final String TENANT = "tenant";
