@@ -1,6 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
+import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 import io.vertx.core.json.JsonObject;
 
@@ -180,5 +181,16 @@ public class CourseStatisticsEo extends JsonObject {
         isLibraryContent = false;
     }
     this.put("isLibraryContent", isLibraryContent);
+  }
+  
+  public Boolean isLMContent() {
+      return this.getBoolean("isLMContent", false);
+  }
+
+  public void setLMContent(Boolean isLMContent) {
+      if (isLMContent == null) {
+          isLMContent = false;
+      }
+      this.put("isLMContent", isLMContent);
   }
 }

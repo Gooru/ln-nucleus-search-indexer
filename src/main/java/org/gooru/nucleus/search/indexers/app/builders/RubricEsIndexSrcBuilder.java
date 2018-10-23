@@ -156,7 +156,7 @@ public class RubricEsIndexSrcBuilder<S extends JsonObject, D extends RubricEio> 
         rubricEo.setLibrary(library);
         statisticsEo.setLibraryContent(true);
       }
-      
+      statisticsEo.setLMContent(taxonomyEo.getHasGutStandard() == 1 ? true : false);
       rubricEo.setStatistics(statisticsEo.getStatistics());
 
       // Set Rubric Tenant

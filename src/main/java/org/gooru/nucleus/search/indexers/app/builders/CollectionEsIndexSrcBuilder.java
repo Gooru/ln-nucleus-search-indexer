@@ -19,6 +19,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.SignatureItemsRepository;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
@@ -182,7 +183,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         LOGGER.error("Unable to convert Taxonomy to JsonObject", e.getMessage());
       }
       collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
-
+      
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
@@ -214,6 +215,10 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         collectionEo.setLibrary(library);
         statisticsEo.setLibraryContent(true);
       }
+      statisticsEo.setLMContent(taxonomyEo.getHasGutStandard() == 1 ? true : false);
+      boolean isCuratedContent = false;
+      if (SignatureItemsRepository.instance().isCuratedSignatureItemByItemId(id)) isCuratedContent = true;
+      statisticsEo.setCuratedContent(isCuratedContent);
       
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);

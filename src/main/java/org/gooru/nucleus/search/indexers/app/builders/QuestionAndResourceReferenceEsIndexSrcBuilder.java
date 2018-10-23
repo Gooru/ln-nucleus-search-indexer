@@ -214,7 +214,8 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
         hasNoStandard = 0;
       }
       rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
-
+      statisticsEo.setLMContent(taxJson.getInteger(IndexFields.HAS_GUT_STANDARD, 0) == 1 ? true : false);
+      
       double pcWeight = PCWeightUtil.getResourcePcWeight(new ScoreFields(rankingFields));
       LOGGER.debug("QEISB->build : PC weight : " + pcWeight);
       statisticsEo.setPreComputedWeight(pcWeight);

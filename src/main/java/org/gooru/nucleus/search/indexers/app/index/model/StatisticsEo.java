@@ -361,4 +361,26 @@ public class StatisticsEo {
     }
     this.statistics = JsonUtil.set(statistics, "isLibraryContent", isLibraryContent);
   }
+  
+    public Boolean isLMContent() {
+        return statistics.getBoolean("isLMContent", false);
+    }
+
+    public void setLMContent(Boolean isLMContent) {
+        if (isLMContent == null) {
+            isLMContent = false;
+        }
+        this.statistics = JsonUtil.set(statistics, "isLMContent", isLMContent);
+    }
+    
+    public Boolean isCuratedContent() {
+        return statistics.getBoolean("isCuratedContent", false);
+    }
+
+    public void setCuratedContent(Boolean isCuratedContent) {
+        if (isCuratedContent == null) {
+            isCuratedContent = false;
+        }
+        this.statistics = JsonUtil.set(statistics, "isCuratedContent", isCuratedContent);
+    }
 }

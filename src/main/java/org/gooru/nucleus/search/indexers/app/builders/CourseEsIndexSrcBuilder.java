@@ -239,6 +239,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
         courseEio.setLibrary(library);
         statistics.setLibraryContent(true);
       }
+      statistics.setLMContent(taxonomyEo.getHasGutStandard() == 1 ? true : false);
       
       // Set REEf
       Double efficacy = null;

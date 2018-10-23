@@ -90,5 +90,25 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
     }
     return responses;
   }
+  
+  @Override
+  public Boolean isCuratedSignatureItemByItemId(String itemId) {
+    DB db = getDefaultDataSourceDBConnection();
+    Boolean returnValue = false;
+    try {
+      openDefaultDBConnection(db);
+      LazyList<SignatureItems> result =
+              SignatureItems.where(SignatureItems.FETCH_CURATED_SI_BY_ITEM_ID, itemId);
+
+      if (result != null && result.size() > 0) {
+        returnValue = true;
+      }
+    } catch (Exception ex) {
+      LOGGER.error("SIRI:hasCuratedSI: Failed to fetch curated SI ", ex);
+    } finally {
+      closeDefaultDBConn(db);
+    }
+    return returnValue;
+  }
 
 }
