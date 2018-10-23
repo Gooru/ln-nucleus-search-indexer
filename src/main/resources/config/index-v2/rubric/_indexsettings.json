@@ -767,6 +767,9 @@
                   },
                   "isFeatured":{
                      "type":"boolean"
+                  },
+                  "isLMContent":{
+                     "type":"boolean"
                   }
                }
             },

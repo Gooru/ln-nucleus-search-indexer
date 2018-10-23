@@ -630,6 +630,12 @@
                },
                "relevance":{
                   "type":"double"
+               },
+               "isCurated":{
+                  "type":"boolean"
+               },
+               "isLMContent":{
+                  "type":"boolean"
                }
             }
          },

@@ -728,6 +728,9 @@
                },
                "relevance":{
                   "type":"double"
+               },
+               "isLMContent":{
+                  "type":"boolean"
                }
             }
          },
