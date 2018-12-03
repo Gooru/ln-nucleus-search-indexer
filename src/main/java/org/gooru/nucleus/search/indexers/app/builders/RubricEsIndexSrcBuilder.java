@@ -77,6 +77,11 @@ public class RubricEsIndexSrcBuilder<S extends JsonObject, D extends RubricEio> 
       if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
       setMetaData(metadata, rubricEo);
 
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) rubricEo.setPrimaryLanguage(primaryLanguage);
+      
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       String aggTaxonomy = source.getString(EntityAttributeConstants.AGGREGATED_TAXONOMY, null);
       String aggGutCodes = source.getString(EntityAttributeConstants.AGGREGATED_GUT_CODES, null);

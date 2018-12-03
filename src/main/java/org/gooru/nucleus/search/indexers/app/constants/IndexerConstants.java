@@ -169,6 +169,8 @@ public final class IndexerConstants {
   public static final String TWCS = "21cs";
 
   public static final String UNDERSCORE = "_";
+  
+  public static final String PRIMARY_LANGUAGE = "primaryLanguage";
 
 
 }

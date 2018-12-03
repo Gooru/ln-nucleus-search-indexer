@@ -265,4 +265,12 @@ public class RubricEio {
 	public void setLibrary(JsonObject library) {
 	  this.rubric = JsonUtil.set(rubric, "library", library);
 	}
+	
+    public JsonObject getPrimaryLanguage() {
+        return rubric.getJsonObject("primaryLanguage", null);
+    }
+
+    public void setPrimaryLanguage(JsonObject primaryLanguage) {
+        this.rubric = JsonUtil.set(rubric, "primaryLanguage", primaryLanguage);
+    }	
 }

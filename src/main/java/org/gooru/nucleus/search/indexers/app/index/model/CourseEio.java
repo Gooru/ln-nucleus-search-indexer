@@ -297,4 +297,12 @@ public class CourseEio extends JsonObject {
   public void setLibrary(JsonObject library) {
     this.put("library", library);
   }
+  
+  public JsonObject getPrimaryLanguage() {
+    return this.getJsonObject("primaryLanguage", null);
+  }
+
+  public void setPrimaryLanguage(JsonObject primaryLanguage) {
+    this.put("primaryLanguage", primaryLanguage);
+  }
 }

@@ -5,8 +5,9 @@ import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourseOld;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Language;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourseOld;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
@@ -58,6 +59,20 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     }
     closeDefaultDBConn(db);
     return metadataReference;
+  }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public List<Map> getLanguages(Integer languageId) {
+    DB db = getDefaultDataSourceDBConnection();
+    openDefaultDBConnection(db);
+    LOGGER.debug("IndexRepositoryImpl : getLanguages : " + languageId);
+    List<Map> languageList = db.findAll(Language.FETCH_LANGUAGE_CODE, languageId);    
+    if (languageList.size() < 1) {
+      LOGGER.warn("Language id: {} not present in DB", languageList);
+    }
+    closeDefaultDBConn(db);
+    return languageList;
   }
   
   @Override

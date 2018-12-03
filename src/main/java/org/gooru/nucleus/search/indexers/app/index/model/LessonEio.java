@@ -221,4 +221,12 @@ public class LessonEio implements Serializable {
   public void setLibrary(JsonObject library) {
     this.lesson = JsonUtil.set(lesson, "library", library);
   }
+  
+  public JsonObject getPrimaryLanguage() {
+    return lesson.getJsonObject("primaryLanguage", null);
+  }
+
+  public void setPrimaryLanguage(JsonObject primaryLanguage) {
+    this.lesson = JsonUtil.set(lesson, "primaryLanguage", primaryLanguage);
+  }
 }

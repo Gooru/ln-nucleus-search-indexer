@@ -137,6 +137,11 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       JsonObject dataMap = setMetaData(metadata);
       if (dataMap != null && !dataMap.isEmpty()) courseEio.setMetadata(dataMap);
       
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) courseEio.setPrimaryLanguage(primaryLanguage);
+      
       //Set Extracted Text
       ResourceInfoEo resourceInfoJson = new ResourceInfoEo();
       String extractedText = source.getString(IndexerConstants.TEXT);

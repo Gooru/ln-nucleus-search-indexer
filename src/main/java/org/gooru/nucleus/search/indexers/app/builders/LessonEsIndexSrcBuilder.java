@@ -91,6 +91,11 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
         }
       }
       
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) lessonEio.setPrimaryLanguage(primaryLanguage);
+      
       StatisticsEo statisticsEo = new StatisticsEo();
       
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);

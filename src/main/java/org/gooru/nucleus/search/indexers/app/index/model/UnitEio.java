@@ -229,4 +229,12 @@ public class UnitEio implements Serializable {
   public void setLibrary(JsonObject library) {
     this.unit = JsonUtil.set(unit, "library", library);
   }
+  
+  public JsonObject getPrimaryLanguage() {
+    return unit.getJsonObject("primaryLanguage", null);
+  }
+
+  public void setPrimaryLanguage(JsonObject primaryLanguage) {
+    this.unit = JsonUtil.set(unit, "primaryLanguage", primaryLanguage);
+  }
 }

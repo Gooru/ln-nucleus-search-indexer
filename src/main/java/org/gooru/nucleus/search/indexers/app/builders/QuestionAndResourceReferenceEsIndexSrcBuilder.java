@@ -72,7 +72,13 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
           StringBuilder answerText = new StringBuilder();
           for (int index = 0; index < answerArray.size(); index++) {
             JsonObject answerObject = answerArray.getJsonObject(index);
-            if (!(Boolean.valueOf(answerObject.getInteger(EntityAttributeConstants.IS_CORRECT).toString()))) continue;
+            boolean isCorrect = false; 
+            try { 
+                isCorrect = Boolean.valueOf(answerObject.getInteger(EntityAttributeConstants.IS_CORRECT).toString());
+            } catch (Exception e) {
+                isCorrect = answerObject.getBoolean(EntityAttributeConstants.IS_CORRECT);
+            }
+            if (!isCorrect) continue;
             String answerString = answerObject.getString(EntityAttributeConstants.ANSWER_TEXT, null);
             if (answerString != null) {
               if (answerText.length() > 0) {
