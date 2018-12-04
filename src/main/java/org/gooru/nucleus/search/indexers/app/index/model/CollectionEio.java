@@ -299,5 +299,13 @@ public class CollectionEio implements Serializable {
   public void setLibrary(JsonObject library) {
     this.collection = JsonUtil.set(collection, "library", library);
   }
+  
+  public JsonObject getPrimaryLanguage() {
+    return collection.getJsonObject("primaryLanguage", null);
+  }
+
+  public void setPrimaryLanguage(JsonObject primaryLanguage) {
+    this.collection = JsonUtil.set(collection, "primaryLanguage", primaryLanguage);
+  }
 
 }

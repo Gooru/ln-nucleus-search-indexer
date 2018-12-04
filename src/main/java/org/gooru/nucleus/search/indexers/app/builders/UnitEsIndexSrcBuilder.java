@@ -91,6 +91,11 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
         }
       }
       
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) unitEio.setPrimaryLanguage(primaryLanguage);
+      
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
       String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);

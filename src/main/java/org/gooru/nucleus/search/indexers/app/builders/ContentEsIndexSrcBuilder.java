@@ -109,6 +109,11 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
         }
       }
 
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) contentEo.setPrimaryLanguage(primaryLanguage);
+      
       Set<String> infoGooruSubjectCodes = null;
       Set<String> infoGooruCourseCodes = null;
       // Set info

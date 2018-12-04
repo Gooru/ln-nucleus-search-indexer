@@ -94,9 +94,14 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       // Set Metadata
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
       JsonObject metadata = null;
-      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);      
       JsonObject dataMap = setMetaData(metadata);
       if (dataMap != null && !dataMap.isEmpty()) collectionEo.setMetadata(dataMap);
+      
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) collectionEo.setPrimaryLanguage(primaryLanguage);
       
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator

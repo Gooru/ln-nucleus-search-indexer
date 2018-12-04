@@ -17,7 +17,6 @@ public class SchemaConstants {
   public static final String RUBRIC = "rubric";
   public static final String TAXONOMY_CODE = "taxonomy_code";
   public static final String GUT_BASED_RESOURCE_SUGGEST = "gut_based_resource_suggest";
-  public static final String GUT_BASED_COLLECTION_SUGGEST = "gut_based_collection_suggest";
   public static final String TENANT = "tenant";
   public static final String TENANT_SETTING = "tenant_setting";
   public static final String SIGNATURE_RESOURCES = "signature_resources";
@@ -31,6 +30,7 @@ public class SchemaConstants {
   public static final String MACHINE_CLASSIFIED_CONTENTS = "machine_classified_content";
   public static final String LIBRARY = "library";
   public static final String COMPETENCY_CONTENT_MAP = "competency_content_map";
+  public static final String GOORU_LANGUAGE = "gooru_language";
 
   public static final String RESOURCE_INDEX_DELETE_TRACKER = "resource_index_delete_tracker";
   public static final String COLLECTION_INDEX_DELETE_TRACKER = "collection_index_delete_tracker";

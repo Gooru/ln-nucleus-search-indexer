@@ -632,6 +632,19 @@
                }
             }
          },
+         "primaryLanguage":{
+            "properties":{
+               "id":{
+                  "type":"integer"
+               },
+               "code":{
+                  "type":"keyword"
+               },
+               "name":{
+                  "type":"keyword"
+               }
+            }
+         },
          "library":{
             "properties":{
                "id":{
