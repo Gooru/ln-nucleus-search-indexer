@@ -66,7 +66,6 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
   public List<Map> getLanguages(Integer languageId) {
     DB db = getDefaultDataSourceDBConnection();
     openDefaultDBConnection(db);
-    LOGGER.debug("IndexRepositoryImpl : getLanguages : " + languageId);
     List<Map> languageList = db.findAll(Language.FETCH_LANGUAGE_CODE, languageId);    
     if (languageList.size() < 1) {
       LOGGER.warn("Language id: {} not present in DB", languageList);
@@ -157,6 +156,5 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     }
     return response;
   }
- 
  
 }

@@ -15,6 +15,6 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName(SchemaConstants.ID)
 public class Language extends Model {
         
-    public static final String FETCH_LANGUAGE_CODE = "SELECT gooru_language.id, gooru_language.name, STRING_AGG(p_language.code, ',') as code FROM content c inner join gooru_language on c.primary_language = gooru_language.id JOIN  p_language ON p_language.id = ANY(gooru_language.language_id) where gooru_language.id = ? group by gooru_language.id,gooru_language.name";
+    public static final String FETCH_LANGUAGE_CODE = "SELECT gooru_language.id, gooru_language.name, STRING_AGG(language.code, ',') as code FROM gooru_language JOIN  language ON language.id = ANY(gooru_language.language_id) where gooru_language.id = ? group by gooru_language.id,gooru_language.name";
 
 }
