@@ -546,6 +546,16 @@
                   }
                }
             },
+            "primaryLanguage":{
+               "properties":{
+                  "id":{
+                     "type":"integer"
+                  },
+                  "name":{
+                     "type":"keyword"
+                  }
+               }
+            },
             "course":{
                "properties":{
                   "id":{

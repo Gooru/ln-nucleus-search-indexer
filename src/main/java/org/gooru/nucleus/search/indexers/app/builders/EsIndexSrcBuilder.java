@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.builders;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -589,18 +588,11 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
           }
     }
     
-  @SuppressWarnings("rawtypes")
   protected JsonObject getPrimaryLanguage(Integer primaryLanguageId) {
     if (primaryLanguageId != null) {
-      List<Map> langList = getIndexRepo().getLanguages(primaryLanguageId);
-      if (langList != null && !langList.isEmpty()) {
-        JsonObject primaryLanguage = new JsonObject();
-        for (Map<?, ?> langMap : langList) {
-          primaryLanguage.put(IndexFields.ID, Integer.valueOf(langMap.get(IndexFields.ID).toString()));
-          primaryLanguage.put(IndexFields.CODE, Arrays.asList(((String) langMap.get(IndexFields.CODE)).split(IndexerConstants.COMMA)));
-          primaryLanguage.put(IndexFields.NAME, langMap.get(IndexFields.NAME).toString());
-        }
-        return primaryLanguage;
+      JsonObject language = getIndexRepo().getLanguages(primaryLanguageId);
+      if (language != null) {
+        return language;
       }
     }
     return null;

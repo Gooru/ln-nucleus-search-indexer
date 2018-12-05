@@ -732,9 +732,6 @@
                "id":{
                   "type":"integer"
                },
-               "code":{
-                  "type":"keyword"
-               },
                "name":{
                   "type":"keyword"
                }
