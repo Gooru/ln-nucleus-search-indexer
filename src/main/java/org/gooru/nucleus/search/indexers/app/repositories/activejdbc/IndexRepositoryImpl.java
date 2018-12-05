@@ -61,17 +61,22 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     return metadataReference;
   }
   
-  @SuppressWarnings("rawtypes")
   @Override
-  public List<Map> getLanguages(Integer languageId) {
+  public JsonObject getLanguages(Integer languageId) {
     DB db = getDefaultDataSourceDBConnection();
-    openDefaultDBConnection(db);
-    List<Map> languageList = db.findAll(Language.FETCH_LANGUAGE_CODE, languageId);    
-    if (languageList.size() < 1) {
-      LOGGER.warn("Language id: {} not present in DB", languageList);
+    JsonObject returnValue = null;
+    try {
+      openDefaultDBConnection(db);
+      Language result = Language.findById(languageId);    
+      if (result != null) {
+        returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, Language.RESPONSE_FIELDS).toJson(result));
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch language ", ex);
+    } finally {
+      closeDefaultDBConn(db);
     }
-    closeDefaultDBConn(db);
-    return languageList;
+    return returnValue;
   }
   
   @Override

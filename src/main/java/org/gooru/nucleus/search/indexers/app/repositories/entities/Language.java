@@ -1,5 +1,8 @@
 package org.gooru.nucleus.search.indexers.app.repositories.entities;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.gooru.nucleus.search.indexers.app.constants.SchemaConstants;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.DbName;
@@ -14,7 +17,7 @@ import org.javalite.activejdbc.annotations.Table;
 @Table(SchemaConstants.GOORU_LANGUAGE)
 @IdName(SchemaConstants.ID)
 public class Language extends Model {
-        
-    public static final String FETCH_LANGUAGE_CODE = "SELECT gooru_language.id, gooru_language.name, STRING_AGG(language.code, ',') as code FROM gooru_language JOIN  language ON language.id = ANY(gooru_language.language_id) where gooru_language.id = ? group by gooru_language.id,gooru_language.name";
-
+  
+  public static final List<String> RESPONSE_FIELDS = Arrays.asList("name", "id");
+  
 }

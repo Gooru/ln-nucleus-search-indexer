@@ -720,6 +720,16 @@
             "collectionIds":{
                "type":"keyword"
             },
+            "primaryLanguage":{
+               "properties":{
+                  "id":{
+                     "type":"integer"
+                  },
+                  "name":{
+                     "type":"keyword"
+                  }
+               }
+            },
             "collectionContents":{
                "properties":{
                   "description":{

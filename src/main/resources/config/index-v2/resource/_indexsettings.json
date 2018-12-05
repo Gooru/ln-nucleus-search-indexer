@@ -957,6 +957,16 @@
                   }
                }
             },
+            "primaryLanguage":{
+               "properties":{
+                  "id":{
+                     "type":"integer"
+                  },
+                  "name":{
+                     "type":"keyword"
+                  }
+               }
+            },
             "library":{
                "properties":{
                   "id":{

@@ -27,6 +27,6 @@ public interface IndexRepository {
 
   String getCurrentCourseCodeByOldTitle(String courseTitle);
 
-  List<Map> getLanguages(Integer languageId);
+  JsonObject getLanguages(Integer languageId);
 
 }
