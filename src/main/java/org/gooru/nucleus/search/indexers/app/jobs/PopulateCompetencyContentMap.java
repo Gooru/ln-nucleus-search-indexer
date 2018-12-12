@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.jobs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -7,17 +8,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.ParseException;
+import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CompetencyContentMapRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexTrackerRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.IndexerJobStatus;
 import org.gooru.nucleus.search.indexers.app.services.BaseIndexService;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.bootstrap.startup.JobInitializer;
 import org.javalite.activejdbc.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
@@ -42,6 +50,7 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
     private static final int MINUTES = 0;
     private static final String HOST = "http://staging.gooru.org";
     private static final Vertx vertx = Vertx.vertx();
+    private static final String LANG_AGG_QUERY = "{\"query\": { \"bool\": { \"must\": [{ \"term\": { \"publishStatus\": \"published\" } }, { \"term\": { \"tenant.tenantId\": \"ba956a97-ae15-11e5-a302-f8a963065976\"} }], \"must_not\": []}}, \"aggs\" : { \"languages\" : { \"terms\" : { \"field\" : \"primaryLanguage.id\" } } } }";
 
     private static final WebClient client = WebClient.create(vertx);
 
@@ -134,10 +143,37 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
         }, dayOfMonth, hourOfDay, minutes);
     }
 
+    @SuppressWarnings("unchecked")
+    private List<String> getLanguageIdsToProcess() {
+      List<String> languageIds = null;
+      try {
+        Response culSearchResponse =
+          performRequest("POST", "/" + IndexNameHolder.getIndexName(EsIndex.COLLECTION) + "/" + IndexerConstants.TYPE_COLLECTION + "/_search", LANG_AGG_QUERY);
+        if (culSearchResponse.getEntity() != null) {
+          languageIds = new ArrayList<>();
+          Map<String, Object> responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(culSearchResponse.getEntity()),
+            new TypeReference<Map<String, Object>>() {});
+          Map<String, Object> aggsMap = (Map<String, Object>) responseAsMap.get("aggregations");
+          List<Map<String, Object>> contentTypeAggList =
+            (List<Map<String, Object>>) (((Map<String, Object>) aggsMap.get("languages")).get("buckets"));
+          for (Map<String, Object> ctMap : contentTypeAggList) {
+            languageIds.add(ctMap.get("key").toString());
+          }
+        }
+      } catch (ParseException | IOException e) {
+        LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
+      } catch (Exception e1) {
+        LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
+      }
+      return languageIds;
+    }
+    
     private void processGUTCodes(String token, JsonArray gutCodesArray, JsonObject configData) {
         LOGGER.info("token : " + token);
         String host = configData.getString("host");
+        List<String> languageIds = getLanguageIdsToProcess();
         for (Object gutCode : gutCodesArray) {
+          languageIds.forEach(langId -> {
             try {
                 JsonObject taxonomyCodeObject = (JsonObject) gutCode;
                 String gut = taxonomyCodeObject.getString(EntityAttributeConstants.ID);
@@ -147,7 +183,7 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
                     HttpClient httpClient = vertx.createHttpClient();
                     HttpClientRequest httpClientRequest =
                         httpClient.getAbs(host + "/gooru-search/rest/v1/pedagogy-search/learning-maps/competency/" + gut
-                            + "?isAdmin=true&length=15", searchResponse -> {
+                            + "?isAdmin=true&length=15&flt.languageId="+langId, searchResponse -> {
                                 if (searchResponse.statusCode() != 200) {
                                     LOGGER.debug("fail" + searchResponse.statusMessage());
                                 } else {
@@ -156,13 +192,13 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
                                         JsonObject contents = responseJson.getJsonObject("contents");
                                         List<Map<String, Object>> competencyCollectionList = new ArrayList<>();
                                         generateContent(IndexerConstants.TYPE_COLLECTION, competencyCollectionList,
-                                            contents, gut, codeType);
+                                            contents, gut, codeType, langId);
                                         CompetencyContentMapRepository.instance()
                                             .insertToCompetencyContentMap(competencyCollectionList);
 
                                         List<Map<String, Object>> competencyAssessmentList = new ArrayList<>();
                                         generateContent(IndexerConstants.TYPE_ASSESSMENT, competencyAssessmentList,
-                                            contents, gut, codeType);
+                                            contents, gut, codeType, langId);
                                         CompetencyContentMapRepository.instance()
                                             .insertToCompetencyContentMap(competencyAssessmentList);
                                     });
@@ -174,6 +210,7 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
             } catch (Exception e1) {
                 LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
             }
+        });
         }
     }
 
@@ -219,7 +256,7 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
     }
 
     private static void generateContent(String contentType, List<Map<String, Object>> competencyContentList,
-        JsonObject contents, String gut, String codeType) {
+        JsonObject contents, String gut, String codeType, String languageId) {
         JsonObject content = contents.getJsonObject(contentType);
         JsonArray searchResults = content.getJsonArray("searchResults");
         for (Object sr : searchResults) {
@@ -244,6 +281,7 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
             dataMap.put("item_count", questionCount + resourceCount);
             dataMap.put("is_published", r.getString("publishStatus").equalsIgnoreCase("published") ? true : false);
             dataMap.put("is_featured", r.getBoolean("isFeatured"));
+            dataMap.put(EntityAttributeConstants.PRIMARY_LANGUAGE, Integer.valueOf(languageId));
             competencyContentList.add(dataMap);
             if (competencyContentList.size() == 5)
                 break;

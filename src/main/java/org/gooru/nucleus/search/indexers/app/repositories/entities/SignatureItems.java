@@ -24,7 +24,7 @@ public class SignatureItems extends Model {
   public final static String FETCH_CURATED_SUGGESTION_BY_C_OR_MC = "(competency_gut_code = ? or micro_competency_gut_code = ?) and is_curated = true and item_format = ?";
 
   public final static String INSERT_QUERY = "insert into signature_items (competency_gut_code, micro_competency_gut_code,"
-          + "performance_range, item_id, item_format) values (?,?,?,?,?)";
+          + "performance_range, item_id, item_format, primary_language) values (?,?,?,?,?,?)";
   
   public final static String DELETE_RECORDS = "delete from signature_items where is_curated = ? and item_format = ?";
   
