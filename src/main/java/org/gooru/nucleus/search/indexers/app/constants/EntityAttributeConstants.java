@@ -119,6 +119,7 @@ public final class EntityAttributeConstants {
   public static final String LIBRARY_ID = "library_id";
   public static final String IS_CORRECT = "is_correct";
   public static final String KEY_CLASSIFICATION = "key_classification";
+  public static final String PRIMARY_LANGUAGE = "primary_language";
   
   //Suggest Table columns
   public static final String COMPETENCY_INTERNAL_CODE = "competency_internal_code";

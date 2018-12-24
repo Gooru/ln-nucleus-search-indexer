@@ -78,6 +78,7 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     }
 
 */    
+	try {
     String contentFormat = getPayLoadObjContentFormat(eventJson);
     String originalContentId = getOriginalContentIdFromData(eventJson);
     if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId != null)) {
@@ -93,6 +94,10 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
       collectionIndexHandler.indexDocument(collectionId);
       LOGGER.debug("REH->handleItemUpdate : Indexed parent collection of resource: " + resourceId + " collection id  : " + collectionId);
     }
+  } catch (Exception e) {
+		LOGGER.error("Failed to handle update event for resource id : " + resourceId);
+		throw new Exception(e);
+	}
   }
 
   private void handleReIndex(String resourceId) throws Exception {
@@ -105,17 +110,23 @@ public class ResourceEventsHandler extends BaseEventHandler implements IndexEven
     LOGGER.debug("REH->handleReIndex : Indexed resource! event name : " + eventName + " resource id : " + resourceId);
   }
 
-  private void handleDelete(String resourceId) throws Exception {
-    String contentFormat = getPayLoadObjContentFormat(eventJson);
-    String originalContentId = getOriginalContentIdFromData(eventJson);
-    if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId == null) {
-      resourceIndexHandler.deleteIndexedDocument(resourceId);
-    } else if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId != null)) {
-      questionAndResourceReferenceIndexHandler.deleteIndexedDocument(resourceId);
-    }
-    LOGGER.debug("REH->handleDelete : Deleted resource from index! event name : " + eventName + " resource id : " + resourceId);
-    handlePostDelete(resourceId);
-  }
+	private void handleDelete(String resourceId) throws Exception {
+		try {
+			String contentFormat = getPayLoadObjContentFormat(eventJson);
+			String originalContentId = getOriginalContentIdContextObj(eventJson);
+			if (!getContextObj(eventJson).containsKey(EventsConstants.EVT_PAYLOAD_ORIGINAL_CONTENT_ID)) originalContentId = getOriginalContentIdFromData(eventJson);
+			if (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId == null) {
+				resourceIndexHandler.deleteIndexedDocument(resourceId);
+			} else if (contentFormat.equalsIgnoreCase(ContentFormat.QUESTION.name()) || (contentFormat.equalsIgnoreCase(ContentFormat.RESOURCE.name()) && originalContentId != null)) {
+				questionAndResourceReferenceIndexHandler.deleteIndexedDocument(resourceId);
+			}
+			LOGGER.debug("REH->handleDelete : Deleted resource from index! event name : " + eventName + " resource id : " + resourceId);
+			handlePostDelete(resourceId);
+		} catch (Exception e) {
+			LOGGER.error("Failed to handle delete event for resource id : " + resourceId);
+			throw new Exception(e);
+		}
+	}
 
   private void handlePostDelete(String resourceId) {
     try {

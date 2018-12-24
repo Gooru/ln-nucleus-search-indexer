@@ -17,4 +17,6 @@ public interface SignatureItemsRepository {
 
   JsonArray getSignatureItemsByGutCode(String gutCode, String contentType);
 
+  Boolean isCuratedSignatureItemByItemId(String itemId);
+
 }

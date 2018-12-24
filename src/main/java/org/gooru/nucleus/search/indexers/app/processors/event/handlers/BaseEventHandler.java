@@ -17,7 +17,11 @@ public class BaseEventHandler {
   protected static JsonObject getPayLoadObj(JsonObject json) {
     return json.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT);
   }
-
+  
+  protected static JsonObject getContextObj(JsonObject json) {
+	return json.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT);
+  }
+  
   protected static String getPayLoadObjContentFormat(JsonObject json) {
     return getPayLoadObj(json).getString(EventsConstants.EVT_PAYLOAD_CONTENT_FORMAT);
   }
@@ -104,4 +108,5 @@ public class BaseEventHandler {
   protected IndexHandler getRubricIndexHandler() {
     return IndexHandlerBuilder.buildRubricIndexHandler();
   }
+  
 }

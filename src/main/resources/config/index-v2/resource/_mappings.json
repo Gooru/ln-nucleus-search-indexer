@@ -728,6 +728,9 @@
                },
                "relevance":{
                   "type":"double"
+               },
+               "isLMContent":{
+                  "type":"boolean"
                }
             }
          },
@@ -903,6 +906,16 @@
                "name":{
                   "type":"text",
                   "analyzer":"keyword_lowercase"
+               }
+            }
+         },
+         "primaryLanguage":{
+            "properties":{
+               "id":{
+                  "type":"integer"
+               },
+               "name":{
+                  "type":"keyword"
                }
             }
          },

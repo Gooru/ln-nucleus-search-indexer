@@ -549,17 +549,17 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     JsonArray value = new JsonArray();
     JsonArray references = metadata.getJsonArray(fieldName);
     if (references != null && references.size() > 0) {
-      String referenceIds = references.toString();
+      String referenceIds = references.toString().substring(1, references.toString().length() - 1);
       List<Map> metacontent = null;
       if (fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)) {
-        metacontent = getIndexRepo().getTwentyOneCenturySkill(referenceIds.substring(1, referenceIds.length() - 1));
+        metacontent = getIndexRepo().getTwentyOneCenturySkill(referenceIds);
       } else {
-        metacontent = getIndexRepo().getMetadata(referenceIds.substring(1, referenceIds.length() - 1));
+        metacontent = getIndexRepo().getMetadata(referenceIds);
       }
       if (metacontent != null) {
         List<Map<String, String>> twcsList = new ArrayList<>();
         for (Map metaMap : metacontent) {
-          value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
+          if (metaMap.containsKey(EntityAttributeConstants.LABEL)) value.add(metaMap.get(EntityAttributeConstants.LABEL).toString());
           if (fieldName.equalsIgnoreCase(EntityAttributeConstants.TWENTY_ONE_CENTURY_SKILL)) {
               Map<String, String> classification = new HashMap<>();
               classification.put(IndexFields.CODE, metaMap.get(EntityAttributeConstants.LABEL).toString());
@@ -587,5 +587,15 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
               twcsList.add(twcs);
           }
     }
+    
+  protected JsonObject getPrimaryLanguage(Integer primaryLanguageId) {
+    if (primaryLanguageId != null) {
+      JsonObject language = getIndexRepo().getLanguages(primaryLanguageId);
+      if (language != null) {
+        return language;
+      }
+    }
+    return null;
+  }
 
 }

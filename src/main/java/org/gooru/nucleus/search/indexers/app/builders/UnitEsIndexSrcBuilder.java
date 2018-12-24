@@ -91,6 +91,11 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
         }
       }
       
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) unitEio.setPrimaryLanguage(primaryLanguage);
+      
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
       String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);
@@ -208,6 +213,7 @@ public class UnitEsIndexSrcBuilder<S extends JsonObject, D extends UnitEio> exte
       if (!collectionTitles.isEmpty()) unitEio.setCollectionTitles(new JsonArray(collectionTitles.stream().distinct().collect(Collectors.toList())));
       if (!collectionContents.isEmpty()) unitEio.setCollections(collectionContents);
 
+      statisticsEo.setLMContent(taxonomyEo.getHasGutStandard() == 1 ? true : false);
       Boolean isFeatured = CourseRepository.instance().isFeatured(course.getId());
       statisticsEo.setFeatured(isFeatured);
       long viewsCount = source.getLong(IndexFields.VIEWS_COUNT, 0L);

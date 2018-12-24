@@ -27,5 +27,7 @@ public class SignatureItems extends Model {
           + "performance_range, item_id, item_format) values (?,?,?,?,?)";
   
   public final static String DELETE_RECORDS = "delete from signature_items where is_curated = ? and item_format = ?";
+  
+  public final static String FETCH_CURATED_SI_BY_ITEM_ID = "item_id = ? and is_curated = true";
 
 }

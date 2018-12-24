@@ -230,6 +230,9 @@
                },
                "relevance":{
                   "type":"double"
+               },
+               "isLMContent":{
+                  "type":"boolean"
                }
             }
          },
@@ -625,6 +628,16 @@
                "url":{
                   "type":"keyword",
                   "copy_to":[ "all" ]
+               }
+            }
+         },
+         "primaryLanguage":{
+            "properties":{
+               "id":{
+                  "type":"integer"
+               },
+               "name":{
+                  "type":"keyword"
                }
             }
          },

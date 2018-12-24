@@ -693,6 +693,16 @@
          "collectionIds":{
             "type":"keyword"
          },
+         "primaryLanguage":{
+            "properties":{
+               "id":{
+                  "type":"integer"
+               },
+               "name":{
+                  "type":"keyword"
+               }
+            }
+         },
          "statistics":{
             "properties":{
                "hasNoDescription":{
@@ -714,6 +724,9 @@
                   "type":"boolean"
                },
                "isFeatured":{
+                  "type":"boolean"
+               },
+               "isLMContent":{
                   "type":"boolean"
                }
             }

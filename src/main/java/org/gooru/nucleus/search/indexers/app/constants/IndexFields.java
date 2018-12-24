@@ -83,6 +83,7 @@ public class IndexFields {
     public static final String SIGNATURE_RESOURCES = "signatureResources";
     public static final String SIGNATURE_COLLECTIONS = "signatureCollections";
     public static final String SIGNATURE_ASSESSMENTS = "signatureAssessments";
+    public static final String HAS_GUT_STANDARD = "hasGutStandard";
 
     // course fields
 

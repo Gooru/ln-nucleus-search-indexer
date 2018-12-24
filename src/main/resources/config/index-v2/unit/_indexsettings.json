@@ -260,6 +260,9 @@
                   },
                   "relevance":{
                      "type":"double"
+                  },
+                  "isLMContent":{
+                     "type":"boolean"
                   }
                }
             },
@@ -539,6 +542,16 @@
                      "type":"keyword"
                   },
                   "tenantId":{
+                     "type":"keyword"
+                  }
+               }
+            },
+            "primaryLanguage":{
+               "properties":{
+                  "id":{
+                     "type":"integer"
+                  },
+                  "name":{
                      "type":"keyword"
                   }
                }

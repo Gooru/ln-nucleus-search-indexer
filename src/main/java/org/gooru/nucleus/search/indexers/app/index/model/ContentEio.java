@@ -331,5 +331,13 @@ public class ContentEio implements Serializable {
   public void setLibrary(JsonObject library) {
       this.content = JsonUtil.set(content, "library", library);
   }
+  
+  public JsonObject getPrimaryLanguage() {
+    return content.getJsonObject("primaryLanguage", null);
+  }
+
+  public void setPrimaryLanguage(JsonObject primaryLanguage) {
+    this.content = JsonUtil.set(content, "primaryLanguage", primaryLanguage);
+  }
 
 }

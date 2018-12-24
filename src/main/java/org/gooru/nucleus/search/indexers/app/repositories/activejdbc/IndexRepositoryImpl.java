@@ -5,8 +5,9 @@ import java.util.Map;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Content;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourseOld;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.Language;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.TaxonomyCourseOld;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
@@ -58,6 +59,24 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     }
     closeDefaultDBConn(db);
     return metadataReference;
+  }
+  
+  @Override
+  public JsonObject getLanguages(Integer languageId) {
+    DB db = getDefaultDataSourceDBConnection();
+    JsonObject returnValue = null;
+    try {
+      openDefaultDBConnection(db);
+      Language result = Language.findById(languageId);    
+      if (result != null) {
+        returnValue = new JsonObject(JsonFormatterBuilder.buildSimpleJsonFormatter(false, Language.RESPONSE_FIELDS).toJson(result));
+      }
+    } catch (Exception ex) {
+      LOGGER.error("Failed to fetch language ", ex);
+    } finally {
+      closeDefaultDBConn(db);
+    }
+    return returnValue;
   }
   
   @Override
@@ -142,6 +161,5 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
     }
     return response;
   }
- 
  
 }

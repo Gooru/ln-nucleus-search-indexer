@@ -19,6 +19,7 @@ import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.TaxonomyEo;
 import org.gooru.nucleus.search.indexers.app.index.model.UserEo;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.SignatureItemsRepository;
 import org.gooru.nucleus.search.indexers.app.utils.BaseUtil;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
 
@@ -93,9 +94,14 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       // Set Metadata
       String metadataString = source.getString(EntityAttributeConstants.METADATA, null);
       JsonObject metadata = null;
-      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);
+      if (StringUtils.isNotBlank(metadataString) && !metadataString.equalsIgnoreCase(IndexerConstants.STR_NULL)) metadata = new JsonObject(metadataString);      
       JsonObject dataMap = setMetaData(metadata);
       if (dataMap != null && !dataMap.isEmpty()) collectionEo.setMetadata(dataMap);
+      
+      // Set Primary Language
+      Integer primaryLanguageId = source.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+      JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+      if (primaryLanguage != null) collectionEo.setPrimaryLanguage(primaryLanguage);
       
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
@@ -182,7 +188,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         LOGGER.error("Unable to convert Taxonomy to JsonObject", e.getMessage());
       }
       collectionEo.setTaxonomy(taxonomyEo.getTaxonomyJson());
-
+      
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
@@ -214,6 +220,10 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
         collectionEo.setLibrary(library);
         statisticsEo.setLibraryContent(true);
       }
+      statisticsEo.setLMContent(taxonomyEo.getHasGutStandard() == 1 ? true : false);
+      boolean isCuratedContent = false;
+      if (SignatureItemsRepository.instance().isCuratedSignatureItemByItemId(id)) isCuratedContent = true;
+      statisticsEo.setCuratedContent(isCuratedContent);
       
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);
@@ -227,6 +237,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       rankingFields.put(ScoreConstants.ORIGINAL_CONTENT_FIELD, collectionEo.getOriginalCollectionId());
       rankingFields.put(ScoreConstants.PUBLISH_STATUS, collectionEo.getPublishStatus());
       rankingFields.put(ScoreConstants.IS_FEATURED, statisticsEo.isFeatured());
+      rankingFields.put(ScoreConstants.GRADING_TYPE, collectionEo.getGradingType());
       JsonObject taxJson = collectionEo.getTaxonomy();
       int hasNoStandard = 1;
       

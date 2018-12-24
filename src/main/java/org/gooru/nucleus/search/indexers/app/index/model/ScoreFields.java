@@ -45,6 +45,8 @@ public class ScoreFields {
   private boolean isFeatured = false;
 
   private static final String PUBLISHED = "published";
+  
+  private String gradingType;
 
   public ScoreFields(Map<String, Object> scoreFieldsMap) {
     if (scoreFieldsMap.get(ScoreConstants.VIEW_COUNT) != null) {
@@ -121,6 +123,10 @@ public class ScoreFields {
     
     if (scoreFieldsMap.get(ScoreConstants.IS_FEATURED) != null) {
       this.isFeatured = (boolean) scoreFieldsMap.get(ScoreConstants.IS_FEATURED);
+    }
+    
+    if (scoreFieldsMap.get(ScoreConstants.GRADING_TYPE) != null) {
+        this.gradingType = (String) scoreFieldsMap.get(ScoreConstants.GRADING_TYPE);
     }
     
   }
@@ -227,5 +233,9 @@ public class ScoreFields {
   public void setFeatured(boolean isFeatured) {
     this.isFeatured = isFeatured;
   }
+
+	public String getGradingType() {
+		return gradingType;
+	}
 
 }

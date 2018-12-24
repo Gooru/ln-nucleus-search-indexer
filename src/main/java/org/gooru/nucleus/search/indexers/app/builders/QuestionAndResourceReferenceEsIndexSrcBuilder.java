@@ -72,7 +72,13 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
           StringBuilder answerText = new StringBuilder();
           for (int index = 0; index < answerArray.size(); index++) {
             JsonObject answerObject = answerArray.getJsonObject(index);
-            if (!(Boolean.valueOf(answerObject.getInteger(EntityAttributeConstants.IS_CORRECT).toString()))) continue;
+            boolean isCorrect = false; 
+            try { 
+                isCorrect = Boolean.valueOf(answerObject.getInteger(EntityAttributeConstants.IS_CORRECT).toString());
+            } catch (Exception e) {
+                isCorrect = answerObject.getBoolean(EntityAttributeConstants.IS_CORRECT);
+            }
+            if (!isCorrect) continue;
             String answerString = answerObject.getString(EntityAttributeConstants.ANSWER_TEXT, null);
             if (answerString != null) {
               if (answerText.length() > 0) {
@@ -214,7 +220,8 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
         hasNoStandard = 0;
       }
       rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
-
+      statisticsEo.setLMContent(taxJson.getInteger(IndexFields.HAS_GUT_STANDARD, 0) == 1 ? true : false);
+      
       double pcWeight = PCWeightUtil.getResourcePcWeight(new ScoreFields(rankingFields));
       LOGGER.debug("QEISB->build : PC weight : " + pcWeight);
       statisticsEo.setPreComputedWeight(pcWeight);
