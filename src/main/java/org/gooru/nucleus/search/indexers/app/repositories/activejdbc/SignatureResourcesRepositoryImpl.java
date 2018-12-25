@@ -1,7 +1,7 @@
 package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
-import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureItems;
+import org.gooru.nucleus.search.indexers.app.repositories.entities.SignatureResources;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
@@ -11,24 +11,24 @@ import org.slf4j.LoggerFactory;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements SignatureItemsRepository {
+public class SignatureResourcesRepositoryImpl extends BaseIndexRepo implements SignatureResourcesRepository {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SignatureItemsRepositoryImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SignatureResourcesRepositoryImpl.class);
 
   @Override
-  public Boolean hasCuratedSuggestion(String codeId, String itemFormat) {
+  public Boolean hasCuratedSuggestion(String codeId) {
     DB db = getDefaultDataSourceDBConnection();
     Boolean returnValue = false;
     try {
       openDefaultDBConnection(db);
-      LazyList<SignatureItems> result =
-              SignatureItems.where(SignatureItems.FETCH_CURATED_SUGGESTION_BY_C_OR_MC, codeId, codeId, itemFormat);
+      LazyList<SignatureResources> result =
+              SignatureResources.where(SignatureResources.FETCH_CURATED_SUGGESTION_BY_C_OR_MC, codeId, codeId);
 
       if (result != null && result.size() > 0) {
         returnValue = true;
       }
     } catch (Exception ex) {
-      LOGGER.error("SIRI:hasCuratedSuggestion: Failed to fetch curated suggestions ", ex);
+      LOGGER.error("SRRI:hasCuratedSuggestion: Failed to fetch curated suggestions ", ex);
     } finally {
       closeDefaultDBConn(db);
     }
@@ -41,50 +41,50 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
     try {
       openDefaultDBConnection(db);
       db.openTransaction();
-      db.exec(SignatureItems.INSERT_QUERY, data.getString(EntityAttributeConstants.COMPETENCY_GUT_CODE), data.getString(EntityAttributeConstants.MICRO_COMPETENCY_GUT_CODE),
-                  data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), data.getString(EntityAttributeConstants.ITEM_ID), data.getString(EntityAttributeConstants.ITEM_FORMAT), data.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE));      
+      db.exec(SignatureResources.INSERT_QUERY, data.getString(EntityAttributeConstants.COMPETENCY_GUT_CODE), data.getString(EntityAttributeConstants.MICRO_COMPETENCY_GUT_CODE),
+                  data.getString(EntityAttributeConstants.PERFORMANCE_RANGE), data.getString(EntityAttributeConstants.ITEM_ID), data.getString(EntityAttributeConstants.ITEM_FORMAT));      
       db.commitTransaction();
-      LOGGER.info("Successfully populated signature items for code : {}", id);
+      LOGGER.info("Successfully populated signature resources for code : {}", id);
     } catch (Throwable e) {
       db.rollbackTransaction();
-      LOGGER.error("SIRI:saveSuggestions: Caught exception. need to rollback and abort", e);
+      LOGGER.error("SRRI:saveSuggestions: Caught exception. need to rollback and abort", e);
     } finally {
       db.close();
     }
   }
   
   @Override
-  public void deleteSuggestions(String itemFormat) {
+  public void deleteSuggestions() {
    DB db = getDefaultDataSourceDBConnection();
     try {
       openDefaultDBConnection(db);
       db.openTransaction();
-      db.exec(SignatureItems.DELETE_RECORDS, false, itemFormat);
+      db.exec(SignatureResources.DELETE_RECORDS, false);
       db.commitTransaction();
-      LOGGER.info("Successfully deleted {} signature items", itemFormat);
+      LOGGER.info("Successfully deleted {} signature resources");
     } catch (Throwable e) {
       db.rollbackTransaction();
-      LOGGER.error("SIRI:deleteSuggestions: Caught exception. need to rollback and abort", e);
+      LOGGER.error("SRRI:deleteSuggestions: Caught exception. need to rollback and abort", e);
     } finally {
       db.close();
     }
   }
   
   @Override
-  public JsonArray getSignatureItemsByGutCode(String gutCode, String contentType) {
+  public JsonArray getSignatureResourcesByGutCode(String gutCode) {
     JsonArray responses = null;
     DB db = getDefaultDataSourceDBConnection();
     try {
       openDefaultDBConnection(db);
 
-      LazyList<SignatureItems> contents = SignatureItems.where(SignatureItems.FETCH_SIGNATURE_ITEMS, gutCode, gutCode, contentType);
+      LazyList<SignatureResources> contents = SignatureResources.where(SignatureResources.FETCH_SIGNATURE_RESOURCE_BY_C_OR_MC, gutCode, gutCode);
       if (contents.size() < 1) {
-        LOGGER.warn("Code id: {} not present in signature_items DB for contentType : {}", gutCode, contentType);
+        LOGGER.warn("Code id: {} not present in signature_resources DB for contentType : {}", gutCode);
       } else {
         responses = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(contents));
       }
     } catch (Exception ex) {
-      LOGGER.error("Failed to fetch signature_items : ", ex);
+      LOGGER.error("SRRI::Failed to fetch signature_resources : ", ex);
     } finally {
       closeDefaultDBConn(db);
     }
@@ -92,19 +92,19 @@ public class SignatureItemsRepositoryImpl extends BaseIndexRepo implements Signa
   }
   
   @Override
-  public Boolean isCuratedSignatureItemByItemId(String itemId) {
+  public Boolean isCuratedSignatureResourceByItemId(String itemId) {
     DB db = getDefaultDataSourceDBConnection();
     Boolean returnValue = false;
     try {
       openDefaultDBConnection(db);
-      LazyList<SignatureItems> result =
-              SignatureItems.where(SignatureItems.FETCH_CURATED_SI_BY_ITEM_ID, itemId);
+      LazyList<SignatureResources> result =
+              SignatureResources.where(SignatureResources.FETCH_CURATED_SR_BY_ITEM_ID, itemId);
 
       if (result != null && result.size() > 0) {
         returnValue = true;
       }
     } catch (Exception ex) {
-      LOGGER.error("SIRI:hasCuratedSI: Failed to fetch curated SI ", ex);
+      LOGGER.error("SRRI:hasCuratedSR: Failed to fetch curated SR ", ex);
     } finally {
       closeDefaultDBConn(db);
     }

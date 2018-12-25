@@ -24,7 +24,7 @@ public class CompetencyContentMapRepositoryImpl extends BaseIndexRepo implements
                 db.addBatch(ps, dataMap.get("subject"), dataMap.get("course"), dataMap.get("domain"),
                     dataMap.get("competency"), dataMap.get("micro-competency") == null ? null : dataMap.get("micro-competency") , dataMap.get("content_type"),
                     dataMap.get("item_id"), (Integer) dataMap.get("item_count"),  (Boolean) dataMap.get("is_published"),
-                    Boolean.valueOf(dataMap.get("is_featured").toString()));
+                    Boolean.valueOf(dataMap.get("is_featured").toString()), (Integer) dataMap.get("primary_language"));
             });
             db.executeBatch(ps);
             db.commitTransaction();
@@ -54,4 +54,5 @@ public class CompetencyContentMapRepositoryImpl extends BaseIndexRepo implements
         }
         return false;
     }
+
 }
