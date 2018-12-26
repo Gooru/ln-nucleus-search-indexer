@@ -134,9 +134,9 @@ public class PopulateGutBasedResourceSuggestJob extends BaseIndexService impleme
         }
       }
     } catch (ParseException | IOException e) {
-      LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
+      LOGGER.info("PopulateGutBasedResourceSuggestJob : IO or Parse EXCEPTION: {} ", e);
     } catch (Exception e1) {
-      LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
+      LOGGER.info("PopulateGutBasedResourceSuggestJob : EXCEPTION: {} ", e1);
     }
     return languages;
   }

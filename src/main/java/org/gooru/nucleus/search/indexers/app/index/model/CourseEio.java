@@ -291,18 +291,26 @@ public class CourseEio extends JsonObject {
   }
   
   public JsonObject getLibrary() {
-    return this.getJsonObject("library", null);
+    return this.getJsonObject(IndexFields.LIBRARY, null);
   }
 
   public void setLibrary(JsonObject library) {
-    this.put("library", library);
+    this.put(IndexFields.LIBRARY, library);
   }
   
   public JsonObject getPrimaryLanguage() {
-    return this.getJsonObject("primaryLanguage", null);
+    return this.getJsonObject(IndexFields.PRIMARY_LANGUAGE, null);
   }
 
   public void setPrimaryLanguage(JsonObject primaryLanguage) {
-    this.put("primaryLanguage", primaryLanguage);
+    this.put(IndexFields.PRIMARY_LANGUAGE, primaryLanguage);
+  }
+
+  public String getVersion() {
+    return this.getString(IndexFields.VERSION);
+  }
+  
+  public void setVersion(String version) {
+    this.put(IndexFields.VERSION, version);
   }
 }

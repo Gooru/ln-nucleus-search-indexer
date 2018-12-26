@@ -161,9 +161,9 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
           }
         }
       } catch (ParseException | IOException e) {
-        LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
+        LOGGER.info("PopulateCompetencyContentMap : IO or Parse EXCEPTION: {} ", e);
       } catch (Exception e1) {
-        LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
+        LOGGER.info("PopulateCompetencyContentMap : EXCEPTION: {} ", e1);
       }
       return languageIds;
     }
@@ -208,7 +208,7 @@ public class PopulateCompetencyContentMap extends BaseIndexService implements Jo
                     delay(2000);
                 }
             } catch (Exception e1) {
-                LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
+                LOGGER.info("PopulateCompetencyContentMap : EXCEPTION: {} ", e1);
             }
         });
         }
