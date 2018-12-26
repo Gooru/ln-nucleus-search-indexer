@@ -58,6 +58,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       String publishStatus = source.getString(EntityAttributeConstants.PUBLISH_STATUS);
       courseEio.setPublishStatus(publishStatus);
       courseEio.setContentFormat(IndexerConstants.COURSE);
+      courseEio.setVersion(source.getString(EntityAttributeConstants.VERSION, null));
 
       Boolean isFeatured = false;
       if(publishStatus.equalsIgnoreCase(IndexerConstants.PUBLISHED)){

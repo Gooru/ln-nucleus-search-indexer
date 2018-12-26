@@ -154,9 +154,9 @@ public class PopulateSignatureAssessmentJob extends BaseIndexService implements 
         }
       }
     } catch (ParseException | IOException e) {
-      LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
+      LOGGER.info("PopulateSignatureAssessmentJob : IO or Parse EXCEPTION: {} ", e);
     } catch (Exception e1) {
-      LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
+      LOGGER.info("PopulateSignatureAssessmentJob : EXCEPTION: {} ", e1);
     }
     return languages;
   }

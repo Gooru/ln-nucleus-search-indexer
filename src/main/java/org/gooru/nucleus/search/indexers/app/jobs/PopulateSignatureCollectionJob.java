@@ -123,7 +123,7 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
                 LOGGER.info("populate-signature-collection is disabled");
             }
         } catch (Exception e) {
-          LOGGER.info("Error while populating resource suggestions : Ex ::", e);
+          LOGGER.info("Error while populating signature collections : Ex ::", e);
           e.printStackTrace();
         }
       }
@@ -149,9 +149,9 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
         }
       }
     } catch (ParseException | IOException e) {
-      LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
+      LOGGER.info("PopulateSignatureCollectionJob : IO or Parse EXCEPTION: {} ", e);
     } catch (Exception e1) {
-      LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
+      LOGGER.info("PopulateSignatureCollectionJob : EXCEPTION: {} ", e1);
     }
     return languages;
   }

@@ -138,9 +138,9 @@ public class PopulateSignatureResourceJob extends BaseIndexService implements Jo
         }
       }
     } catch (ParseException | IOException e) {
-      LOGGER.info("PopulateLearningMapsTable : IO or Parse EXCEPTION: {} ", e);
+      LOGGER.info("PopulateSignatureResourceJob : IO or Parse EXCEPTION: {} ", e);
     } catch (Exception e1) {
-      LOGGER.info("PopulateLearningMapsTable : EXCEPTION: {} ", e1);
+      LOGGER.info("PopulateSignatureResourceJob : EXCEPTION: {} ", e1);
     }
     return languages;
   }
