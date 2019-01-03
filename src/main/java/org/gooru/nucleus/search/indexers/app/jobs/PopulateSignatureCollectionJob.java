@@ -1,5 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.jobs;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
@@ -33,7 +35,8 @@ import io.vertx.core.json.JsonObject;
 public class PopulateSignatureCollectionJob extends BaseIndexService implements JobInitializer {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulateSignatureCollectionJob.class);
-  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.gutCodes\" : [GUT_CODE] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
+  private static final String QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"publishStatus\" : \"published\" } }, { \"term\" : { \"primaryLanguage.id\" : LANG_ID } }, { \"term\" : { \"contentFormat\" : \"collection\" } }, { \"bool\" : { \"mustNot\" : [ { \"term\" : { \"contentSubFormat\" : \"benchmark\" } } ] } }, { \"terms\" : { \"taxonomy.gutCodes\" : [GUT_CODE] } } ] } }, \"size\" : 20, \"query\" : { \"function_score\" : { \"script_score\" : { \"script\" : { \"lang\" : \"painless\", \"source\" : \"_score * doc['statistics.preComputedWeight'].value\" }}, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"_all\", \"taxonomyDataSet\", \"learningObjective\", \"originalCreator.usernameDisplay\", \"originalCreator.usernameDisplay.usernameDisplaySnowball\", \"owner.usernameDisplay\", \"creator.usernameDisplay\", \"owner.usernameDisplay.usernameDisplaySnowball\", \"creator.usernameDisplay.usernameDisplaySnowball\", \"title.titleKStem^10.0F\", \"taxonomy.subject.label^1.1F\", \"taxonomy.course.label^1.4F\", \"taxonomy.domain.label\", \"taxonomy.domain.label.labelSnowball\", \"taxonomy.course.label.labelSnowball\", \"taxonomy.subject.label.labelSnowball\", \"resourceTitles\", \"collectionContents.description\", \"creator.usernameDisplay.usernameDisplayKStem\", \"owner.usernameDisplay.usernameDisplayKStem\", \"originalCreator.usernameDisplay.usernameDisplayKStem\" ], \"boost\" : 3.0, \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : false, \"analyzer\" : \"gooru_kstem\" } } } }, \"from\" : 0, \"_source\" : [ \"id\", \"publishStatus\", \"learningObjective\", \"description\", \"contentFormat\", \"grade\", \"title\", \"collaboratorIds\", \"thumbnail\", \"createdAt\", \"updatedAt\", \"modifierId\", \"metadata\", \"statistics\", \"owner\", \"creator\", \"originalCreator\", \"taxonomy\", \"resourceTitles\", \"resourceIds\", \"collectionContents\", \"course\", \"license\" ] }";
+  private static final String LANG_AGG_QUERY = "{\"query\": { \"bool\": { \"must\": [{ \"term\": { \"publishStatus\": \"published\" } }, { \"term\": { \"tenant.tenantId\": \"ba956a97-ae15-11e5-a302-f8a963065976\"} }], \"must_not\": []}}, \"aggs\" : { \"languages\" : { \"terms\" : { \"field\" : \"primaryLanguage.id\" } } } }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
@@ -76,13 +79,17 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
           Integer limit = params.getInteger("batchSize", BATCH_SIZE);
           Long offset = params.getLong("offset", OFFSET);
           Long totalProcessed = 0L;
+          List<String> languages = getLanguageIdsToProcess();
+          LOGGER.info("Languages to process : {}", languages);
           SignatureItemsRepository.instance().deleteSuggestions(IndexerConstants.COLLECTION);
           while (true) {
             JsonArray ltCodesArray = TaxonomyCodeRepository.instance().getLTCodeByFrameworkAndOffset(IndexerConstants.GUT_FRAMEWORK, limit, offset);
             if (ltCodesArray.size() == 0) {
               break;
             }
-            processTaxonomyCodes(ltCodesArray);
+            languages.forEach(languageId -> {
+              processTaxonomyCodes(ltCodesArray, languageId);
+            });
             totalProcessed += ltCodesArray.size();
             offset += limit;
             if (totalProcessed >= totalCountOfLTs || totalProcessed >= expireCount) {
@@ -97,7 +104,9 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
             if (standardCodesArray.size() == 0) {
               break;
             }
-            processTaxonomyCodes(standardCodesArray);
+            languages.forEach(languageId -> {
+              processTaxonomyCodes(standardCodesArray, languageId);
+            });
             totalProcessed += standardCodesArray.size();
             stdOffset += limit;
             if (totalProcessed >= totalCountOfStdsLts || totalProcessed >= expireCount) {
@@ -114,7 +123,7 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
                 LOGGER.info("populate-signature-collection is disabled");
             }
         } catch (Exception e) {
-          LOGGER.info("Error while populating resource suggestions : Ex ::", e);
+          LOGGER.info("Error while populating signature collections : Ex ::", e);
           e.printStackTrace();
         }
       }
@@ -123,7 +132,32 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
   }
 
   @SuppressWarnings("unchecked")
-  private void processTaxonomyCodes(JsonArray taxonomyCodeArray) {
+  private List<String> getLanguageIdsToProcess() {
+    List<String> languages = null;
+    try {
+      Response culSearchResponse =
+        performRequest("POST", "/" + IndexNameHolder.getIndexName(EsIndex.COLLECTION) + "/" + IndexerConstants.TYPE_COLLECTION + "/_search", LANG_AGG_QUERY);
+      if (culSearchResponse.getEntity() != null) {
+        languages = new ArrayList<>();
+        Map<String, Object> responseAsMap = (Map<String, Object>) SERIAILIZER.readValue(EntityUtils.toString(culSearchResponse.getEntity()),
+          new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> aggsMap = (Map<String, Object>) responseAsMap.get("aggregations");
+        List<Map<String, Object>> contentTypeAggList =
+          (List<Map<String, Object>>) (((Map<String, Object>) aggsMap.get("languages")).get("buckets"));
+        for (Map<String, Object> ctMap : contentTypeAggList) {
+          languages.add(ctMap.get("key").toString());
+        }
+      }
+    } catch (ParseException | IOException e) {
+      LOGGER.info("PopulateSignatureCollectionJob : IO or Parse EXCEPTION: {} ", e);
+    } catch (Exception e1) {
+      LOGGER.info("PopulateSignatureCollectionJob : EXCEPTION: {} ", e1);
+    }
+    return languages;
+  }
+  
+  @SuppressWarnings("unchecked")
+  private void processTaxonomyCodes(JsonArray taxonomyCodeArray, String languageId) {
     for (Object taxonomyCode : taxonomyCodeArray) {
       JsonObject taxonomyCodeObject = (JsonObject) taxonomyCode;
       String code = taxonomyCodeObject.getString(EntityAttributeConstants.ID);
@@ -132,7 +166,8 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
           LOGGER.debug("Proceed to populate, as suggestions are not present in table for code : {} ", code);
 
           if (!code.isEmpty()) {
-            String query = QUERY.replaceAll("GUT_CODE", convertArrayToString(StringUtils.join(code.toLowerCase(), IndexerConstants.COMMA)));
+            String query = QUERY.replaceAll("LANG_ID", languageId);
+            query = query.replaceAll("GUT_CODE", convertArrayToString(StringUtils.join(code.toLowerCase(), IndexerConstants.COMMA)));
            Response searchResponse = performRequest("POST",
                     "/" + IndexNameHolder.getIndexName(EsIndex.COLLECTION) + "/" + IndexerConstants.TYPE_COLLECTION + "/_search", query);
             if (searchResponse.getEntity() != null) {
@@ -146,7 +181,7 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
                 deserializeResponseAndPopulate(taxonomyCodeObject, code, hitsMap, suggestByPerfAsMap);
                 LOGGER.debug("Populated suggestions for code : {} : {} ", code, suggestByPerfAsMap.toString());
                 if (!suggestByPerfAsMap.isEmpty()) {
-                  extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap);
+                  extractAndPopulateSuggestions(taxonomyCodeObject, suggestByPerfAsMap, languageId);
                 }
               } else {
                 LOGGER.debug("No matching suggestions for gut : {} ", code);
@@ -198,7 +233,7 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
     
   }
 
-  private void extractAndPopulateSuggestions(JsonObject taxonomyCodeObject, Map<String, List<String>> perfMap) {
+  private void extractAndPopulateSuggestions(JsonObject taxonomyCodeObject, Map<String, List<String>> perfMap, String languageId) {
     if (!perfMap.isEmpty()) {
       String code = taxonomyCodeObject.getString(EntityAttributeConstants.ID);
       String codeType = taxonomyCodeObject.getString(EntityAttributeConstants.CODE_TYPE);
@@ -221,6 +256,7 @@ public class PopulateSignatureCollectionJob extends BaseIndexService implements 
           suggestJson.put(EntityAttributeConstants.PERFORMANCE_RANGE, perfMapEntry.getKey());
           suggestJson.put(EntityAttributeConstants.ITEM_ID, itemId);
           suggestJson.put(EntityAttributeConstants.ITEM_FORMAT, IndexerConstants.COLLECTION);
+          suggestJson.put(EntityAttributeConstants.PRIMARY_LANGUAGE, Integer.valueOf(languageId));
           SignatureItemsRepository.instance().saveSuggestions(code, suggestJson);
         }
       }

@@ -109,6 +109,9 @@ public class IndexFields {
     public static final String EFFICACY = "efficacy";
     public static final String ENGAGEMENT = "engagement";
     public static final String RELEVANCE = "relevance";
+    public static final String VERSION = "version";
+    public static final String LIBRARY = "library";
+    public static final String PRIMARY_LANGUAGE = "primaryLanguage";
 
     // license fields
 

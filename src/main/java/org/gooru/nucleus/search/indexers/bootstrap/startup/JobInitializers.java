@@ -8,7 +8,7 @@ import org.gooru.nucleus.search.indexers.app.jobs.PopulateCompetencyContentMap;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateLearningMaps;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureAssessmentJob;
 import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureCollectionJob;
-import org.gooru.nucleus.search.indexers.app.jobs.PopulateSignatureResourceJob;
+import org.gooru.nucleus.search.indexers.app.jobs.PopulateGutBasedResourceSuggestJob;
 
 public class JobInitializers implements Iterable<JobInitializer> {
 
@@ -16,7 +16,7 @@ public class JobInitializers implements Iterable<JobInitializer> {
 
   public JobInitializers() {
     List<JobInitializer> initializers = new ArrayList<>();
-    initializers.add(PopulateSignatureResourceJob.instance());
+    initializers.add(PopulateGutBasedResourceSuggestJob.instance());
     initializers.add(PopulateSignatureCollectionJob.instance());
     initializers.add(PopulateSignatureAssessmentJob.instance());
     initializers.add(PopulateLearningMaps.instance());

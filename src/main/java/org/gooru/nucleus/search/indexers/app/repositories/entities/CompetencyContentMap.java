@@ -15,7 +15,7 @@ import org.javalite.activejdbc.annotations.Table;
 public class CompetencyContentMap extends Model {
     
     public final static String INSERT_CCM = "insert into competency_content_map (subject, course, domain, competency, micro_competency, "
-        + "content_type, item_id, item_count, is_published, is_featured) values (?,?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING";
+        + "content_type, item_id, item_count, is_published, is_featured, primary_language) values (?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING";
     
     public final static String FETCH_EXISTING_CONTENT = "select id from competency_content_map where content_type = ? AND item_id = ?";
 
