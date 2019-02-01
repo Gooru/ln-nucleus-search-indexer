@@ -128,5 +128,13 @@ public class CollectionEo {
   public void setCurated(Boolean isCurated) {
     collection = JsonUtil.set(collection, "isCurated", isCurated);
   }
+  
+  public JsonObject getPrimaryLanguage() {
+    return collection.getJsonObject("primaryLanguage", null);
+  }
+
+  public void setPrimaryLanguage(JsonObject primaryLanguage) {
+    this.collection = JsonUtil.set(collection, "primaryLanguage", primaryLanguage);
+  }
 
 }
