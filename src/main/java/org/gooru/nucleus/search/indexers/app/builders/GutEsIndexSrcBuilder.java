@@ -211,6 +211,10 @@ public class GutEsIndexSrcBuilder<S extends JsonObject, D extends GutEio> extend
           content.setTitle(contentData.getString(EntityAttributeConstants.TITLE, null));
           content.setThumbnail(contentData.getString(EntityAttributeConstants.THUMBNAIL, null));
           content.setCurated(contentData.getBoolean(EntityAttributeConstants.IS_CURATED, false));
+          // Set Primary Language
+          Integer primaryLanguageId = contentData.getInteger(EntityAttributeConstants.PRIMARY_LANGUAGE, null);
+          JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
+          if (primaryLanguage != null) content.setPrimaryLanguage(primaryLanguage);
           // Set Creator
           String creatorId = contentData.getString(EntityAttributeConstants.CREATOR_ID, null);
           if (creatorId != null) {
