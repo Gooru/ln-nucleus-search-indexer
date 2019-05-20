@@ -80,6 +80,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
     esIndexSrcBuilders.put(IndexType.RESOURCE.getType(), new ResourceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.RESOURCE_REFERENCE.getType(), new QuestionAndResourceReferenceEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COLLECTION.getType(), new CollectionEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.ASSESSMENT.getType(), new CollectionEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.COLLECTION_EXTERNAL.getType(), new CollectionEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.ASSESSMENT_EXTERNAL.getType(), new CollectionEsIndexSrcBuilder<>());
+    esIndexSrcBuilders.put(IndexType.OFFLINE_ACTIVITY.getType(), new CollectionEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.COURSE.getType(), new CourseEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.CROSSWALK.getType(), new CrosswalkEsIndexSrcBuilder<>());
     esIndexSrcBuilders.put(IndexType.UNIT.getType(), new UnitEsIndexSrcBuilder<>());

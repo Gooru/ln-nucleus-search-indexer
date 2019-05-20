@@ -305,9 +305,6 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       case IndexerConstants.ASSESSMENT:
         statisticsEo.setAssessmentCount(statisticsEo.getAssessmentCount() + 1);
         break;
-      case IndexerConstants.ASSESSMENT_EXTERNAL:
-        statisticsEo.setExternalAssessmentCount(statisticsEo.getExternalAssessmentCount() + 1);
-        break;
       }
     }
   }

@@ -67,6 +67,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     switch (type) {
     case IndexerConstants.TYPE_ASSESSMENT:
     case IndexerConstants.TYPE_COLLECTION:
+    case IndexerConstants.ASSESSMENT_EXTERNAL:
+    case IndexerConstants.COLLECTION_EXTERNAL:
+    case IndexerConstants.TYPE_OFFLINE_ACTIVITY:
       return IndexNameHolder.getIndexName(EsIndex.COLLECTION);
     case IndexerConstants.TYPE_QUESTION:
     case IndexerConstants.TYPE_RESOURCE:
@@ -99,6 +102,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     switch (type) {
     case IndexerConstants.TYPE_ASSESSMENT:
     case IndexerConstants.TYPE_COLLECTION:
+    case IndexerConstants.ASSESSMENT_EXTERNAL:
+    case IndexerConstants.COLLECTION_EXTERNAL:
+    case IndexerConstants.TYPE_OFFLINE_ACTIVITY:
       return IndexerConstants.TYPE_COLLECTION;
     case IndexerConstants.TYPE_QUESTION:
     case IndexerConstants.TYPE_RESOURCE:
@@ -135,6 +141,10 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
     case IndexerConstants.TYPE_RESOURCE_REFERENCE:
       return ExecuteOperationConstants.GET_QUESTION_OR_RESOURCE_REFERENCE;
     case IndexerConstants.TYPE_COLLECTION:
+    case IndexerConstants.TYPE_ASSESSMENT:
+    case IndexerConstants.ASSESSMENT_EXTERNAL:
+    case IndexerConstants.COLLECTION_EXTERNAL:
+    case IndexerConstants.TYPE_OFFLINE_ACTIVITY:
       return ExecuteOperationConstants.GET_COLLECTION;
     case IndexerConstants.TYPE_COURSE:
       return ExecuteOperationConstants.GET_COURSE;
@@ -367,6 +377,9 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             case IndexerConstants.TYPE_QUESTION :
             case IndexerConstants.TYPE_COLLECTION :
             case IndexerConstants.TYPE_ASSESSMENT :
+            case IndexerConstants.ASSESSMENT_EXTERNAL:
+            case IndexerConstants.COLLECTION_EXTERNAL:
+            case IndexerConstants.TYPE_OFFLINE_ACTIVITY:
               setExistingStatisticsData(result, contentInfoAsMap, typeName);
               break;
             case IndexerConstants.TYPE_COURSE : 
@@ -482,7 +495,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         LOGGER.debug("statistics index data : " + statisticsMap);
         if (IndexerConstants.RESOURCE_FORMATS.matcher(typeName).matches()) {
           viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
-        } else if (typeName.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+        } else if (IndexerConstants.COLLECTION_FORMATS.matcher(typeName).matches()) {
           viewsCount = getLong(statisticsMap.get(ScoreConstants.VIEW_COUNT));
           collabCount = getInteger(statisticsMap.get(ScoreConstants.COLLAB_COUNT));
           remixCount = getInteger(statisticsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));
