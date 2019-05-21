@@ -14,7 +14,8 @@ import org.javalite.activejdbc.annotations.Table;
 @IdName(SchemaConstants.ID)
 public class LearningMaps extends Model {
 
-  public final static String UPDATE_RQCACUL_QUERY = "UPDATE learning_maps SET resource_count = ?, question_count = ?, collection_count = ?, assessment_count = ?, rubric_count = ?, course_count = ?, unit_count = ?, lesson_count = ?, signature_resource_count = ?, signature_collection_count = ?, signature_assessment_count = ?,"
-          + "resource = to_json(?::json), question = to_json(?::json), collection = to_json(?::json), assessment = to_json(?::json), rubric = to_json(?::json), course = to_json(?::json), unit = to_json(?::json), lesson = to_json(?::json), updated_at = now() WHERE id = ?";
+  public final static String UPDATE_RQCACUL_QUERY =
+    "UPDATE learning_maps SET resource_count = ?, question_count = ?, collection_count = ?, assessment_count = ?, ext_assessment_count = ?, ext_collection_count = ?, offline_activity_count = ?, rubric_count = ?, course_count = ?, unit_count = ?, lesson_count = ?, signature_resource_count = ?, signature_collection_count = ?, signature_assessment_count = ?,"
+      + "resource = to_json(?::json), question = to_json(?::json), collection = to_json(?::json), assessment = to_json(?::json), ext_assessment = to_json(?::json), ext_collection = to_json(?::json), offline_activity = to_json(?::json), rubric = to_json(?::json), course = to_json(?::json), unit = to_json(?::json), lesson = to_json(?::json), updated_at = now() WHERE id = ?";
 
 }

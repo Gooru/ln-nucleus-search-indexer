@@ -142,7 +142,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
                         JsonObject responseJson = new JsonObject(responseBody.toString());
                         JsonObject contents = responseJson.getJsonObject("contents");
                         for (LMContentFormat key : LMContentFormat.values()) {
-                           generateContent(key.getContentFormat(), lmJson, contents);
+                           generateContent(key.getValue(), lmJson, contents);
                         }
                         lmJson.put(EntityAttributeConstants.ID, gut);
                         LearningMapsRepository.instance().updateRQCACULLearningMaps(lmJson);
@@ -226,7 +226,14 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
   }
   
   private static void generateContent(String contentType, Map<String, Object> lmJson, JsonObject contents) {
-    JsonObject content = contents.getJsonObject(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, contentType));
+    JsonObject content = contents.getJsonObject(contentType);
+    if (LMContentFormat.ASSESSMENT_EXTERNAL.getValue().equals(contentType)) {
+      contentType = "ext_assessment";
+    } else if (LMContentFormat.COLLECTION_EXTERNAL.getValue().equals(contentType)) {
+      contentType = "ext_collection";
+    } else if (LMContentFormat.OFFLINE_ACTIVITY.getValue().equals(contentType)) {
+      contentType = "offline_activity";
+    }
     lmJson.put(contentType +"_count", content.getInteger("totalHitCount"));
     lmJson.put(contentType, content.toString());
     if (contentType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) LOGGER.info("Resource Count : {}",content.getInteger("totalHitCount"));
