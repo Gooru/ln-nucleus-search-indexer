@@ -182,22 +182,22 @@ public final class IndexerConstants {
     QUESTION("question"),
     COLLECTION("collection"),
     ASSESSMENT("assessment"),
-    ASSESSMENT_EXTERNAL("ext_assessment"),
-    COLLECTION_EXTERNAL("ext_collection"),
-    OFFLINE_ACTIVITY("offline_activity"),
+    ASSESSMENT_EXTERNAL("assessmentExternal"),
+    COLLECTION_EXTERNAL("collectionExternal"),
+    OFFLINE_ACTIVITY("offlineActivity"),
     RUBRIC("rubric"),
     COURSE("course"),
     UNIT("unit"),
     LESSON("lesson");
 
-    private String contentFormat;
+    private String value;
 
-    LMContentFormat(String contentFormat) {
-      this.contentFormat = contentFormat;
+    LMContentFormat(String value) {
+      this.value = value;
     }
 
-    public String getContentFormat() {
-      return this.contentFormat;
+    public String getValue() {
+      return this.value;
     }
 
   }
