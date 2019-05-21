@@ -11,6 +11,7 @@ import org.elasticsearch.client.Response;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants.LMContentFormat;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.LearningMapsRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.TaxonomyCodeRepository;
 import org.gooru.nucleus.search.indexers.app.services.BaseIndexService;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.base.CaseFormat;
 
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
@@ -139,14 +141,9 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
                       searchResponse.bodyHandler(responseBody -> {
                         JsonObject responseJson = new JsonObject(responseBody.toString());
                         JsonObject contents = responseJson.getJsonObject("contents");
-                        generateContent(IndexerConstants.TYPE_RESOURCE, lmJson, contents);
-                        generateContent(IndexerConstants.TYPE_QUESTION, lmJson, contents);
-                        generateContent(IndexerConstants.TYPE_COLLECTION, lmJson, contents);
-                        generateContent(IndexerConstants.TYPE_ASSESSMENT, lmJson, contents);
-                        generateContent(IndexerConstants.TYPE_RUBRIC, lmJson, contents);
-                        generateContent(IndexerConstants.TYPE_COURSE, lmJson, contents);
-                        generateContent(IndexerConstants.TYPE_UNIT, lmJson, contents);
-                        generateContent(IndexerConstants.TYPE_LESSON, lmJson, contents);
+                        for (LMContentFormat key : LMContentFormat.values()) {
+                           generateContent(key.getContentFormat(), lmJson, contents);
+                        }
                         lmJson.put(EntityAttributeConstants.ID, gut);
                         LearningMapsRepository.instance().updateRQCACULLearningMaps(lmJson);
                       });
@@ -229,7 +226,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
   }
   
   private static void generateContent(String contentType, Map<String, Object> lmJson, JsonObject contents) {
-    JsonObject content = contents.getJsonObject(contentType);
+    JsonObject content = contents.getJsonObject(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, contentType));
     lmJson.put(contentType +"_count", content.getInteger("totalHitCount"));
     lmJson.put(contentType, content.toString());
     if (contentType.equalsIgnoreCase(IndexerConstants.TYPE_RESOURCE)) LOGGER.info("Resource Count : {}",content.getInteger("totalHitCount"));

@@ -38,4 +38,6 @@ public interface CollectionRepository {
   Long getRemixedInCourseCount(String collectionId);
 
   JsonObject getCollectionById(String collectionId);
+
+  Long getOATaskCount(String collectionId);
 }

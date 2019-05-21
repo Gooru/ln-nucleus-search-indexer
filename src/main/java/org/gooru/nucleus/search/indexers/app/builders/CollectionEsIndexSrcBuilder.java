@@ -103,6 +103,12 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       JsonObject primaryLanguage = getPrimaryLanguage(primaryLanguageId);
       if (primaryLanguage != null) collectionEo.setPrimaryLanguage(primaryLanguage);
       
+      String format = source.getString(EntityAttributeConstants.FORMAT, null);
+      if (format != null && format.equalsIgnoreCase(IndexerConstants.TYPE_OFFLINE_ACTIVITY)) {
+        Long oaTaskCount = getCollectionRepo().getOATaskCount(id);
+        collectionEo.setOATaskCount(oaTaskCount);
+      }
+      
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
       String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);

@@ -307,5 +307,16 @@ public class CollectionEio implements Serializable {
   public void setPrimaryLanguage(JsonObject primaryLanguage) {
     this.collection = JsonUtil.set(collection, "primaryLanguage", primaryLanguage);
   }
+  
+  public Long getOATaskCount() {
+    return collection.getLong("oaTaskCount", null);
+  }
+
+  public void setOATaskCount(Long oaTaskCount) {
+    if (oaTaskCount == null) {
+      oaTaskCount = 0L;
+    }
+    this.collection = JsonUtil.set(collection, "oaTaskCount", oaTaskCount);
+  }
 
 }

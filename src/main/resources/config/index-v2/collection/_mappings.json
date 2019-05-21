@@ -572,6 +572,9 @@
          "visibleOnProfile":{
             "type":"boolean"
          },
+         "oaTaskCount":{
+            "type":"long"
+         },
          "statistics":{
             "properties":{
                "averageTimeSpent":{

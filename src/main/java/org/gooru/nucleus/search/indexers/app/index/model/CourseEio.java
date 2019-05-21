@@ -313,4 +313,12 @@ public class CourseEio extends JsonObject {
   public void setVersion(String version) {
     this.put(IndexFields.VERSION, version);
   }
+  
+  public JsonArray getCollaboratorIds() {
+    return this.getJsonArray(IndexFields.COLLABORATORS_IDS, null);
+  }
+
+  public void setCollaboratorIds(JsonArray collaboratorIds) {
+    this.put(IndexFields.COLLABORATORS_IDS, collaboratorIds);
+  }
 }

@@ -2,10 +2,14 @@ package org.gooru.nucleus.search.indexers.app.constants;
 
 public enum IndexType {
 
-  COLLECTION("collection"),
   QUESTION("question"),
   RESOURCE_REFERENCE("resource-reference"),
   RESOURCE("resource"),
+  COLLECTION("collection"),
+  ASSESSMENT("assessment"),
+  COLLECTION_EXTERNAL("collection-external"),
+  ASSESSMENT_EXTERNAL("assessment-external"),
+  OFFLINE_ACTIVITY("offline-activity"),
   USER("user"),
   SEARCH_QUERY("searchquery"),
   TAXONOMY("taxonomy"),
