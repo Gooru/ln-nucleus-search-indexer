@@ -39,4 +39,6 @@ public class Collection extends Model {
 
   public static final String GET_STUDENTS_OF_COLLECTION = "select count(cm.user_id) from class c inner join class_member cm on cm.class_id = c.id where course_id in (select distinct course_id from collection where parent_collection_id = ?::uuid and is_deleted = false) and c.is_deleted = false";
   
+  public static final String GET_TASK_COUNTS_OF_OA = "select count(oat.id) from collection c inner join oa_tasks oat on c.id = oat.oa_id where c.id = ?::uuid and c.is_deleted = false";
+  
 }

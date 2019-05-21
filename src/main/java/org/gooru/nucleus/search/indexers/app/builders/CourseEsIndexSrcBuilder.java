@@ -124,6 +124,16 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
         }
       }
       
+      String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);
+      Integer collaboratorCount  = 0;
+      if (collaborator != null) {
+        JsonArray collaboratorIds = new JsonArray(collaborator);
+        if (collaboratorIds != null) {
+          courseEio.setCollaboratorIds(collaboratorIds);
+        }
+        collaboratorCount = collaboratorIds.size();
+      }
+      
       // Set license
       Integer licenseId = source.getInteger(EntityAttributeConstants.LICENSE);
       JsonObject license = getLicenseData(licenseId);
@@ -232,6 +242,7 @@ public class CourseEsIndexSrcBuilder<S extends JsonObject, D extends CourseEio> 
       statistics.setRemixedInClassCount(remixedInClassCount);
       Long studentCount = getCourseRepo().getUsedByStudentCount(id);
       statistics.setUsedByStudentCount(studentCount);
+      statistics.setCollaboratorCount(collaboratorCount);
       
       // Set Library
       statistics.setLibraryContent(false);

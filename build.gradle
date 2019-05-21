@@ -5,8 +5,8 @@ buildscript {
     repositories { jcenter() }
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:1.2.2"
-        classpath group: 'org.javalite', name: 'activejdbc', version: '1.4.11'
-        classpath group: 'org.javalite', name: 'activejdbc-instrumentation', version: '1.4.11'
+        classpath group: 'org.javalite', name: 'activejdbc', version: '1.4.13'
+        classpath group: 'org.javalite', name: 'activejdbc-instrumentation', version: '1.4.13'
     }
 }
 
@@ -97,7 +97,7 @@ shadowJar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
+    gradleVersion = '4.10'
 }
 
 //////////////// specific to activeJDBC instrumentation ///////////////

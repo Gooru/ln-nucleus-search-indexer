@@ -282,6 +282,9 @@
                   "all"
                ]
             },
+            "oaTaskCount":{
+               "type":"long"
+            },
             "tenant":{
                "properties":{
                   "tenantRootId":{
