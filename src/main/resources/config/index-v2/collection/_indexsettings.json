@@ -282,9 +282,6 @@
                   "all"
                ]
             },
-            "oaTaskCount":{
-               "type":"long"
-            },
             "tenant":{
                "properties":{
                   "tenantRootId":{
@@ -677,6 +674,9 @@
                   },
                   "isLMContent":{
                      "type":"boolean"
+                  },
+                  "oaTaskCount":{
+                     "type":"long"
                   }
                }
             },

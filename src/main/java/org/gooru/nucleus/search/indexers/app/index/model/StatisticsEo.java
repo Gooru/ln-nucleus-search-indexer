@@ -383,4 +383,15 @@ public class StatisticsEo {
         }
         this.statistics = JsonUtil.set(statistics, "isCuratedContent", isCuratedContent);
     }
+    
+    public Long getOATaskCount() {
+      return statistics.getLong("oaTaskCount", null);
+    }
+
+    public void setOATaskCount(Long oaTaskCount) {
+      if (oaTaskCount == null) {
+        oaTaskCount = 0L;
+      }
+      this.statistics = JsonUtil.set(statistics, "oaTaskCount", oaTaskCount);
+    }
 }

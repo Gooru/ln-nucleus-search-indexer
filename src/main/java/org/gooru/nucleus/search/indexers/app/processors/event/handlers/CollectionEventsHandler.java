@@ -177,6 +177,7 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       ValidationUtil.rejectIfInvalidJsonCollaboratorUpdate(eventJson);
       JsonArray collaborators = getCollaborators(eventJson);
       collectionIndexHandler.updateCount(collectionId, ScoreConstants.COLLAB_COUNT, collaborators.size());
+      collectionIndexHandler.indexDocument(collectionId);
     } catch (Exception e) {
       LOGGER.error("Failed to update collaborator count for collection : " + collectionId);
       throw new Exception(e);

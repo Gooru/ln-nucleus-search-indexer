@@ -572,9 +572,6 @@
          "visibleOnProfile":{
             "type":"boolean"
          },
-         "oaTaskCount":{
-            "type":"long"
-         },
          "statistics":{
             "properties":{
                "averageTimeSpent":{
@@ -639,6 +636,9 @@
                },
                "isLMContent":{
                   "type":"boolean"
+               },
+               "oaTaskCount":{
+                  "type":"long"
                }
             }
          },
