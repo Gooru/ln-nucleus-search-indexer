@@ -11,6 +11,8 @@ public final class IndexerConstants {
   public static final String TYPE_COLLECTION = "collection";
 
   public static final String TYPE_ASSESSMENT = "assessment";
+  
+  public static final String TYPE_OFFLINE_ACTIVITY = "offline-activity";
 
   public static final String TYPE_STATISTICS = "statistics";
   
@@ -26,7 +28,7 @@ public final class IndexerConstants {
 
   public static final Pattern RESOURCE_FORMATS = Pattern.compile("resource|question|resource-reference");
 
-  public static final Pattern COLLECTION_FORMATS = Pattern.compile("collection|assessment|assessment-external|collection-external");
+  public static final Pattern COLLECTION_FORMATS = Pattern.compile("collection|assessment|assessment-external|collection-external|offline-activity");
 
   public static final String COLLECTION_IDS = "collection_ids";
 
@@ -115,6 +117,8 @@ public final class IndexerConstants {
   public static final String ASSESSMENT = "assessment";
 
   public static final String ASSESSMENT_EXTERNAL = "assessment-external";
+  
+  public static final String COLLECTION_EXTERNAL = "collection-external";
 
   public static final String TYPE_UNIT = "unit";
   
@@ -171,6 +175,32 @@ public final class IndexerConstants {
   public static final String UNDERSCORE = "_";
   
   public static final String PRIMARY_LANGUAGE = "primaryLanguage";
+  
+  public enum LMContentFormat {
+
+    RESOURCE("resource"),
+    QUESTION("question"),
+    COLLECTION("collection"),
+    ASSESSMENT("assessment"),
+    ASSESSMENT_EXTERNAL("assessmentExternal"),
+    COLLECTION_EXTERNAL("collectionExternal"),
+    OFFLINE_ACTIVITY("offlineActivity"),
+    RUBRIC("rubric"),
+    COURSE("course"),
+    UNIT("unit"),
+    LESSON("lesson");
+
+    private String value;
+
+    LMContentFormat(String value) {
+      this.value = value;
+    }
+
+    public String getValue() {
+      return this.value;
+    }
+
+  }
 
 
 }

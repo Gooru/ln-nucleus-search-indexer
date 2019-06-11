@@ -636,6 +636,9 @@
                },
                "isLMContent":{
                   "type":"boolean"
+               },
+               "oaTaskCount":{
+                  "type":"long"
                }
             }
          },

@@ -172,6 +172,13 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
           statisticsEo.setPublisherQualityIndicator(editorialTags.getInteger(EntityAttributeConstants.PUBLISHER_QUALITY_INDICATOR));
       }
       
+      //Set OA Task Count
+      String format = source.getString(EntityAttributeConstants.FORMAT, null);
+      if (format != null && format.equalsIgnoreCase(IndexerConstants.TYPE_OFFLINE_ACTIVITY)) {
+        Long oaTaskCount = getCollectionRepo().getOATaskCount(id);
+        statisticsEo.setOATaskCount(oaTaskCount);
+      }
+      
       String taxonomy = source.getString(EntityAttributeConstants.TAXONOMY, null);
       String aggTaxonomy = source.getString(EntityAttributeConstants.AGGREGATED_TAXONOMY, null);
       String aggGutCodes = source.getString(EntityAttributeConstants.AGGREGATED_GUT_CODES, null);

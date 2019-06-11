@@ -109,7 +109,7 @@ public class BaseIndexService {
         statisticEo.setViewsCount(viewsCount);
         statistics = statisticEo.getStatistics();
       }
-      if (contentFormat != null && contentFormat.equalsIgnoreCase(IndexerConstants.TYPE_COLLECTION)) {
+      if (contentFormat != null && IndexerConstants.COLLECTION_FORMATS.matcher(contentFormat).matches()) {
         viewsCount = getLong(statisticsAsMap.get(ScoreConstants.VIEW_COUNT));
         collaboratorCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLAB_COUNT));
         remixCount = getInteger(statisticsAsMap.get(ScoreConstants.COLLECTION_REMIX_COUNT));

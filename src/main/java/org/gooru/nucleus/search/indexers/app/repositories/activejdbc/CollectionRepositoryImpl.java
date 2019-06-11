@@ -246,5 +246,26 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     }
     return count;
   }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public Long getOATaskCount(String collectionId) {
+    Long count = 0L;
+    DB db = getDefaultDataSourceDBConnection();
+    try {
+      openDefaultDBConnection(db);
+      List countList = db.firstColumn(Collection.GET_TASK_COUNTS_OF_OA, collectionId);
+      if (countList == null || countList.size() < 1) {
+        LOGGER.warn("Task for offline-activity : {} not present in DB", collectionId);
+        return count;
+      }
+      count = ((Long) countList.get(0));
+    } catch (Exception e) {
+      LOGGER.error("Not able to fetch Task Count for offline-activity : {} error : {}", collectionId, e);
+    } finally {
+      closeDefaultDBConn(db);
+    }
+    return count;
+  }
 
 }

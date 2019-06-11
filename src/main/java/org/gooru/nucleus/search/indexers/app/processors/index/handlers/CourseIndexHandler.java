@@ -35,7 +35,7 @@ public class CourseIndexHandler extends BaseIndexHandler implements IndexHandler
       ProcessorContext context = new ProcessorContext(courseId, ExecuteOperationConstants.GET_COURSE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNull(result, ErrorMsgConstants.COURSE_DATA_NULL);
-      LOGGER.debug("CRIH->indexDocument : getIndexDataCollection() returned:" + result);
+      //LOGGER.debug("CRIH->indexDocument : getIndexDataCollection() returned:" + result);
       CourseIndexService.instance().indexDocument(courseId, result);
       LOGGER.debug("CRIH->indexDocument : Indexed course for course id : " + courseId);
     } catch (Exception ex) {

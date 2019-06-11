@@ -193,4 +193,11 @@ public class CourseStatisticsEo extends JsonObject {
       }
       this.put("isLMContent", isLMContent);
   }
+  
+  public void setCollaboratorCount(Integer collaboratorCount) {
+    if (collaboratorCount == null) {
+      collaboratorCount = 0;
+    }
+    this.put("collaboratorCount", collaboratorCount);
+  }
 }

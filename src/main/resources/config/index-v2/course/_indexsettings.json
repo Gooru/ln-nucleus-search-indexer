@@ -85,6 +85,12 @@
                   }
                }
             },
+            "collaboratorIds":{
+               "type":"keyword",
+               "copy_to":[
+                  "all"
+               ]
+            },
             "metadata":{
                "properties":{
                   "educationalUse":{

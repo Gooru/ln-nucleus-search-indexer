@@ -4,6 +4,7 @@ import org.gooru.nucleus.search.indexers.app.constants.EventsConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandler;
+import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import io.vertx.core.json.JsonObject;
 
@@ -39,7 +40,11 @@ public class CourseEventsHandler extends BaseEventHandler implements IndexEventH
         case EventsConstants.ITEM_COPY:
           handleCopyCourse(courseId);
           break;
-
+          
+        case EventsConstants.COLLABORATORS_UPDATE:
+          handleUpdateCollaborators(courseId);
+          break;
+          
         default:
           LOGGER.error("CREH->handleEvents : Invalid event !! event name : " + eventName);
           throw new InvalidRequestException("Invalid event, not able to handle");
@@ -71,6 +76,16 @@ public class CourseEventsHandler extends BaseEventHandler implements IndexEventH
     courseIndexHandler.indexDocument(courseId);
     courseIndexHandler.increaseCount(parentCourseId, IndexFields.COURSE_REMIXCOUNT);
     LOGGER.debug("CREH->handleCopy : Indexed course! event name : " + eventName + " course id : " + courseId);
+  }
+  
+  private void handleUpdateCollaborators(String collectionId) throws Exception {
+    try {
+      ValidationUtil.rejectIfInvalidJsonCollaboratorUpdate(eventJson);
+      courseIndexHandler.indexDocument(collectionId);
+    } catch (Exception e) {
+      LOGGER.error("Failed to update collaborator count for course : " + collectionId);
+      throw new Exception(e);
+    }
   }
 
 }
