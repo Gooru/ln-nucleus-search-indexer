@@ -163,7 +163,7 @@ public class CourseEventsHandler extends BaseEventHandler implements IndexEventH
   }
   
   private JsonObject getItemsOfCourse(String courseId) {
-    ProcessorContext context = new ProcessorContext(courseId, ExecuteOperationConstants.GET_ITEM_IDS_OF_COURSE);
+    ProcessorContext context = new ProcessorContext(courseId, ExecuteOperationConstants.GET_ITEMS_OF_COURSE);
     JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
     LOGGER.debug("CREH->getCollectionIdsOfCourse : Fetched item data from DB, Calling index service !!");
     return result;

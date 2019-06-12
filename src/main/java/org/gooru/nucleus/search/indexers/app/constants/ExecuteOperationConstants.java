@@ -86,9 +86,7 @@ public final class ExecuteOperationConstants {
   
   public static final String GET_DELETED_UNIT_IDS_OF_COURSE = "get_deleted_unit_ids_of_course";
   
-  //Index 
-  public static final String GET_ITEM_IDS_OF_COURSE = "get_item_ids_of_course";
-  
+  //Index   
   public static final String GET_ITEMS_OF_UNIT = "get_item_ids_of_unit";
   
   public static final String GET_ITEMS_OF_LESSON = "get_item_ids_of_lesson";

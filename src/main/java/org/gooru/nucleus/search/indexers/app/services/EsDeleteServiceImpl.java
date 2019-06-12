@@ -117,7 +117,7 @@ public class EsDeleteServiceImpl extends BaseIndexService implements DeleteServi
       
       int batchSize = 50;
       int processedBatchSize = 0;
-      LOGGER.debug("bulkDeleteDocuments()-> content type : "+contentType +" total batch size : " + jsonArr.size());
+      LOGGER.debug("bulkDeleteDocuments()-> content type : "+contentType +" total size : " + jsonArr.size());
       while(true) {
         BulkRequest bulkRequest = new BulkRequest();
         for (Object jsonObjStr : jsonArr) {
@@ -129,7 +129,6 @@ public class EsDeleteServiceImpl extends BaseIndexService implements DeleteServi
           } catch (Exception e) {
             id = jsonStr;
           }
-          LOGGER.debug("process index req to add to bulk");
           if (data != null && !data.isEmpty()) {
             id = data.getString(EntityAttributeConstants.ID);
             if (contentType.equalsIgnoreCase("unit")) id = data.getString(EntityAttributeConstants.UNIT_ID);
@@ -140,11 +139,9 @@ public class EsDeleteServiceImpl extends BaseIndexService implements DeleteServi
           if (id != null) {
             DeleteRequest delete = new DeleteRequest(index, getIndexTypeByType(contentType), id); 
             bulkRequest.add(delete);
-            LOGGER.debug("added to bulk req");
           }
           processedBatchSize++;
           if (processedBatchSize > 0 && (batchSize == bulkRequest.numberOfActions() || processedBatchSize == jsonArr.size())) {
-            LOGGER.debug("index batch");
             BulkResponse bulkResponse = getHighLevelClient().bulk(bulkRequest);
             if(bulkResponse.hasFailures()){
               BulkItemResponse[] responses =  bulkResponse.getItems();
