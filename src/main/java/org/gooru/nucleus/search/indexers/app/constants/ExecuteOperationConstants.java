@@ -63,6 +63,49 @@ public final class ExecuteOperationConstants {
   public static final String GET_GUT = "get_gut";
   
   public static final String GET_USER_RESOURCE_REFERENCES = "get_user_resource_references";
+  
+  public static final String GET_ITEMS_OF_COURSE = "get_items_of_course";
+
+  public static final String GET_DELETED_ITEM_IDS_OF_COURSE = "get_deleted_item_ids_of_course";
+  
+  public static final String GET_DELETED_ITEM_IDS_OF_UNIT = "get_deleted_item_ids_of_unit";
+  
+  public static final String GET_DELETED_ITEM_IDS_OF_LESSON = "get_deleted_item_ids_of_lesson";
+  
+  public static final String GET_DELETED_RUBRIC_IDS_OF_COURSE = "get_deleted_rubric_ids_of_course";
+  
+  public static final String GET_DELETED_RUBRIC_IDS_OF_UNIT = "get_deleted_rubric_ids_of_unit";
+  
+  public static final String GET_DELETED_RUBRIC_IDS_OF_LESSON= "get_deleted_rubric_ids_of_lesson";
+  
+  public static final String GET_DELETED_RUBRIC_IDS_OF_ITEM = "get_deleted_rubric_ids_of_item";
+  
+  public static final String GET_DELETED_LESSON_IDS_OF_UNIT = "get_deleted_lesson_ids_of_unit";
+  
+  public static final String GET_DELETED_LESSON_IDS_OF_COURSE = "get_deleted_lesson_ids_of_course";
+  
+  public static final String GET_DELETED_UNIT_IDS_OF_COURSE = "get_deleted_unit_ids_of_course";
+  
+  //Index   
+  public static final String GET_ITEMS_OF_UNIT = "get_item_ids_of_unit";
+  
+  public static final String GET_ITEMS_OF_LESSON = "get_item_ids_of_lesson";
+  
+  public static final String GET_RUBRICS_OF_COURSE = "get_rubric_ids_of_course";
+  
+  public static final String GET_RUBRICS_OF_UNIT = "get_rubric_ids_of_unit";
+  
+  public static final String GET_RUBRICS_OF_LESSON= "get_rubric_ids_of_lesson";
+  
+  public static final String GET_RUBRICS_OF_ITEM = "get_rubric_ids_of_item";
+  
+  public static final String GET_LESSONS_OF_UNIT = "get_lesson_ids_of_unit";
+  
+  public static final String GET_LESSONS_OF_COURSE = "get_lesson_ids_of_course";
+  
+  public static final String GET_UNITS_OF_COURSE = "get_unit_ids_of_course";
+  
+  public static final String GET_CONTENTS_OF_COLLECTION = "get_content_ids_of_collection";
 
   private ExecuteOperationConstants() {
     throw new AssertionError();

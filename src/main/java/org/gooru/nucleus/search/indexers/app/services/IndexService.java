@@ -3,7 +3,6 @@
  */
 package org.gooru.nucleus.search.indexers.app.services;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.elasticsearch.action.search.SearchResponse;
@@ -20,13 +19,7 @@ public interface IndexService {
   static IndexService instance() {
     return new EsIndexServiceImpl();
   }
-
-  /**
-   * Delete content in index using the entry id
-   * @throws Exception 
-   */
-  void deleteDocuments(String idString, String indexName, String typeName) throws Exception;
-
+  
   /**
    * Index a single content based on inputs.
    *
@@ -47,8 +40,6 @@ public interface IndexService {
   void buildInfoIndex(String idString, String contentFormat) throws Exception;
     
   void updateBrokenStatus(String ids, boolean isUpdateBroken) throws Exception;
-
-  void deleteDocuments(String key, String type) throws Exception;
 
   void indexDocumentByField(String id, String indexName, String typeName, Map<String, Object> fieldValues, Map<String, Object> contentInfoSource) throws Exception;
 

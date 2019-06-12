@@ -2,19 +2,23 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import java.util.List;
 
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Lesson;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
+import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class LessonRepositoryImpl extends BaseIndexRepo implements LessonRepository {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CourseRepositoryImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LessonRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
 
   @Override
@@ -89,7 +93,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     DB db = getDefaultDataSourceDBConnection();
     try{
       openDefaultDBConnection(db);
-      Long lessonCountL = Lesson.count(Lesson.GET_LESSON_BY_COURSE_ID, courseId, false);
+      Long lessonCountL = Lesson.count(Lesson.GET_LESSONS_OF_COURSE, courseId, false);
       LOGGER.debug("Lesson count : {} for course : {}", lessonCountL, courseId);
       lessonCount =  lessonCountL != null ? lessonCountL.intValue() : 0;
     }
@@ -124,7 +128,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     DB db = getDefaultDataSourceDBConnection();
     try{
       openDefaultDBConnection(db);
-      lessons = Lesson.where(Lesson.GET_LESSON_BY_COURSE_ID, courseId, false);
+      lessons = Lesson.where(Lesson.GET_LESSONS_OF_COURSE, courseId, false);
       if (lessons.size() < 1) {
         LOGGER.warn("Lessons for course: {} not present in DB", courseId);
       }
@@ -134,6 +138,68 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
     }
     closeDefaultDBConn(db);
     return lessons;
+  }
+  
+  @Override
+  public JsonObject getDeletedLessonsOfCourse(String courseId) {
+    LazyList<Lesson> contents = Lesson.where(Lesson.GET_LESSONS_OF_COURSE, courseId, true);
+    if (contents.size() < 1) {
+      LOGGER.warn("Lessons for course : {} not present in DB", courseId);
+    }
+    JsonObject result = new JsonObject();
+    populateResponseWithRelatedIds(contents, result);
+    return result;
+  }
+  
+  @Override
+  public JsonObject getDeletedLessonsOfUnit(String unitId) {
+    LazyList<Lesson> contents = Lesson.where(Lesson.GET_LESSONS_OF_UNIT, unitId, true);
+    if (contents.size() < 1) {
+      LOGGER.warn("Lessons for unit : {} not present in DB", unitId);
+    }
+    JsonObject result = new JsonObject();
+    populateResponseWithRelatedIds(contents, result);
+    return result;
+  }
+  
+  @Override
+  public JsonObject getLessonsOfCourse(String courseId) {
+    JsonArray responseArray = new JsonArray();
+    LazyList<Lesson> contents = Lesson.where(Lesson.GET_LESSONS_OF_COURSE, courseId, false);
+    if(contents != null){
+      if (contents.size() < 1) {
+        LOGGER.warn("Lessons for course : {} not present in DB", courseId);
+      }
+      for(Lesson content : contents){
+        responseArray.add(content.toJson(false));
+      }
+    }
+    return new JsonObject().put("lessons", responseArray);
+  }
+  
+  @Override
+  public JsonObject getLessonsOfUnit(String unitId) {
+    JsonArray responseArray = new JsonArray();
+    LazyList<Lesson> contents = Lesson.where(Lesson.GET_LESSONS_OF_UNIT, unitId, false);
+    if(contents != null){
+      if (contents.size() < 1) {
+        LOGGER.warn("Lessons for unit : {} not present in DB", unitId);
+      }
+      for(Lesson content : contents){
+        responseArray.add(content.toJson(false));
+      }
+    }
+    return new JsonObject().put("lessons", responseArray);
+  }
+
+  private void populateResponseWithRelatedIds(LazyList<Lesson> contents, JsonObject result) {
+    JsonArray lessonIds = new JsonArray();
+    if (contents.size() > 0) {
+      for (Lesson content : contents) {
+        lessonIds.add(Convert.toString(content.get(EntityAttributeConstants.LESSON_ID)));
+      }
+    }
+    result.put(IndexerConstants.LESSON_IDS, lessonIds);
   }
 
 }

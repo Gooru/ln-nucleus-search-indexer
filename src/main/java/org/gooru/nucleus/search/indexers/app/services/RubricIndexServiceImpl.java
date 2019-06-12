@@ -54,7 +54,7 @@ public class RubricIndexServiceImpl extends BaseIndexService implements RubricIn
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_RUBRIC);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RUBRIC_UNAVAILABLE);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("RUBISI->deleteIndexedRubric : Delete from index failed for rubric id : " + key + " Exception : " + ex);
       throw new Exception(ex);

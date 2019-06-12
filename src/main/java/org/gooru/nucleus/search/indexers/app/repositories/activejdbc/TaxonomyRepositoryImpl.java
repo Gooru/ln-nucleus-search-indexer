@@ -73,7 +73,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       openDefaultDBConnection(db);
       LazyList<TaxonomyCodeMapping> gutArray = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
       if (gutArray == null || gutArray.size() < 1) {
-        LOGGER.debug("GUT for framework code : {} not present in DB", targetCodeId);
+       // LOGGER.debug("GUT for framework code : {} not present in DB", targetCodeId);
         return null;
       }
 
@@ -98,7 +98,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
       openDefaultDBConnection(db);
       equivalentCodes = db.findAll(query, sourceCodeId);
       if (equivalentCodes.size() < 1) {
-        LOGGER.warn("Equivalent codes for {} standard : {} not present in DB", sourceCodeId);
+  //      LOGGER.warn("Equivalent codes for {} standard : {} not present in DB", sourceCodeId);
       }
     } catch (Exception ex) {
       LOGGER.error("Failed to fetch Equivalent codes ", ex);
@@ -116,7 +116,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
     try {
       LazyList<TaxonomyCodeMapping> crosswalkCodes = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_SOURCE_CODE_TO_TARGET_CODE, sourceCodeId);
       if (crosswalkCodes == null || crosswalkCodes.size() < 1) {
-        LOGGER.debug("Crosswalk codes for GUT Code : {} not present in DB", sourceCodeId);
+//        LOGGER.debug("Crosswalk codes for GUT Code : {} not present in DB", sourceCodeId);
         return null;
       }
       crosswalkArray = new JsonArray(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(crosswalkCodes));
@@ -131,7 +131,7 @@ public class TaxonomyRepositoryImpl extends BaseIndexRepo implements TaxonomyRep
   @Override
   public JsonObject getGdtMapping(String targetCodeId) {
 
-    LOGGER.debug("TaxonomyRepositoryImpl : getGdtMapping : " + targetCodeId);
+  //  LOGGER.debug("TaxonomyRepositoryImpl : getGdtMapping : " + targetCodeId);
     TaxonomyCodeMapping result = null;
     LazyList<TaxonomyCodeMapping> list = TaxonomyCodeMapping.where(TaxonomyCodeMapping.INTERNAL_TARGET_CODE_TO_SOURCE_CODE, targetCodeId);
 

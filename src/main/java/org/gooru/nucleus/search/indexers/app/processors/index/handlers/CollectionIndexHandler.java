@@ -1,21 +1,23 @@
 package org.gooru.nucleus.search.indexers.app.processors.index.handlers;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import org.gooru.nucleus.search.indexers.app.constants.*;
-import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
-import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
-import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
-import org.gooru.nucleus.search.indexers.app.services.IndexService;
-import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
-import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
-import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.gooru.nucleus.search.indexers.app.constants.*;
+import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
+import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
+import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
+import org.gooru.nucleus.search.indexers.app.services.DeleteService;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
+import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
+import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class CollectionIndexHandler extends BaseIndexHandler implements IndexHandler {
 
@@ -68,7 +70,7 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
       ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_DELETED_COLLECTION);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.COLLECTION_NOT_DELETED);
-      IndexService.instance().deleteDocuments(collectionId, indexName, getIndexType());
+      DeleteService.instance().deleteDocuments(collectionId, indexName, getIndexType());
     } catch (Exception ex) {
       LOGGER.error("CIH->deleteIndexedDocument : Delete collection from index failed for collection id : " + collectionId + " Exception : " + ex);
       throw new Exception(ex);
@@ -203,6 +205,5 @@ public class CollectionIndexHandler extends BaseIndexHandler implements IndexHan
       throw new Exception(ex);
     }
   }
-
 
 }

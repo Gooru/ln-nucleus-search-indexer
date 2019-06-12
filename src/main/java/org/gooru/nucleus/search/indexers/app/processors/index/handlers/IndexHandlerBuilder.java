@@ -26,4 +26,12 @@ public final class IndexHandlerBuilder {
     return new RubricIndexHandler();
   }
   
+  public static IndexHandler buildUnitIndexHandler(){
+    return new UnitIndexHandler();
+  }
+  
+  public static IndexHandler buildLessonIndexHandler(){
+    return new LessonIndexHandler();
+  }
+  
 }

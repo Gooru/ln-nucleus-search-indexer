@@ -31,4 +31,6 @@ public interface ContentRepository {
   Boolean isOEExistInCollection(String collectionId);
 
   JsonObject getUserCopiedResources(String userId);
+
+  JsonObject getContentsOfItem(String collectionId);
 }

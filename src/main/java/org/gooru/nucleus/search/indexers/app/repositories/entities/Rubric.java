@@ -18,4 +18,10 @@ public class Rubric extends Model {
   public static final String IS_RUBRIC = "is_rubric";
   public static final String FETCH_MAPPED_QUESTIONS =
           "select count(distinct content_id) from rubric r inner join content c on r.content_id = c.id where content_id is not null and r.is_deleted = false and c.is_deleted = false and parent_rubric_id =?::uuid";
+  
+  public static final String GET_RUBRICS_OF_COURSE = "course_id = ?::uuid and is_deleted = ?";
+  public static final String GET_RUBRICS_OF_UNIT = "unit_id = ?::uuid and is_deleted = ?";
+  public static final String GET_RUBRICS_OF_LESSON = "lesson_id = ?::uuid and is_deleted = ?";
+  public static final String GET_RUBRICS_OF_COLLECTION = "collection_id = ?::uuid and is_deleted = ?";
+
 }

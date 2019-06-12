@@ -32,6 +32,10 @@ public final class EventHandlerBuilder {
     return new UnitEventsHandler(eventJson);
   }
   
+  public static IndexEventHandler buildLessonHandler(JsonObject eventJson){
+    return new LessonEventsHandler(eventJson);
+  }
+  
   public static IndexEventHandler buildKeywordsHandler(JsonObject eventJson){
     return new KeywordEventsHandler(eventJson);
   }

@@ -106,15 +106,6 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       StatisticsEo statisticsEo = new StatisticsEo();
       // Set Collaborator
       String collaborator = source.getString(EntityAttributeConstants.COLLABORATOR, null);
-      Integer collaboratorCount  = 0;
-      if (collaborator != null) {
-        JsonArray collaboratorIds = new JsonArray(collaborator);
-        if (collaboratorIds != null) {
-          collectionEo.setCollaboratorIds(collaboratorIds);
-        }
-        collaboratorCount = collaboratorIds.size();
-      }
-      statisticsEo.setCollaboratorCount(collaboratorCount);
 
       // Set Contents of Collection
       List<Map> resourceMetaAsList = getCollectionRepo().getContentsOfCollection(id);
@@ -143,9 +134,19 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       CourseEo course = new CourseEo(); 
       course.setId(source.getString(IndexerConstants.COLLECTION_COURSE_ID, null));
       course.setTitle(source.getString(IndexerConstants.COLLECTION_COURSE, null));
-      collectionEo.setCourse(course.getCourseJson());
       Boolean isFeatured = false;
-      if(course.getId() != null) isFeatured = CourseRepository.instance().isFeatured(course.getId());
+      if (course.getId() != null || source.getString(EntityAttributeConstants.COURSE_ID) != null) {
+        JsonObject courseObj = CourseRepository.instance().getCourseById(source.getString(EntityAttributeConstants.COURSE_ID));
+        if (courseObj != null && !courseObj.isEmpty()) {
+          course.setId(courseObj.getString(EntityAttributeConstants.ID, null));
+          course.setTitle(courseObj.getString(EntityAttributeConstants.TITLE, null));
+          isFeatured =
+            courseObj.getString(EntityAttributeConstants.PUBLISH_STATUS).equalsIgnoreCase(IndexerConstants.PUBLISHED) ? true : false;
+          collaborator = courseObj.getString(EntityAttributeConstants.COLLABORATOR, null);
+        }
+      }
+      collectionEo.setCourse(course.getCourseJson());
+      setCollaborator(collectionEo, statisticsEo, collaborator);
       statisticsEo.setFeatured(isFeatured);
       
       // Set Statistics
@@ -235,7 +236,7 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       Map<String, Object> rankingFields = new HashMap<>();
       rankingFields.put(ScoreConstants.COLLECTION_REMIX_COUNT, remixCount);
       rankingFields.put(ScoreConstants.VIEW_COUNT, viewsCount);
-      rankingFields.put(ScoreConstants.COLLAB_COUNT, collaboratorCount);
+      rankingFields.put(ScoreConstants.COLLAB_COUNT, statisticsEo.getCollaboratorCount());
       rankingFields.put(ScoreConstants.RESOURCE_COUNT, resourceCount);
       rankingFields.put(ScoreConstants.QUESTION_COUNT, questionCount);
       rankingFields.put(ScoreConstants.HAS_NO_THUMBNAIL, statisticsEo.getHasNoThumbnail());
@@ -285,6 +286,18 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
 
     }
     return collectionEo.getCollectionJson();
+  }
+
+  private void setCollaborator(D collectionEo, StatisticsEo statisticsEo, String collaborator) {
+    Integer collaboratorCount  = 0;
+    if (collaborator != null) {
+      JsonArray collaboratorIds = new JsonArray(collaborator);
+      if (collaboratorIds != null) {
+        collectionEo.setCollaboratorIds(collaboratorIds);
+      }
+      collaboratorCount = collaboratorIds.size();
+    }
+    statisticsEo.setCollaboratorCount(collaboratorCount);
   }
 
   private void setCollectionContent(JsonArray collectionContents, @SuppressWarnings("rawtypes") Map resourceMetaMap) {

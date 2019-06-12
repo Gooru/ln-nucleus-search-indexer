@@ -51,6 +51,8 @@ class MessageProcessor implements Processor {
               processCourseEvents();
             } else if (contentFormat.equalsIgnoreCase(ContentFormat.UNIT.name())) {
               processUnitEvents();
+            } else if (contentFormat.equalsIgnoreCase(ContentFormat.LESSON.name())) {
+              processLessonEvents();
             } else if (contentFormat.equalsIgnoreCase(ContentFormat.RUBRIC.name())) {
               processRubricEvents();
             } else {
@@ -91,6 +93,10 @@ class MessageProcessor implements Processor {
   
   private void processUnitEvents(){
     EventHandlerBuilder.buildUnitHandler(eventBody).handleEvents();
+  }
+  
+  private void processLessonEvents(){
+    EventHandlerBuilder.buildLessonHandler(eventBody).handleEvents();
   }
   
   private void processCourseEvents(){

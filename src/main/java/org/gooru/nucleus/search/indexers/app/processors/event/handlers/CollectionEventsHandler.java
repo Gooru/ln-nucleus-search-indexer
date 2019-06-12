@@ -7,6 +7,9 @@ import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.exceptions.InvalidRequestException;
 import org.gooru.nucleus.search.indexers.app.processors.index.handlers.IndexHandler;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
+import org.gooru.nucleus.search.indexers.app.services.DeleteService;
+import org.gooru.nucleus.search.indexers.app.services.IndexService;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.ValidationUtil;
 
 import java.util.Iterator;
@@ -87,21 +90,15 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       JsonArray copiedResourceIds = ids.getJsonArray(IndexerConstants.RESOURCE_REFERENCES_IDS);
       
       if (questionIds != null && questionIds.size() > 0) {
-        Iterator<Object> iter = questionIds.iterator();
-        while (iter.hasNext()) {
-          String questionId = (String) iter.next();
-          questionAndResourceReferenceIndexHandler.deleteIndexedDocument(questionId);
-          LOGGER.debug("CEH->handleCopy : Deleted questions inside collection id : " + collectionId + " question id : " + questionId);
-        }
+        DeleteService.instance().bulkDeleteDocuments(questionIds,
+          IndexerConstants.TYPE_RESOURCE, IndexNameHolder.getIndexName(EsIndex.RESOURCE));
+        LOGGER.debug("CEH->handlePostDelete : Deleted questions inside collection id : " + collectionId);
       }
 
       if (copiedResourceIds != null && copiedResourceIds.size() > 0) {
-          Iterator<Object> iter = copiedResourceIds.iterator();
-          while (iter.hasNext()) {
-            String copiedResourceId = (String) iter.next();
-            questionAndResourceReferenceIndexHandler.deleteIndexedDocument(copiedResourceId);
-            LOGGER.debug("CEH->handleCopy : Deleted copiedResourceId inside collection id : " + collectionId + " copiedResource id : " + copiedResourceId);
-          }
+        DeleteService.instance().bulkDeleteDocuments(copiedResourceIds,
+          IndexerConstants.TYPE_RESOURCE, IndexNameHolder.getIndexName(EsIndex.RESOURCE));
+        LOGGER.debug("CEH->handlePostDelete : Deleted copiedResourceId inside collection id : " + collectionId);
       }
       
       if (resourceIds != null && resourceIds.size() > 0) {
@@ -109,8 +106,17 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
         while (iter.hasNext()) {
           String resourceId = (String) iter.next();
           resourceIndexHandler.decreaseCount(resourceId, ScoreConstants.USED_IN_COLLECTION_COUNT);
-          LOGGER.debug("CEH->handleCopy : Decreased used in collection count id : " + resourceId);
+          LOGGER.debug("CEH->handlePostDelete : Decreased used in collection count id : " + resourceId);
         }
+      }
+      
+      // Delete containing rubrics
+      JsonObject rubrics = getDeletedRubricIds(collectionId);
+      JsonArray rubricIds = rubrics.getJsonArray(IndexerConstants.RUBRIC_IDS);
+      if (rubricIds != null && rubricIds.size() > 0) {
+        DeleteService.instance().bulkDeleteDocuments(rubricIds,
+          IndexerConstants.TYPE_RUBRIC, IndexNameHolder.getIndexName(EsIndex.RUBRIC));
+        LOGGER.debug("CEH->handlePostDelete : Deleted rubrics inside collection id : " + collectionId);
       }
     } catch (Exception e) {
       LOGGER.error("CEH->handlePostDelete : Failed to re-index associated resources that is mapped to this collection : " + collectionId + "    Exception : " + e);
@@ -123,6 +129,13 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
     JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
     LOGGER.debug("CEH->getCollectionResources : Fetched resource data from DB, json : " + result.toString() + " Calling index service !!");
     ValidationUtil.rejectIfNull(result, ErrorMsgConstants.RESOURCE_IDS_NULL);
+    return result;
+  }
+  
+  private JsonObject getDeletedRubricIds(String collectionId) {
+    ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_DELETED_RUBRIC_IDS_OF_ITEM);
+    JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+    LOGGER.debug("CEH->getDeletedRubricIds : Fetched rubric data from DB, json : " + result.toString() + " Calling index service !!");
     return result;
   }
 
@@ -166,6 +179,15 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
           LOGGER.debug("CEH->handleCopy : Incremented used in collection count id : " + resourceId);
         }
       }
+      
+      // Index containing rubrics
+      JsonObject rubrics = getRubricsOfItem(collectionId);
+      JsonArray rubricIds = rubrics.getJsonArray("rubrics");
+      if (rubricIds != null && rubricIds.size() > 0) {
+        IndexService.instance().bulkIndexDocuments(rubricIds,
+          IndexerConstants.TYPE_RUBRIC, IndexNameHolder.getIndexName(EsIndex.RUBRIC));
+        LOGGER.debug("CREH->handleCopy : Indexed rubrics inside collection id : " + collectionId);
+      }
     } catch (Exception e) {
       LOGGER.error("Failed to handle copy event for collection id : " + collectionId, e);
       throw new Exception(e);
@@ -182,6 +204,13 @@ public class CollectionEventsHandler extends BaseEventHandler implements IndexEv
       LOGGER.error("Failed to update collaborator count for collection : " + collectionId);
       throw new Exception(e);
     }
+  }
+  
+  private JsonObject getRubricsOfItem(String collectionId) {
+    ProcessorContext context = new ProcessorContext(collectionId, ExecuteOperationConstants.GET_RUBRICS_OF_ITEM);
+    JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
+    LOGGER.debug("CREH->getRubricsOfItem : Fetched rubric data from DB, Calling index service !!");
+    return result;
   }
 
 }
