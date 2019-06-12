@@ -23,5 +23,13 @@ public interface LessonRepository {
   Integer getLessonCountByCourseId(String courseId);
   
   JsonObject getLessonById(String lessonId);
+  
+  JsonObject getDeletedLessonsOfCourse(String courseId);
+  
+  JsonObject getDeletedLessonsOfUnit(String unitId);
+  
+  JsonObject getLessonsOfCourse(String courseId);
+  
+  JsonObject getLessonsOfUnit(String unitId);
 
 }

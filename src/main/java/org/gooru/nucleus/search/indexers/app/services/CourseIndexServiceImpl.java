@@ -91,7 +91,7 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_COURSE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.COURSE_NOT_DELETED);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception e) {
       LOGGER.error("CISI-> Delete failed for course : " + key + " Exception " + e);
       throw new Exception(e);

@@ -145,10 +145,95 @@ public class FetchContentHandler implements DBHandler {
         case ExecuteOperationConstants.GET_GUT:
           result = TaxonomyCodeRepository.instance().getGutCode(context.getId());
           break;
+          
         case ExecuteOperationConstants.GET_USER_RESOURCE_REFERENCES:
           result = ContentRepository.instance().getUserCopiedResources(context.getId());
           break;  
           
+        case ExecuteOperationConstants.GET_ITEMS_OF_COURSE:
+          result = CollectionRepository.instance().getItemsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_ITEM_IDS_OF_COURSE:
+          result = CollectionRepository.instance().getDeletedItemIdsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_ITEM_IDS_OF_UNIT:
+          result = CollectionRepository.instance().getDeletedItemIdsOfUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_ITEM_IDS_OF_LESSON:
+          result = CollectionRepository.instance().getDeletedItemIdsOfLesson(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_UNIT_IDS_OF_COURSE:
+          result = UnitRepository.instance().getDeletedUnitsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_LESSON_IDS_OF_COURSE:
+          result = LessonRepository.instance().getDeletedLessonsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_LESSON_IDS_OF_UNIT:
+          result = LessonRepository.instance().getDeletedLessonsOfUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_RUBRIC_IDS_OF_COURSE:
+          result = RubricRepository.instance().getDeletedRubricsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_RUBRIC_IDS_OF_UNIT:
+          result = RubricRepository.instance().getDeletedRubricsOfUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_RUBRIC_IDS_OF_LESSON:
+          result = RubricRepository.instance().getDeletedRubricsOfLesson(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_DELETED_RUBRIC_IDS_OF_ITEM:
+          result = RubricRepository.instance().getDeletedRubricsOfItem(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_ITEMS_OF_UNIT:
+          result = CollectionRepository.instance().getItemsOfUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_ITEMS_OF_LESSON:
+          result = CollectionRepository.instance().getItemsOfLesson(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_UNITS_OF_COURSE:
+          result = UnitRepository.instance().getUnitsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_LESSONS_OF_COURSE:
+          result = LessonRepository.instance().getLessonsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_LESSONS_OF_UNIT:
+          result = LessonRepository.instance().getLessonsOfUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_RUBRICS_OF_COURSE:
+          result = RubricRepository.instance().getRubricsOfCourse(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_RUBRICS_OF_UNIT:
+          result = RubricRepository.instance().getRubricsOfUnit(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_RUBRICS_OF_LESSON:
+          result = RubricRepository.instance().getRubricsOfLesson(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_RUBRICS_OF_ITEM:
+          result = RubricRepository.instance().getRubricsOfItem(context.getId());
+          break;
+          
+        case ExecuteOperationConstants.GET_CONTENTS_OF_COLLECTION:
+          result = ContentRepository.instance().getContentsOfItem(context.getId());
+          break;
+                    
         default:
           LOGGER.error("Invalid operation type passed in, not able to handle");
           throw new InvalidRequestException();

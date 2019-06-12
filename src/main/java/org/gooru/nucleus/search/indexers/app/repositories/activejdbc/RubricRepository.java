@@ -13,4 +13,20 @@ public interface RubricRepository {
   JsonObject getDeletedRubric(String rubricId);
 
   Integer getQuestionCountByRubricId(String rubricId);
+
+  JsonObject getDeletedRubricsOfCourse(String courseId);
+
+  JsonObject getDeletedRubricsOfUnit(String unitId);
+
+  JsonObject getDeletedRubricsOfLesson(String lessonId);
+
+  JsonObject getDeletedRubricsOfItem(String collectionId);
+
+  JsonObject getRubricsOfCourse(String courseId);
+
+  JsonObject getRubricsOfUnit(String unitId);
+
+  JsonObject getRubricsOfLesson(String lessonId);
+
+  JsonObject getRubricsOfItem(String collectionId);
 }

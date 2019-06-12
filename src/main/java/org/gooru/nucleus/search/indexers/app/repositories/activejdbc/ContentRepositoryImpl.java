@@ -112,7 +112,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
   @Override
   public JsonObject getQuestionAndOriginalResourceIds(String collectionId) {
     LazyList<Content> contents = Content.find(Content.FETCH_QUESTION_AND_ORIGINAL_RESOURCE_IDS, collectionId);
-    if (contents.size() < 1) {
+    if (contents == null || contents.isEmpty()) {
       LOGGER.warn("Resources for collection : {} not present in DB", collectionId);
     }
     JsonObject result = new JsonObject();
@@ -220,5 +220,20 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
       }
     }
     return new JsonObject().put(IndexerConstants.RESOURCE_REFERENCES, contentArray);
+  }
+  
+  @Override
+  public JsonObject getContentsOfItem(String collectionId) {
+    JsonArray responseArray = new JsonArray();
+    LazyList<Content> contents = Content.where(Content.FETCH_CONTENTS_OF_ITEM, collectionId, false);
+    if(contents != null){
+      if (contents.size() < 1) {
+        LOGGER.warn("Contents for container : {} not present in DB", collectionId);
+      }
+      for(Content content : contents){
+        responseArray.add(content.toJson(false));
+      }
+    }
+    return new JsonObject().put("contents", responseArray);
   }
 }

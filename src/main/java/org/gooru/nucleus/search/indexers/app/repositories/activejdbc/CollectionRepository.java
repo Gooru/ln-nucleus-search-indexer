@@ -40,4 +40,16 @@ public interface CollectionRepository {
   JsonObject getCollectionById(String collectionId);
 
   Long getOATaskCount(String collectionId);
+
+  JsonObject getItemsOfCourse(String courseId);
+
+  JsonObject getDeletedItemIdsOfCourse(String courseId);
+
+  JsonObject getDeletedItemIdsOfUnit(String unitId);
+
+  JsonObject getDeletedItemIdsOfLesson(String lessonId);
+
+  JsonObject getItemsOfUnit(String unitId);
+
+  JsonObject getItemsOfLesson(String lessonId);
 }

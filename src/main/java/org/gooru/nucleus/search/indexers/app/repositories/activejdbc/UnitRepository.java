@@ -20,5 +20,9 @@ public interface UnitRepository {
   
   LazyList<Unit> getUnitByCourseId(String courseId);
   
+  JsonObject getDeletedUnitsOfCourse(String courseId);
+  
+  JsonObject getUnitsOfCourse(String courseId);
+  
 }
 

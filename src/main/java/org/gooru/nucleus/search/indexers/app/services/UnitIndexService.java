@@ -14,4 +14,8 @@ public interface UnitIndexService {
 
   void deleteIndexedUnit(String key, String type) throws Exception;
   
+  public void indexDocument(String id, JsonObject data) throws Exception;
+  
+  public void deleteDocument(String id) throws Exception;
+  
 }

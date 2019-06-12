@@ -9,6 +9,7 @@ import org.gooru.nucleus.search.indexers.app.repositories.entities.Collection;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
+import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +161,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     DB db = getDefaultDataSourceDBConnection();
     try {
       openDefaultDBConnection(db);
-      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_COURSE, courseId, false);
+      collections = Collection.where(Collection.GET_COLLECTIONS_OF_COURSE, courseId, false);
       if (collections.size() < 1) {
         LOGGER.warn("Collections for course: {} not present in DB", courseId);
       }
@@ -177,7 +178,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     DB db = getDefaultDataSourceDBConnection();
     try {
       openDefaultDBConnection(db);
-      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_LESSON, lessonId, false);
+      collections = Collection.where(Collection.GET_COLLECTIONS_OF_LESSON, lessonId, false);
       if (collections.size() < 1) {
         LOGGER.warn("Collections for lesson: {} not present in DB", lessonId);
       }
@@ -194,7 +195,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
     DB db = getDefaultDataSourceDBConnection();
     openDefaultDBConnection(db);
     try {
-      collections = Collection.where(Collection.GET_COLLECTION_COUNT_BY_UNIT, unitId, false);
+      collections = Collection.where(Collection.GET_COLLECTIONS_OF_UNIT, unitId, false);
       if (collections.size() < 1) {
         LOGGER.warn("Collections for unit: {} not present in DB", unitId);
       }
@@ -266,6 +267,94 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
       closeDefaultDBConn(db);
     }
     return count;
+  }
+  
+  @Override
+  public JsonObject getItemsOfCourse(String courseId) {
+    JsonArray collectionArray = new JsonArray();
+    List<Collection> collections = Collection.where(Collection.GET_COLLECTIONS_OF_COURSE, courseId, false);
+    if (collections != null){
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections not present in DB for course id: {} not present in DB", courseId);
+      }
+      for(Collection collection : collections){
+        collectionArray.add(collection.toJson(false));
+      }
+    }
+    return new JsonObject().put("collections", collectionArray);
+  }
+  
+  @Override
+  public JsonObject getDeletedItemIdsOfCourse(String courseId) {
+    LazyList<Collection> contents = Collection.where(Collection.GET_COLLECTIONS_OF_COURSE, courseId, true);
+    if (contents.size() < 1) {
+      LOGGER.warn("Collections for course : {} not present in DB", courseId);
+    }
+    JsonObject result = new JsonObject();
+    populateResponseWithRelatedIds(contents, result);
+    return result;
+  }
+  
+  @Override
+  public JsonObject getDeletedItemIdsOfUnit(String unitId) {
+    LazyList<Collection> contents = Collection.where(Collection.GET_COLLECTIONS_OF_UNIT, unitId, true);
+    if (contents.size() < 1) {
+      LOGGER.warn("Collections for unit : {} not present in DB", unitId);
+    }
+    JsonObject result = new JsonObject();
+    populateResponseWithRelatedIds(contents, result);
+    return result;
+  }
+  
+  @Override
+  public JsonObject getDeletedItemIdsOfLesson(String lessonId) {
+    LazyList<Collection> contents = Collection.where(Collection.GET_COLLECTIONS_OF_LESSON, lessonId, true);
+    if (contents.size() < 1) {
+      LOGGER.warn("Collections for lesson : {} not present in DB", lessonId);
+    }
+    JsonObject result = new JsonObject();
+    populateResponseWithRelatedIds(contents, result);
+    return result;
+  }
+  
+  @Override
+  public JsonObject getItemsOfUnit(String unitId) {
+    JsonArray collectionArray = new JsonArray();
+    List<Collection> collections = Collection.where(Collection.GET_COLLECTIONS_OF_UNIT, unitId, false);
+    if(collections != null){
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for unit : {} not present in DB", unitId);
+      }
+      for(Collection collection : collections){
+        collectionArray.add(collection.toJson(false));
+      }
+    }
+    return new JsonObject().put("collections", collectionArray);
+  }
+  
+  @Override
+  public JsonObject getItemsOfLesson(String lessonId) {
+    JsonArray collectionArray = new JsonArray();
+    List<Collection> collections = Collection.where(Collection.GET_COLLECTIONS_OF_LESSON, lessonId, false);
+    if(collections != null){
+      if (collections.size() < 1) {
+        LOGGER.warn("Collections for lesson : {} not present in DB", lessonId);
+      }
+      for(Collection collection : collections){
+        collectionArray.add(collection.toJson(false));
+      }
+    }
+    return new JsonObject().put("collections", collectionArray);
+  }
+
+  private void populateResponseWithRelatedIds(LazyList<Collection> contents, JsonObject result) {
+    JsonArray collectionIds = new JsonArray();
+    if (contents.size() > 0) {
+      for (Collection content : contents) {
+        collectionIds.add(Convert.toString(content.get(EntityAttributeConstants.ID)));
+      }
+    }
+    result.put(IndexerConstants.COLLECTION_IDS, collectionIds);
   }
 
 }

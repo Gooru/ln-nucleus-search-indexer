@@ -23,6 +23,8 @@ public class Lesson extends Model {
 
   public static final String IS_DELETED = "is_deleted";
   
-  public static final String GET_LESSON_BY_COURSE_ID = "course_id = ?::uuid and is_deleted = ?";
+  public static final String GET_LESSONS_OF_COURSE = "course_id = ?::uuid and is_deleted = ?";
+  
+  public static final String GET_LESSONS_OF_UNIT = "unit_id = ?::uuid and is_deleted = ?";
 
 }

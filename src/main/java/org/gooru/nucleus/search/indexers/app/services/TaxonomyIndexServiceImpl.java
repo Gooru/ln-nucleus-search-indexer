@@ -22,7 +22,7 @@ public class TaxonomyIndexServiceImpl implements TaxonomyIndexService {
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_TAXONOMY_CODE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.TAXONOMY_UNAVAILABLE);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("TISI->deleteIndexedTaxonomy : Delete from index failed for taxonomy id : " + key + " Exception : " + ex);
       throw new Exception(ex);

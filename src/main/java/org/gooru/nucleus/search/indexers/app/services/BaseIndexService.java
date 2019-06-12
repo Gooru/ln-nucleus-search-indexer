@@ -12,12 +12,15 @@ import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
+import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
+import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ContentInfoEio;
 import org.gooru.nucleus.search.indexers.app.index.model.CourseStatisticsEo;
 import org.gooru.nucleus.search.indexers.app.index.model.StatisticsEo;
+import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +35,110 @@ public class BaseIndexService {
   public static final String WATSON_TAGS_FIELD = "resourceInfo.watsonTags.";
   protected static final ObjectMapper SERIAILIZER = new ObjectMapper();
 
+  public static String getIndexByType(String type) {
+    switch (type) {
+    case IndexerConstants.TYPE_ASSESSMENT:
+    case IndexerConstants.TYPE_COLLECTION:
+    case IndexerConstants.ASSESSMENT_EXTERNAL:
+    case IndexerConstants.COLLECTION_EXTERNAL:
+    case IndexerConstants.TYPE_OFFLINE_ACTIVITY:
+      return IndexNameHolder.getIndexName(EsIndex.COLLECTION);
+    case IndexerConstants.TYPE_QUESTION:
+    case IndexerConstants.TYPE_RESOURCE:
+    case IndexerConstants.TYPE_RESOURCE_REFERENCE:
+      return IndexNameHolder.getIndexName(EsIndex.RESOURCE);
+    case IndexerConstants.TYPE_COURSE:
+      return IndexNameHolder.getIndexName(EsIndex.COURSE);
+    case IndexerConstants.TYPE_CROSSWALK:
+      return IndexNameHolder.getIndexName(EsIndex.CROSSWALK);
+    case IndexerConstants.TYPE_UNIT:
+      return IndexNameHolder.getIndexName(EsIndex.UNIT);
+    case IndexerConstants.TYPE_LESSON:
+      return IndexNameHolder.getIndexName(EsIndex.LESSON);
+    case IndexerConstants.TYPE_RUBRIC:
+      return IndexNameHolder.getIndexName(EsIndex.RUBRIC);
+    case IndexerConstants.TYPE_TAXONOMY:
+      return IndexNameHolder.getIndexName(EsIndex.TAXONOMY);
+    case IndexerConstants.TYPE_TENANT:
+      return IndexNameHolder.getIndexName(EsIndex.TENANT);
+    case IndexerConstants.TYPE_GUT:
+      return IndexNameHolder.getIndexName(EsIndex.GUT);
+    case IndexerConstants.TYPE_CONTENT_INFO:
+      return IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO);
+    default:
+      return null;
+    }
+  }
+
+  public static String getIndexTypeByType(String type) {
+    switch (type) {
+    case IndexerConstants.TYPE_ASSESSMENT:
+    case IndexerConstants.TYPE_COLLECTION:
+    case IndexerConstants.ASSESSMENT_EXTERNAL:
+    case IndexerConstants.COLLECTION_EXTERNAL:
+    case IndexerConstants.TYPE_OFFLINE_ACTIVITY:
+      return IndexerConstants.TYPE_COLLECTION;
+    case IndexerConstants.TYPE_QUESTION:
+    case IndexerConstants.TYPE_RESOURCE:
+    case IndexerConstants.TYPE_RESOURCE_REFERENCE:
+      return IndexerConstants.TYPE_RESOURCE;
+    case IndexerConstants.TYPE_COURSE:
+      return IndexerConstants.TYPE_COURSE;
+    case IndexerConstants.TYPE_CROSSWALK:
+      return IndexerConstants.TYPE_CROSSWALK;
+    case IndexerConstants.TYPE_UNIT:
+      return IndexerConstants.TYPE_UNIT;
+    case IndexerConstants.TYPE_LESSON:
+      return IndexerConstants.TYPE_LESSON;
+    case IndexerConstants.TYPE_RUBRIC:
+      return IndexerConstants.TYPE_RUBRIC;
+    case IndexerConstants.TYPE_TAXONOMY:
+      return IndexerConstants.TYPE_TAXONOMY;
+    case IndexerConstants.TYPE_TENANT:
+      return IndexerConstants.TYPE_TENANT;
+    case IndexerConstants.TYPE_GUT:
+      return IndexerConstants.TYPE_GUT;
+    case IndexerConstants.TYPE_CONTENT_INFO:
+      return IndexerConstants.TYPE_CONTENT_INFO;
+    default:
+      return null;
+    }
+  }
+
+  protected static String getExecuteOperation(String type) {
+    switch (type) {
+    case IndexerConstants.TYPE_RESOURCE:
+      return ExecuteOperationConstants.GET_RESOURCE;
+    case IndexerConstants.TYPE_QUESTION:
+    case IndexerConstants.TYPE_RESOURCE_REFERENCE:
+      return ExecuteOperationConstants.GET_QUESTION_OR_RESOURCE_REFERENCE;
+    case IndexerConstants.TYPE_COLLECTION:
+    case IndexerConstants.TYPE_ASSESSMENT:
+    case IndexerConstants.ASSESSMENT_EXTERNAL:
+    case IndexerConstants.COLLECTION_EXTERNAL:
+    case IndexerConstants.TYPE_OFFLINE_ACTIVITY:
+      return ExecuteOperationConstants.GET_COLLECTION;
+    case IndexerConstants.TYPE_COURSE:
+      return ExecuteOperationConstants.GET_COURSE;
+    case IndexerConstants.TYPE_CROSSWALK:
+      return ExecuteOperationConstants.GET_CROSSWALK;
+    case IndexerConstants.TYPE_UNIT:
+      return ExecuteOperationConstants.GET_UNIT;
+    case IndexerConstants.TYPE_LESSON:
+      return ExecuteOperationConstants.GET_LESSON;
+    case IndexerConstants.TYPE_RUBRIC:
+      return ExecuteOperationConstants.GET_RUBRIC;
+    case IndexerConstants.TYPE_TAXONOMY:
+      return ExecuteOperationConstants.GET_TAXONOMY_CODE;
+    case IndexerConstants.TYPE_TENANT:
+      return ExecuteOperationConstants.GET_TENANT;
+    case IndexerConstants.TYPE_GUT:
+      return ExecuteOperationConstants.GET_GUT;
+    default:
+      return null;
+    }
+  }
+  
   protected static int getInteger(Object value) {
     return value == null ? 0 : (int) value;
   }

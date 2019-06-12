@@ -22,7 +22,7 @@ public class ResourceIndexServiceImpl implements ResourceIndexService {
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_RESOURCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RESOURCE_NOT_DELETED);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("RISI->deleteIndexedResource : Delete resource from index failed for resource id : " + key + " Exception : " + ex);
       throw new Exception(ex);
@@ -36,7 +36,7 @@ public class ResourceIndexServiceImpl implements ResourceIndexService {
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_RESOURCE_REFERENCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.QUESTION_NOT_DELETED);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("RISI->deleteIndexedQuestion : Delete question from index failed for question id : " + key + " Exception : " + ex);
       throw new Exception(ex);
@@ -50,7 +50,7 @@ public class ResourceIndexServiceImpl implements ResourceIndexService {
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_RESOURCE_REFERENCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RESOURCE_REF_NOT_DELETED);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("RISI->deleteIndexedResourceReference : Delete resource from index failed for resource reference id : " + key + " Exception : " + ex);
       throw new Exception(ex);
