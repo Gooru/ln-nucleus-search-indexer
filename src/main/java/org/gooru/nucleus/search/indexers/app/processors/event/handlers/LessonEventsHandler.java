@@ -47,7 +47,6 @@ public class LessonEventsHandler extends BaseEventHandler implements IndexEventH
         case EventsConstants.ITEM_UPDATE:
           handleReIndex(lessonId);
           break;
-        //TODO delete associated collections and questions which are not already deleted 
         case EventsConstants.ITEM_DELETE:
           deleteLesson(lessonId);
           break;
@@ -71,15 +70,18 @@ public class LessonEventsHandler extends BaseEventHandler implements IndexEventH
     lessonIndexHandler.indexDocument(lessonId);
     courseIndexHandler.indexDocument(courseId);
     unitIndexHandler.indexDocument(unitId);
+    LOGGER.debug("LEH->handleReIndex : Indexed lesson! event name : " + eventName + " lesson id : " + lessonId);
   }
 
   private void deleteLesson(String lessonId) throws Exception {
+    long start = System.currentTimeMillis();
     String courseId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
     String unitId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_UNIT_GOORU_ID);
     lessonIndexHandler.deleteIndexedDocument(lessonId);
     courseIndexHandler.indexDocument(courseId);
     unitIndexHandler.indexDocument(unitId);
     handlePostDelete(lessonId);
+    LOGGER.info("LEH-> Time taken to delete lesson : {} : {} ms", lessonId, (System.currentTimeMillis() - start));
   }
   
   private void handlePostDelete(String lessonId) {

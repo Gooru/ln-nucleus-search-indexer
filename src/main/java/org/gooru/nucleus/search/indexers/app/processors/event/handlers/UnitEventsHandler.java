@@ -66,13 +66,16 @@ public class UnitEventsHandler extends BaseEventHandler implements IndexEventHan
     String courseId = eventJson.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT_DATA).getString(EventsConstants.EVT_PAYLOAD_OBJECT_DATA_COURSE_ID);
     unitIndexHandler.indexDocument(unitId);
     courseIndexHandler.indexDocument(courseId);
+    LOGGER.debug("UEH->handleReIndex : Indexed unit! event name : " + eventName + " unit id : " + unitId);
   }  
 
   private void deleteUnit(String unitId) throws Exception {
+    long start = System.currentTimeMillis();
     String courseId = eventJson.getJsonObject(EventsConstants.EVT_CONTEXT_OBJECT).getString(EventsConstants.EVT_PAYLOAD_COURSE_GOORU_ID);
     unitIndexHandler.deleteIndexedDocument(unitId);
     courseIndexHandler.indexDocument(courseId);
     handlePostDelete(unitId);
+    LOGGER.info("UEH-> Time taken to delete unit : {} : {} ms", unitId, (System.currentTimeMillis() - start));
   }
   
   private void handlePostDelete(String unitId) {

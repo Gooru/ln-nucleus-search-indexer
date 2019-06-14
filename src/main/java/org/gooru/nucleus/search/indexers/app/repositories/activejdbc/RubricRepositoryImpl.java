@@ -122,7 +122,7 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
         LOGGER.warn("Rubrics for course : {} not present in DB", courseId);
       }
       for(Rubric content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("rubrics", responseArray);
@@ -137,7 +137,7 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
         LOGGER.warn("Rubrics for unit : {} not present in DB", unitId);
       }
       for(Rubric content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("rubrics", responseArray);
@@ -152,7 +152,7 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
         LOGGER.warn("Rubrics for lesson : {} not present in DB", lessonId);
       }
       for(Rubric content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("rubrics", responseArray);
@@ -167,7 +167,7 @@ public class RubricRepositoryImpl extends BaseIndexRepo implements RubricReposit
         LOGGER.warn("Rubrics for container : {} not present in DB", collectionId);
       }
       for(Rubric content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("rubrics", responseArray);

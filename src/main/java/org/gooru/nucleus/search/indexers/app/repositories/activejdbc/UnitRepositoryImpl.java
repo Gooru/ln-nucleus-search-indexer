@@ -124,7 +124,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
         LOGGER.warn("Units for course : {} not present in DB", courseId);
       }
       for(Unit content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("units", responseArray);
