@@ -231,7 +231,7 @@ public class ContentRepositoryImpl extends BaseIndexRepo implements ContentRepos
         LOGGER.warn("Contents for container : {} not present in DB", collectionId);
       }
       for(Content content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("contents", responseArray);

@@ -86,10 +86,12 @@ public class CourseEventsHandler extends BaseEventHandler implements IndexEventH
   
   //TODO Need to clarify - remix count of original course / parent course should be incremented
   private void handleCopyCourse(String courseId) throws Exception {
+    long start = System.currentTimeMillis();
     String parentCourseId = getOriginalContentIdTargetObj(eventJson);
     courseIndexHandler.indexDocument(courseId);
     courseIndexHandler.increaseCount(parentCourseId, IndexFields.COURSE_REMIXCOUNT);
     handlePostCopy(courseId);
+    LOGGER.info("CREH-> Time taken to copy course : {} ms", (System.currentTimeMillis() - start));
     LOGGER.debug("CREH->handleCopy : Indexed course! event name : " + eventName + " course id : " + courseId);
   }
   

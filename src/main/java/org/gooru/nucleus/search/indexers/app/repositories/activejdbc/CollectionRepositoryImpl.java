@@ -278,7 +278,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
         LOGGER.warn("Collections not present in DB for course id: {} not present in DB", courseId);
       }
       for(Collection collection : collections){
-        collectionArray.add(collection.toJson(false));
+        collectionArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(collection));
       }
     }
     return new JsonObject().put("collections", collectionArray);
@@ -326,7 +326,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
         LOGGER.warn("Collections for unit : {} not present in DB", unitId);
       }
       for(Collection collection : collections){
-        collectionArray.add(collection.toJson(false));
+        collectionArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(collection));
       }
     }
     return new JsonObject().put("collections", collectionArray);
@@ -341,7 +341,7 @@ public class CollectionRepositoryImpl extends BaseIndexRepo implements Collectio
         LOGGER.warn("Collections for lesson : {} not present in DB", lessonId);
       }
       for(Collection collection : collections){
-        collectionArray.add(collection.toJson(false));
+        collectionArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(collection));
       }
     }
     return new JsonObject().put("collections", collectionArray);

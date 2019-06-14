@@ -171,7 +171,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
         LOGGER.warn("Lessons for course : {} not present in DB", courseId);
       }
       for(Lesson content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("lessons", responseArray);
@@ -186,7 +186,7 @@ public class LessonRepositoryImpl extends BaseIndexRepo implements LessonReposit
         LOGGER.warn("Lessons for unit : {} not present in DB", unitId);
       }
       for(Lesson content : contents){
-        responseArray.add(content.toJson(false));
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
       }
     }
     return new JsonObject().put("lessons", responseArray);
