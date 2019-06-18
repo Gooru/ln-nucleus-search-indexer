@@ -19,6 +19,6 @@ public class Unit extends Model {
 
   public static final String IS_DELETED = "is_deleted";
   
-  public static final String GET_UNIT_BY_COURSE_ID = "course_id = ?::uuid and is_deleted = ?";
+  public static final String GET_UNITS_OF_COURSE = "course_id = ?::uuid and is_deleted = ?";
 
 }

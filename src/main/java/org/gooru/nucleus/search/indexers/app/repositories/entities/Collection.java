@@ -29,11 +29,11 @@ public class Collection extends Model {
   
   public static final String IS_DELETED = "is_deleted";
   
-  public static final String GET_COLLECTION_COUNT_BY_COURSE = "course_id = ?::uuid and is_deleted = ?";
+  public static final String GET_COLLECTIONS_OF_COURSE = "course_id = ?::uuid and is_deleted = ?";
 
-  public static final String GET_COLLECTION_COUNT_BY_UNIT = "unit_id = ?::uuid and is_deleted = ?";
+  public static final String GET_COLLECTIONS_OF_UNIT = "unit_id = ?::uuid and is_deleted = ?";
 
-  public static final String GET_COLLECTION_COUNT_BY_LESSON = "lesson_id = ?::uuid and is_deleted = ?";
+  public static final String GET_COLLECTIONS_OF_LESSON = "lesson_id = ?::uuid and is_deleted = ?";
   
   public static final String GET_USED_IN_COURSE_COUNT = "select count(distinct course_id) from collection where parent_collection_id = ?::uuid and is_deleted = false";
 

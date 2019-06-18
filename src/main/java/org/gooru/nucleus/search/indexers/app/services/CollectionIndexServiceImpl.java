@@ -22,7 +22,7 @@ public class CollectionIndexServiceImpl implements CollectionIndexService {
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_DELETED_COLLECTION);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.COLLECTION_NOT_DELETED);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("CISI->deleteIndexedCollection : Delete collection from index failed for collection id : " + key + " Exception : " + ex);
       throw new Exception(ex);

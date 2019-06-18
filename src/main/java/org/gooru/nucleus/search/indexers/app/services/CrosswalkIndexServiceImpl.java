@@ -22,7 +22,7 @@ public class CrosswalkIndexServiceImpl implements CrosswalkIndexService {
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_CROSSWALK);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.CROSSWALK_UNAVAILABLE);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("CwISI->deleteIndexedCrosswalk : Delete from index failed for crosswalk id : " + key + " Exception : " + ex);
       throw new Exception(ex);

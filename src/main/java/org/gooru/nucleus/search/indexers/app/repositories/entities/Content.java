@@ -32,4 +32,15 @@ public class Content extends Model {
   public static final String FETCH_USER_CONTENTS = "content_format = ?::content_format_type and (creator_id = ?::uuid or original_creator_id = ?::uuid) and is_deleted = ?";
   public static final String FETCH_TWENTY_ONE_CENTURY_SKILL = "select * from twenty_one_century_skill where id = any(string_to_array(?,',')::integer[]);";
   public static final String GET_OE_QUESTION_OF_COLLECTION = "content_subformat = 'open_ended_question' and is_deleted = false and collection_id = ?::uuid";
+  
+  public static final String FETCH_CONTENTS_OF_COURSE = "course_id = ?::uuid and is_deleted = ?";
+  
+  public static final String FETCH_CONTENTS_OF_UNIT = "unit_id = ?::uuid and is_deleted = ?";
+
+  public static final String FETCH_CONTENTS_OF_LESSON = "lesson_id = ?::uuid and is_deleted = ?";
+  
+  public static final String FETCH_CONTENTS_OF_ITEM = "collection_id = ?::uuid and is_deleted = ?";
+
+
+
 }

@@ -17,11 +17,15 @@ public final class EventsConstants {
   public static final String EVT_PAYLOAD_PARENT_GOORU_ID = "parentGooruId";
   public static final String EVT_PAYLOAD_CONTENT_GOORU_ID = "contentGooruId";
   public static final String EVT_PAYLOAD_COURSE_GOORU_ID = "courseGooruId";
+  public static final String EVT_PAYLOAD_UNIT_GOORU_ID = "unitGooruId";
+  public static final String EVT_PAYLOAD_LESSON_GOORU_ID = "lessonGooruId";
   public static final String EVT_PAYLOAD_COLLABORATORS = "collaborators";
   public static final String EVT_REF_PARENT_GOORU_IDS = "referenceParentGooruIds";
   public static final String EVT_PAYLOAD_USER_ID = "id";
   public static final String EVT_PAYLOAD_OBJECT_DATA_COLLECTION_ID = "collection_id";
   public static final String EVT_PAYLOAD_OBJECT_DATA_COURSE_ID = "course_id";
+  public static final String EVT_PAYLOAD_OBJECT_DATA_UNIT_ID = "unit_id";
+  public static final String EVT_PAYLOAD_OBJECT_DATA_LESSON_ID = "lesson_id";
   public static final String EVT_PAYLOAD_OBJECT_DATA_ORIGINAL_CONTENT_ID = "original_content_id";
 
   public static final String ITEM_CREATE = "item.create";

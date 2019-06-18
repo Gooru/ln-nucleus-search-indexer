@@ -2,19 +2,23 @@ package org.gooru.nucleus.search.indexers.app.repositories.activejdbc;
 
 import java.util.List;
 
+import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
+import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Course;
 import org.gooru.nucleus.search.indexers.app.repositories.entities.Unit;
 import org.gooru.nucleus.search.indexers.processors.repositories.activejdbc.formatter.JsonFormatterBuilder;
 import org.javalite.activejdbc.DB;
 import org.javalite.activejdbc.LazyList;
+import org.javalite.common.Convert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CourseRepositoryImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(UnitRepositoryImpl.class);
   private static final String UUID_TYPE = "uuid";
 
   @Override
@@ -88,7 +92,7 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     DB db = getDefaultDataSourceDBConnection();
     try{
       openDefaultDBConnection(db);
-      lessons = Unit.where(Unit.GET_UNIT_BY_COURSE_ID, courseId, false);
+      lessons = Unit.where(Unit.GET_UNITS_OF_COURSE, courseId, false);
       if (lessons.size() < 1) {
         LOGGER.warn("Units for course: {} not present in DB", courseId);
       }
@@ -98,6 +102,42 @@ public class UnitRepositoryImpl extends BaseIndexRepo implements UnitRepository 
     }
     closeDefaultDBConn(db);
     return lessons;
+  }
+  
+  @Override
+  public JsonObject getDeletedUnitsOfCourse(String courseId) {
+    LazyList<Unit> contents = Unit.where(Unit.GET_UNITS_OF_COURSE, courseId, true);
+    if (contents.size() < 1) {
+      LOGGER.warn("Units for course : {} not present in DB", courseId);
+    }
+    JsonObject result = new JsonObject();
+    populateResponseWithRelatedIds(contents, result);
+    return result;
+  }
+  
+  @Override
+  public JsonObject getUnitsOfCourse(String courseId) {
+    JsonArray responseArray = new JsonArray();
+    LazyList<Unit> contents = Unit.where(Unit.GET_UNITS_OF_COURSE, courseId, false);
+    if(contents != null){
+      if (contents.size() < 1) {
+        LOGGER.warn("Units for course : {} not present in DB", courseId);
+      }
+      for(Unit content : contents){
+        responseArray.add(JsonFormatterBuilder.buildSimpleJsonFormatter(false, null).toJson(content));
+      }
+    }
+    return new JsonObject().put("units", responseArray);
+  }
+
+  private void populateResponseWithRelatedIds(LazyList<Unit> contents, JsonObject result) {
+    JsonArray lessonIds = new JsonArray();
+    if (contents.size() > 0) {
+      for (Unit content : contents) {
+        lessonIds.add(Convert.toString(content.get(EntityAttributeConstants.UNIT_ID)));
+      }
+    }
+    result.put(IndexerConstants.UNIT_IDS, lessonIds);
   }
   
 }

@@ -2,6 +2,7 @@ package org.gooru.nucleus.search.indexers.bootstrap;
 
 import org.gooru.nucleus.search.indexers.app.constants.HttpConstants;
 import org.gooru.nucleus.search.indexers.app.constants.RouteConstants;
+import org.gooru.nucleus.search.indexers.app.services.DeleteService;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.gooru.nucleus.search.indexers.app.services.PopulateDataService;
 import org.slf4j.Logger;
@@ -122,7 +123,7 @@ public class IndexBuilderVerticle extends AbstractVerticle {
       String type = context.request().getParam(RouteConstants.TYPE);
       if (indexableId != null) {
         try {
-          IndexService.instance().deleteDocuments(indexableId, type);
+          DeleteService.instance().deleteDocuments(indexableId, type);
           future.complete("Deleted and Logged");
         } catch (Exception e) {
           future.fail(e);

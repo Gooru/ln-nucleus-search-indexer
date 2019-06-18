@@ -16,6 +16,7 @@ import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
+import org.gooru.nucleus.search.indexers.app.services.DeleteService;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
@@ -58,7 +59,7 @@ public class QuestionAndResourceReferenceIndexHandler extends BaseIndexHandler i
       ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_QUESTION_OR_RESOURCE_REFERENCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.QUESTION_NOT_DELETED);
-      IndexService.instance().deleteDocuments(resourceId, indexName, getIndexType());
+      DeleteService.instance().deleteDocuments(resourceId, indexName, getIndexType());
     } catch (Exception ex) {
       LOGGER.error("QIH->deleteIndexedDocument : Delete question from index failed for question id : " + resourceId + " Exception : " + ex);
       throw new Exception(ex);
@@ -222,4 +223,5 @@ public class QuestionAndResourceReferenceIndexHandler extends BaseIndexHandler i
       IndexService.instance().indexDocumentByField(id, indexName, getIndexType(), contentSource, contentInfoSource);
     }
   }
+
 }

@@ -176,6 +176,12 @@ public final class IndexerConstants {
   
   public static final String PRIMARY_LANGUAGE = "primaryLanguage";
   
+  public static final String LESSON_IDS = "lesson_ids";
+
+  public static final String UNIT_IDS = "unit_ids";
+  
+  public static final String RUBRIC_IDS = "rubric_ids";
+  
   public enum LMContentFormat {
 
     RESOURCE("resource"),

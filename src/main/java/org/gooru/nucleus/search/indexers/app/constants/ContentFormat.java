@@ -10,6 +10,7 @@ public enum ContentFormat {
   QUESTION("question"),
   COURSE("course"),
   UNIT("unit"),
+  LESSON("lesson"),
   RUBRIC("rubric");
 
   final String contentFormat;

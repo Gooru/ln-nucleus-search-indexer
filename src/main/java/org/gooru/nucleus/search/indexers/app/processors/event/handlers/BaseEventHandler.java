@@ -109,4 +109,12 @@ public class BaseEventHandler {
     return IndexHandlerBuilder.buildRubricIndexHandler();
   }
   
+  protected IndexHandler getUnitIndexHandler(){
+    return IndexHandlerBuilder.buildUnitIndexHandler();
+  }
+  
+  protected IndexHandler getLessonIndexHandler(){
+    return IndexHandlerBuilder.buildLessonIndexHandler();
+  }
+  
 }

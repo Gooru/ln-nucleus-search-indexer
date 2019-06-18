@@ -16,6 +16,7 @@ import org.gooru.nucleus.search.indexers.app.constants.ScoreConstants;
 import org.gooru.nucleus.search.indexers.app.index.model.ScoreFields;
 import org.gooru.nucleus.search.indexers.app.processors.ProcessorContext;
 import org.gooru.nucleus.search.indexers.app.processors.repositories.RepoBuilder;
+import org.gooru.nucleus.search.indexers.app.services.DeleteService;
 import org.gooru.nucleus.search.indexers.app.services.IndexService;
 import org.gooru.nucleus.search.indexers.app.utils.IndexNameHolder;
 import org.gooru.nucleus.search.indexers.app.utils.PCWeightUtil;
@@ -58,7 +59,7 @@ public class ResourceIndexHandler extends BaseIndexHandler implements IndexHandl
       ProcessorContext context = new ProcessorContext(resourceId, ExecuteOperationConstants.GET_DELETED_RESOURCE);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.RESOURCE_NOT_DELETED);
-      IndexService.instance().deleteDocuments(resourceId, indexName, getIndexType());
+      DeleteService.instance().deleteDocuments(resourceId, indexName, getIndexType());
     } catch (Exception ex) {
       LOGGER.error("CIH->deleteIndexedDocument : Delete resource from index failed for resource id : " + resourceId + " Exception : " + ex);
       throw new Exception(ex);

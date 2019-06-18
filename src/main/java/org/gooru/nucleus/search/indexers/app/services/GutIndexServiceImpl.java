@@ -22,7 +22,7 @@ public class GutIndexServiceImpl implements GutIndexService {
       ProcessorContext context = new ProcessorContext(key, ExecuteOperationConstants.GET_GUT);
       JsonObject result = RepoBuilder.buildIndexerRepo(context).getIndexDataContent();
       ValidationUtil.rejectIfNotDeleted(result, ErrorMsgConstants.GUT_UNAVAILABLE);
-      IndexService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
+      DeleteService.instance().deleteDocuments(key, EsIndexServiceImpl.getIndexByType(type), EsIndexServiceImpl.getIndexTypeByType(type));
     } catch (Exception ex) {
       LOGGER.error("GISI->deleteIndexedGut : Delete from index failed for gut id : " + key + " Exception : " + ex);
       throw new Exception(ex);
