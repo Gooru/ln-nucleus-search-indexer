@@ -46,6 +46,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
   private static final int HOUR_OF_DAY = 4;
   private static final int MINUTES = 21600;
   private static final String HOST = "http://staging.gooru.org";
+  private static final String SEARCH_HOST = "http://localhost:8080";
   private static final Vertx vertx = Vertx.vertx();
 
   private static final WebClient client = WebClient.create(vertx);
@@ -71,6 +72,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
     configData.put("password", params.getString("password", "test1"));
     configData.put("host", params.getString("host", HOST));
     configData.put("clientData", params.getJsonObject("clientData"));
+    configData.put("searchHost", params.getString("searchHost", SEARCH_HOST));
 
     MonthlyTimer.schedule(new Runnable() {
       public void run() {
@@ -123,7 +125,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
 
   private void processGUTCodes(String token, JsonArray gutCodesArray, JsonObject configData) {
     LOGGER.info("token : " + token);
-    String host = configData.getString("host");
+    String host = configData.getString("searchHost");
     for (Object gutCode : gutCodesArray) {
       try {
         JsonObject taxonomyCodeObject = (JsonObject) gutCode;
