@@ -43,8 +43,7 @@
                "analyzer":"full_text"
             },
             "searchquery":{
-               "type":"text",
-               "index":"not_analyzed"
+               "type":"keyword"
             }
          }
       }

@@ -30,10 +30,10 @@
   },
   "indexTrackerDataSource" : {
   	"nucleus.ds.type" : "hikari",
-  	"username" : "search",
-  	"password" : "search",
+  	"username" : "nucleus",
+  	"password" : "nucleus",
   	"autoCommit" : false,
-  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/search",
+  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/reports_db",
   	"maximumPoolSize" : 5,
   	"database" : "reports_db"
   },
@@ -82,6 +82,7 @@
         "username" : "USERNAME",
         "password" : "PASSWORD",
         "host ": "http://staging.gooru.org",
+        "searchHost ": "http://localhost:8080",
         "clientData" : {
         	"client_key":"CLIENT_KEY",
         	"client_id":"CLIENT_ID",
