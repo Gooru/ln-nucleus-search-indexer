@@ -15,7 +15,7 @@ public enum EsIndex {
   SEARCH_QUERY("searchquery"),
   DICTIONARY("dictionary"),
   USER("user"),
-  CONTENT_PROVIDER("content_provider", new String[]{"publisher", "aggregator"}),
+  CONTENT_PROVIDER("content_provider", new String[]{"publisher"}),
   CONTENT_INFO("contentinfo"),
   COURSE("course"),
   CROSSWALK("crosswalk"),

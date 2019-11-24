@@ -3,19 +3,11 @@
       "translog": {
         "flush_threshold_size": "200mb"
       },
-      "merge": {
-        "policy": {
-          "floor_segment": "2mb",
-          "max_merge_at_once": "10",
-          "segments_per_tier": "10"
-        }
-      },
       "analysis": {
         "analyzer": {
           "gooru_kstem": {
             "type": "custom",
             "filter": [
-              "standard",
               "lowercase",
               "stop",
               "kstem"
@@ -37,7 +29,22 @@
               "trim"
             ],
             "tokenizer": "whitespace"
+          },
+          "snowball_lowercase": {
+            "type":"custom",
+            "filter": [
+              "lowercase",
+              "my_snow",
+              "stop"
+            ],
+            "tokenizer": "standard"
           }
+        },
+        "filter" : {
+                "my_snow" : {
+                    "type" : "snowball",
+                    "language" : "English"
+                }
         }
       },
       "number_of_shards": "11",

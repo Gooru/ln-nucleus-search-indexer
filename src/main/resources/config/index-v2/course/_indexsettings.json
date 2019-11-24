@@ -15,7 +15,6 @@
                   "type":"custom",
                   "tokenizer":"standard",
                   "filter":[
-                     "standard",
                      "lowercase",
                      "stop",
                      "kstem"
@@ -26,7 +25,6 @@
       }
    },
    "mappings":{
-      "course":{
          "properties":{
             "all":{
                "type":"text"
@@ -831,5 +829,4 @@
             }
          }
       }
-   }
 }

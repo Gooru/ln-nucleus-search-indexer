@@ -16,7 +16,6 @@
       }
    },
    "mappings":{
-      "user":{
          "properties":{
             "all":{
                "type":"text"
@@ -241,5 +240,4 @@
             }
          }
       }
-   }
 }

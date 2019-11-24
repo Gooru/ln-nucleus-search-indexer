@@ -103,7 +103,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   public Map<String, Object> getDocument(String id, String indexName, String type) {
     GetResponse response = null;
     try {
-      response = get(indexName, getIndexTypeByType(type), id);
+      response = get(indexName, id);
     } catch (Exception e) {
       LOGGER.info("Document not found in index for id : {} : EXCEPTION : {}", id, e.getMessage());
     }
@@ -112,7 +112,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   
   @Override
   public SearchResponse getDocument(String indexName, String type, SearchSourceBuilder sourceBuilder) throws IOException {
-    SearchResponse result = search(indexName, type, sourceBuilder);
+    SearchResponse result = search(indexName, sourceBuilder);
     return result;
   }
 

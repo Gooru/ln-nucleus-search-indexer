@@ -23,10 +23,9 @@
          },
          "filter":{
             "name_ngrams":{
-               "side":"front",
                "max_gram":30,
                "min_gram":1,
-               "type":"edgeNGram"
+               "type":"edge_ngram"
             },
             "split_words_by_special_character":{
                "type":"word_delimiter",

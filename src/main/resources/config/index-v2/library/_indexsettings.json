@@ -16,7 +16,6 @@
       }
    },
    "mappings":{
-      "library":{
          "properties":{
             "collections":{
                "type":"keyword"
@@ -72,5 +71,4 @@
             }
          }
       }
-   }
 }

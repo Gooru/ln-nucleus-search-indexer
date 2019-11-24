@@ -1,5 +1,4 @@
 {
-   "user":{
       "properties":{
          "all":{
             "type":"text"
@@ -211,5 +210,4 @@
             "type":"keyword"
          }
       }
-   }
 }

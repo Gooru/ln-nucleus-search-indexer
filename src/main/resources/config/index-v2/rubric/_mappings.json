@@ -1,5 +1,4 @@
 {
-   "rubric":{
       "properties":{
          "all":{
             "type":"text"
@@ -924,5 +923,4 @@
             }
          }
       }
-   }
 }

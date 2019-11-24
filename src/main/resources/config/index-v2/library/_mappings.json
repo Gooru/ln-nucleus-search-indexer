@@ -1,5 +1,4 @@
 {
-   "library":{
       "properties":{
          "collections":{
             "type":"keyword"
@@ -54,5 +53,4 @@
             "type":"keyword"
          }
       }
-   }
 }

@@ -38,7 +38,7 @@ ext {
     hikariVersion = '2.7.6'
     postgresVersion = '9.4-1206-jdbc42'
     activejdbcVersion = '1.4.11'
-    elasticsearchVersion = '5.6.0'
+    elasticsearchVersion = '7.4.2'
     kafkaVersion = '0.10.1.1'
     logbackVersion = '1.2.3'
     log4jVersion='2.8'

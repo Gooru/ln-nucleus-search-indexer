@@ -13,7 +13,6 @@
       }
    },
    "mappings":{
-      "searchquery":{
          "properties":{
             "indexType":{
                "type":"text"
@@ -47,5 +46,4 @@
             }
          }
       }
-   }
 }

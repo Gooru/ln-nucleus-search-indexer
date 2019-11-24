@@ -16,7 +16,6 @@
       }
    },
    "mappings":{
-      "dictionary":{
          "properties":{
             "definitions":{
                "type":"text",
@@ -42,5 +41,4 @@
             }
          }
       }
-   }
 }

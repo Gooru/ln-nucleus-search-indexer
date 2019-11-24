@@ -24,7 +24,6 @@
                "gooru_kstem":{
                   "type":"custom",
                   "filter":[
-                     "standard",
                      "lowercase",
                      "stop",
                      "kstem"
@@ -37,14 +36,26 @@
                   ],
                   "type":"custom",
                   "tokenizer":"keyword"
+               },
+               "snowball_lowercase":{
+                  "type":"custom",
+                  "filter":[
+                     "lowercase",
+                     "my_snow",
+                     "stop"
+                  ],
+                  "tokenizer":"standard"
                }
             },
-            "filter":{
+            "filter" : {
+                "my_snow" : {
+                    "type" : "snowball",
+                    "language" : "English"
+                },
                "name_ngrams":{
-                  "side":"front",
                   "max_gram":30,
                   "min_gram":1,
-                  "type":"edgeNGram"
+                  "type":"edge_ngram"
                },
                "split_words_by_special_character":{
                   "type":"word_delimiter",
@@ -63,7 +74,6 @@
       }
    },
    "mappings":{
-      "taxonomy":{
          "properties":{
             "all":{
                "type":"text"
@@ -94,7 +104,7 @@
                "fields":{
                   "titleSnowball":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   },
                   "titleKStem":{
                      "type":"text",
@@ -115,7 +125,7 @@
                   },
                   "descriptionSnowball":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   }
                },
                "copy_to":[
@@ -156,7 +166,7 @@
                      "fields":{
                         "titleSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         },
                         "titleKStem":{
                            "type":"text",
@@ -182,7 +192,7 @@
                            "fields":{
                               "titleSnowball":{
                                  "type":"text",
-                                 "analyzer":"snowball"
+                                 "analyzer":"snowball_lowercase"
                               },
                               "titleKStem":{
                                  "type":"text",
@@ -220,7 +230,7 @@
                               },
                               "descriptionSnowball":{
                                  "type":"text",
-                                 "analyzer":"snowball"
+                                 "analyzer":"snowball_lowercase"
                               }
                            }
                         },
@@ -266,7 +276,7 @@
                                  "fields":{
                                     "usernameDisplaySnowball":{
                                        "type":"text",
-                                       "analyzer":"snowball"
+                                       "analyzer":"snowball_lowercase"
                                     }
                                  }
                               },
@@ -312,7 +322,7 @@
                                  "fields":{
                                     "usernameDisplaySnowball":{
                                        "type":"text",
-                                       "analyzer":"snowball"
+                                       "analyzer":"snowball_lowercase"
                                     }
                                  }
                               },
@@ -358,7 +368,7 @@
                               },
                               "descriptionSnowball":{
                                  "type":"text",
-                                 "analyzer":"snowball"
+                                 "analyzer":"snowball_lowercase"
                               }
                            }
                         },
@@ -404,7 +414,7 @@
                                  "fields":{
                                     "usernameDisplaySnowball":{
                                        "type":"text",
-                                       "analyzer":"snowball"
+                                       "analyzer":"snowball_lowercase"
                                     }
                                  }
                               },
@@ -450,7 +460,7 @@
                                  "fields":{
                                     "usernameDisplaySnowball":{
                                        "type":"text",
-                                       "analyzer":"snowball"
+                                       "analyzer":"snowball_lowercase"
                                     }
                                  }
                               },
@@ -534,7 +544,7 @@
                                  "fields":{
                                     "usernameDisplaySnowball":{
                                        "type":"text",
-                                       "analyzer":"snowball"
+                                       "analyzer":"snowball_lowercase"
                                     }
                                  }
                               },
@@ -580,7 +590,7 @@
                                  "fields":{
                                     "usernameDisplaySnowball":{
                                        "type":"text",
-                                       "analyzer":"snowball"
+                                       "analyzer":"snowball_lowercase"
                                     }
                                  }
                               },
@@ -621,7 +631,7 @@
                      "fields":{
                         "titleSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         },
                         "titleKStem":{
                            "type":"text",
@@ -642,7 +652,7 @@
                         },
                         "descriptionSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      },
                      "copy_to":[
@@ -669,7 +679,7 @@
                      "fields":{
                         "titleSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         },
                         "titleKStem":{
                            "type":"text",
@@ -701,7 +711,7 @@
                      "fields":{
                         "titleSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         },
                         "titleKStem":{
                            "type":"text",
@@ -729,7 +739,7 @@
                      "fields":{
                         "titleSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         },
                         "titleKStem":{
                            "type":"text",
@@ -775,7 +785,7 @@
                "fields":{
                   "keywordsSnowball":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   },
                   "keywordsKStem":{
                      "type":"text",
@@ -788,5 +798,4 @@
             }
          }
       }
-   }
 }

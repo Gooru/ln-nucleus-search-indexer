@@ -1,5 +1,4 @@
 {
-   "crosswalk":{
       "properties":{
          "indexType":{
             "type":"text"
@@ -38,5 +37,4 @@
             }
          }
       }
-   }
 }

@@ -15,7 +15,6 @@
                   "type":"custom",
                   "tokenizer":"standard",
                   "filter":[
-                     "standard",
                      "lowercase",
                      "stop",
                      "kstem"
@@ -28,7 +27,6 @@
       "refresh_interval":"1s"
    },
    "mappings":{
-      "tenant":{
          "properties":{
             "id":{
                "type":"keyword"
@@ -82,5 +80,4 @@
             }
          }
       }
-   }
 }            

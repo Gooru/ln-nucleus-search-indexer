@@ -1,5 +1,4 @@
 {
-   "contentinfo":{
       "properties":{
          "id":{
             "type":"keyword"
@@ -52,5 +51,4 @@
             }
          }
       }
-   }
 }

@@ -4,6 +4,8 @@ import java.util.regex.Pattern;
 
 public final class IndexerConstants {
 
+  public static final String _DOC = "_doc";
+  
   public static final String TYPE_RESOURCE = "resource";
 
   public static final String TYPE_QUESTION = "question";

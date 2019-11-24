@@ -298,27 +298,27 @@ public class BaseIndexService {
   }
 
   protected DeleteResponse deleteFromIndex(String indexName, String indexType, String id) throws IOException {
-    DeleteRequest deleteRequest = new DeleteRequest(indexName, indexType, id);
+    DeleteRequest deleteRequest = new DeleteRequest(indexName, IndexerConstants._DOC, id);
     return getHighLevelClient().delete(deleteRequest, RequestOptions.DEFAULT);
   }
   
   protected IndexResponse index(String indexName, String indexType, String id, String source) throws IOException {
-    IndexRequest indexRequest = new IndexRequest(indexName, indexType, id).source(source, XContentType.JSON); 
+    IndexRequest indexRequest = new IndexRequest(indexName, IndexerConstants._DOC, id).source(source, XContentType.JSON); 
     return getHighLevelClient().index(indexRequest, RequestOptions.DEFAULT);
   }
   
   protected UpdateResponse update(String indexName, String indexType, String id, Map<String, Object> source) throws IOException {
-    UpdateRequest updateRequest = new UpdateRequest(indexName, indexType, id).doc(source);
+    UpdateRequest updateRequest = new UpdateRequest(indexName, IndexerConstants._DOC, id).doc(source);
     return getHighLevelClient().update(updateRequest, RequestOptions.DEFAULT);
   }
   
-  protected GetResponse get(String indexName, String indexType, String id) throws IOException {
-    GetRequest getRequest = new GetRequest(indexName, indexType, id);
+  protected GetResponse get(String indexName, String id) throws IOException {
+    GetRequest getRequest = new GetRequest(indexName).id(id);
     return getHighLevelClient().get(getRequest, RequestOptions.DEFAULT);
   }
   
-  protected SearchResponse search(String indexName, String type, SearchSourceBuilder sourceBuilder) throws IOException {
-    SearchRequest searchRequest = new SearchRequest(indexName).types(type).source(sourceBuilder);
+  protected SearchResponse search(String indexName, SearchSourceBuilder sourceBuilder) throws IOException {
+    SearchRequest searchRequest = new SearchRequest(indexName).source(sourceBuilder);
     return getHighLevelClient().search(searchRequest, RequestOptions.DEFAULT);
   }
   

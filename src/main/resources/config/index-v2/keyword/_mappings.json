@@ -1,5 +1,4 @@
 {
-   "keyword":{
       "properties":{
          "id":{
             "type":"keyword"
@@ -9,5 +8,4 @@
             "analyzer":"autocomplete"
          }
       }
-   }
 }
