@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
 import org.gooru.nucleus.search.indexers.app.constants.IndexFields;
-import org.gooru.nucleus.search.indexers.app.utils.JsonUtil;
 
 import io.vertx.core.json.JsonObject;
 

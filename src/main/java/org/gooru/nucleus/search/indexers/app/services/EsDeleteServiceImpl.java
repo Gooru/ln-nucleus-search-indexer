@@ -6,6 +6,7 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.gooru.nucleus.search.indexers.app.constants.EntityAttributeConstants;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
 import org.gooru.nucleus.search.indexers.app.constants.IndexerConstants;
@@ -30,12 +31,10 @@ public class EsDeleteServiceImpl extends BaseIndexService implements DeleteServi
   @Override
   public void deleteDocuments(String indexableIds, String indexName, String type) throws IOException {
     for (String key : indexableIds.split(",")) {
-      DeleteRequest delete = new DeleteRequest(indexName, getIndexTypeByType(type), key); 
-      getHighLevelClient().delete(delete);
+      deleteFromIndex(indexName, getIndexTypeByType(type), key);
 
       // Delete from CI index
-      DeleteRequest deleteFromCI = new DeleteRequest(indexName, getIndexTypeByType(type), key); 
-      getHighLevelClient().delete(deleteFromCI);
+      deleteFromIndex(indexName, getIndexTypeByType(type), key);
 
       trackDeletes(key, getIndexTypeByType(type));
     }
@@ -142,7 +141,7 @@ public class EsDeleteServiceImpl extends BaseIndexService implements DeleteServi
           }
           processedBatchSize++;
           if (processedBatchSize > 0 && (batchSize == bulkRequest.numberOfActions() || processedBatchSize == jsonArr.size())) {
-            BulkResponse bulkResponse = getHighLevelClient().bulk(bulkRequest);
+            BulkResponse bulkResponse = getHighLevelClient().bulk(bulkRequest, RequestOptions.DEFAULT);
             if(bulkResponse.hasFailures()){
               BulkItemResponse[] responses =  bulkResponse.getItems();
               for(BulkItemResponse response : responses){
