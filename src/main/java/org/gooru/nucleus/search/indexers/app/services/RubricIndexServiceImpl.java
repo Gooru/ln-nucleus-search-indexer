@@ -1,8 +1,5 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
@@ -26,8 +23,7 @@ public class RubricIndexServiceImpl extends BaseIndexService implements RubricIn
   public void indexDocument(String id, JsonObject data) throws Exception {
     if (!data.isEmpty()) {
       try {        
-        IndexRequest request = new IndexRequest(getIndexName(), IndexerConstants.TYPE_RUBRIC, id).source(EsIndexSrcBuilder.get(IndexerConstants.TYPE_RUBRIC).buildSource(data), XContentType.JSON); 
-        getHighLevelClient().index(request);
+        index(getIndexName(), IndexerConstants.TYPE_RUBRIC, id, EsIndexSrcBuilder.get(IndexerConstants.TYPE_RUBRIC).buildSource(data));
       } catch (Exception e) {
           LOGGER.info("Exception while indexing rubric");
           throw new Exception(e);
@@ -38,8 +34,7 @@ public class RubricIndexServiceImpl extends BaseIndexService implements RubricIn
   @Override
   public void deleteDocument(String id) throws Exception {
     try {
-      DeleteRequest delete = new DeleteRequest(getIndexName(), IndexerConstants.TYPE_RUBRIC, id); 
-      getHighLevelClient().delete(delete);
+      deleteFromIndex(getIndexName(), IndexerConstants.TYPE_RUBRIC, id);
     }
     catch(Exception e){
       LOGGER.error("Failed to delete rubric from index");

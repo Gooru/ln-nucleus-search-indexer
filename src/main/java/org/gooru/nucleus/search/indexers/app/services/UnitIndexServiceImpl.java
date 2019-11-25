@@ -2,9 +2,6 @@ package org.gooru.nucleus.search.indexers.app.services;
 
 import java.util.Map;
 
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
@@ -51,8 +48,7 @@ public class UnitIndexServiceImpl extends BaseIndexService implements UnitIndexS
         Map<String, Object> contentInfoAsMap = IndexService.instance().getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
         
         setExistingStatisticsData(data, contentInfoAsMap);
-        IndexRequest request = new IndexRequest(getIndexName(), getIndexType(), id).source(EsIndexSrcBuilder.get(getIndexType()).buildSource(data), XContentType.JSON); 
-        getHighLevelClient().index(request);
+        index(getIndexName(), getIndexType(), id, EsIndexSrcBuilder.get(getIndexType()).buildSource(data));
       } catch (Exception e) {
           LOGGER.info("Exception while indexing");
           throw new Exception(e);
@@ -63,12 +59,10 @@ public class UnitIndexServiceImpl extends BaseIndexService implements UnitIndexS
   @Override
   public void deleteDocument(String id) throws Exception {
     try {
-      DeleteRequest delete = new DeleteRequest(getIndexName(), getIndexType(), id); 
-      getHighLevelClient().delete(delete);
+      deleteFromIndex(getIndexName(), getIndexType(), id);
 
       // Delete from CI index
-      DeleteRequest deleteFromCI = new DeleteRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
-      getHighLevelClient().delete(deleteFromCI);
+      deleteFromIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id);
     }
     catch(Exception e){
       LOGGER.error("Failed to delete unit from index");

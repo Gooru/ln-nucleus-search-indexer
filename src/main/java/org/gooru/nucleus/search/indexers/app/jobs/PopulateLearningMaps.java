@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.CaseFormat;
 
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
