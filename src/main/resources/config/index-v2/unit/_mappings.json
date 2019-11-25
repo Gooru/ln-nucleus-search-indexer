@@ -1,5 +1,4 @@
 {
-   "unit":{
       "properties":{
          "all":{
             "type":"text"
@@ -679,5 +678,4 @@
             }
          }
       }
-   }
 }

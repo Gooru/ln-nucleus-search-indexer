@@ -1,5 +1,4 @@
 {
-   "taxonomy":{
       "properties":{
          "all":{
             "type":"text"
@@ -30,7 +29,7 @@
             "fields":{
                "titleSnowball":{
                   "type":"text",
-                  "analyzer":"snowball"
+                  "analyzer":"snowball_lowercase"
                },
                "titleKStem":{
                   "type":"text",
@@ -51,7 +50,7 @@
                },
                "descriptionSnowball":{
                   "type":"text",
-                  "analyzer":"snowball"
+                  "analyzer":"snowball_lowercase"
                }
             },
             "copy_to":[
@@ -88,7 +87,7 @@
                   "fields":{
                      "titleSnowball":{
                         "type":"text",
-                        "analyzer":"snowball"
+                        "analyzer":"snowball_lowercase"
                      },
                      "titleKStem":{
                         "type":"text",
@@ -114,7 +113,7 @@
                         "fields":{
                            "titleSnowball":{
                               "type":"text",
-                              "analyzer":"snowball"
+                              "analyzer":"snowball_lowercase"
                            },
                            "titleKStem":{
                               "type":"text",
@@ -152,7 +151,7 @@
                            },
                            "descriptionSnowball":{
                               "type":"text",
-                              "analyzer":"snowball"
+                              "analyzer":"snowball_lowercase"
                            }
                         }
                      },
@@ -198,7 +197,7 @@
                               "fields":{
                                  "usernameDisplaySnowball":{
                                     "type":"text",
-                                    "analyzer":"snowball"
+                                    "analyzer":"snowball_lowercase"
                                  }
                               }
                            },
@@ -244,7 +243,7 @@
                               "fields":{
                                  "usernameDisplaySnowball":{
                                     "type":"text",
-                                    "analyzer":"snowball"
+                                    "analyzer":"snowball_lowercase"
                                  }
                               }
                            },
@@ -290,7 +289,7 @@
                            },
                            "descriptionSnowball":{
                               "type":"text",
-                              "analyzer":"snowball"
+                              "analyzer":"snowball_lowercase"
                            }
                         }
                      },
@@ -336,7 +335,7 @@
                               "fields":{
                                  "usernameDisplaySnowball":{
                                     "type":"text",
-                                    "analyzer":"snowball"
+                                    "analyzer":"snowball_lowercase"
                                  }
                               }
                            },
@@ -382,7 +381,7 @@
                               "fields":{
                                  "usernameDisplaySnowball":{
                                     "type":"text",
-                                    "analyzer":"snowball"
+                                    "analyzer":"snowball_lowercase"
                                  }
                               }
                            },
@@ -466,7 +465,7 @@
                               "fields":{
                                  "usernameDisplaySnowball":{
                                     "type":"text",
-                                    "analyzer":"snowball"
+                                    "analyzer":"snowball_lowercase"
                                  }
                               }
                            },
@@ -512,7 +511,7 @@
                               "fields":{
                                  "usernameDisplaySnowball":{
                                     "type":"text",
-                                    "analyzer":"snowball"
+                                    "analyzer":"snowball_lowercase"
                                  }
                               }
                            },
@@ -553,7 +552,7 @@
                   "fields":{
                      "titleSnowball":{
                         "type":"text",
-                        "analyzer":"snowball"
+                        "analyzer":"snowball_lowercase"
                      },
                      "titleKStem":{
                         "type":"text",
@@ -574,7 +573,7 @@
                      },
                      "descriptionSnowball":{
                         "type":"text",
-                        "analyzer":"snowball"
+                        "analyzer":"snowball_lowercase"
                      }
                   },
                   "copy_to":[
@@ -601,7 +600,7 @@
                   "fields":{
                      "titleSnowball":{
                         "type":"text",
-                        "analyzer":"snowball"
+                        "analyzer":"snowball_lowercase"
                      },
                      "titleKStem":{
                         "type":"text",
@@ -633,7 +632,7 @@
                   "fields":{
                      "titleSnowball":{
                         "type":"text",
-                        "analyzer":"snowball"
+                        "analyzer":"snowball_lowercase"
                      },
                      "titleKStem":{
                         "type":"text",
@@ -661,7 +660,7 @@
                   "fields":{
                      "titleSnowball":{
                         "type":"text",
-                        "analyzer":"snowball"
+                        "analyzer":"snowball_lowercase"
                      },
                      "titleKStem":{
                         "type":"text",
@@ -707,7 +706,7 @@
             "fields":{
                "keywordsSnowball":{
                   "type":"text",
-                  "analyzer":"snowball"
+                  "analyzer":"snowball_lowercase"
                },
                "keywordsKStem":{
                   "type":"text",
@@ -719,5 +718,4 @@
             ]
          }
       }
-   }
 }

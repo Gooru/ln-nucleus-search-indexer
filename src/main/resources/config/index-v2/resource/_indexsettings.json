@@ -4,19 +4,11 @@
          "translog":{
             "flush_threshold_size":"200mb"
          },
-         "merge":{
-            "policy":{
-               "floor_segment":"2mb",
-               "max_merge_at_once":"10",
-               "segments_per_tier":"10"
-            }
-         },
          "analysis":{
             "analyzer":{
                "gooru_kstem":{
                   "type":"custom",
                   "filter":[
-                     "standard",
                      "lowercase",
                      "stop",
                      "kstem"
@@ -38,7 +30,22 @@
                      "trim"
                   ],
                   "tokenizer":"whitespace"
+               },
+               "snowball_lowercase":{
+                  "type":"custom",
+                  "filter":[
+                     "lowercase",
+                     "my_snow",
+                     "stop"
+                  ],
+                  "tokenizer":"standard"
                }
+            },
+            "filter" : {
+                "my_snow" : {
+                    "type" : "snowball",
+                    "language" : "English"
+                }
             }
          },
          "number_of_shards":"11",
@@ -46,7 +53,6 @@
       }
    },
    "mappings":{
-      "resource":{
          "properties":{
             "all":{
                "type":"text"
@@ -60,7 +66,7 @@
                "fields":{
                   "titleSnowball":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   },
                   "titleKStem":{
                      "type":"text",
@@ -132,7 +138,7 @@
                      "fields":{
                         "usernameDisplaySnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   },
@@ -178,7 +184,7 @@
                      "fields":{
                         "usernameDisplaySnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   },
@@ -203,7 +209,7 @@
                "fields":{
                   "copyrightOwnerListSnowball":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   },
                   "copyrightOwnerListStandard":{
                      "type":"text",
@@ -241,7 +247,7 @@
                      "fields":{
                         "usernameDisplaySnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   }
@@ -264,7 +270,7 @@
                   },
                   "descriptionSnowball":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   }
                },
                "copy_to":[
@@ -281,7 +287,7 @@
                   },
                   "narrationSnowball":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   }
                }
             },
@@ -313,7 +319,7 @@
                      "properties":{
                         "answerText":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   },
@@ -327,13 +333,13 @@
                         },
                         "hintText":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   },
                   "questionText":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   }
                }
             },
@@ -341,7 +347,7 @@
                "properties":{
                   "text":{
                      "type":"text",
-                     "analyzer":"snowball",
+                     "analyzer":"snowball_lowercase",
                      "copy_to":[
                         "customSpellCheckerSuggest"
                      ]
@@ -363,7 +369,7 @@
                            "fields":{
                               "keywordsSnowball":{
                                  "type":"text",
-                                 "analyzer":"snowball"
+                                 "analyzer":"snowball_lowercase"
                               }
                            }
                         }
@@ -450,7 +456,7 @@
                            "fields":{
                               "labelSnowball":{
                                  "type":"text",
-                                 "analyzer":"snowball"
+                                 "analyzer":"snowball_lowercase"
                               }
                            }
                         }
@@ -550,7 +556,7 @@
                            "fields":{
                               "labelSnowball":{
                                  "type":"text",
-                                 "analyzer":"snowball"
+                                 "analyzer":"snowball_lowercase"
                               }
                            }
                         },
@@ -578,7 +584,7 @@
                            "fields":{
                               "labelSnowball":{
                                  "type":"text",
-                                 "analyzer":"snowball"
+                                 "analyzer":"snowball_lowercase"
                               }
                            }
                         }
@@ -619,11 +625,11 @@
                   },
                   "taxonomyDataSet":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   },
                   "taxonomySkills":{
                      "type":"text",
-                     "analyzer":"snowball"
+                     "analyzer":"snowball_lowercase"
                   },
                   "taxonomySet":{
                      "properties":{
@@ -689,7 +695,7 @@
                      "fields":{
                         "titleSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   }
@@ -703,7 +709,7 @@
             },
             "collectionTitles":{
                "type":"text",
-               "analyzer":"snowball"
+               "analyzer":"snowball_lowercase"
             },
             "collectionIds":{
                "type":"keyword"
@@ -803,7 +809,7 @@
                      "fields":{
                         "publisherSnowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   },
@@ -977,7 +983,7 @@
                      "fields":{
                         "snowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   },
@@ -987,7 +993,7 @@
                      "fields":{
                         "snowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   },
@@ -997,7 +1003,7 @@
                      "fields":{
                         "snowball":{
                            "type":"text",
-                           "analyzer":"snowball"
+                           "analyzer":"snowball_lowercase"
                         }
                      }
                   }
@@ -1005,5 +1011,4 @@
             }
          }
       }
-   }
 }

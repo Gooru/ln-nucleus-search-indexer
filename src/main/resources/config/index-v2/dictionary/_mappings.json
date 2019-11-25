@@ -1,5 +1,4 @@
 {
-   "dictionary":{
       "properties":{
          "definitions":{
             "type":"text",
@@ -24,5 +23,4 @@
             "analyzer":"keyword_lowercase"
          }
       }
-   }
 }

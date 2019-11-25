@@ -1,5 +1,4 @@
 {
-      "tenant":{
          "properties":{
             "id":{
                "type":"keyword"
@@ -58,5 +57,4 @@
                "type":"keyword"
             }
          }
-      }
    }

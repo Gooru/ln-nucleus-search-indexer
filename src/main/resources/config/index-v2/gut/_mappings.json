@@ -1,5 +1,4 @@
 {
-   "gut":{
       "properties":{
          "all":{
             "type":"text"
@@ -606,5 +605,4 @@
             ]
          }
       }
-   }
 }

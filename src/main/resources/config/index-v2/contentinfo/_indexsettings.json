@@ -16,7 +16,6 @@
       }
    },
    "mappings":{
-      "contentinfo":{
          "properties":{
             "id":{
                "type":"keyword"
@@ -70,5 +69,4 @@
             }
          }
       }
-   }
 }

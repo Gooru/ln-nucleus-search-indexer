@@ -15,7 +15,6 @@
                   "type":"custom",
                   "tokenizer":"standard",
                   "filter":[
-                     "standard",
                      "lowercase",
                      "stop",
                      "kstem"
@@ -26,7 +25,6 @@
       }
    },
    "mappings":{
-      "unit":{
          "properties":{
             "all":{
                "type":"text"
@@ -727,5 +725,4 @@
             }
          }
       }
-   }
 }

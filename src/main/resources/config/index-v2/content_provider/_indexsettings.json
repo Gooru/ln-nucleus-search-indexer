@@ -35,7 +35,6 @@
       }
    },
    "mappings":{
-      "publisher":{
          "properties":{
             "id":{
                "type":"keyword"
@@ -55,6 +54,5 @@
                "analyzer":"autocomplete"
             }
          }
-      }
    }
 }

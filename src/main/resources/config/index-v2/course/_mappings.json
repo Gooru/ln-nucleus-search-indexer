@@ -1,5 +1,4 @@
 {
-   "course":{
       "properties":{
          "all":{
             "type":"text"
@@ -779,5 +778,4 @@
             }
          }
       }
-   }
 }

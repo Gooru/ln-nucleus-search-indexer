@@ -1,5 +1,4 @@
 {
-   "searchquery":{
       "properties":{
          "indexType":{
             "type":"text"
@@ -32,5 +31,4 @@
             "type":"keyword"
          }
       }
-   }
 }

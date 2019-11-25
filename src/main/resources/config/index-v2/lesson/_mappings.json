@@ -1,5 +1,4 @@
 {
-   "lesson":{
       "properties":{
          "all":{
             "type":"text"
@@ -680,5 +679,4 @@
             }
          }
       }
-   }
 }

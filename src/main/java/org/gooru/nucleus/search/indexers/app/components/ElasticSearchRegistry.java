@@ -122,8 +122,9 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
         String indexSettings = EsMappingUtil.getIndexSettingsConfig(esIndex.getName());
         try {
-          performRequest("PUT", "/" + indexName, indexSettings);
-          LOGGER.debug("Es Index : {} Created!", indexName);
+          performRequest("PUT", "/" + indexName + "?include_type_name=false", indexSettings);
+          
+          LOGGER.debug("Es Index : {} Created! : {} ", indexName);
         } catch (Exception exception) {
           if (exception instanceof ResponseException) {
             if (((ResponseException) exception).getResponse().getStatusLine().getStatusCode() == 400
@@ -135,7 +136,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
               Response updateResponse;
               try {
                 String mapping = EsMappingUtil.getMappingConfig(indexType);
-                updateResponse = performRequest("PUT", "/" + indexName + "/_mapping/" + indexType, mapping);
+                updateResponse = performRequest("PUT", "/" + indexName + "/_mapping?include_type_name=false", mapping);
                 if (updateResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                   LOGGER.debug("Updated mapping with index '{}' and type '{}'", indexName, indexType);
                 }

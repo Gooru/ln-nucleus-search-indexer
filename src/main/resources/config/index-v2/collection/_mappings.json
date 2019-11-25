@@ -1,5 +1,4 @@
 {
-   "collection":{
       "properties":{
          "all":{
             "type":"text"
@@ -789,5 +788,4 @@
             }
          }
       }
-   }
 }
