@@ -75,7 +75,13 @@
             "userVisibility":{
                "type":"keyword"
             },
+            "fcVisibility":{
+               "type":"keyword"
+            },
             "parentTenantIds":{
+               "type":"keyword"
+            },
+            "parentTenantFCVisibility":{
                "type":"keyword"
             }
          }
