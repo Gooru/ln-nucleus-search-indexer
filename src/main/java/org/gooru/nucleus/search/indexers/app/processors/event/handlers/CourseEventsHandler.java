@@ -295,7 +295,7 @@ public class CourseEventsHandler extends BaseEventHandler implements IndexEventH
 
   private void indexContents(String collectionId, JsonArray contentIds) throws Exception {
     if (contentIds != null && contentIds.size() > 0) {
-      IndexService.instance().bulkIndexDocuments(contentIds, IndexerConstants.TYPE_RESOURCE,
+      IndexService.instance().bulkIndexDocuments(contentIds, IndexerConstants.TYPE_RESOURCE_REFERENCE,
         IndexNameHolder.getIndexName(EsIndex.RESOURCE));
       LOGGER.debug("CREH->handlePostCollectionCopyOrDelete : Indexed contents inside collection id : " + collectionId);
     }
