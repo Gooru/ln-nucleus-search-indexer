@@ -142,10 +142,10 @@ public class EsDeleteServiceImpl extends BaseIndexService implements DeleteServi
           processedBatchSize++;
           if (processedBatchSize > 0 && (batchSize == bulkRequest.numberOfActions() || processedBatchSize == jsonArr.size())) {
             BulkResponse bulkResponse = getHighLevelClient().bulk(bulkRequest, RequestOptions.DEFAULT);
-            if(bulkResponse.hasFailures()){
-              BulkItemResponse[] responses =  bulkResponse.getItems();
-              for(BulkItemResponse response : responses){
-                if(response.isFailed()){
+            if (bulkResponse.hasFailures()) {
+              BulkItemResponse[] responses = bulkResponse.getItems();
+              for (BulkItemResponse response : responses) {
+                if (response.isFailed()) {
                   INDEX_FAILURES_LOGGER.error("bulkDeleteDocuments() : Failed  id : " + response.getId());
                 }
               }

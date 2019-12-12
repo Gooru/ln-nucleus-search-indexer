@@ -66,7 +66,6 @@ public class IndexFields {
     public static final String CODE = "code";
     public static final String ICON = "icon";
     public static final String PUBLISHER = "publisher";
-    public static final String AGGREGATOR = "aggregator";
     public static final String COLLABORATORS_IDS = "collaboratorIds";
     public static final String METADATA = "metadata";
     public static final String GRADE = "grade";
