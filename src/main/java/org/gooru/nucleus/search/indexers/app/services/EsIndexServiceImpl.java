@@ -9,17 +9,14 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.action.DocWriteResponse.Result;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
@@ -71,8 +68,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             try {
               // Get statistics and extracted text data from backup index
               setResourceStasInfoData(body, indexableId, typeName);
-              IndexRequest request = new IndexRequest(indexName, getIndexTypeByType(typeName), indexableId).source(EsIndexSrcBuilder.get(typeName).buildSource(body), XContentType.JSON); 
-              getHighLevelClient().index(request);
+              index(indexName, getIndexTypeByType(typeName), indexableId, EsIndexSrcBuilder.get(typeName).buildSource(body));
             } catch (Exception e) {
               LOGGER.info("Exception while indexing");
               throw new Exception(e);
@@ -107,18 +103,16 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
   public Map<String, Object> getDocument(String id, String indexName, String type) {
     GetResponse response = null;
     try {
-      GetRequest getRequest = new GetRequest(indexName, getIndexTypeByType(type), id);
-      response = getHighLevelClient().get(getRequest);
+      response = get(indexName, getIndexTypeByType(type), id);
     } catch (Exception e) {
       LOGGER.info("Document not found in index for id : {} : EXCEPTION : {}", id, e.getMessage());
     }
-    return (response != null && response.isExists()) ? response.getSource() : null;
+    return (response != null && response.isExists()) ? response.getSourceAsMap() : null;
   }
   
   @Override
   public SearchResponse getDocument(String indexName, String type, SearchSourceBuilder sourceBuilder) throws IOException {
-    SearchRequest searchRequest = new SearchRequest(indexName).types(type).source(sourceBuilder);
-    SearchResponse result = getHighLevelClient().search(searchRequest);
+    SearchResponse result = search(indexName, type, sourceBuilder);
     return result;
   }
 
@@ -155,9 +149,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         if (exception instanceof ResponseException || exception instanceof DocumentMissingException) {
           if (((ResponseException) exception).getResponse().getStatusLine().getStatusCode() == 404 || // ES 5.x
                   exception.getMessage().contains("resource_already_exists_exception")) {
-            IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id);
-            request.source(buildContentInfoIndexSrc(id, typeName, fieldValues), XContentType.JSON);
-            getHighLevelClient().index(request);
+            index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id, buildContentInfoIndexSrc(id, typeName, fieldValues));
           } else {
             throw new Exception(exception);
           }
@@ -225,8 +217,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           }
 
           // LOGGER.debug("index source data : " + result.toString());
-          IndexRequest request = new IndexRequest(indexName, getIndexTypeByType(typeName), indexableId).source(EsIndexSrcBuilder.get(typeName).buildSource(result), XContentType.JSON); 
-          getHighLevelClient().index(request);
+          index(indexName, getIndexTypeByType(typeName), indexableId, EsIndexSrcBuilder.get(typeName).buildSource(result));
           LOGGER.info("EISI->indexDocument : Indexed " + typeName + " id  : " + indexableId);
         } catch (Exception ex) {
           LOGGER.error("EISI->Re-index failed for " + typeName + " id : " + indexableId + " Exception ", ex);
@@ -255,17 +246,14 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           throws Exception {
     try {
       LOGGER.debug("Indexing: " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " Index");
-      UpdateRequest updateRequest = new UpdateRequest().index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO)).type(IndexerConstants.TYPE_CONTENT_INFO).id(id).doc(contentInfoSource);
-      UpdateResponse response = getHighLevelClient().update(updateRequest);
-      if (response.getResult().equals(Result.UPDATED))
+      UpdateResponse response = update(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id, contentInfoSource);
+      if (response.getResult() == DocWriteResponse.Result.UPDATED)
         LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document updated!");
     } catch (Exception ex) {
       if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
-        LOGGER.debug("Caught Document Missing Exception!!");
-        IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
-        request.source(buildContentInfoIndexSrc(id, typeName, contentSource), XContentType.JSON); 
-        IndexResponse createResponse = getHighLevelClient().index(request);
-        if (createResponse.getResult().equals(Result.CREATED))
+        LOGGER.debug("Caught Document Missing Exception!!"); 
+        IndexResponse createResponse = index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id, buildContentInfoIndexSrc(id, typeName, contentSource));
+        if (createResponse.getResult() == DocWriteResponse.Result.CREATED)
           LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document created!");
       } else {
         throw new Exception(ex);
@@ -277,19 +265,16 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           Map<String, Object> contentInfoSource) throws Exception {
     try {
       LOGGER.debug("Indexing: " + indexName + " Index");
-      UpdateRequest updateRequest = new UpdateRequest();
-      updateRequest.index(indexName).type(typeName).id(id).doc(contentInfoSource);
-      UpdateResponse response = getHighLevelClient().update(updateRequest);
-      if (response.getResult().equals(Result.UPDATED))
+      UpdateResponse response = update(indexName, typeName, id, contentInfoSource);
+      if (response.getResult() == DocWriteResponse.Result.UPDATED)
         LOGGER.info("Index " + indexName + " : document updated!");
 
     } catch (Exception ex) {
       if (ex instanceof DocumentMissingException || ex.getCause().getCause().getCause() instanceof DocumentMissingException) {
         LOGGER.debug("Caught Document Missing Exception!");
-        IndexRequest request = new IndexRequest(indexName, typeName, id); 
-        request.source(buildContentInfoIndexSrc(id, typeName, contentSource), XContentType.JSON); 
-        IndexResponse createResponse = getHighLevelClient().index(request);
-        if (createResponse.getResult().equals(Result.CREATED))
+
+        IndexResponse createResponse = index(indexName, typeName, id, buildContentInfoIndexSrc(id, typeName, contentSource));;
+        if (createResponse.getResult() == DocWriteResponse.Result.CREATED)
           LOGGER.info("Index " + indexName + " : document created!");
       } else {
         throw new Exception(ex);
@@ -391,10 +376,11 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
             JsonObject error = ((JsonObject) responseItem).getJsonObject("error");
             if (error.getString("type").equalsIgnoreCase("document_missing_exception")) {
               LOGGER.debug("Caught Document Missing Exception!");
-              IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO,updateError.getString("_id"));
-              request.source(buildContentInfoIndexSrc(updateError.getString("_id"), contentType.get(updateError.getString("_id")), viewsData.get(updateError.getString("_id"))), XContentType.JSON);
-              IndexResponse createResponse = getHighLevelClient().index(request);
-              if (createResponse.getResult().equals(Result.CREATED))
+              IndexResponse createResponse =
+                index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO,
+                  updateError.getString("_id"), buildContentInfoIndexSrc(updateError.getString("_id"),
+                    contentType.get(updateError.getString("_id")), viewsData.get(updateError.getString("_id"))));
+              if (createResponse.getResult() == DocWriteResponse.Result.CREATED)
                 LOGGER.info("Index " + IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO) + " : document created!");
             }
             INDEX_FAILURES_LOGGER.error(" bulkIndexStatisticsField() : Failed  id : {} Exception {} ", updateError.getString("_id"),
@@ -436,7 +422,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
           }
           processedBatchSize++;
           if (processedBatchSize > 0 && (batchSize == bulkRequest.numberOfActions() || processedBatchSize == jsonArr.size())) {
-            BulkResponse bulkResponse = getHighLevelClient().bulk(bulkRequest);
+            BulkResponse bulkResponse = bulk(bulkRequest);
             if(bulkResponse.hasFailures()){
               BulkItemResponse[] responses =  bulkResponse.getItems();
               for(BulkItemResponse response : responses){
@@ -446,7 +432,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
               }
               throw new Exception(bulkResponse.buildFailureMessage());
             } else {
-              LOGGER.debug("bulkIndexDocuments() -> Successfull, totalProcessedTillCurrentBatch : {} !", processedBatchSize);
+              LOGGER.debug("bulkIndexDocuments() -> Successful, totalProcessedTillCurrentBatch : {} !", processedBatchSize);
             }
             if (processedBatchSize < jsonArr.size()) {
               continue;
@@ -482,9 +468,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         //Index text when available
         if (contentInfoJson != null) {
           try {
-            IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
-            request.source(contentInfoJson.toString(), XContentType.JSON); 
-            getHighLevelClient().index(request);
+            index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id, contentInfoJson.toString());
             
             // Get statistics and extracted text data from backup index
             setResourceStasInfoData(inputJson, id, IndexerConstants.TYPE_RESOURCE);
@@ -535,9 +519,7 @@ public class EsIndexServiceImpl extends BaseIndexService implements IndexService
         JsonObject contentInfoJson = buildContentInfoEsIndexSrc(id, contentFormat, text);
         if (text.trim() != null) {
           try {
-            IndexRequest request = new IndexRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
-            request.source(contentInfoJson.toString(), XContentType.JSON); 
-            getHighLevelClient().index(request);
+            index(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id, contentInfoJson.toString());
           } catch (Exception e) {
             LOGGER.error("Text Extraction : Re-index failed for " + contentFormat + " id : " + id + " Exception ", e.getMessage());
           }

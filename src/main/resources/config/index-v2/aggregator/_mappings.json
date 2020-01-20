@@ -1,9 +1,0 @@
-{
-   "aggregator":{
-      "properties":{
-         "aggregatorname":{
-            "type":"text"
-         }
-      }
-   }
-}        

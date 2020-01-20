@@ -1,6 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.services;
 
-import java.util.Collections;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +8,25 @@ import java.util.Map;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.gooru.nucleus.search.indexers.app.components.ElasticSearchRegistry;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
 import org.gooru.nucleus.search.indexers.app.constants.ExecuteOperationConstants;
@@ -156,14 +172,6 @@ public class BaseIndexService {
     return views;
   }
 
-  protected RestHighLevelClient getHighLevelClient() {
-    return ElasticSearchRegistry.getRestHighLevelClient();
-  }
-  
-  protected RestClient getLowLevelClient() {
-    return ElasticSearchRegistry.getLowLevelRestClient();
-  }
-
   protected String buildContentInfoIndexSrc(String id, String contentFormat, Map<String, Object> data){
     ContentInfoEio contentInfoEo = new ContentInfoEio();
     contentInfoEo.setId(id);
@@ -269,12 +277,52 @@ public class BaseIndexService {
   }
   
   protected Response performRequest(String method, String indexUrl, String requestPayload) throws Exception {
+    Request request = new Request(method, indexUrl);
     StringEntity entity = null;
     if (!StringUtil.isNullOrEmpty(requestPayload)) {
       entity = new StringEntity(requestPayload, ContentType.APPLICATION_JSON);
+      request.setEntity(entity);
+
     }
-    Response response = getLowLevelClient().performRequest(method, indexUrl, Collections.emptyMap(), entity);
+    Response response = getLowLevelClient().performRequest(request);
     return response;
   }
   
+
+  protected RestHighLevelClient getHighLevelClient() {
+    return ElasticSearchRegistry.getRestHighLevelClient();
+  }
+  
+  protected RestClient getLowLevelClient() {
+    return ElasticSearchRegistry.getLowLevelRestClient();
+  }
+
+  protected DeleteResponse deleteFromIndex(String indexName, String indexType, String id) throws IOException {
+    DeleteRequest deleteRequest = new DeleteRequest(indexName, indexType, id);
+    return getHighLevelClient().delete(deleteRequest, RequestOptions.DEFAULT);
+  }
+  
+  protected IndexResponse index(String indexName, String indexType, String id, String source) throws IOException {
+    IndexRequest indexRequest = new IndexRequest(indexName, indexType, id).source(source, XContentType.JSON); 
+    return getHighLevelClient().index(indexRequest, RequestOptions.DEFAULT);
+  }
+  
+  protected UpdateResponse update(String indexName, String indexType, String id, Map<String, Object> source) throws IOException {
+    UpdateRequest updateRequest = new UpdateRequest(indexName, indexType, id).doc(source);
+    return getHighLevelClient().update(updateRequest, RequestOptions.DEFAULT);
+  }
+  
+  protected GetResponse get(String indexName, String indexType, String id) throws IOException {
+    GetRequest getRequest = new GetRequest(indexName, indexType, id);
+    return getHighLevelClient().get(getRequest, RequestOptions.DEFAULT);
+  }
+  
+  protected SearchResponse search(String indexName, String type, SearchSourceBuilder sourceBuilder) throws IOException {
+    SearchRequest searchRequest = new SearchRequest(indexName).types(type).source(sourceBuilder);
+    return getHighLevelClient().search(searchRequest, RequestOptions.DEFAULT);
+  }
+  
+  protected BulkResponse bulk(BulkRequest bulkRequest) throws IOException {
+    return getHighLevelClient().bulk(bulkRequest, RequestOptions.DEFAULT);
+  }
 }

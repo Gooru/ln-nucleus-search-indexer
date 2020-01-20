@@ -14,6 +14,7 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -320,7 +321,7 @@ public class TaxonomyEsIndexSrcBuilder<S extends JsonObject, D extends TaxonomyE
     if (bulkRequest.numberOfActions() > 0) {
       bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
       try {
-        BulkResponse bulkResponse = getClient().bulk(bulkRequest);
+        BulkResponse bulkResponse = getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
         if (!bulkResponse.hasFailures()) {
           LOGGER.debug("Successfully indexed bulk keywords!");
         }
