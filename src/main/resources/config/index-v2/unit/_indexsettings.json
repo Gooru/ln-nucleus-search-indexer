@@ -51,8 +51,7 @@
                      "analyzer":"keyword_lowercase"
                   },
                   "keyword":{
-                     "type":"text",
-                     "analyzer":"keyword"
+                     "type":"keyword"
                   }
                },
                "copy_to":[

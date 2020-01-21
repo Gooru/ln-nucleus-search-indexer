@@ -1,15 +1,16 @@
 package org.gooru.nucleus.search.indexers.app.components;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.sniff.SniffOnFailureListener;
 import org.elasticsearch.client.sniff.Sniffer;
@@ -101,11 +102,12 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
     HttpHost[] httpHosts = buildHosts(hostName);
     SniffOnFailureListener sniffOnFailureListener = new SniffOnFailureListener();
     RestClient restClient = RestClient.builder(httpHosts).setFailureListener(sniffOnFailureListener).build();
+    RestClientBuilder restClientBuilder = RestClient.builder(httpHosts);
     Sniffer sniffer = Sniffer.builder(restClient).setSniffAfterFailureDelayMillis(30000).build();
     sniffOnFailureListener.setSniffer(sniffer);
     
     setLowLevelRestClient(restClient);
-    setRestHighLevelClient(restClient);
+    setRestHighLevelClient(restClientBuilder);
     setSniffer(sniffer);
   }
 
@@ -120,6 +122,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
 
         String indexSettings = EsMappingUtil.getIndexSettingsConfig(esIndex.getName());
         try {
+          //performRequest("PUT", "/" + indexName + "?include_type_name=false", indexSettings); // change this for 7.x upgrade
           performRequest("PUT", "/" + indexName, indexSettings);
           LOGGER.debug("Es Index : {} Created!", indexName);
         } catch (Exception exception) {
@@ -133,6 +136,7 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
               Response updateResponse;
               try {
                 String mapping = EsMappingUtil.getMappingConfig(indexType);
+                //updateResponse = performRequest("PUT", "/" + indexName + "/_mapping?include_type_name=false", mapping); // change this for 7.x upgrade
                 updateResponse = performRequest("PUT", "/" + indexName + "/_mapping/" + indexType, mapping);
                 if (updateResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                   LOGGER.debug("Updated mapping with index '{}' and type '{}'", indexName, indexType);
@@ -152,11 +156,13 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
   }
 
   private Response performRequest(String method, String indexUrl, String indexSettings) throws Exception {
+    Request request = new Request(method, indexUrl);
     StringEntity entity = null;
     if (!StringUtil.isNullOrEmpty(indexSettings)) {
       entity = new StringEntity(indexSettings, ContentType.APPLICATION_JSON);
+      request.setEntity(entity);
     }
-    Response response = getLowLevelRestClient().performRequest(method, indexUrl, Collections.emptyMap(), entity);
+    Response response = getLowLevelRestClient().performRequest(request);
     return response;
   }
   
@@ -208,8 +214,8 @@ public final class ElasticSearchRegistry implements Finalizer, Initializer {
     return getFactory().restHighLevelClient;
   }
 
-  public static void setRestHighLevelClient(RestClient client) {
-    getFactory().restHighLevelClient = new RestHighLevelClient(client);
+  public static void setRestHighLevelClient(RestClientBuilder clientBuilder) {
+    getFactory().restHighLevelClient = new RestHighLevelClient(clientBuilder);
   }
   
   public static Sniffer getSniffer() {

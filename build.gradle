@@ -4,7 +4,6 @@ import java.lang.invoke.LambdaForm.Compiled;
 buildscript {
     repositories { jcenter() }
     dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.2"
         classpath group: 'org.javalite', name: 'activejdbc', version: '1.4.13'
         classpath group: 'org.javalite', name: 'activejdbc-instrumentation', version: '1.4.13'
     }
@@ -12,7 +11,7 @@ buildscript {
 
 plugins {
     id 'java' // or 'groovy' Must be explicitly applied
-    id 'com.github.johnrengelman.shadow' version "1.2.3"
+    id 'com.github.johnrengelman.shadow' version "4.0.1"
 }
 
 
@@ -39,7 +38,7 @@ ext {
     hikariVersion = '2.7.6'
     postgresVersion = '9.4-1206-jdbc42'
     activejdbcVersion = '1.4.11'
-    elasticsearchVersion = '5.6.0'
+    elasticsearchVersion = '6.8.5'
     kafkaVersion = '0.10.1.1'
     logbackVersion = '1.2.3'
     log4jVersion='2.8'
@@ -96,7 +95,7 @@ shadowJar {
     }
 }
 
-task wrapper(type: Wrapper) {
+wrapper {
     gradleVersion = '4.10'
 }
 
@@ -127,7 +126,7 @@ def addUrlIfNotPresent( to, what ) {
 compileJava.doLast {
     println( "In compileJava.doLast" )
     Instrumentation instrumentation = new Instrumentation()
-    def projectMainClassesDir = sourceSets.main.output.classesDir.getPath()
+    def projectMainClassesDir = sourceSets.main.output.classesDirs.getAsPath()
     def rootLoader = this.class.classLoader.rootLoader
     instrumentation.outputDirectory = projectMainClassesDir
     addUrlIfNotPresent rootLoader, projectMainClassesDir

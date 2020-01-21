@@ -1,7 +1,6 @@
 package org.gooru.nucleus.search.indexers.app.index.model;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

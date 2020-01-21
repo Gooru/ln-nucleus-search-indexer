@@ -2,9 +2,6 @@ package org.gooru.nucleus.search.indexers.app.services;
 
 import java.util.Map;
 
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.gooru.nucleus.search.indexers.app.builders.EsIndexSrcBuilder;
 import org.gooru.nucleus.search.indexers.app.constants.ErrorMsgConstants;
 import org.gooru.nucleus.search.indexers.app.constants.EsIndex;
@@ -33,8 +30,7 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
         Map<String, Object> contentInfoAsMap = IndexService.instance().getDocument(id, IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO);
         
         setExistingStatisticsData(data, contentInfoAsMap);
-        IndexRequest request = new IndexRequest(getIndexName(), IndexerConstants.TYPE_COURSE, id).source(EsIndexSrcBuilder.get(IndexerConstants.TYPE_COURSE).buildSource(data), XContentType.JSON); 
-        getHighLevelClient().index(request);
+        index(getIndexName(), IndexerConstants.TYPE_COURSE, id, EsIndexSrcBuilder.get(IndexerConstants.TYPE_COURSE).buildSource(data));
       } catch (Exception e) {
           LOGGER.info("Exception while indexing");
           throw new Exception(e);
@@ -71,12 +67,10 @@ public class CourseIndexServiceImpl extends BaseIndexService implements CourseIn
   @Override
   public void deleteDocument(String id) throws Exception {
     try {
-      DeleteRequest delete = new DeleteRequest(getIndexName(), IndexerConstants.TYPE_COURSE, id); 
-      getHighLevelClient().delete(delete);
+      deleteFromIndex(getIndexName(), IndexerConstants.TYPE_COURSE, id);
 
       // Delete from CI index
-      DeleteRequest deleteFromCI = new DeleteRequest(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id); 
-      getHighLevelClient().delete(deleteFromCI);
+      deleteFromIndex(IndexNameHolder.getIndexName(EsIndex.CONTENT_INFO), IndexerConstants.TYPE_CONTENT_INFO, id);
     }
     catch(Exception e){
       LOGGER.error("Failed to delete course from index");

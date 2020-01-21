@@ -37,7 +37,7 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
     try {
       super.build(source, originalresourceEo);
 
-      originalresourceEo.setContentFormat(IndexerConstants.TYPE_RESOURCE);
+      originalresourceEo.setContentFormat(source.getString(EntityAttributeConstants.CONTENT_FORMAT, IndexerConstants.TYPE_RESOURCE));
 
       // Add Language to info
       String language = source.getString(EntityAttributeConstants.LANGUAGE, null);

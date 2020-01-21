@@ -39,10 +39,11 @@ public final class ScoreConstants {
   
   //Score formula collection
   public static final String COLLECTION_SCORE_EXPRESSION =
-    "(((viewsCount != null && viewsCount != 0)? ((viewsCount/maxViewCount) * 2.5) : 0.0)+((hasNoThumbnail != null ) ? ((hasNoThumbnail > 0)? -1.0 :" +
-      " 1.0) : 0.0)+((hasNoDescription != null)? ((hasNoDescription > 0)? -2.0 : 2.2):0.0)+((isCopied != null)? ((isCopied > 0)?  0.0 : 1.4):0.0)+(" +
-      "(hasNoStandard != null)? ((hasNoStandard > 0 )? 0.0 : 1.4) : 0.0)+((resourceCount <= 2 || resourceCount > 8 )? 0.0 :2.0)+((questionCount == " +
-      "0)? 0.0:1.7)+((collectionItemCount < 1 ? -10.0 : 0.0)) +((isPublished == 1)? 2.5 : 0.0)+((isFeatured == 1)? 2.5 : 0.0)+((isTeacherGradingType == 1) ? -7 : 0.0))";
+    "(((viewsCount != null && viewsCount != 0)? ((viewsCount/maxViewCount) * 2.5) : 0.0)+((hasNoThumbnail != null && hasNoThumbnail > 0) ? 0.0001 : 1.0)+"
+    + "((hasNoDescription != null && hasNoDescription > 0) ? 0.0: 2.2)+((isCopied != null && isCopied > 0) ? 0.0 : 1.4)+"
+    + "((hasNoStandard != null && hasNoStandard > 0) ? 0.01 : 2.5)+((resourceCount <= 2 || resourceCount > 8) ? 0.001 :2.0)+"
+    + "((questionCount == 0) ? 0.001:1.7)+((collectionItemCount < 1) ? 0.000001 : 1.0) +((isPublished == 1)? 2.5 : 0.0)+"
+    + "((isFeatured == 1)? 2.5 : 0.0)+((isTeacherGradingType == 1) ? 0.00001 : 1.0))";
 
   // Score max/99 percentile values
   public static final int MAX_RESOURCE_USED_99PERSENT_VAL = 25;

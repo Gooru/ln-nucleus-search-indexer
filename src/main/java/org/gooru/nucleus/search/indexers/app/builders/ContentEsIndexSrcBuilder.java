@@ -16,6 +16,7 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -341,7 +342,7 @@ public class ContentEsIndexSrcBuilder<S extends JsonObject, D extends ContentEio
       bulkRequest.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
       BulkResponse bulkResponse;
       try {
-        bulkResponse = getClient().bulk(bulkRequest);
+        bulkResponse = getClient().bulk(bulkRequest, RequestOptions.DEFAULT);
         if (bulkResponse.hasFailures()) {
           BulkItemResponse[] responses = bulkResponse.getItems();
           for (BulkItemResponse response : responses) {

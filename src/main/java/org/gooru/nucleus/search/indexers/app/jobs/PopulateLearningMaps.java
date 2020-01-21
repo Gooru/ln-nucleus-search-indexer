@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.CaseFormat;
 
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
@@ -39,13 +38,14 @@ import io.vertx.ext.web.codec.BodyCodec;
 public class PopulateLearningMaps  extends BaseIndexService implements JobInitializer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PopulateLearningMaps.class);
-  private static final String GUT_QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"id\" : GUT_CODE } } ] } }, \"size\" : 10, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"title\", \"description\", \"codeType\", \"keywords\", \"competency.title\", \"competency.description\" ], \"use_dis_max\" : true, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : true } }, \"from\" : 0, \"_source\" : [ ] }";
+  private static final String GUT_QUERY = "{ \"post_filter\" : { \"bool\" : { \"filter\" : [ { \"term\" : { \"id\" : GUT_CODE } } ] } }, \"size\" : 10, \"query\" : { \"query_string\" : { \"query\" : \"*\", \"fields\" : [ \"title\", \"description\", \"codeType\", \"keywords\", \"competency.title\", \"competency.description\" ], \"tie_breaker\" : 1, \"default_operator\" : \"and\", \"allow_leading_wildcard\" : true } }, \"from\" : 0, \"_source\" : [ ] }";
   private static long OFFSET = 0;
   private static int BATCH_SIZE = 100;
   private static final int DAY_OF_MONTH = 1;
   private static final int HOUR_OF_DAY = 4;
   private static final int MINUTES = 21600;
   private static final String HOST = "http://staging.gooru.org";
+  private static final String SEARCH_HOST = "http://localhost:8080";
   private static final Vertx vertx = Vertx.vertx();
 
   private static final WebClient client = WebClient.create(vertx);
@@ -71,6 +71,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
     configData.put("password", params.getString("password", "test1"));
     configData.put("host", params.getString("host", HOST));
     configData.put("clientData", params.getJsonObject("clientData"));
+    configData.put("searchHost", params.getString("searchHost", SEARCH_HOST));
 
     MonthlyTimer.schedule(new Runnable() {
       public void run() {
@@ -123,7 +124,7 @@ public class PopulateLearningMaps  extends BaseIndexService implements JobInitia
 
   private void processGUTCodes(String token, JsonArray gutCodesArray, JsonObject configData) {
     LOGGER.info("token : " + token);
-    String host = configData.getString("host");
+    String host = configData.getString("searchHost");
     for (Object gutCode : gutCodesArray) {
       try {
         JsonObject taxonomyCodeObject = (JsonObject) gutCode;

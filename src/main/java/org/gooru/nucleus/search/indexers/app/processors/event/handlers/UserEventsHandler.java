@@ -26,7 +26,7 @@ public class UserEventsHandler extends BaseEventHandler implements IndexEventHan
     try {
       eventName = eventJson.getString(EventsConstants.EVT_OBJECT_EVENT_NAME);
       LOGGER.debug("UEH->handleEvents : Event validation passed, proceding to handle consumed event : " + eventName);
-      String userId = eventJson.getJsonObject(EventsConstants.EVT_PAYLOAD_OBJECT).getString(EventsConstants.EVT_PAYLOAD_USER_ID);
+      String userId = getUserId(eventJson);
       
       if(userId == null){
         throw new InvalidRequestException("User Id is null, not able to handle");
