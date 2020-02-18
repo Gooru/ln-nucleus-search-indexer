@@ -5,6 +5,7 @@ public class SchemaConstants {
   //Database Names
   public static final String DEFAULT_DATABASE_NAME = "nucleus";
   public static final String TRACKER_DATABASE_NAME = "reports_db";
+  public static final String DEFAULT_DATASCOPE_DATABASE_NAME = "dsdb";
   //Table Names
   public static final String CONTENT = "content";
   public static final String ORIGINAL_RESOURCE = "original_resource";
@@ -35,6 +36,9 @@ public class SchemaConstants {
   public static final String RESOURCE_INDEX_DELETE_TRACKER = "resource_index_delete_tracker";
   public static final String COLLECTION_INDEX_DELETE_TRACKER = "collection_index_delete_tracker";
   public static final String INDEXER_JOB_STATUS = "indexer_job_status";
+  
+  public static final String CONTENT_VECTORS = "content_vectors";
+
   //Primary Key Column Names
   public static final String ID = "id";
   public static final String UNIT_ID = "unit_id";

@@ -22,7 +22,8 @@ public final class PCWeightUtil {
 
   public static double getResourcePcWeight(final ScoreFields rankingData) throws Exception {
     try {
-      float usedInSCollectionCount = (float) rankingData.getResourceUsedCollectionCount() / ScoreConstants.MAX_RESOURCE_USED_99PERSENT_VAL;
+      float usedInSCollectionCount =
+        (float) rankingData.getResourceUsedCollectionCount() / ScoreConstants.MAX_RESOURCE_USED_99PERSENT_VAL;
       float frameBreakerScore = (!rankingData.getHasFrameBreaker()) ? 1f : ScoreConstants.DEMOTE_FRAME_BREAKER;
       float thumbnailScore = (rankingData.getHasNoThumbnail() == 0) ? 1f : ScoreConstants.DEMOTE_THUMBNAIL;
       float descScore = computeDescriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
@@ -32,19 +33,27 @@ public final class PCWeightUtil {
       float skillScore = (rankingData.getHas21stCenturySkills()) ? 1f : 0f;
       float viewsScore = rankingData.getViewsCount() / ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
       float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f;
-      Double publisherQualityIndicator = (rankingData.getPublisherQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getPublisherQualityIndicator()) / 5) : null;
-      Double contentQualityIndicator = (rankingData.getContentQualityIndicator() != null) ? ((double) normalizeValueToFive(rankingData.getContentQualityIndicator()) / 5) : null;
+      Double publisherQualityIndicator = (rankingData.getPublisherQualityIndicator() != null)
+        ? ((double) normalizeValueToFive(rankingData.getPublisherQualityIndicator()) / 5) : null;
+      Double contentQualityIndicator = (rankingData.getContentQualityIndicator() != null)
+        ? ((double) normalizeValueToFive(rankingData.getContentQualityIndicator()) / 5) : null;
       float featuredScore = (rankingData.isFeatured()) ? 1f : 0f;
+      Double efficacy = (rankingData.getEfficacy() != null) ? ((double) rankingData.getEfficacy()) : 0;
+      Double engagement = (rankingData.getEngagement() != null) ? ((double) rankingData.getEngagement()) : 0;
+      Double relevance = (rankingData.getRelevance() != null) ? ((double) rankingData.getRelevance()) : 0;
 
-      double usageSignalWeight = (double) (((double) (normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2) * 0.5);
-      double otherSignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore + standardScore + domainBoost + skillScore + oerScore + publishStatusScore + featuredScore) / 9) * 0.2);
+      double usageSignalWeight =
+        (double) (((double) (normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2) * 0.2);
+      double otherSignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore + standardScore
+        + domainBoost + skillScore + oerScore + publishStatusScore + featuredScore) / 9) * 0.3);
+      double reefWeight = (double) (((double) (efficacy + engagement + relevance) / 1.8) * 0.2);
       double editorialTagSignals = 0;
-      if(contentQualityIndicator != null) {
+      if (contentQualityIndicator != null) {
         editorialTagSignals = contentQualityIndicator * 0.3;
-      } else if (publisherQualityIndicator != null){
+      } else if (publisherQualityIndicator != null) {
         editorialTagSignals = publisherQualityIndicator * 0.3;
       }
-      return (double) normalizeValue(usageSignalWeight + otherSignalWeight + editorialTagSignals);
+      return (double) normalizeValue(usageSignalWeight + otherSignalWeight + editorialTagSignals + reefWeight);
     } catch (Exception e) {
       throw new Exception(e);
     }
@@ -70,6 +79,9 @@ public final class PCWeightUtil {
       scollectionMvelInputs.put("isPublished", rankingData.getIsPublished());
       scollectionMvelInputs.put("isFeatured", rankingData.isFeatured());
       scollectionMvelInputs.put("isTeacherGradingType", rankingData.getGradingType() != null && rankingData.getGradingType().equalsIgnoreCase(ScoreConstants.TEACHER) ? 1 : 0);
+      scollectionMvelInputs.put("efficacy", rankingData.getEfficacy());
+      scollectionMvelInputs.put("engagement", rankingData.getEngagement());
+      scollectionMvelInputs.put("relevance", rankingData.getRelevance());
       VariableResolverFactory inputFactory = new MapVariableResolverFactory(scollectionMvelInputs);
       Double scPreComputedWeight = 0.0;
       scPreComputedWeight = (Double) MVEL.executeExpression(scollectionScoreCompiled, inputFactory);

@@ -189,14 +189,16 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(contentEo.getId(), contentEo.getContentFormat());
-      if (signatureResource != null) {
-        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
-        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      Double relevance = null;
+      JsonObject contentVector = getContentVectorRepo().getContentVectorsByContentId(contentEo.getId(), contentEo.getContentFormat());
+      if (contentVector != null) {
+        efficacy = (Double) contentVector.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) contentVector.getValue(EntityAttributeConstants.ENGAGEMENT);
+        relevance = (Double) contentVector.getValue(EntityAttributeConstants.RELEVANCE);
       }
       statisticsEo.setEfficacy(efficacy);
       statisticsEo.setEngagement(engagement);
-      statisticsEo.setRelevance(null);
+      statisticsEo.setRelevance(relevance);
       
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
@@ -220,6 +222,10 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
         hasNoStandard = 0;
       }
       rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
+      rankingFields.put(ScoreConstants.EFFICACY, statisticsEo.getEfficacy());
+      rankingFields.put(ScoreConstants.ENGAGEMENT, statisticsEo.getEngagement());
+      rankingFields.put(ScoreConstants.RELEVANCE, statisticsEo.getRelevance());
+      
       statisticsEo.setLMContent(taxJson.getInteger(IndexFields.HAS_GUT_STANDARD, 0) == 1 ? true : false);
       
       double pcWeight = PCWeightUtil.getResourcePcWeight(new ScoreFields(rankingFields));

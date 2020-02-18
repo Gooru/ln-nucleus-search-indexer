@@ -14,50 +14,62 @@ public class BaseIndexRepo {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BaseIndexRepo.class);
 
-  protected DB getDefaultDataSourceDBConnection(){
+  protected DB getDefaultDataSourceDBConnection() {
     return new DB(DataSourceRegistry.getInstance().getDefaultDatabase());
   }
-  
-  protected void openDefaultDBConnection(DB db){
+
+  protected void openDefaultDBConnection(DB db) {
     db.open(DataSourceRegistry.getInstance().getDefaultDataSource());
   }
-  
-  protected void closeDefaultDBConn(DB db){
+
+  protected void closeDefaultDBConn(DB db) {
     db.close();
   }
 
-    protected DB getTrackerDataSourceDBConnection() {
-        return new DB(DataSourceRegistry.getInstance().getIndexTrackerDatabase());
-    }
+  protected DB getTrackerDataSourceDBConnection() {
+    return new DB(DataSourceRegistry.getInstance().getIndexTrackerDatabase());
+  }
 
-    protected void openTrackerDBConnection(DB db) {
-        db.open(DataSourceRegistry.getInstance().getIndexTrackerDataSource());
-    }
+  protected void openTrackerDBConnection(DB db) {
+    db.open(DataSourceRegistry.getInstance().getIndexTrackerDataSource());
+  }
 
-    protected void closeTrackerDBConn(DB db) {
-        db.close();
-    }
-    
-  public static String toPostgresArrayString(Collection<String> input) {
-      int approxSize = ((input.size() + 1) * 36); // Length of UUID is around
-                                                  // 36 chars
-      Iterator<String> it = input.iterator();
-      if (!it.hasNext()) {
-          return "{}";
-      }
-
-      StringBuilder sb = new StringBuilder(approxSize);
-      sb.append('{');
-      for (;;) {
-          String s = it.next();
-          sb.append('"').append(s).append('"');
-          if (!it.hasNext()) {
-              return sb.append('}').toString();
-          }
-          sb.append(',');
-      }
+  protected void closeTrackerDBConn(DB db) {
+    db.close();
   }
   
+  protected DB getDSDataSourceDBConnection() {
+    return new DB(DataSourceRegistry.getInstance().getDatascopeDatabase());
+  }
+
+  protected void openDSDBConnection(DB db) {
+    db.open(DataSourceRegistry.getInstance().getDatascopeDataSource());
+  }
+
+  protected void closeDBConn(DB db) {
+    db.close();
+  }
+  
+  public static String toPostgresArrayString(Collection<String> input) {
+    int approxSize = ((input.size() + 1) * 36); // Length of UUID is around
+                                                // 36 chars
+    Iterator<String> it = input.iterator();
+    if (!it.hasNext()) {
+      return "{}";
+    }
+
+    StringBuilder sb = new StringBuilder(approxSize);
+    sb.append('{');
+    for (;;) {
+      String s = it.next();
+      sb.append('"').append(s).append('"');
+      if (!it.hasNext()) {
+        return sb.append('}').toString();
+      }
+      sb.append(',');
+    }
+  }
+
   public PGobject getPGObject(String field, String type, String value) {
     PGobject pgObject = new PGobject();
     pgObject.setType(type);

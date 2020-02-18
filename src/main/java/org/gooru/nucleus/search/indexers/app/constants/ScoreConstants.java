@@ -33,6 +33,9 @@ public final class ScoreConstants {
   public static final String PUBLISHER_QUALITY_INDICATOR = "publisherQualityIndicator";
   public static final String IS_FEATURED = "isFeatured";
   public static final String GRADING_TYPE = "gradingType";
+  public static final String EFFICACY = "efficacy";
+  public static final String ENGAGEMENT = "engagement";
+  public static final String RELEVANCE = "relevance";
 
   public static final String[] DEMOTE_DOMAINS = {"wikipedia"};
   public static final String TEACHER = "teacher";
@@ -43,7 +46,8 @@ public final class ScoreConstants {
     + "((hasNoDescription != null && hasNoDescription > 0) ? 0.0: 2.2)+((isCopied != null && isCopied > 0) ? 0.0 : 1.4)+"
     + "((hasNoStandard != null && hasNoStandard > 0) ? 0.01 : 2.5)+((resourceCount <= 2 || resourceCount > 8) ? 0.001 :2.0)+"
     + "((questionCount == 0) ? 0.001:1.7)+((collectionItemCount < 1) ? 0.000001 : 1.0) +((isPublished == 1)? 2.5 : 0.0)+"
-    + "((isFeatured == 1)? 2.5 : 0.0)+((isTeacherGradingType == 1) ? 0.00001 : 1.0))";
+    + "((isFeatured == 1)? 2.5 : 0.0)+((isTeacherGradingType == 1) ? 0.00001 : 1.0)+((efficacy != null && efficacy > 0) ? efficacy : 0.0)+"
+    + "((engagement != null && engagement > 0) ? engagement : 0.0)+((relevance != null && relevance > 0) ? relevance : 0.0))";
 
   // Score max/99 percentile values
   public static final int MAX_RESOURCE_USED_99PERSENT_VAL = 25;

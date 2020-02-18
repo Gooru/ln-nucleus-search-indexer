@@ -19,8 +19,6 @@ public interface IndexRepository {
 
   List<Map> getTwentyOneCenturySkill(String referenceIds);
 
-  JsonObject getSignatureResourcesByContentId(String contentId, String contentType);
-
   JsonArray getSignatureResourcesByCodeId(String codeId);
 
   JsonArray getSignatureResourcesByGutCode(String gutCodeId);
