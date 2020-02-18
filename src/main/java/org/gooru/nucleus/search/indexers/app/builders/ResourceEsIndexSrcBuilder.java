@@ -139,14 +139,16 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(originalresourceEo.getId(), originalresourceEo.getContentFormat());
-      if (signatureResource != null) {
-        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
-        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      Double relevance = null;
+      JsonObject contentVector = getContentVectorRepo().getContentVectorsByContentId(originalresourceEo.getId(), originalresourceEo.getContentFormat());
+      if (contentVector != null) {
+        efficacy = (Double) contentVector.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) contentVector.getValue(EntityAttributeConstants.ENGAGEMENT);
+        relevance = (Double) contentVector.getValue(EntityAttributeConstants.RELEVANCE);
       }
       statisticsEo.setEfficacy(efficacy);
       statisticsEo.setEngagement(engagement);
-      statisticsEo.setRelevance(null);
+      statisticsEo.setRelevance(relevance);
       
       // Set ranking fields
       Map<String, Object> rankingFields = new HashMap<>();
@@ -163,7 +165,10 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       rankingFields.put(ScoreConstants.CONTENT_QUALITY_INDICATOR, statisticsEo.getContentQualityIndicator());
       rankingFields.put(ScoreConstants.PUBLISHER_QUALITY_INDICATOR, statisticsEo.getPublisherQualityIndicator());
       rankingFields.put(ScoreConstants.IS_FEATURED, statisticsEo.isFeatured());
-
+      rankingFields.put(ScoreConstants.EFFICACY, statisticsEo.getEfficacy());
+      rankingFields.put(ScoreConstants.ENGAGEMENT, statisticsEo.getEngagement());
+      rankingFields.put(ScoreConstants.RELEVANCE, statisticsEo.getRelevance());
+      
       JsonObject taxJson = originalresourceEo.getTaxonomy();
       int hasNoStandard = 1;
       if (taxJson != null && taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD) != null

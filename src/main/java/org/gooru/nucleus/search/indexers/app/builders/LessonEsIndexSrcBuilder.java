@@ -222,14 +222,16 @@ public class LessonEsIndexSrcBuilder<S extends JsonObject, D extends LessonEio> 
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(lessonEio.getId(), lessonEio.getContentFormat());
-      if (signatureResource != null) {
-        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
-        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      Double relevance = null;
+      JsonObject contentVector = getContentVectorRepo().getContentVectorsByContentId(lessonEio.getId(), lessonEio.getContentFormat());
+      if (contentVector != null) {
+        efficacy = (Double) contentVector.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) contentVector.getValue(EntityAttributeConstants.ENGAGEMENT);
+        relevance = (Double) contentVector.getValue(EntityAttributeConstants.RELEVANCE);
       }
       statisticsEo.setEfficacy(efficacy);
       statisticsEo.setEngagement(engagement);
-      statisticsEo.setRelevance(null);
+      statisticsEo.setRelevance(relevance);
       
       //Set Library
       statisticsEo.setLibraryContent(false);

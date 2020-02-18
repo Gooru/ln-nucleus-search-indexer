@@ -22,6 +22,8 @@ import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionR
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CollectionRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentRepositoryImpl;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentVectorRepository;
+import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.ContentVectorRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepository;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.CourseRepositoryImpl;
 import org.gooru.nucleus.search.indexers.app.repositories.activejdbc.IndexRepository;
@@ -167,6 +169,10 @@ public abstract class EsIndexSrcBuilder<S, D> implements IsEsIndexSrcBuilder<S, 
   
   protected LibraryRepositoryImpl getLibraryRepo() {
     return (LibraryRepositoryImpl) LibraryRepository.instance();
+  }
+  
+  protected ContentVectorRepositoryImpl getContentVectorRepo() {
+    return (ContentVectorRepositoryImpl) ContentVectorRepository.instance();
   }
   
   protected RestHighLevelClient getClient() {

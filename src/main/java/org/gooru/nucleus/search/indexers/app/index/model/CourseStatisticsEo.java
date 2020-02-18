@@ -142,7 +142,7 @@ public class CourseStatisticsEo extends JsonObject {
 
   public void setEfficacy(Double efficacy) {
     if (efficacy == null) {
-      efficacy = 0.5;
+      efficacy = 0.0;
     }
     this.put(IndexFields.EFFICACY, efficacy);
   }
@@ -154,7 +154,7 @@ public class CourseStatisticsEo extends JsonObject {
 
   public void setEngagement(Double engagement) {
     if (engagement == null) {
-      engagement = 0.5;
+      engagement = 0.0;
     }
     this.put(IndexFields.ENGAGEMENT, engagement);
   }
@@ -166,7 +166,7 @@ public class CourseStatisticsEo extends JsonObject {
 
   public void setRelevance(Double relevance) {
     if (relevance == null) {
-      relevance = 0.5;
+      relevance = 0.0;
     }
     this.put(IndexFields.RELEVANCE, relevance);
   }

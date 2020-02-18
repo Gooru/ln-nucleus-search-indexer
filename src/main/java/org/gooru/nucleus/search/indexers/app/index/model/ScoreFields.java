@@ -47,6 +47,12 @@ public class ScoreFields {
   private static final String PUBLISHED = "published";
   
   private String gradingType;
+  
+  private Double efficacy;
+
+  private Double engagement;
+
+  private Double relevance;
 
   public ScoreFields(Map<String, Object> scoreFieldsMap) {
     if (scoreFieldsMap.get(ScoreConstants.VIEW_COUNT) != null) {
@@ -128,7 +134,41 @@ public class ScoreFields {
     if (scoreFieldsMap.get(ScoreConstants.GRADING_TYPE) != null) {
         this.gradingType = (String) scoreFieldsMap.get(ScoreConstants.GRADING_TYPE);
     }
-    
+
+    if (scoreFieldsMap.get(ScoreConstants.EFFICACY) != null) {
+      this.efficacy = (Double) scoreFieldsMap.get(ScoreConstants.EFFICACY);
+    }
+    if (scoreFieldsMap.get(ScoreConstants.ENGAGEMENT) != null) {
+      this.engagement = (Double) scoreFieldsMap.get(ScoreConstants.ENGAGEMENT);
+    }
+    if (scoreFieldsMap.get(ScoreConstants.RELEVANCE) != null) {
+      this.relevance = (Double) scoreFieldsMap.get(ScoreConstants.RELEVANCE);
+    }
+
+  }
+
+  public Double getEfficacy() {
+    return efficacy;
+  }
+
+  public void setEfficacy(Double efficacy) {
+    this.efficacy = efficacy;
+  }
+
+  public Double getEngagement() {
+    return engagement;
+  }
+
+  public void setEngagement(Double engagement) {
+    this.engagement = engagement;
+  }
+
+  public Double getRelevance() {
+    return relevance;
+  }
+
+  public void setRelevance(Double relevance) {
+    this.relevance = relevance;
   }
 
   public static String getDomainName(String url) throws URISyntaxException {

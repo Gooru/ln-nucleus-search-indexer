@@ -80,26 +80,6 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
   }
   
   @Override
-  public JsonObject getSignatureResourcesByContentId(String contentId, String contentType) {
-    DB db = getDefaultDataSourceDBConnection();
-    openDefaultDBConnection(db);
-
-    JsonObject returnValue = null;
-    LazyList<SignatureResources> contents = SignatureResources.findBySQL(SignatureResources.FETCH_SIGNATURE_RESOURCES, contentId, contentType);
-    if (contents.size() < 1) {
-      LOGGER.warn("Content id: {} not present in DB", contentId);
-    }
-    if (contents.size() > 0) {
-      SignatureResources content = contents.get(0);
-      if (content != null) {
-        returnValue = new JsonObject(content.toJson(false));
-      }
-    }
-    closeDefaultDBConn(db);
-    return returnValue;
-  }
-  
-  @Override
   public JsonArray getSignatureResourcesByCodeId(String codeId) {
     JsonArray responses = null;
     DB db = getDefaultDataSourceDBConnection();

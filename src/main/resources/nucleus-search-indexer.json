@@ -37,6 +37,15 @@
   	"maximumPoolSize" : 5,
   	"database" : "reports_db"
   },
+  "defaultDatascopeDataSource" : {
+  	"nucleus.ds.type" : "hikari",
+  	"username" : "dsuser",
+  	"password" : "dspass",
+  	"autoCommit" : false,
+  	"jdbcUrl" : "jdbc:postgresql://localhost:5432/dsdb",
+  	"maximumPoolSize" : 5,
+  	"database" : "dsdb"
+  },
   "populateResourceSuggestJobSettings" : {
   	"batchSize" : 100,
   	"offset" : 0,

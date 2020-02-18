@@ -200,14 +200,16 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       // Set REEf
       Double efficacy = null;
       Double engagement = null;
-      JsonObject signatureResource = getIndexRepo().getSignatureResourcesByContentId(collectionEo.getId(), collectionEo.getContentFormat());
-      if (signatureResource != null) {
-        efficacy = (Double) signatureResource.getValue(EntityAttributeConstants.EFFICACY);
-        engagement = (Double) signatureResource.getValue(EntityAttributeConstants.ENGAGEMENT);
+      Double relevance = null;
+      JsonObject contentVector = getContentVectorRepo().getContentVectorsByContentId(collectionEo.getId(), collectionEo.getContentFormat());
+      if (contentVector != null) {
+        efficacy = (Double) contentVector.getValue(EntityAttributeConstants.EFFICACY);
+        engagement = (Double) contentVector.getValue(EntityAttributeConstants.ENGAGEMENT);
+        relevance = (Double) contentVector.getValue(EntityAttributeConstants.RELEVANCE);
       }
       statisticsEo.setEfficacy(efficacy);
       statisticsEo.setEngagement(engagement);
-      statisticsEo.setRelevance(null);
+      statisticsEo.setRelevance(relevance);
       
       long viewsCount = source.getLong(ScoreConstants.VIEW_COUNT);
       int remixCount = source.getInteger(ScoreConstants.COLLECTION_REMIX_COUNT);
@@ -246,6 +248,9 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       rankingFields.put(ScoreConstants.PUBLISH_STATUS, collectionEo.getPublishStatus());
       rankingFields.put(ScoreConstants.IS_FEATURED, statisticsEo.isFeatured());
       rankingFields.put(ScoreConstants.GRADING_TYPE, collectionEo.getGradingType());
+      rankingFields.put(ScoreConstants.EFFICACY, statisticsEo.getEfficacy());
+      rankingFields.put(ScoreConstants.ENGAGEMENT, statisticsEo.getEngagement());
+      rankingFields.put(ScoreConstants.RELEVANCE, statisticsEo.getRelevance());
       JsonObject taxJson = collectionEo.getTaxonomy();
       int hasNoStandard = 1;
       
@@ -254,6 +259,9 @@ public class CollectionEsIndexSrcBuilder<S extends JsonObject, D extends Collect
       }
 
       rankingFields.put(ScoreConstants.TAX_HAS_NO_STANDARD, hasNoStandard);
+      rankingFields.put(ScoreConstants.EFFICACY, statisticsEo.getEfficacy());
+      rankingFields.put(ScoreConstants.ENGAGEMENT, statisticsEo.getEngagement());
+      rankingFields.put(ScoreConstants.RELEVANCE, statisticsEo.getRelevance());
 
       double pcWeight = PCWeightUtil.getCollectionPCWeight(new ScoreFields(rankingFields));
 
