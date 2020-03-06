@@ -29,8 +29,7 @@ public final class PCWeightUtil {
       float descScore = computeDescriptionValue(rankingData.getDescription(), rankingData.getHasNoDescription());
       float domainBoost = (rankingData.getDomainBoost() == 1) ? 1f : ScoreConstants.DEMOTE_DOMAIN;
       float standardScore = (rankingData.getHasNoStandard() == 0) ? 1f : 0f;
-      float oerScore = (rankingData.getOer() == 1) ? 1f : 0f;
-      float skillScore = (rankingData.getHas21stCenturySkills()) ? 1f : 0f;
+      float skillScore = (rankingData.getHas21stCenturySkills()) ? 0.5f : 0f;
       float viewsScore = rankingData.getViewsCount() / ScoreConstants.MAX_RESOURCE_VIEWS_99PERSENT_VAL;
       float publishStatusScore = (rankingData.getIsPublished() == 1) ? 1f : 0f;
       Double publisherQualityIndicator = (rankingData.getPublisherQualityIndicator() != null)
@@ -41,19 +40,23 @@ public final class PCWeightUtil {
       Double efficacy = (rankingData.getEfficacy() != null) ? ((double) rankingData.getEfficacy()) : 0;
       Double engagement = (rankingData.getEngagement() != null) ? ((double) rankingData.getEngagement()) : 0;
       Double relevance = (rankingData.getRelevance() != null) ? ((double) rankingData.getRelevance()) : 0;
+      float usedInLibrary = (rankingData.isUsedInLibrary()) ? 1f : 0f;
 
       double usageSignalWeight =
         (double) (((double) (normalizeValue(usedInSCollectionCount) + normalizeValue(viewsScore)) / 2) * 0.2);
-      double otherSignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore + standardScore
-        + domainBoost + skillScore + oerScore + publishStatusScore + featuredScore) / 9) * 0.3);
+      double contentQualitySignalWeight = (double) (((double) (descScore + frameBreakerScore + thumbnailScore
+        + domainBoost + skillScore + publishStatusScore + featuredScore + usedInLibrary) / 8) * 0.2);
       double reefWeight = (double) (((double) (efficacy + engagement + relevance) / 1.8) * 0.2);
       double editorialTagSignals = 0;
       if (contentQualityIndicator != null) {
-        editorialTagSignals = contentQualityIndicator * 0.3;
+        editorialTagSignals = contentQualityIndicator * 0.2;
       } else if (publisherQualityIndicator != null) {
-        editorialTagSignals = publisherQualityIndicator * 0.3;
+        editorialTagSignals = publisherQualityIndicator * 0.2;
       }
-      return (double) normalizeValue(usageSignalWeight + otherSignalWeight + editorialTagSignals + reefWeight);
+      double relevanceSignal = standardScore * 0.2;
+      
+      return (double) normalizeValue(
+        usageSignalWeight + contentQualitySignalWeight + editorialTagSignals + reefWeight + relevanceSignal);
     } catch (Exception e) {
       throw new Exception(e);
     }
@@ -82,6 +85,7 @@ public final class PCWeightUtil {
       scollectionMvelInputs.put("efficacy", rankingData.getEfficacy());
       scollectionMvelInputs.put("engagement", rankingData.getEngagement());
       scollectionMvelInputs.put("relevance", rankingData.getRelevance());
+      scollectionMvelInputs.put("isUsedInLibrary", rankingData.isUsedInLibrary());
       VariableResolverFactory inputFactory = new MapVariableResolverFactory(scollectionMvelInputs);
       Double scPreComputedWeight = 0.0;
       scPreComputedWeight = (Double) MVEL.executeExpression(scollectionScoreCompiled, inputFactory);
@@ -93,7 +97,7 @@ public final class PCWeightUtil {
   }
 
   protected static Float computeDescriptionValue(String description, int hasNoDescription) {
-    Float descriptionScore = -5.0f;
+    Float descriptionScore = -2.0f;
     if (hasNoDescription == 0) {
       descriptionScore = 0.8f;
       if (description.length() > 80) {

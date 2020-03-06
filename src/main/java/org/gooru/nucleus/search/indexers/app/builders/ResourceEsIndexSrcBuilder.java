@@ -168,7 +168,8 @@ public class ResourceEsIndexSrcBuilder<S extends JsonObject, D extends ContentEi
       rankingFields.put(ScoreConstants.EFFICACY, statisticsEo.getEfficacy());
       rankingFields.put(ScoreConstants.ENGAGEMENT, statisticsEo.getEngagement());
       rankingFields.put(ScoreConstants.RELEVANCE, statisticsEo.getRelevance());
-      
+      rankingFields.put(ScoreConstants.USED_IN_LIBRARY, statisticsEo.isLibraryContent());
+
       JsonObject taxJson = originalresourceEo.getTaxonomy();
       int hasNoStandard = 1;
       if (taxJson != null && taxJson.getInteger(EntityAttributeConstants.TAXONOMY_HAS_STD) != null

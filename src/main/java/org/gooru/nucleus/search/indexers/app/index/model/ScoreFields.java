@@ -53,6 +53,8 @@ public class ScoreFields {
   private Double engagement;
 
   private Double relevance;
+  
+  private boolean usedInLibrary = false;
 
   public ScoreFields(Map<String, Object> scoreFieldsMap) {
     if (scoreFieldsMap.get(ScoreConstants.VIEW_COUNT) != null) {
@@ -143,6 +145,10 @@ public class ScoreFields {
     }
     if (scoreFieldsMap.get(ScoreConstants.RELEVANCE) != null) {
       this.relevance = (Double) scoreFieldsMap.get(ScoreConstants.RELEVANCE);
+    }
+    
+    if (scoreFieldsMap.get(ScoreConstants.USED_IN_LIBRARY) != null) {
+      this.usedInLibrary = (boolean) scoreFieldsMap.get(ScoreConstants.USED_IN_LIBRARY);
     }
 
   }
@@ -277,5 +283,13 @@ public class ScoreFields {
 	public String getGradingType() {
 		return gradingType;
 	}
+
+  public boolean isUsedInLibrary() {
+    return usedInLibrary;
+  }
+
+  public void setUsedInLibrary(boolean usedInLibrary) {
+    this.usedInLibrary = usedInLibrary;
+  }
 
 }

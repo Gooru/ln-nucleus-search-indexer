@@ -135,7 +135,7 @@ public class IndexRepositoryImpl extends BaseIndexRepo implements IndexRepositor
         response = contents.get(0).getString(EntityAttributeConstants.ID);
       }
     } catch (Exception ex) {
-      LOGGER.error("Failed to fetch taxonomy course : ", ex);
+      LOGGER.error("Failed to fetch course from taxonomy course version < 3.0. EX:: {} ", ex.getMessage());
     } finally {
       closeDefaultDBConn(db);
     }
