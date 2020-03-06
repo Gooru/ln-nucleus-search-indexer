@@ -215,6 +215,10 @@ public class QuestionAndResourceReferenceEsIndexSrcBuilder<S extends JsonObject,
       rankingFields.put(ScoreConstants.CONTENT_QUALITY_INDICATOR, statisticsEo.getContentQualityIndicator());
       rankingFields.put(ScoreConstants.PUBLISHER_QUALITY_INDICATOR, statisticsEo.getPublisherQualityIndicator());
       rankingFields.put(ScoreConstants.IS_FEATURED, statisticsEo.isFeatured());
+      rankingFields.put(ScoreConstants.EFFICACY, statisticsEo.getEfficacy());
+      rankingFields.put(ScoreConstants.ENGAGEMENT, statisticsEo.getEngagement());
+      rankingFields.put(ScoreConstants.RELEVANCE, statisticsEo.getRelevance());
+      rankingFields.put(ScoreConstants.USED_IN_LIBRARY, statisticsEo.isLibraryContent());
 
       JsonObject taxJson = contentEo.getTaxonomy();
       int hasNoStandard = 1;
